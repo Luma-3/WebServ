@@ -21,12 +21,11 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
       - name: install cmake
         run: sudo apt-get install cmake
-
-      - name: install gtest
-        run: sudo apt-get install libgtest-dev
 
       - name: Create build dir
         run: mkdir -p build
@@ -34,7 +33,7 @@ jobs:
       - name: Run Cmake
         run: |
           cmake -B build
-          cmake --build build --target WebServ
+          cmake --build build
 
       - name: Run unit tests
         run: ctest --test-dir build --output-on-failure
