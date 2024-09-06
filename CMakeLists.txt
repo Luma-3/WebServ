@@ -6,12 +6,13 @@ add_compile_options(-g3 -Wextra -Wall -Werror -Wunused -Wshadow)
 
 include_directories(./includes)
 
+set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_executable(WebServ 
 		sources/main.cpp
 		)
 
-execute_process(COMMAND mkdir -p externals/googletest/build
-COMMAND cmake -S externals/googletest -B externals/googletest/build)
-execute_process(COMMAND cmake --build externals/googletest/build)
+add_subdirectory(externals/googletest)
 
 add_subdirectory(tests)
