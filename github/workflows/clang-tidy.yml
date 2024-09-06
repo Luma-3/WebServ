@@ -1,0 +1,36 @@
+name: Static Analysis
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  clang-tidy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: install clang-tidy
+        run: sudo apt-get install clang-tidy
+
+      - name: install cmake
+        run: sudo apt-get install cmake
+
+      - name: Create build dir
+        run: mkdir -p build
+
+      - name: Run Cmake
+        run: |
+          cmake -B build
+          cmake --build build --target WebServ
+
+      - name: Run clang-tidy
+        run: clang-tidy src/*.cpp
