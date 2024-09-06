@@ -1,0 +1,13 @@
+Checks: >
+  -*,                    # Desactive Toutes les règles
+  clang-analyzer-*,      # Active toutes les règles de l'analyseur statique 
+  bugprone-*,            # Active toutes les règles de bugprone (Detection des bugs)
+  modernize-*,           # Active toutes les règles de modernize (Modernisation du code)
+  readability-*,         # Active toutes les règles de readability (Lisibilité du code)
+  performance-*,         # Active toutes les règles de performance (Optimisation du code)
+  hicpp-*,               # Active toutes les règles de hicpp (High Integrity C++ Standard)
+  cppcoreguidelines-*,   # Active toutes les règles de cppcoreguidelines (Lignes directrices du noyau C++)
+  misc-*,                # Active toutes les règles de misc (Divers)
+
+WarningsAsErrors: '*'    # Transforme toutes les avertissements en erreurs
+HeaderFilterRegex: '.*'  # Ajoute les headers à analyser
