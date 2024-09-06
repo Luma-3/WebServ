@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
       - name: install clang-tidy
         run: sudo apt-get install clang-tidy
@@ -28,9 +30,7 @@ jobs:
         run: mkdir -p build
 
       - name: Run Cmake
-        run: |
-          cmake -B build
-          cmake --build build --target WebServ
+        run: cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build
 
       - name: Run clang-tidy
-        run: clang-tidy src/*.cpp
+        run: clang-tidy -p=./build/compile_commands.json $(find . -name '*.cpp') -- -std=c++98
