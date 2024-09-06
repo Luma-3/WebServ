@@ -1,0 +1,40 @@
+name: Unit Test
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/*
+      - hotfix/*
+  pull_request:
+    branches:
+      - main
+      - develop
+      - feature/*
+      - hotfix/*
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: install cmake
+        run: sudo apt-get install cmake
+
+      - name: install gtest
+        run: sudo apt-get install libgtest-dev
+
+      - name: Create build dir
+        run: mkdir -p build
+
+      - name: Run Cmake
+        run: |
+          cmake -B build
+          cmake --build build --target WebServ
+
+      - name: Run unit tests
+        run: ctest --test-dir build --output-on-failure

@@ -1,0 +1,77 @@
+---
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: Left
+AlignConsecutiveDeclarations: Consecutive
+AlignConsecutiveMacros: Consecutive
+AlignEscapedNewlines: Left
+AlignOperands: AlignAfterOperator
+AlignTrailingComments: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: false
+BinPackArguments: true
+BinPackParameters: true
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: false
+  AfterEnum: false
+  AfterFunction: true
+  AfterNamespace: false
+  AfterObjCDeclaration: false
+  AfterStruct: false
+  AfterUnion: false
+  AfterExternBlock: false
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Custom
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: AfterColon
+BreakInheritanceList: AfterColon
+ColumnLimit: 80
+CompactNamespaces: false
+ContinuationIndentWidth: 4
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+DerivePointerAlignment: false
+EmptyLineBeforeAccessModifier: Always
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"(llvm|llvm-c|clang|clang-c)/'
+    Priority: 2
+    SortPriority: 0
+    CaseSensitive: false
+  - Regex: '^(<|"(gtest|isl|json)/)'
+    Priority: 3
+    SortPriority: 1
+    CaseSensitive: false
+  - Regex: '.*'
+    Priority: 1
+    SortPriority: 2
+    CaseSensitive: false
+IncludeIsMainRegex: '(Test)?$'
+IndentCaseLabels: true
+IndentPPDirectives: AfterHash
+IndentWidth: 4
+IndentWrappedFunctionNames: false
+NamespaceIndentation: None
+PPIndentWidth: 2
+PackConstructorInitializers: CurrentLine
+PointerAlignment: Right
+QualifierAlignment: Left
+SortIncludes: CaseInsensitive
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: Never
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: false
+TabWidth: 4
+UseTab: Always
+...

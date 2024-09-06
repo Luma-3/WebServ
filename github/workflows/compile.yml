@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: install cmake
+        uses: sudo apt-get install cmake
+
+      - name: Create build dir
+        uses: mkdir -p build
+
+      - name: Run Cmake
+        uses: |
+          cmake -B build
+          cmake --build build --target WebServ
