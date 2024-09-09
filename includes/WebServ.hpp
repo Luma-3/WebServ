@@ -1,32 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   WebServ.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/09 15:10:17 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/09 14:05:05 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/09 15:06:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cerrno>
-#include <iostream>
-#include <istream>
+#ifndef WEBSERV_HPP
+#define WEBSERV_HPP
 
-#include "WebServ.hpp"
+#include <fstream>
+#include <map>
+#include <vector>
 
-using std::cerr;
-using std::endl;
+// #include "Server.hpp"
 
-int main(int ac, char **av)
+class WebServ
 {
-	if (ac != 2) {
-		cerr << "Wrong Numbre of Argument" << endl;
-		return (EINVAL);
-	}
+  private:
+	// std::vector<Server>				   _servers;
+	std::ifstream					   _config_file;
+	std::map<std::string, std::string> _parse;
 
-	WebServ serv((std::string(av[1])));
+  public:
+	WebServ(std::string file_path);
 
-	serv.Parse();
-}
+	void Parse();
+
+	~WebServ();
+};
+
+#endif // WEBSERV_HPP
