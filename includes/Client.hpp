@@ -1,21 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/09 12:19:07 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/09 12:19:46 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/09 10:27:20 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/09 10:28:53 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#ifndef CLient
+#define CLient
 
-int main()
+#include <string>
+
+class Client
 {
-	Server server;
+  private:
+	const int	socket;
+	int			bytes_read;
+	std::string response;
 
-	server.ListenConnexion();
-	return 0;
-}
+  public:
+	Client();
+	~Client();
+};
+
+#endif // CLient

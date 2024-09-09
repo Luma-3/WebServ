@@ -1,21 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/09 12:19:07 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/09 12:19:46 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/09 12:33:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#ifndef SERVER_HPP
+#define SERVER_HPP
 
-int main()
+#include <iostream>
+#include <netdb.h>
+#include <string>
+
+class Server
 {
-	Server server;
+  private:
+	const std::string _port;
+	const int		  _server_socket;
+	struct addrinfo	 *_info;
 
-	server.ListenConnexion();
-	return 0;
-}
+  public:
+	Server(/* args */);
+	~Server();
+
+	void ListenConnexion();
+};
+
+#endif // SERVER_HPP

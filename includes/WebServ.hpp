@@ -1,21 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   WebServ.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/09 12:19:07 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/09 12:19:46 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/09 09:46:21 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/09 09:57:16 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef WEBSERV_HPP
+#define WEBSERV_HPP
+
+#include <vector>
+
 #include "Server.hpp"
 
-int main()
+class WebServ
 {
-	Server server;
+  private:
+	std::vector<Server> _servers;
 
-	server.ListenConnexion();
-	return 0;
-}
+  public:
+	WebServ();
+	~WebServ();
+};
+
+#endif // WEBSERV_HPP
