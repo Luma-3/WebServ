@@ -1,32 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/09 15:10:17 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/09 14:05:14 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/09 14:05:15 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cerrno>
+#ifndef SERVER_HPP
+#define SERVER_HPP
+
 #include <iostream>
-#include <istream>
+#include <netdb.h>
+#include <string>
 
-#include "WebServ.hpp"
-
-using std::cerr;
-using std::endl;
-
-int main(int ac, char **av)
+class Server
 {
-	if (ac != 2) {
-		cerr << "Wrong Numbre of Argument" << endl;
-		return (EINVAL);
-	}
+  private:
+    const std::string _port;
+    const int          _server_socket;
+    struct addrinfo     *_info;
 
-	WebServ serv((std::string(av[1])));
+  public:
+    Server(/* args */);
+    ~Server();
 
-	serv.Parse();
-}
+    void ListenConnexion();
+};
+
+#endif // SERVER_HPP

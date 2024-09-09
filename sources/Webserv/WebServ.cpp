@@ -1,32 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   WebServ.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/09 15:10:17 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/09 14:17:47 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/09 15:07:19 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cerrno>
-#include <iostream>
-#include <istream>
-
 #include "WebServ.hpp"
 
-using std::cerr;
-using std::endl;
+#include <iostream>
 
-int main(int ac, char **av)
+WebServ::WebServ(std::string file_path) :
+	_config_file(file_path.c_str(), std::ios::in)
 {
-	if (ac != 2) {
-		cerr << "Wrong Numbre of Argument" << endl;
-		return (EINVAL);
+	if (_config_file.is_open() == false) {
+		std::cerr << "Failed to open config file" << file_path << std::endl;
 	}
+}
 
-	WebServ serv((std::string(av[1])));
+void WebServ::Parse()
+{
+	char *buff = new char[10];
 
-	serv.Parse();
+	while (_config_file.read(buff, 10)) {
+		std::cout << buff << std::endl;
+	}
+}
+
+WebServ::~WebServ()
+{
+	if (_config_file.is_open() == true) _config_file.close();
 }
