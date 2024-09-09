@@ -2,6 +2,12 @@
 	"files.associations": {
 		"*.tpp": "cpp",
 		"iostream": "cpp",
-		"ostream": "cpp"
+		"ostream": "cpp",
+		"array": "cpp",
+		"string_view": "cpp",
+		"initializer_list": "cpp",
+		"ranges": "cpp",
+		"span": "cpp",
+		"utility": "cpp"
 	}
 }

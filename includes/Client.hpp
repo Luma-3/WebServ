@@ -14,16 +14,24 @@
 #define CLient
 
 #include <string>
+#include <map>
+#include "Server.hpp"
 
-class Client
+class Client : public Server
 {
   private:
-	const int	socket;
-	int			bytes_read;
-	std::string response;
+	const int							_socket;
+	int									_bytes_read;
+	std::map<std::string, std::string>	_request;	
+	std::string 						_response;
 
   public:
 	Client();
+
+	int		GETRessource();
+	int		POSTRessource();
+	char	*createResponse();	
+
 	~Client();
 };
 

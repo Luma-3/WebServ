@@ -16,10 +16,11 @@
 #include <iostream>
 #include <netdb.h>
 #include <string>
+#include <string.h>
 
 class Server
 {
-  private:
+  protected:
 	const std::string _port;
 	const int		  _server_socket;
 	struct addrinfo	 *_info;

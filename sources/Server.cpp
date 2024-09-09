@@ -42,10 +42,11 @@ Server::Server() :
 
 void Server::ListenConnexion()
 {
-	int	  client_sock;
-	int	  size = 100;
-	char *buff = new char[size];
-	int	  nb_bytes;
+	int		client_sock;
+	int		size = 100;
+	char	*buff = new char[size];
+	char	resp[110] = "HTTP/1.1 200 OK\nDate: Mon, 09 Sep 2024 12:00:00 GMT\nContent-Lenght: 48\nConnection: keep-alive\n\nca marche!!!!\n";
+	int		nb_bytes;
 
 	client_sock = accept(_server_socket, NULL, NULL);
 	nb_bytes = recv(client_sock, buff, size, 0);
@@ -53,6 +54,8 @@ void Server::ListenConnexion()
 		cerr << "Error on recv" << endl;
 	}
 	cout << buff << endl;
+	send(client_sock, resp, strlen(resp), 0);
+	close(client_sock);
 }
 
 Server::~Server()
@@ -60,5 +63,3 @@ Server::~Server()
 	close(_server_socket);
 	freeaddrinfo(_info);
 }
-
-//test commit v145563141851
