@@ -1,0 +1,43 @@
+Config		= [ ServerBlock ]
+
+ServerBlock = 'server' '{' ServerCore '}'
+
+ServerCore	=	[LocationBlock | ServerParam]
+
+ServerParam = 		ListenParam 
+				|	ServerNameParam
+				|	ErrorPageParam
+				|	ErrorLogParam
+				|	AccessLogParam
+				|	RootParam
+				|	IndexParam
+				|	AutoIndexParam
+
+LocationBlock = 'location' value '{' [ LocationParam ] '}'
+LocationParam =	RootParam
+				|	IndexParam
+				|	ErrorPageParam
+				|	AutoIndexParam
+				|	DenyMethodParam
+
+ListenParam		= 'listen' port ';'
+ServerNameParam	= 'server_name' value ';'
+ErrorPageParam	= 'error_page' [ error_code ] ':' value ';'
+ErrorLogParam	= 'error_log' value ';'
+AccessLogParam	= 'access_log' value ';'
+RootParam		= 'root' value ';'
+IndexParam		= 'index' value ';'
+AutoIndexParam	= 'autoindex' bool_val ';'
+
+DenyMethodParam	= 'deny_method' method ';'
+
+method		= 'DELETE' | 'GET' | 'POST'
+bool_val	= 'on' | 'off'
+
+port		= [0-9]+
+value 		= all
+(* path		= '/' [a-zA-Z0-9/_]*
+file_path	= '/' [a-zA-Z0-9/_.]*
+file_name	= [a-zA-Z0-9._]+
+error_code	= \d\d\d
+domain_name	= [a-zA-Z0-9.]+ *)
