@@ -3,46 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/06 15:21:25 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/10 17:34:55 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
+#include "Client.hpp"
 
 int main()
 {
-	std::cout << "Hello World!" << std::endl;
-	return 0;
+	std::string request = "DELETE /index HTTP/1.1\nHost: example.com\nContent-Type: application/json\nContent-Length: 20\n";
+
+	Client client;
+	try {
+		client.parseRequest((char *)request.c_str());
+	} catch (InvalidRequestException &e) {
+		std::cerr << e.what() << std::endl;
+	}
+
+	for (std::map<std::string, std::string>::iterator it = client._headers.begin(); it != client._headers.end(); it++)
+	{
+		std::cout << it->first << "/ => " << it->second << std::endl;
+	}
 }
-
-// #include <cstdlib>
-// #include <iostream>
-// #include <vector>
-
-// void test(int a)
-// {
-// 	if (a = 5) { // Erreur potentielle : affectation au lieu de comparaison
-// 		std::cout << "a vaut 5" << std::endl;
-// 	}
-// }
-
-// int main()
-// {
-// 	int				 x = NULL; // Utilisation de NULL au lieu de nullptr
-// 	std::vector<int> vec;
-// 	for (int i = 0; i < 10; i++) { // 10 est un nombre magique
-// 		vec.push_back(i);
-// 	}
-
-// 	int *ptr = (int *)malloc(
-// 		sizeof(int)); // Utilisation de malloc au lieu de new, non recommandé
-// 	*ptr = 10;		  // 10 est un nombre magique
-
-// 	std::cout << "Valeur de ptr : " << *ptr << std::endl;
-// 	free(ptr); // Utilisation de free au lieu de delete
-
-// 	return 0;
-// }

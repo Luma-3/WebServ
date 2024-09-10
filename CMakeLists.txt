@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(WebServ 
 		sources/main.cpp
+		sources/Client.cpp
 		)
 
 add_subdirectory(externals/googletest)

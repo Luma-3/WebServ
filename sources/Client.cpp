@@ -3,24 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/09 17:01:53 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/10 17:36:22 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client() {}
+#include <algorithm>
+#include <fstream>
+
+Client::Client() : Server() {}
 
 Client::Client(string methodType, string url, string httpVersion,
-			   size_t contentLength)
+			   string contentLength, string host, string contentType) : Server()
 {
-	_headers["method"] = methodType;
 	_headers["url"] = url;
+	_headers["host"] = host;
+	_headers["method"] = methodType;
 	_headers["httpVersion"] = httpVersion;
-	_headers["contentLength"] = std::to_string(contentLength);
+	_headers["contentType"] = contentType;
+	_headers["contentLength"] = contentLength;
 }
 
 Client::Client(char *params)
@@ -37,74 +42,96 @@ Client::~Client() {}
 /**
  * ! Utils
  */
-
-bool Client::verifMethodType(const std::string &methodType)
+void	Client::checkMethod(const std::string &methodType)
 {
-	if (methodType == "GET" || methodType == "POST" || methodType == "DELETE" ||
-		methodType.empty())
-		return true;
-	return false;
+	if (methodType != "GET"
+	&& methodType != "POST"
+	&& methodType != "DELETE")
+		throw InvalidRequestException();
+}
+
+void	Client::checkHttp(const std::string &httpVersion)
+{
+	if (httpVersion != "HTTP/1.1") throw InvalidRequestException();
+}
+
+void	Client::createUrl(std::string &url)
+{
+	if (url[0] ==  '/' && url.length() == 1)
+		return;
+
+	if (url[0] != '/')
+		url = "/" + url;
+	
+	if (url.length() > 1 && url[url.length() - 1] == '/')
+		url = url.substr(0, url.length() - 1);
+	/**
+	 * ! Virer le slash de fin si il existe
+	 */
+	_headers["Url"] = _locations[url]["root"] + url;
+}
+
+void	Client::checkUrl(const std::string &url)
+{
+	std::ifstream file(url.c_str());
+	if (!file.good())
+		_headers["Url"] = _locations["/404"]["root"] + "/404.html";
 }
 
 /**
  * ! Parsing
  */
-
-void Client::parseRequest(char *params)
+string Client::getAndErase(string &str, const string &delim)
 {
+	size_t pos = str.find(delim);
+	string ret = str.substr(0, pos);
+	if (pos == string::npos) return ret;
+	str.erase(0, pos + delim.length());
+	return ret;
+}
+
+void	Client::parseRequest(char *params)
+{
+
 	string request(params);
-	size_t pos;
 
 	/**
 	 * * Method type
 	 */
-	pos = request.find(' ');
-	if (pos == string::npos) throw InvalidRequestException();
-	_headers["method"] = request.substr(0, pos);
-
-	if (!verifMethodType(_headers["method"])) throw InvalidRequestException();
-
-	request.erase(0, pos + 1);
+	_headers["Method"] = getAndErase(request, " ");
+	checkMethod(_headers["Method"]);
 
 	/**
 	 * * URL
 	 */
-	pos = request.find(' ');
-	if (pos == string::npos) throw InvalidRequestException();
-	_headers["url"] = request.substr(0, pos - 1);
-	// TODO: check if url is valid
-
-	request.erase(0, pos + 1);
+	_headers["Url"] = getAndErase(request, " ");
+	createUrl(_headers["Url"]);
+	// checkUrl(_headers["Url"]);
 
 	/**
 	 * * HTTP version
 	 */
-	pos = request.find('\n');
-	if (pos == string::npos) throw InvalidRequestException();
-	_headers["httpVersion"] = request.substr(0, pos - 1);
-	// TODO: check if httpVersion is valid
-
-	request.erase(0, pos + 1);
+	_headers["httpVersion"] = getAndErase(request, "\n");
+	checkHttp(_headers["httpVersion"]);
 
 	/**
-	 * * Host
+	 * * Headers
 	 */
-	pos = request.find("Host: ");
-	if (pos == string::npos) throw InvalidRequestException();
-	_headers["host"] = request.substr(pos + 6, request.find('\n') - pos - 6);
-	if (_headers["host"].empty()) throw InvalidRequestException();
+	size_t pos;
+	while ((pos = request.find("\n")) != string::npos)
+	{
+		string line = request.substr(0, pos);
+		request.erase(0, pos + 1);
 
-	request.erase(0, request.find('\n') + 1);
+		if (line.empty()) break;
 
-	if (_headers["method"] != "POST") return;
+		string key = getAndErase(line, ": ");
+		string value = line;
+		_headers[key] = value;
+	}
+	if (_headers["Method"] != "POST") return ;
 
-	/**
-	 * * Content-Length
-	 */
-	pos = request.find("Content-Length: ");
-	if (pos == string::npos) throw InvalidRequestException();
-
-	request.erase(0, pos + 16);
-
-	_headers["contentLenght"] = request.substr(0, request.find('\n'));
+	if (_headers["Content-Type"].empty()) throw InvalidRequestException();
 }
+
+// void	Client::
