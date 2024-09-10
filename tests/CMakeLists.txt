@@ -1,11 +1,8 @@
 enable_testing()
 
-add_executable(exemple_test Test.cpp)
+add_executable(TokenizeTest tokenize/TestTokenize.cpp
+							../sources/tokenizer/tokenize.cpp)
 
-# include_directories(../externals/googletest/googletest/include)
+target_link_libraries(TokenizeTest gtest gtest_main)
 
-# add_dependencies(exemple_test gtest)
-
-target_link_libraries(exemple_test gtest gtest_main)
-
-add_test(NAME Test_name COMMAND exemple_test)
+add_test(NAME Tokenize_Test COMMAND ./TokenizeTest)

@@ -6,13 +6,12 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:17:47 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/09 15:07:19 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/10 20:07:19 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WebServ.hpp"
-
 #include <iostream>
+#include <WebServ.hpp>
 
 WebServ::WebServ(std::string file_path) :
 	_config_file(file_path.c_str(), std::ios::in)

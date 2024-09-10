@@ -12,6 +12,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(WebServ 
 		sources/main.cpp
 		sources/Webserv/WebServ.cpp
+		sources/parser/Parser.cpp
+		sources/tokenizer/tokenize.cpp
 		)
 
 add_subdirectory(externals/googletest)

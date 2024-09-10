@@ -1,31 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/10 20:03:55 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/10 10:28:25 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/10 11:48:54 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cerrno>
-#include <iostream>
-#include <istream>
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
 
-#include "Parser.hpp"
-#include "WebServ.hpp"
+#include <string>
+#include <vector>
 
-using std::cerr;
-using std::endl;
+#include "Location.hpp"
 
-int main(int ac, char **av)
+class Config
 {
-	if (ac != 2) {
-		cerr << "Wrong Numbre of Argument" << endl;
-		return (EINVAL);
-	}
+  private:
+	std::string			   _port;
+	std::string			   _server_name;
+	std::vector<Locations> _locations;
 
-	Parser parser(av[1]);
-}
+  public:
+	Config();
+	~Config();
+	Config(const Config &);
+	Config &operator=(const Config &);
+};
+
+#endif // CONFIG_HPP
