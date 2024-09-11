@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/10 17:36:22 by anthony          ###   ########.fr       */
+/*   Updated: 2024/09/11 15:05:34 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,16 @@
 #include <algorithm>
 #include <fstream>
 
-Client::Client() : Server() {}
+#include "Server.hpp"
+
+Client::Client() : Server()
+{
+	_haveHeader = false;
+}
 
 Client::Client(string methodType, string url, string httpVersion,
-			   string contentLength, string host, string contentType) : Server()
+			   string contentLength, string host, string contentType) :
+	Server()
 {
 	_headers["url"] = url;
 	_headers["host"] = host;
@@ -26,6 +32,7 @@ Client::Client(string methodType, string url, string httpVersion,
 	_headers["httpVersion"] = httpVersion;
 	_headers["contentType"] = contentType;
 	_headers["contentLength"] = contentLength;
+	_haveHeader = true;
 }
 
 Client::Client(char *params)
@@ -39,30 +46,31 @@ Client::Client(char *params)
 
 Client::~Client() {}
 
+Client::Client(const Server &server) : Server(server) {}
+
 /**
  * ! Utils
  */
-void	Client::checkMethod(const std::string &methodType)
+void Client::checkMethod(const std::string &methodType)
 {
-	if (methodType != "GET"
-	&& methodType != "POST"
-	&& methodType != "DELETE")
+	if (methodType != "GET" && methodType != "POST" && methodType != "DELETE")
 		throw InvalidRequestException();
 }
 
-void	Client::checkHttp(const std::string &httpVersion)
+void Client::checkHttp(const std::string &httpVersion)
 {
 	if (httpVersion != "HTTP/1.1") throw InvalidRequestException();
 }
 
-void	Client::createUrl(std::string &url)
+void Client::createUrl(std::string &url)
 {
-	if (url[0] ==  '/' && url.length() == 1)
+	if (url[0] == '/' && url.length() == 1) {
+		_headers["Url"] = "/var/www/html/index.html";
 		return;
+	}
 
-	if (url[0] != '/')
-		url = "/" + url;
-	
+	if (url[0] != '/') url = "/" + url;
+
 	if (url.length() > 1 && url[url.length() - 1] == '/')
 		url = url.substr(0, url.length() - 1);
 	/**
@@ -71,7 +79,7 @@ void	Client::createUrl(std::string &url)
 	_headers["Url"] = _locations[url]["root"] + url;
 }
 
-void	Client::checkUrl(const std::string &url)
+void Client::checkUrl(const std::string &url)
 {
 	std::ifstream file(url.c_str());
 	if (!file.good())
@@ -85,53 +93,65 @@ string Client::getAndErase(string &str, const string &delim)
 {
 	size_t pos = str.find(delim);
 	string ret = str.substr(0, pos);
+
+	std::cout << "extrated : " << ret << std::endl;
+
 	if (pos == string::npos) return ret;
 	str.erase(0, pos + delim.length());
+	std::cout << "After erase : " << str << std::endl;
 	return ret;
 }
 
-void	Client::parseRequest(char *params)
+void Client::parseRequest(void *buff)
 {
+	size_t pos = 0;
 
-	string request(params);
+	_buffer += (char *)buff;
+	pos = _buffer.find("\r\n");
 
+	if (pos == string::npos) return;
+
+	if (_haveHeader == false) {
+		string line = _buffer.substr(0, pos);
+		// std::cout << line << std::endl;
+		// * Method type
+		_headers["Method"] = getAndErase(line, " ");
+		checkMethod(_headers["Method"]);
+
+		std::cout << line << std::endl;
+		// * Url
+		_headers["Url"] = getAndErase(line, " ");
+		createUrl(_headers["Url"]);
+		// checkUrl(_headers["Url"]);
+
+		// std::cout << line << std::endl;
+		// * Http version
+		_headers["httpVersion"] = getAndErase(line, "\n");
+		// checkHttp(_headers["httpVersion"]);
+
+		_buffer.erase(0, pos + 2);
+		_haveHeader = true;
+	}
 	/**
-	 * * Method type
+	 * * Other headers
 	 */
-	_headers["Method"] = getAndErase(request, " ");
-	checkMethod(_headers["Method"]);
-
-	/**
-	 * * URL
-	 */
-	_headers["Url"] = getAndErase(request, " ");
-	createUrl(_headers["Url"]);
-	// checkUrl(_headers["Url"]);
-
-	/**
-	 * * HTTP version
-	 */
-	_headers["httpVersion"] = getAndErase(request, "\n");
-	checkHttp(_headers["httpVersion"]);
-
-	/**
-	 * * Headers
-	 */
-	size_t pos;
-	while ((pos = request.find("\n")) != string::npos)
-	{
-		string line = request.substr(0, pos);
-		request.erase(0, pos + 1);
+	pos = _buffer.find("\r\n");
+	while (pos != string::npos) {
+		string line = _buffer.substr(0, pos);
+		std::cout << "line : " << line << std::endl;
 
 		if (line.empty()) break;
 
 		string key = getAndErase(line, ": ");
 		string value = line;
 		_headers[key] = value;
+		std::cout << "key : " << key << " value : " << value << std::endl;
+		std::cout << "value : " << value << std::endl;
+
+		_buffer.erase(0, pos + 2);
+		pos = _buffer.find("\r\n");
 	}
-	if (_headers["Method"] != "POST") return ;
+	if (_headers["Method"] != "POST") return;
 
 	if (_headers["Content-Type"].empty()) throw InvalidRequestException();
 }
-
-// void	Client::

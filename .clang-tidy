@@ -2,12 +2,11 @@ Checks: >
   -*,
   clang-analyzer-*,
   bugprone-*,
-  modernize-*,
   readability-*,
   performance-*,
   hicpp-*,
   cppcoreguidelines-*,
   misc-*,
 
-WarningsAsErrors: '*'
-HeaderFilterRegex: '.*'
+WarningsAsErrors: "*"
+HeaderFilterRegex: "./includes/.*"
