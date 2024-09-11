@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/10 20:03:55 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/11 14:35:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,17 @@
 #include <iostream>
 #include <istream>
 
-#include "Parser.hpp"
-#include "WebServ.hpp"
+#include "parser/Parser.hpp"
 
 using std::cerr;
 using std::endl;
 
-int main(int ac, char **av)
+int main(const int ac, const char **av)
 {
 	if (ac != 2) {
 		cerr << "Wrong Numbre of Argument" << endl;
 		return (EINVAL);
 	}
-
-	Parser parser(av[1]);
+	std::string config = *av;
+	Parser		parser(config);
 }

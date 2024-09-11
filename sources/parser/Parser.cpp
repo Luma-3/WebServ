@@ -6,46 +6,67 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/10 16:05:56 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/11 15:50:20 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Parser.hpp"
+#include "parser/Parser.hpp"
 
-Parser::Parser(std::string file_path) :
-	_config_file(file_path.c_str(), std::ios::in)
+Parser::Parser() : _status(0) {};
+
+Parser::Parser(const Parser &src)
 {
-	if (_config_file.is_open() == false) {
+	_parse_stack = src._parse_stack;
+}
+
+Parser::Parser(const std::string &file_path) :
+	_config_file(file_path.c_str(), std::ios::in),
+	_status(0)
+{
+	if (!_config_file.is_open()) {
 		std::cerr << "Failed to open config file: " << file_path << std::endl;
 	}
-
-	Tokenize(_config_file);
 }
 
-bool Parser::isErrorCode(std::string &val)
+Parser &Parser::operator=(const Parser &src)
 {
-	if (val.size() != 3) return false;
-	for (size_t i = 0; i < val.size(); i++) {
-		if (val[i] < '0' || val[i] > '9') return false;
+	if (this != &src) {
+		_parse_stack = src._parse_stack;
 	}
-	return true;
+	return *this;
 }
 
-bool Parser::isPort(std::string &val)
-{
-	for (size_t i = 0; i < val.size(); i++) {
-		if (!isdigit(val[i])) return false;
-	}
-	return true;
-}
+// bool Parser::isErrorCode(std::string &val)
+// {
+// 	if (val.size() != 3) {
+// 		return false;
+// 	}
+// 	for (size_t i = 0; i < val.size(); i++) {
+// 		if (val[i] < '0' || val[i] > '9') {
+// 			return false;
+// 		}
+// 	}
+// 	return true;
+// }
 
-bool Parser::isBool(std::string &val)
-{
-	if (val == "on" || val == "off") return true;
-	return false;
-}
+// bool Parser::isPort(std::string &val)
+// {
+// 	for (size_t i = 0; i < val.size(); i++) {
+// 		if (!isdigit(val[i])) {
+// 			return false;
+// 		}
+// 	}
+// 	return true;
+// }
+
+// bool Parser::isBool(std::string &val)
+// {
+// 	return (val == "on" || val == "off");
+// }
 
 Parser::~Parser()
 {
-	if (_config_file.is_open() == true) _config_file.close();
+	if (_config_file.is_open()) {
+		_config_file.close();
+	}
 }
