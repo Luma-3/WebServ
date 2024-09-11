@@ -1,7 +1,7 @@
 enable_testing()
 
 add_executable(TokenizeTest tokenize/TestTokenize.cpp
-							../sources/tokenizer/tokenize.cpp)
+							../sources/parser/tokenize.cpp)
 
 target_link_libraries(TokenizeTest gtest gtest_main)
 

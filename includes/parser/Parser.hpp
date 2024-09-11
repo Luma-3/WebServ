@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/10 16:06:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/11 15:49:10 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,36 @@
 
 #include <fstream>
 #include <iostream>
+#include <stack>
 #include <string>
 #include <vector>
 
-std::vector<std::string> Tokenize(std::ifstream &file);
+#include "Token.hpp"
+
+std::vector< std::string > Tokenize(std::ifstream &file);
 
 class Parser
 {
   private:
-	std::ifstream _config_file;
+	std::ifstream			   _config_file;
+	std::vector< std::string > _tokens;
+	int						   _status;
+	std::stack< Token >		   _parse_stack;
 
-	bool isErrorCode(std::string &val);
-	bool isPort(std::string &val);
-	bool isBool(std::string &val);
+	// static bool isErrorCode(std::string &val);
+	// static bool isPort(std::string &val);
+	// static bool isBool(std::string &val);
 
   public:
-	Parser(std::string file_path);
+	Parser();
+	Parser(const Parser &src);
+	Parser(const std::string &file_path);
 	~Parser();
+
+	void Parse();
+	void Tokenize();
+
+	Parser &operator=(const Parser &src);
 };
 
 #endif // PARSER_HPP

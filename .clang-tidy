@@ -1,13 +1,13 @@
+HeaderFilterRegex: '.*'
 Checks: >
   -*,
   clang-analyzer-*,
   bugprone-*,
-  modernize-*,
   readability-*,
   performance-*,
-  hicpp-*,
   cppcoreguidelines-*,
   misc-*,
+  -readability-implicit-bool-conversion
 
 WarningsAsErrors: '*'
-HeaderFilterRegex: '.*'
+FormatStyle: file

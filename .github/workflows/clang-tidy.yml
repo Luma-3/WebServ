@@ -5,10 +5,14 @@ on:
     branches:
       - main
       - develop
+      - feature/*
+      - hotfix/*
   pull_request:
     branches:
       - main
       - develop
+      - feature/*
+      - hotfix/*
 
 jobs:
   clang-tidy:
@@ -33,4 +37,4 @@ jobs:
         run: cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build
 
       - name: Run clang-tidy
-        run: clang-tidy -p=./build/compile_commands.json $(find ./sources -name '*.cpp') -- -std=c++98
+        run: clang-tidy -p build $(find ./sources -name '*.cpp') --extra-arg=-std=c++98

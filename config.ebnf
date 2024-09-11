@@ -1,43 +1,23 @@
 Config		= [ ServerBlock ]
 
-ServerBlock = 'server' '{' ServerCore '}'
-
-ServerCore	=	[LocationBlock | ServerParam]
-
-ServerParam = 		ListenParam 
-				|	ServerNameParam
+ServerBlock = 'server' '{' [ ServerParam ] '}'
+ServerParam = 		BlockValueServer
 				|	ErrorPageParam
-				|	ErrorLogParam
-				|	AccessLogParam
-				|	RootParam
-				|	IndexParam
-				|	AutoIndexParam
+				|	LocationBlock
+
+BlockValueServer		= KeyServer value ';'
+KeyServer = 'listen' | 'server_name' | 'error_log' | 'access_log' | 'root' | 'index' | 'autoindex' | 'host'
 
 LocationBlock = 'location' value '{' [ LocationParam ] '}'
-LocationParam =	RootParam
-				|	IndexParam
+LocationParam =		BlockValueLocation
 				|	ErrorPageParam
-				|	AutoIndexParam
 				|	DenyMethodParam
 
-ListenParam		= 'listen' port ';'
-ServerNameParam	= 'server_name' value ';'
-ErrorPageParam	= 'error_page' [ error_code ] ':' value ';'
-ErrorLogParam	= 'error_log' value ';'
-AccessLogParam	= 'access_log' value ';'
-RootParam		= 'root' value ';'
-IndexParam		= 'index' value ';'
-AutoIndexParam	= 'autoindex' bool_val ';'
+BlockValueLocation		= KeyLocation value ';'
+KeyLocation = 'root' | 'index' | 'autoindex' | 'return'
 
-DenyMethodParam	= 'deny_method' method ';'
 
-method		= 'DELETE' | 'GET' | 'POST'
-bool_val	= 'on' | 'off'
+ErrorPageParam	= 'error_page' '='  error_code | [ error_code ',' ] ':' value ';'
+DenyMethodParam	= 'deny_method' '=' method | [ method ',' ] ';'
 
-port		= [0-9]+
-value 		= all
-(* path		= '/' [a-zA-Z0-9/_]*
-file_path	= '/' [a-zA-Z0-9/_.]*
-file_name	= [a-zA-Z0-9._]+
-error_code	= \d\d\d
-domain_name	= [a-zA-Z0-9.]+ *)
+value 		= [a-zA-Z0-9/._-]+
