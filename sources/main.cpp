@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/11 14:35:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/11 19:48:18 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ int main(const int ac, const char **av)
 		cerr << "Wrong Numbre of Argument" << endl;
 		return (EINVAL);
 	}
-	std::string config = *av;
-	Parser		parser(config);
+
+	Parser parser(av[1]);
+
+	parser.Tokenize();
 }

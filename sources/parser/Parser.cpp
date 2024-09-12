@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/11 15:50:20 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/11 19:47:33 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ Parser::Parser(const Parser &src)
 	_parse_stack = src._parse_stack;
 }
 
-Parser::Parser(const std::string &file_path) :
-	_config_file(file_path.c_str(), std::ios::in),
+Parser::Parser(const char *file_path) :
+	_config_file(file_path, std::ios::in),
 	_status(0)
 {
 	if (!_config_file.is_open()) {
