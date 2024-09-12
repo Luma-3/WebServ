@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/11 15:44:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/11 21:46:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static bool is_delimiter(char c)
 
 static size_t skip_space(string &line, size_t it)
 {
-	while (line[it] && (isspace(line[it]) == 0)) {
+	while (line[it] && (isspace(line[it]) != 0)) {
 		it++;
 	}
 	return it;
@@ -50,7 +50,7 @@ static void tokenize_line(string &line, vector< string > &tokens)
 		backIT = frontIT;
 		if (!is_delimiter(line[frontIT])) {
 			while (frontIT < line.size() && !is_delimiter(line[frontIT + 1]) &&
-				   (isspace(line[frontIT + 1]) != 0)) {
+				   (isspace(line[frontIT + 1]) == 0)) {
 				frontIT++;
 			}
 		}
@@ -64,10 +64,12 @@ static void tokenize_line(string &line, vector< string > &tokens)
 
 void Parser::Tokenize()
 {
-	vector< string > tokens;
 
-	string line;
-	while (std::getline(_config_file, line)) {
-		tokenize_line(line, tokens);
+	for (string line; std::getline(_config_file, line);) {
+		tokenize_line(line, _tokens);
+	}
+
+	for (size_t i = 0; i < _tokens.size(); i++) {
+		cout << "token[" << i << "]: " << _tokens[i] << endl;
 	}
 }
