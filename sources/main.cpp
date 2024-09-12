@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/11 15:16:24 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/12 10:10:00 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,13 @@ int main()
 
 	std::cout << "Server listening on port " << server_port << std::endl;
 	Server server;
-	Client client(server);
+
 	while (true) {
-		int	 client_sock = accept(server_sock, NULL, NULL);
-		char buff[1024] = {0};
-		int	 valread = recv(client_sock, buff, 1024, 0);
+		Client client(server);
+		int	   client_sock = accept(server_sock, NULL, NULL);
+		char   buff[1024] = {0};
+		int	   valread = recv(client_sock, buff, 1024, 0);
+
 		try {
 			client.parseRequest(buff);
 		} catch (InvalidRequestException &e) {
@@ -66,13 +68,9 @@ int main()
 		}
 		memset(buff, 0, 1024);
 		(void)valread;
+		std::string response = client.buildResponse();
+		send(client_sock, response.c_str(), response.length(), 0);
 		close(client_sock);
-		break;
-	}
-
-	for (std::map< std::string, std::string >::iterator it =
-			 client._headers.begin();
-		 it != client._headers.end(); it++) {
-		std::cout << it->first << "=> " << it->second << std::endl;
+		client.resetHeaders();
 	}
 }

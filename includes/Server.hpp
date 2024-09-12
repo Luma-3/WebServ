@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:55:45 by anthony           #+#    #+#             */
-/*   Updated: 2024/09/11 14:14:28 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/12 11:21:57 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,16 @@ class Server
   public:
 	Server()
 	{
-		string root_ = "root";
-		string index_ = "/index";
-		string root = "/var/www/html";
+		string root = "www";
 		string index = "index.html";
-		string error = "404";
+		string error404 = "404.html";
+		// string error500 = "500.html";
 
-		// Initialisation de la _locationsuration
-		_locations[index_][root_] = root;
-		_locations[index_][index_] = root + "/" + index;
-		_locations[error][root_] = root;
+		_locations["/"]["root"] = root;
+		_locations["/"]["index"] = root + "/" + index;
+		_locations["/404"]["root"] = root;
+		_locations["/404"]["file"] = root + "/" + error404;
+		// _locations["/500"]["root"] = root;
+		// _locations["/500"]["file"] = root + "/" + error500;
 	}
 };

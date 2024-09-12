@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/11 14:14:57 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/12 11:18:09 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 #include <iostream>
 #include <map>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include "Server.hpp"
@@ -30,11 +32,15 @@ class Client : public Server
 	void   checkUrl(const string &url);
 	void   createUrl(std::string &url);
 	string getAndErase(string &str, const string &delim);
+	string getStatusMessage(const std::string &code);
+	string getExtensionFile();
+	string getDataFromFileRequest();
 
   public:
 	map< string, string > _headers;
 	string				  _buffer;
 	bool				  _haveHeader;
+	string				  _codeResponse;
 
 	Client();
 	Client(const Server &server);
@@ -43,7 +49,9 @@ class Client : public Server
 		   string contentLength, string host, string contentType);
 	~Client();
 
-	void parseRequest(void *buff);
+	string buildResponse();
+	void   parseRequest(void *buff);
+	void   resetHeaders();
 };
 
 class InvalidRequestException : public std::exception
