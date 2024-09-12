@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 10:27:20 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/09 10:28:53 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/12 23:43:28 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,14 @@ class Client : public Server
   private:
 	const int							_socket;
 	int									_bytes_read;
-	std::map<std::string, std::string>	_request;	
+	char								*_request;	
 	std::string 						_response;
 
   public:
-	Client();
+	Client( const char *request);
 
-	int		GETRessource();
-	int		POSTRessource();
-	char	*createResponse();	
+	std::string	getResponse() const;
+	void		HandleRequest();
 
 	~Client();
 };

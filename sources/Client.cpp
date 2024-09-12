@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WebServ.cpp                                        :+:      :+:    :+:   */
+/*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdufour <jdufour@student.42.fr>            #+#  +:+       +#+        */
+/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024-09-09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024-09-09 14:33:51 by jdufour          ###   ########.fr       */
+/*   Created: 2024/09/12 22:37:50 by jdufour           #+#    #+#             */
+/*   Updated: 2024/09/12 22:38:20 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/WebServ.hpp"
+#include "../includes/Client.hpp"
 
-WebServ::WebServ()
-{
-    
-}
+Client::Client(){}
+
+
+Client::~Client() {}

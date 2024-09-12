@@ -32,3 +32,6 @@
 *.app
 build/
 externals/
+
+#Others
+test.cpp
