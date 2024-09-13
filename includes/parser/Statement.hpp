@@ -1,36 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Token.cpp                                          :+:      :+:    :+:   */
+/*   Statement.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/13 14:12:07 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/13 15:03:01 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/13 15:07:25 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser/Token.hpp"
+#ifndef STATEMENT_HPP
+#define STATEMENT_HPP
 
-Token::Token() : _type(None) {}
-
-Token::Token(const Token &src)
+class Statement
 {
-	*this = src;
+  private:
+
+  public:
+	Statement();
+	Statement(const Statement &src);
+	Statement &operator=(const Statement &src);
+	~Statement();
+};
+
+Statement::Statement() {}
+
+Statement::Statement(const Statement &src) {}
+
+Statement &Statement::operator=(const Statement &src)
+{
+	if (this != &src) {}
+	return *this;
 }
 
-Token &Token::operator=(const Token &src)
-{
-	if (this == &src) {
-		*this = src;
-	}
-	return (*this);
-}
+Statement::~Statement() {}
 
-Token::Token(std::string value, enum Token_Type type) :
-	_type(type),
-	_value(value)
-{
-}
-
-Token::~Token() {}
+#endif // STATEMENT_HPP

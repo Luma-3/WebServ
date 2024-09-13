@@ -1,36 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Token.cpp                                          :+:      :+:    :+:   */
+/*   Action.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/13 14:12:07 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/13 14:07:35 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser/Token.hpp"
+#ifndef ACTION_HPP
+#define ACTION_HPP
 
-Token::Token() : _type(None) {}
+enum ActionType {
+	SHIFT,
+	REDUCE,
+	ACCEPT,
+	ERROR
+};
 
-Token::Token(const Token &src)
+class Action
 {
-	*this = src;
-}
+  private:
+	ActionType _type;
+	int		   _next_states;
+	void (*rule_func)();
 
-Token &Token::operator=(const Token &src)
-{
-	if (this == &src) {
-		*this = src;
-	}
-	return (*this);
-}
+  public:
+	Action();
+	Action(ActionType type, int next_states, void (*rule_func)());
+	Action(const Action &src);
+	Action &operator=(const Action &src);
+	~Action();
+};
 
-Token::Token(std::string value, enum Token_Type type) :
-	_type(type),
-	_value(value)
-{
-}
-
-Token::~Token() {}
+#endif // ACTION_HPP

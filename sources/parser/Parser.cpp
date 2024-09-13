@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/11 19:47:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/13 12:54:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,11 @@ Parser &Parser::operator=(const Parser &src)
 // {
 // 	return (val == "on" || val == "off");
 // }
+
+
+
+
+
 
 Parser::~Parser()
 {
