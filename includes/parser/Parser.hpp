@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/12 01:38:29 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/13 14:43:44 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,54 +22,26 @@
 
 #include "Token.hpp"
 
-enum ActionType {
-	SHIFT,
-	REDUCE,
-	ACCEPT,
-	ERROR
-};
-
-struct Action {
-	ActionType type;
-	int		   next_state;
-	int		   production;
-	void (*action)(void);
-
-	Action(ActionType type = ERROR, int next_state = -1, int production = -1,
-		   void (*action)(void) = NULL) :
-		type(type),
-		next_state(next_state),
-		production(production),
-		action(action)
-	{
-	}
-};
-
-void initActionTable(std::map< std::pair< int, std::string >, Action > &config)
-{
-	config[std::make_pair(0, "server")] = Action(SHIFT, 1);
-	config[std::make_pair(1, "{")] = Action(SHIFT, 2);
-	config[std::make_pair(2, "port")] = Action(SHIFT, 3);
-	config[std::make_pair(3, "=")] = Action(SHIFT, 4);
-	config[std::make_pair(4, "")] = Action(SHIFT, 5);
-	config[std::make_pair(5, ";")] = Action(REDUCE, -1, );
-	
-	
-}
+// void initActionTable(std::map< std::pair< int, std::string >, Action >
+// &config)
+// {
+// 	config[std::make_pair(0, "server")] = Action(SHIFT, 1);
+// 	config[std::make_pair(1, "{")] = Action(SHIFT, 2);
+// 	config[std::make_pair(2, "port")] = Action(SHIFT, 3);
+// 	config[std::make_pair(3, "=")] = Action(SHIFT, 4);
+// 	config[std::make_pair(4, "")] = Action(SHIFT, 5);
+// 	config[std::make_pair(5, ";")] = Action(REDUCE, -1, );
+// }
 
 class Parser
 {
   private:
-	std::ifstream			   _config_file;
-	std::vector< std::string > _tokens;
-	int						   _status;
-	std::stack< Token >		   _parse_stack;
+	std::ifstream		   _config_file;
+	std::vector< Token * > _tokens;
+	int					   _status;
+	std::stack< Token * >  _parse_stack;
 
-	std::map< std::pair< int, std::string >, Action > _config;
-
-	// static bool isErrorCode(std::string &val);
-	// static bool isPort(std::string &val);
-	// static bool isBool(std::string &val);
+	// std::map< std::pair< int, std::string >, Action > _config;
 
   public:
 	Parser();

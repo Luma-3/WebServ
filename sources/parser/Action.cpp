@@ -1,36 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Token.cpp                                          :+:      :+:    :+:   */
+/*   Action.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/13 14:12:07 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/13 14:11:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser/Token.hpp"
+#include <iostream>
+#include <parser/Action.hpp>
+#include <stack>
+#include <string>
 
-Token::Token() : _type(None) {}
+Action::Action() {}
 
-Token::Token(const Token &src)
+Action::Action(const Action &src) {}
+
+Action &Action::operator=(const Action &src)
 {
-	*this = src;
+	if (this != &src) {}
+	return *this;
 }
 
-Token &Token::operator=(const Token &src)
+void shift(std::string &value, std::stack< Token > &stack, )
 {
-	if (this == &src) {
-		*this = src;
-	}
-	return (*this);
+	std::cout << "Shift: " << value << std::endl;
+	stack.push(Token(value, none));
 }
 
-Token::Token(std::string value, enum Token_Type type) :
-	_type(type),
-	_value(value)
-{
-}
-
-Token::~Token() {}
+Action::~Action() {}

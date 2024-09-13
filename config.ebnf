@@ -5,7 +5,7 @@ ServerParam = 		BlockValueServer
 				|	ErrorPageParam
 				|	LocationBlock
 
-BlockValueServer		= KeyServer value ';'
+BlockValueServer		= KeyServer '=' value ';'
 KeyServer = 'listen' | 'server_name' | 'error_log' | 'access_log' | 'root' | 'index' | 'autoindex' | 'host'
 
 LocationBlock = 'location' value '{' [ LocationParam ] '}'
@@ -13,7 +13,7 @@ LocationParam =		BlockValueLocation
 				|	ErrorPageParam
 				|	DenyMethodParam
 
-BlockValueLocation		= KeyLocation value ';'
+BlockValueLocation		= KeyLocation '=' value ';'
 KeyLocation = 'root' | 'index' | 'autoindex' | 'return'
 
 

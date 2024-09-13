@@ -6,13 +6,14 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/11 21:46:36 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/13 14:43:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cstring>
 
 #include "parser/Parser.hpp"
+#include "parser/Token.hpp"
 
 using std::cout;
 using std::endl;
@@ -33,15 +34,50 @@ static size_t skip_space(string &line, size_t it)
 	return it;
 }
 
-static string take_token(size_t frontIT, size_t backIT, string &line)
+static Token_Type identify_token(const string &value)
 {
+	string key[] = {"server",	  "listen", "server_name", "error_log",
+					"acces_log",  "root",	"index",	   "autoindex",
+					"host",		  "return", "location",	   "error_page",
+					"deny_method"};
+
+	for (size_t i = 0; i < 13; ++i) {
+		if (value == key[i]) return (Key);
+	}
+
+	char c;
+	c = value.c_str()[0];
+	switch (c) {
+		case ',':
+			return (Comma);
+		case ':':
+			return (Colone);
+		case ';':
+			return (Semi_Colon);
+		case '{' || '}':
+			return (Bracket);
+		case '=':
+			return (Equal);
+		default:
+			break;
+	}
+	return (Value);
+}
+
+static Token *create_token(size_t frontIT, size_t backIT, string &line)
+{
+
 	size_t size = frontIT - backIT + 1;
-	string token(line, backIT, size);
+	string value(line, backIT, size);
+
+	Token_Type type = identify_token(value);
+
+	Token *token = new Token(value, type);
 
 	return token;
 }
 
-static void tokenize_line(string &line, vector< string > &tokens)
+static void tokenize_line(string &line, vector< Token * > &tokens)
 {
 	size_t frontIT = 0;
 	size_t backIT = 0;
@@ -54,7 +90,7 @@ static void tokenize_line(string &line, vector< string > &tokens)
 				frontIT++;
 			}
 		}
-		tokens.push_back(take_token(frontIT, backIT, line));
+		tokens.push_back(create_token(frontIT, backIT, line));
 		if (frontIT < line.size()) {
 			frontIT++;
 		}
