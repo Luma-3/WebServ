@@ -6,64 +6,53 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 19:49:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/10 20:02:00 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/14 16:42:13 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <gtest/gtest.h>
 
-#include "Parser.hpp"
+#include "parser/Parser.hpp"
+#include "parser/Token.hpp"
 
-TEST(Tokenize, test1)
+TEST(Token, createToken)
 {
-	std::ifstream			 file("../../tests/tokenize/test1.conf");
-	std::vector<std::string> tokens = Tokenize(file);
+	Token token("server", Key);
 
-	EXPECT_EQ(tokens.size(), 7);
-	EXPECT_EQ(tokens[0], "server");
-	EXPECT_EQ(tokens[1], "{");
-	EXPECT_EQ(tokens[2], "listen");
-	EXPECT_EQ(tokens[3], "=");
-	EXPECT_EQ(tokens[4], "8080");
-	EXPECT_EQ(tokens[5], ";");
-	EXPECT_EQ(tokens[6], "}");
+	EXPECT_EQ(token.getType(), Key);
+	EXPECT_EQ(token.getValue(), "server");
 }
 
-TEST(Tokenize, test2)
+TEST(Token, copyToken)
 {
-	std::ifstream			 file("../../tests/tokenize/test2.conf");
-	std::vector<std::string> tokens = Tokenize(file);
+	Token token("server", Key);
 
-	EXPECT_EQ(tokens.size(), 7);
-	EXPECT_EQ(tokens[0], "server");
-	EXPECT_EQ(tokens[1], "{");
-	EXPECT_EQ(tokens[2], "listen");
-	EXPECT_EQ(tokens[3], "=");
-	EXPECT_EQ(tokens[4], "8080");
-	EXPECT_EQ(tokens[5], ";");
-	EXPECT_EQ(tokens[6], "}");
+	Token copy(token);
+
+	EXPECT_EQ(copy.getType(), Key);
+	EXPECT_EQ(copy.getValue(), "server");
 }
 
-TEST(Tokenize, test3)
+TEST(Token, assignToken)
 {
-	std::ifstream			 file("../../tests/tokenize/test3.conf");
-	std::vector<std::string> tokens = Tokenize(file);
+	Token token("server", Key);
+	Token copy("location", Key);
 
-	EXPECT_EQ(tokens.size(), 14);
-	EXPECT_EQ(tokens[0], "server");
-	EXPECT_EQ(tokens[1], "{");
-	EXPECT_EQ(tokens[2], "listen");
-	EXPECT_EQ(tokens[3], "=");
-	EXPECT_EQ(tokens[4], "8080");
-	EXPECT_EQ(tokens[5], ";");
-	EXPECT_EQ(tokens[6], "location");
-	EXPECT_EQ(tokens[7], "{");
-	EXPECT_EQ(tokens[8], "root");
-	EXPECT_EQ(tokens[9], "=");
-	EXPECT_EQ(tokens[10], "/var/www/html");
-	EXPECT_EQ(tokens[11], ";");
-	EXPECT_EQ(tokens[12], "}");
-	EXPECT_EQ(tokens[13], "}");
+	copy = token;
+
+	EXPECT_EQ(copy.getType(), Key);
+	EXPECT_EQ(copy.getValue(), "server");
+}
+
+TEST(Tokenize, skipSpace)
+{
+	std::string line = "    server";
+	size_t		it = 0;
+
+	it = skip_space(line,
+					it); // TODO pass static function on static method class
+
+	EXPECT_EQ(it, 4);
 }
 
 int main(int ac, char **av)
