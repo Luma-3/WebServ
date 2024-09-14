@@ -1,26 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Test.cpp                                           :+:      :+:    :+:   */
+/*   Statement.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 14:25:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/06 16:24:09 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/14 12:18:34 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/14 12:18:53 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <gtest/gtest.h>
+#include "parser/Statement.hpp"
 
+Statement::Statement() {}
 
-TEST(Parsing, truc)
+Statement::Statement(const Statement &src) {}
+
+Statement &Statement::operator=(const Statement &src)
 {
-	EXPECT_EQ(1, 1);
+	if (this != &src) {}
+	return *this;
 }
 
-
-int main(void)
-{
-	::testing::InitGoogleTest();
-	return RUN_ALL_TESTS();
-}
+Statement::~Statement() {}

@@ -6,16 +6,25 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 15:03:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/13 15:07:25 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/14 12:18:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STATEMENT_HPP
 #define STATEMENT_HPP
 
+enum Statement_Type {
+	ServerParam,
+	LocationParam,
+	ErrorPage,
+	DenyMethod,
+	LocationBlock
+};
+
 class Statement
 {
-  private:
+  protected:
+	Statement_Type _type;
 
   public:
 	Statement();
@@ -24,16 +33,6 @@ class Statement
 	~Statement();
 };
 
-Statement::Statement() {}
 
-Statement::Statement(const Statement &src) {}
-
-Statement &Statement::operator=(const Statement &src)
-{
-	if (this != &src) {}
-	return *this;
-}
-
-Statement::~Statement() {}
 
 #endif // STATEMENT_HPP

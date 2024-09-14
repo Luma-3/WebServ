@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/13 14:43:45 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/14 14:43:08 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,9 @@ static Token_Type identify_token(const string &value)
 			return (Colone);
 		case ';':
 			return (Semi_Colon);
-		case '{' || '}':
+		case '{':
+			return (Bracket);
+		case '}':
 			return (Bracket);
 		case '=':
 			return (Equal);

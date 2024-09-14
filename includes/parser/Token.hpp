@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Token.hpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/14 14:37:24 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/14 14:41:34 by jbrousse         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
 
@@ -22,10 +34,11 @@ class Token
 
   public:
 	Token();
+	Token(const Token &src);
 	Token(std::string value, enum Token_Type type);
 
-	enum Token_Type getType();
-	std::string		getValue();
+	enum Token_Type	   getType() const;
+	const std::string &getValue() const;
 
 	Token &operator=(const Token &src);
 	virtual ~Token();

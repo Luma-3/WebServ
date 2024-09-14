@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/13 12:54:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/14 12:26:32 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,38 +36,10 @@ Parser &Parser::operator=(const Parser &src)
 	return *this;
 }
 
-// bool Parser::isErrorCode(std::string &val)
-// {
-// 	if (val.size() != 3) {
-// 		return false;
-// 	}
-// 	for (size_t i = 0; i < val.size(); i++) {
-// 		if (val[i] < '0' || val[i] > '9') {
-// 			return false;
-// 		}
-// 	}
-// 	return true;
-// }
-
-// bool Parser::isPort(std::string &val)
-// {
-// 	for (size_t i = 0; i < val.size(); i++) {
-// 		if (!isdigit(val[i])) {
-// 			return false;
-// 		}
-// 	}
-// 	return true;
-// }
-
-// bool Parser::isBool(std::string &val)
-// {
-// 	return (val == "on" || val == "off");
-// }
-
-
-
-
-
+const std::vector< Token * > &Parser::getTokens() const
+{
+	return _tokens;
+}
 
 Parser::~Parser()
 {

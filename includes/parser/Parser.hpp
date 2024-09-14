@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/13 14:43:44 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/14 12:26:12 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ class Parser
 
 	void Parse();
 	void Tokenize();
+
+	const std::vector< Token * > &getTokens() const;
 
 	Parser &operator=(const Parser &src);
 };
