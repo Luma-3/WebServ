@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:32:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/16 14:52:22 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/16 15:26:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,26 +45,37 @@ class Lexer
 
 	// EXCEPTIONS
 
-	class FileNotOpenException : public std::exception
-	{
-	  private:
-		std::string _msg;
-
-	  public:
-		FileNotOpenException(std::string file_path);
-		virtual const char *what() const throw();
-		virtual ~FileNotOpenException() throw();
-	};
-
 	class InvalidFileExtensionException : public std::exception
 	{
 	  private:
 		std::string _msg;
 
 	  public:
-		InvalidFileExtensionException(std::string extention);
-		virtual const char *what() const throw();
+		InvalidFileExtensionException(const std::string &extention);
+		InvalidFileExtensionException(const InvalidFileExtensionException &src);
+
+		InvalidFileExtensionException &
+		operator=(const InvalidFileExtensionException &src);
+
 		virtual ~InvalidFileExtensionException() throw();
+
+		virtual const char *what() const throw();
+	};
+
+	class FileNotOpenException : public std::exception
+	{
+	  private:
+		std::string _msg;
+
+	  public:
+		FileNotOpenException(const std::string &file_path);
+		FileNotOpenException(const FileNotOpenException &src);
+
+		FileNotOpenException &operator=(const FileNotOpenException &src);
+
+		virtual ~FileNotOpenException() throw();
+
+		virtual const char *what() const throw();
 	};
 };
 
