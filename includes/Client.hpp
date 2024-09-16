@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/12 11:18:09 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/16 13:10:31 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,14 @@ using std::string;
 class Client : public Server
 {
   private:
-	void   checkMethod(const string &methodType);
-	void   checkHttp(const string &httpVersion);
-	void   checkUrl(const string &url);
-	void   createUrl(std::string &url);
-	string getAndErase(string &str, const string &delim);
-	string getStatusMessage(const std::string &code);
-	string getExtensionFile();
-	string getDataFromFileRequest();
+	void				checkMethod(const string &methodType);
+	void				checkHttp(const string &httpVersion);
+	void				checkUrl(const string &url);
+	void				createUrl(std::string &url);
+	string				getAndErase(string &str, const string &delim);
+	string				getStatusMessage(const std::string &code);
+	string				getContentType(const std::string &file_extension);
+	std::vector< char > getDataFromFileRequest();
 
   public:
 	map< string, string > _headers;

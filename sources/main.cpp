@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/12 10:10:00 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/16 11:06:04 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int main()
 		(void)valread;
 		std::string response = client.buildResponse();
 		send(client_sock, response.c_str(), response.length(), 0);
-		close(client_sock);
+		// close(client_sock);
 		client.resetHeaders();
 	}
 }
