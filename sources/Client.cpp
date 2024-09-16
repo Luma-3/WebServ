@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/16 13:16:42 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/16 13:53:17 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,9 +133,9 @@ void Client::createUrl(string &url)
 	if (_locations.find(url_path) == _locations.end()) {
 		root = _locations["/"]["root"] + url_path;
 	} else {
-		root = _locations[url_path]["root"] + url_path;
+		root = _locations[url_path]["root"] + "/";
 	}
-	_headers["Url"] = root + "/" + filename + "." + file_extension;
+	_headers["Url"] = root + filename + "." + file_extension;
 
 	std::cout << "AU FINAL URL = " << _headers["Url"] << std::endl;
 	_headers["Content-Type"] = getContentType(file_extension);
