@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 14:37:24 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/14 14:41:34 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/16 15:08:47 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Token
   public:
 	Token();
 	Token(const Token &src);
-	Token(std::string value, enum Token_Type type);
+	Token(const std::string &value, enum Token_Type type);
 
 	enum Token_Type	   getType() const;
 	const std::string &getValue() const;

@@ -6,14 +6,12 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/16 14:53:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/16 15:37:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/Lexer.hpp"
 
-#include <cerrno>
-#include <cstring>
 #include <iostream>
 #include <string>
 
@@ -39,17 +37,19 @@ void Lexer::SkipSpace(string &line, size_t &it)
 
 Token_Type identify_token(const string &value)
 {
-	string key[] = {"server",	  "listen", "server_name", "error_log",
-					"acces_log",  "root",	"index",	   "autoindex",
-					"host",		  "return", "location",	   "error_page",
-					"deny_method"};
+	static const int	size_key = 13;
+	static const string key[size_key] = {
+		"server",	"listen",	  "server_name", "error_log", "acces_log",
+		"root",		"index",	  "autoindex",	 "host",	  "return",
+		"location", "error_page", "deny_method"};
 
-	for (size_t i = 0; i < 13; ++i) {
-		if (value == key[i]) return (Key);
+	for (size_t i = 0; i < size_key; ++i) {
+		if (value == key[i]) {
+			return (Key);
+		}
 	}
 
-	char c;
-	c = value.c_str()[0];
+	char c = *value.c_str();
 	switch (c) {
 		case ',':
 			return (Comma);
@@ -58,7 +58,6 @@ Token_Type identify_token(const string &value)
 		case ';':
 			return (Semi_Colon);
 		case '{':
-			return (Bracket);
 		case '}':
 			return (Bracket);
 		case '=':
@@ -138,7 +137,7 @@ Lexer::Lexer(const char *file_path)
 {
 
 	string file_path_str(file_path);
-	size_t pos = file_path_str.find_last_of(".");
+	size_t pos = file_path_str.find_last_of('.');
 	if (pos == string::npos) {
 		throw InvalidFileExtensionException(string("None"));
 	}
@@ -158,33 +157,4 @@ Lexer &Lexer::operator=(const Lexer &other)
 {
 	if (this != &other) {}
 	return *this;
-}
-
-// EXCEPTIONS
-
-Lexer::InvalidFileExtensionException::InvalidFileExtensionException(
-	std::string extention) :
-	_msg("Invalid file extension, Found: " + extention + " Expected: .conf")
-{
-}
-
-const char *Lexer::InvalidFileExtensionException::what() const throw()
-{
-	return _msg.c_str();
-}
-
-Lexer::FileNotOpenException::~FileNotOpenException() throw() {}
-
-Lexer::FileNotOpenException::FileNotOpenException(std::string file_path) :
-	_msg("Failed to open file: " + file_path + ": " + std::strerror(errno))
-{
-}
-
-const char *Lexer::FileNotOpenException::what() const throw()
-{
-	return _msg.c_str();
-}
-
-Lexer::InvalidFileExtensionException::~InvalidFileExtensionException() throw()
-{
 }
