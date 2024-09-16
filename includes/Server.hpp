@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:55:45 by anthony           #+#    #+#             */
-/*   Updated: 2024/09/16 13:33:07 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/16 18:51:56 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ class Server
 		_locations["/images"]["root"] = images_root;
 
 		// Configuration pour la page d'erreur 404
-		_locations["/404"]["root"] = html_root;
-		_locations["/404"]["file"] = html_root + "/" + error404;
+		// _locations["/404"]["root"] = html_root;
+		// _locations["/404"]["file"] = html_root + "/" + error404;
 
 		// Configuration pour la page d'erreur 500 (commentée)
 		// _locations["/500"]["root"] = html_root;

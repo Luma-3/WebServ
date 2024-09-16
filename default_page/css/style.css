@@ -1,0 +1,39 @@
+body {
+	font-family: 'Roboto', sans-serif;
+	background-image: url('../images/background.jpg');
+	background-repeat: repeat;
+	/* position: relative; */
+}
+
+
+.container {
+	width: 80%;
+	margin: auto;
+	overflow: hidden;
+}
+
+.title {
+	color: white;
+	font-size: 2rem;
+	text-align: center;
+	justify-content: center;
+	border: 4px solid black;
+	padding: 1rem;
+	border-radius: 10px;
+	background-color: #EE92C2;
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
+
+.errorMessage {
+	width: 100%;
+	height: 30%;
+	padding: 0;
+	margin: 0 auto 0 auto;
+	position: center;
+	display: flex;
+	justify-content: center;
+	background-color: #c492ee;
+	align-items: center;
+	flex-wrap: wrap;
+}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/16 11:06:04 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/16 16:32:37 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ int main()
 		(void)valread;
 		std::string response = client.buildResponse();
 		send(client_sock, response.c_str(), response.length(), 0);
-		// close(client_sock);
-		client.resetHeaders();
+		close(client_sock);
 	}
 }

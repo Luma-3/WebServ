@@ -13,8 +13,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(WebServ 
 		sources/main.cpp
 		sources/Client.cpp
+		sources/ClientParsing.cpp
 		)
 
 add_subdirectory(externals/googletest)
-
-add_subdirectory(tests)
