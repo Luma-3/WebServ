@@ -6,14 +6,16 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/11 19:48:18 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/16 14:55:00 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cerrno>
+#include <cstdlib>
 #include <iostream>
 #include <istream>
 
+#include "parser/Lexer.hpp"
 #include "parser/Parser.hpp"
 
 using std::cerr;
@@ -26,7 +28,12 @@ int main(const int ac, const char **av)
 		return (EINVAL);
 	}
 
-	Parser parser(av[1]);
+	try {
+		Lexer lexer(av[1]);
 
-	parser.Tokenize();
+		lexer.Tokenize();
+	} catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
+		return (EXIT_FAILURE);
+	}
 }
