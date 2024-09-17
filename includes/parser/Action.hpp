@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/13 14:07:35 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/17 14:35:04 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@ class Action
 {
   private:
 	ActionType _type;
-	int		   _next_states;
-	void (*rule_func)();
+	int		   _next_state;
+
+	void (*_rule_func)();
 
   public:
 	Action();
@@ -33,6 +34,11 @@ class Action
 	Action(const Action &src);
 	Action &operator=(const Action &src);
 	~Action();
+
+	void Shift(Token *token, std::stack< Token * > &stack, Parser &parser);
+	void Reduce(Token *token, std::stack< Token * > &stack, Parser &parser);
+
+	
 };
 
 #endif // ACTION_HPP

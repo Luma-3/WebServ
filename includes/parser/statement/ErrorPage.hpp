@@ -1,36 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Config.hpp                                         :+:      :+:    :+:   */
+/*   ErrorPage.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/10 10:28:25 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/17 10:19:34 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/17 10:38:58 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/17 11:23:08 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef ERRORPAGE_HPP
+#define ERRORPAGE_HPP
 
 #include <string>
 #include <vector>
 
-#include "Location.hpp"
+#include "lexer/Token.hpp"
 
-class Config
+namespace statement {
+
+class ErrorPage : public Token
 {
   private:
-	std::string			   _port;
-	std::string			   _server_name;
-	std::vector<Locations> _locations;
-	
+	std::vector< std::string > _error_code;
+	std::string				   _value;
 
   public:
-	Config();
-	~Config();
-	Config(const Config &);
-	Config &operator=(const Config &);
+	ErrorPage();
+	ErrorPage(const ErrorPage &src);
+	ErrorPage &operator=(const ErrorPage &src);
+	~ErrorPage();
 };
 
-#endif // CONFIG_HPP
+} // namespace statement
+
+#endif // ERRORPAGE_HPP

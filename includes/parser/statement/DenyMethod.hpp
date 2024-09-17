@@ -1,36 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Config.hpp                                         :+:      :+:    :+:   */
+/*   DenyMethod.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/10 10:28:25 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/17 10:19:34 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/17 10:29:39 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/17 11:16:34 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef DENYMETHOD_HPP
+#define DENYMETHOD_HPP
 
 #include <string>
 #include <vector>
 
-#include "Location.hpp"
+#include "lexer/Token.hpp"
 
-class Config
+namespace statement {
+
+class DenyMethod : public Token
 {
   private:
-	std::string			   _port;
-	std::string			   _server_name;
-	std::vector<Locations> _locations;
-	
+	std::vector< std::string > _methods;
 
   public:
-	Config();
-	~Config();
-	Config(const Config &);
-	Config &operator=(const Config &);
+	DenyMethod();
+	DenyMethod(const DenyMethod &src);
+	DenyMethod &operator=(const DenyMethod &src);
+	~DenyMethod();
 };
 
-#endif // CONFIG_HPP
+} // namespace statement
+
+#endif // DENYMETHOD_HPP

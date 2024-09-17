@@ -1,23 +1,44 @@
 Config		= [ ServerBlock ]
 
 ServerBlock = 'server' '{' [ ServerParam ] '}'
-ServerParam = 		BlockValueServer
+ServerParam = 	LocationBlock
+				|	PortParam
+				|	HostParam
 				|	ErrorPageParam
-				|	LocationBlock
-
-BlockValueServer		= KeyServer '=' value ';'
-KeyServer = 'listen' | 'server_name' | 'error_log' | 'access_log' | 'root' | 'index' | 'autoindex' | 'host'
-
-LocationBlock = 'location' value '{' [ LocationParam ] '}'
-LocationParam =		BlockValueLocation
-				|	ErrorPageParam
+				|	LogParam
+				|	RootParam
+				|	AutoindexParam
 				|	DenyMethodParam
+				|	ReturnParam
+				|	IndexParam
 
-BlockValueLocation		= KeyLocation '=' value ';'
-KeyLocation = 'root' | 'index' | 'autoindex' | 'return'
+LocationBlock = 'location' path '{' [ LocationParam ] '}'
+LocationParam =	RootParam
+				|	IndexParam
+				|	ErrorPageParam
+				|	AutoindexParam
+				|	DenyMethodParam
+				|	ReturnParam
 
-
-ErrorPageParam	= 'error_page' '='  error_code | [ error_code ',' ] ':' value ';'
+PortParam		= 'port' '=' value_port ';'
+HostParam		= 'host' '=' value_host ';'
+ErrorPageParam	= 'error_page' '='  error_code | [ error_code ',' ] ':' file_path ';'
 DenyMethodParam	= 'deny_method' '=' method | [ method ',' ] ';'
+RootParam		= 'root' '=' path ';'
+IndexParam		= 'index' '=' file_name ';'
+LogParam		= 'error_log' '=' file_path ';' | 'access_log' '=' file_path ';'
 
-value 		= [a-zA-Z0-9/._-]+
+autoindexParam	= 'autoindex' '=' bool ';'
+
+ReturnParam		= 'return' '=' error_code ':' value ';'
+
+
+value_port 		= [0-9]+
+value_host		= [a-zA-Z0-9._-]+
+error_code 	= [0-9]+3
+file_path	= [a-zA-Z0-9/._-]+
+value		= [a-zA-Z0-9/._-:]+
+path		= [a-zA-Z0-9/_-]+/
+file_name	= [a-zA-Z0-9._-]+.[a-zA-Z0-9]+
+method		= 'GET' | 'POST' | 'DELETE'
+bool		= 'on' | 'off'

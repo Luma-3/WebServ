@@ -6,15 +6,15 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 19:49:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/16 14:59:56 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/17 10:09:04 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <gtest/gtest.h>
 
-#include "parser/Lexer.hpp"
+#include "lexer/Lexer.hpp"
+#include "lexer/Token.hpp"
 #include "parser/Parser.hpp"
-#include "parser/Token.hpp"
 
 TEST(Token, createToken)
 {
