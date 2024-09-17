@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/16 10:31:59 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/17 13:17:06 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "Token.hpp"
+#include "lexer/Token.hpp"
 
 // void initActionTable(std::map< std::pair< int, std::string >, Action >
 // &config)
@@ -53,6 +53,7 @@ class Parser
 	void Tokenize();
 
 	const std::vector< Token * > &getTokens() const;
+	void						  setState(int state);
 
 	Parser &operator=(const Parser &src);
 };

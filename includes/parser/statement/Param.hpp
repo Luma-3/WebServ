@@ -1,47 +1,48 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Token.hpp                                          :+:      :+:    :+:   */
+/*   Param.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/14 14:37:24 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/16 15:08:47 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/17 10:27:58 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/17 13:02:04 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TOKEN_HPP
-#define TOKEN_HPP
+#ifndef PARAMSTATEMENT_HPP
+#define PARAMSTATEMENT_HPP
 
 #include <string>
 
-enum Token_Type {
+#include "lexer/Token.hpp"
+
+namespace statement {
+
+enum Param_Type {
 	None,
-	Key,
-	Value,
-	Comma,
-	Semi_Colon,
-	Bracket,
-	Colone,
-	Equal
+	root,
+	index,
+	server_name,
+	listen,
+	autoindex,
+	return_,
 };
 
-class Token
+class Param : public Token
 {
   private:
-	enum Token_Type _type;
-	std::string		_value;
+	Param_Type	_param_type;
+	std::string _error_code;
+	std::string _value;
 
   public:
-	Token();
-	Token(const Token &src);
-	Token(const std::string &value, enum Token_Type type);
-
-	enum Token_Type	   getType() const;
-	const std::string &getValue() const;
-
-	Token &operator=(const Token &src);
-	virtual ~Token();
+	Param();
+	Param(const Param &src);
+	Param &operator=(const Param &src);
+	~Param();
 };
 
-#endif // TOKEN_HPP
+} // namespace statement
+
+#endif // PARAMSTATEMENT_HPP

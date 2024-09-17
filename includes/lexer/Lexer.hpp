@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:32:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/16 15:26:05 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/17 09:33:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,12 @@ class Lexer
 	std::vector< Token * > _tokens;
 
 	static bool IsDelimiter(char c);
-	static void SkipSpace(std::string &line, size_t &it);
-	static void TokenizeLine(std::string &line, std::vector< Token * > &tokens);
+	static void SkipSpace(const std::string &line, size_t &it);
+	static void TokenizeLine(const std::string		&line,
+							 std::vector< Token * > &tokens);
 
-	static Token *CreateToken(size_t frontIT, size_t backIT, std::string &line);
+	static Token *CreateToken(size_t frontIT, size_t backIT,
+							  const std::string &line);
 
   public:
 	Lexer();

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/16 15:38:45 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/17 13:17:22 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,11 @@ Parser &Parser::operator=(const Parser &src)
 const std::vector< Token * > &Parser::getTokens() const
 {
 	return _tokens;
+}
+
+void Parser::setState(int state)
+{
+	_status = state;
 }
 
 Parser::~Parser()

@@ -6,16 +6,16 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/16 15:37:39 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/17 14:13:55 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser/Lexer.hpp"
+#include "lexer/Lexer.hpp"
 
 #include <iostream>
 #include <string>
 
-#include "parser/Token.hpp"
+#include "lexer/Token.hpp"
 
 using std::cout;
 using std::endl;
@@ -28,63 +28,31 @@ bool Lexer::IsDelimiter(char c)
 			c == ',');
 }
 
-void Lexer::SkipSpace(string &line, size_t &it)
+void Lexer::SkipSpace(const string &line, size_t &it)
 {
 	while (line[it] && (isspace(line[it]) != 0)) {
 		it++;
 	}
 }
 
-Token_Type identify_token(const string &value)
-{
-	static const int	size_key = 13;
-	static const string key[size_key] = {
-		"server",	"listen",	  "server_name", "error_log", "acces_log",
-		"root",		"index",	  "autoindex",	 "host",	  "return",
-		"location", "error_page", "deny_method"};
-
-	for (size_t i = 0; i < size_key; ++i) {
-		if (value == key[i]) {
-			return (Key);
-		}
-	}
-
-	char c = *value.c_str();
-	switch (c) {
-		case ',':
-			return (Comma);
-		case ':':
-			return (Colone);
-		case ';':
-			return (Semi_Colon);
-		case '{':
-		case '}':
-			return (Bracket);
-		case '=':
-			return (Equal);
-		default:
-			break;
-	}
-	return (Value);
-}
-
-Token *Lexer::CreateToken(size_t frontIT, size_t backIT, string &line)
+Token *Lexer::CreateToken(size_t frontIT, size_t backIT, const string &line)
 {
 
 	size_t size = frontIT - backIT + 1;
 	string value(line, backIT, size);
 
-	Token_Type type = identify_token(value);
+	Token_Type type = Token::IdentifyToken(value);
 
 	Token *token = new Token(value, type);
 
 	return token;
 }
 
-void Lexer::TokenizeLine(string &line, vector< Token * > &tokens)
+void Lexer::TokenizeLine(const string &line, vector< Token * > &tokens)
 {
 	size_t frontIT = 0;
 	size_t backIT = 0;
+
 	SkipSpace(line, frontIT);
 	while (frontIT < line.size()) {
 		backIT = frontIT;
