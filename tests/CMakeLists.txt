@@ -1,6 +1,7 @@
 enable_testing()
 
 add_executable(TokenizeTest tokenize/TestTokenize.cpp
+							../sources/parser/LexerException.cpp
 							../sources/parser/Lexer.cpp
 							../sources/parser/Token.cpp)
 
