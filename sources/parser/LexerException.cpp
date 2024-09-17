@@ -6,12 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:21:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/16 15:26:22 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/17 08:56:48 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cerrno>
 #include <cstring>
+#include <exception>
 
 #include "parser/Lexer.hpp"
 
