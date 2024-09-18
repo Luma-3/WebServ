@@ -6,115 +6,122 @@
 /*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/12 23:38:04 by jdufour          ###   ########.fr       */
+/*   Updated: 2024/09/18 22:49:32 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
-#include "../includes/Client.hpp"
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-
-using std::cerr;
-using std::cout;
-using std::endl;
-
-Server::Server( std::string servername, std::string hostname, std::string port) : 
+Server::Server(std::string servername, std::string hostname, std::string port) :
 	_name(servername),
 	_hostname(hostname),
 	_port(port),
-	_server_socket(socket(AF_INET, SOCK_STREAM, 0)) {}
+	_server_socket(socket(AF_INET, SOCK_STREAM, 0)),
+	_request(new char[MAX_REQ_SIZE])
+{
+}
 
-int	Server::getSocket( void) const
+int Server::getSocket(void) const
 {
 	return (_server_socket);
 }
 
-std::string	Server::getName( void) const
+std::string Server::getName(void) const
 {
 	return (_name);
 }
 
-void	Server::createSocket()
+char *Server::getRequest(void) const
 {
-	// non-blocking flag added to socket
-	if (fcntl(_server_socket, F_SETFL, O_NONBLOCK) == -1)
-	{
-		cerr << "Error on set nonblocking" << endl;
-		exit(1);
-	}
-	int	val = 1;
-	// make sure the port is not BURNED TO ASHES (otherwise it will take some time for the used port to be reusable)
-	if (setsockopt(_server_socket, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(int)) == -1)
-	{
-		cerr << "Error on setting the port on reusable : " << strerror(errno) << ". socket value is " << _server_socket << endl;
-		exit(1);
-	}
-	#ifdef SO_REUSEPORT
-	if (setsockopt(_server_socket, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(int)) == -1)
-	{
-		cerr << "Error on setting the port on reusable : " << strerror(errno) << endl;
-		exit(1);
-	}
-	#endif
-	cout << "Server " << _name << " is launched !" << endl;
-	if (_server_socket == -1) 
-	{
-		cerr << "socket failed" << endl;
-		exit(1);
-	}
-	if (getaddrinfo(_hostname.c_str(), _port.c_str(), NULL, &_info) != 0) 
-	{
-		cerr << "getaddrinfo failed" << endl;
-		exit(1);
-	}
-
-	if (bind(_server_socket, _info->ai_addr, _info->ai_addrlen) == -1) 
-	{
-		cerr << _name << ": bind failed" << endl;
-		exit(1);
-	}
-
-	if (listen(_server_socket, 10) == -1)
-		exit(1);	
+	return (_request);
 }
 
-void Server::HandleConnexion()
+int Server::createSocket()
 {
-	int		size = 100;
-	char	*buff = new char[size];
-	int		nb_bytes;
-
-	memset(buff, 0, 100);
-	_new_socket = accept(_server_socket, NULL, NULL);
-	nb_bytes = recv(_new_socket, buff, size, 0);
-	if (nb_bytes == -1 && (errno != EAGAIN && errno != EWOULDBLOCK))
-	{
-		cerr << "Error on recv" << endl;
-		close(_new_socket);
+	// non-blocking flag added to socket
+	if (fcntl(_server_socket, F_SETFL, O_NONBLOCK) == -1) {
+		std::cerr << "Error on set nonblocking on " << _name << std::endl;
+		return (FAILURE);
 	}
-	else if (nb_bytes > 0)
-	{
-		cout << buff << endl;
+	int val = 1;
+	// make sure the port is not BURNED TO ASHES (otherwise it will take some
+	// time for the used port to be reusable)
+	if (setsockopt(_server_socket, SOL_SOCKET, SO_REUSEADDR, &val,
+				   sizeof(int)) == -1) {
+		std::cerr << "error on setting the port on reusable on " << _name
+				  << ": " << strerror(errno) << ". socket value is "
+				  << _server_socket << std::endl;
+		return (FAILURE);
+	}
+#ifdef SO_REUSEPORT
+	if (setsockopt(_server_socket, SOL_SOCKET, SO_REUSEPORT, &val,
+				   sizeof(int)) == -1) {
+		std::cerr << "error on setting the port on reusable on " << _name
+				  << ": " << strerror(errno) << std::endl;
+		return (FAILURE);
+	}
+#endif
+	std::cout << "Server " << _name << " is launched !" << std::endl;
+	if (_server_socket == -1) {
+		std::cerr << "socket failed on " << _name << std::endl;
+		return (FAILURE);
+	}
+	if (getaddrinfo(_hostname.c_str(), _port.c_str(), NULL, &_info) != 0) {
+		std::cerr << "getaddrinfo failed on" << _name << std::endl;
+		return (FAILURE);
+	}
+	if (bind(_server_socket, _info->ai_addr, _info->ai_addrlen) == -1) {
+		std::cerr << _name << ": bind failed on " << _name << std::endl;
+		return (FAILURE);
+	}
+	if (listen(_server_socket, 10) == -1) {
+		return (FAILURE);
+	}
+	return (SUCCESS);
+}
+
+int Server::HandleConnexion()
+{
+	int nb_bytes;
+
+	for (int i = 0; i < MAX_REQ_SIZE; i++)
+		_request[i] = 0;
+	_new_socket = accept(_server_socket, NULL, NULL);
+	if (_new_socket == -1) {
+		std::cerr << "Error on awaiting connection (accept) on " << _name
+				  << std::endl;
+		return (FAILURE);
+	}
+	nb_bytes = recv(_new_socket, _request, MAX_REQ_SIZE, 0);
+	if (nb_bytes == -1 && (errno != EAGAIN && errno != EWOULDBLOCK)) {
+		std::cerr << "Error on recv on " << _name << std::endl;
+		close(_new_socket);
+		return (FAILURE);
+	} else if (nb_bytes > 0) {
+		std::cout << _request << std::endl;
 
 		// this will be to uncomment and adjust with the client functions
-		// Client	serverClient = Client(buff);
+		// Client	serverClient = Client(getRequest());
 		// serverClient.HandleRequest();
-		// send(_new_socket, serverClient.getResponse().c_str(), strlen(serverClient.getResponse().c_str()), 0);
-		char	repTest[110] = "HTTP/1.1 200 OK\nDate: Mon, 09 Sep 2024 12:00:00 GMT\nContent-Length: 13\nConnection: keep-alive\n\nca marche!!!!\n";
-		send(_new_socket, repTest, strlen(repTest), 0);
-	}
-	else if (!nb_bytes)
-	{
-		std::cout << "client disconnected" << endl;
+		// send(_new_socket, serverClient.getResponse().c_str(),
+		// strlen(serverClient.getResponse().c_str()), 0);
+		char repTest[110] = "HTTP/1.1 200 OK\nDate: Mon, 09 Sep 2024 12:00:00 "
+							"GMT\nContent-Length: 13\nConnection: "
+							"keep-alive\n\nca marche!!!!\n";
+		if (send(_new_socket, repTest, strlen(repTest), 0) == -1) {
+			std::cerr << "Error on sending response on " << _name << std::endl;
+			return (FAILURE);
+		}
+	} else if (!nb_bytes) {
+		std::cout << "client disconnected on " << _name << std::endl;
 		close(_new_socket);
 	}
+	return (SUCCESS);
 }
 
 Server::~Server()
 {
 	close(_server_socket);
 	freeaddrinfo(_info);
+	delete[] _request;
 }

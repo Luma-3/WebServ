@@ -1,17 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client.cpp                                         :+:      :+:    :+:   */
+/*   Signal.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/12 22:37:50 by jdufour           #+#    #+#             */
-/*   Updated: 2024/09/18 22:49:41 by jdufour          ###   ########.fr       */
+/*   Created: 2024/09/18 21:24:32 by jdufour           #+#    #+#             */
+/*   Updated: 2024/09/18 22:49:43 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Client.hpp"
+#ifndef SIGNAL_HPP
+#define SIGNAL_HPP
 
-Client::Client() {}
+#include <csignal>
+#include <iostream>
 
-Client::~Client() {}
+extern volatile int g_sig;
+
+void handler(int signum);
+void initSignal(void);
+
+#endif

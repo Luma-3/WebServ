@@ -6,52 +6,40 @@
 /*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:46:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/12 23:43:37 by jdufour          ###   ########.fr       */
+/*   Updated: 2024/09/18 22:49:47 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HANDLER_HPP
-# define HANDLER_HPP
+#define HANDLER_HPP
 
-# define MAX_EVENTS 10
+#define MAX_EVENTS 10
 
-# include <vector>
-# include <sys/epoll.h>
-# include <exception>
+#include <csignal>
+#include <exception>
+#include <sys/epoll.h>
+#include <vector>
 
-# include "Server.hpp"
-
+#include "Server.hpp"
 // # include "Config.hpp"
-
-typedef typename std::vector<Server>::iterator handlerIt;
-
 
 class Handler
 {
   private:
-	std::vector<Server*>	_servers;
-	int						_nbServ;
-	
+	std::vector<Server *> _servers;
+	int					  _nbServ;
+
   public:
 	Handler();
 
-	void					loadServTest( );
-	std::vector<Server*>	getAllServ( void) const;
-	int						getNbServ( void) const;
+	void				  loadServTest();
+	int					  launchServers();
+	std::vector<Server *> getAllServ(void) const;
+	int					  getNbServ(void) const;
 
-	Server					*operator[]( const int index);
-
-	// handlerIt	begin( void)
-	// {
-	// 	return (this->_servers.begin());
-	// }
-	// handlerIt	end( void)
-	// {
-	// 	return (this->_servers.end());
-	// }
-	
+	// Server *operator[](const int index);
 
 	~Handler();
 };
 
-#endif 
+#endif

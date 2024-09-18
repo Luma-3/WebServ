@@ -1,17 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client.cpp                                         :+:      :+:    :+:   */
+/*   Signal.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/12 22:37:50 by jdufour           #+#    #+#             */
-/*   Updated: 2024/09/18 22:49:41 by jdufour          ###   ########.fr       */
+/*   Created: 2024/09/18 21:27:56 by jdufour           #+#    #+#             */
+/*   Updated: 2024/09/18 22:49:34 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Client.hpp"
+#include "../includes/Signal.hpp"
 
-Client::Client() {}
+void handler(int signum)
+{
+	if (signum == SIGINT) {
+		g_sig = 130;
+	}
+}
 
-Client::~Client() {}
+void initSignal(void)
+{
+	signal(SIGINT, handler);
+}
