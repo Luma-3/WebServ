@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 16:22:31 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/18 19:22:02 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ using statement::DenyMethod;
 using statement::Location;
 using statement::Param;
 
-Location::Location() : Token(S_Location) {}
+Location::Location() : Token(S_Location), _autoindex(false) {}
 
 Location::Location(const Location &src) :
 	Token(src),
@@ -43,7 +43,7 @@ void Location::IdentifyParam(Token *token)
 			_index = param->getValue();
 			break;
 		case T_AutoIndex:
-			_autoindex = param->ConvertBool(param->getValue());
+			_autoindex = Param::ConvertBool(param->getValue());
 			break;
 		case T_Return:
 			_return = param->getValue();
@@ -55,7 +55,8 @@ void Location::IdentifyParam(Token *token)
 
 Location::Location(const std::vector< Token * > &tokens,
 				   const std::string			&route) :
-	_route(route)
+	_route(route),
+	_autoindex(false)
 {
 	for (size_t i = 0; i < tokens.size(); ++i) {
 		if (tokens[i]->Token::getType() == S_Parameter) {

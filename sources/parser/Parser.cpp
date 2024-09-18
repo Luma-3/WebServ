@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 17:27:24 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/18 19:08:55 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,11 @@ Parser::Parser() : _status(0) {};
 
 Parser::Parser(const Parser &src) : _status(src._status) {}
 
-Parser::Parser(std::vector< Token * > tokens) : _tokens(tokens), _status(0) {}
+Parser::Parser(const std::vector< Token * > &tokens) :
+	_tokens(tokens),
+	_status(0)
+{
+}
 
 Parser &Parser::operator=(const Parser &src)
 {

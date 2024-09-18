@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 14:37:24 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 17:00:07 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/18 19:12:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,7 @@ struct IdentifyKey {
 class Token
 {
   private:
-	std::string _value;
-
-  protected:
+	std::string		   _value;
 	enum Token_Type	   _type;
 	enum Terminal_Type _terminal;
 

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 16:29:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/18 19:19:48 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void Server::IdentifyParam(Token *token)
 			_index = param->getValue();
 			break;
 		case T_AutoIndex:
-			_autoindex = param->ConvertBool(param->getValue());
+			_autoindex = Param::ConvertBool(param->getValue());
 			break;
 		case T_Return:
 			_return = param->getValue();
@@ -65,7 +65,7 @@ void Server::IdentifyParam(Token *token)
 	}
 }
 
-Server::Server(const std::vector< Token * > &tokens)
+Server::Server(const std::vector< Token * > &tokens) : _autoindex(false)
 {
 	for (size_t i = 0; i < tokens.size(); ++i) {
 		if (tokens[i]->Token::getType() == S_Parameter) {

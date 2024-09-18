@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:27:58 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 14:28:20 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/18 19:17:48 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ class Param : public Token
 	Param(const std::string &value, enum Terminal_Type key);
 	Param &operator=(const Param &src);
 
-	// static Param_Type IdentifyParam(const std::string &key);
-	bool ConvertBool(const std::string &key);
+	static bool ConvertBool(const std::string &key);
 
 	const std::string &getValue() const;
 
