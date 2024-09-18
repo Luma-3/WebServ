@@ -1,36 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Config.hpp                                         :+:      :+:    :+:   */
+/*   ReturnParam.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/10 10:28:25 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/17 10:19:34 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/17 10:38:58 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/18 11:05:58 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef RETURNPARAM_HPP
+#define RETURNPARAM_HPP
 
 #include <string>
 #include <vector>
 
-#include "Location.hpp"
+#include "lexer/Token.hpp"
 
-class Config
+namespace statement {
+
+class ReturnParam : public Token
 {
   private:
-	std::string			   _port;
-	std::string			   _server_name;
-	std::vector<Locations> _locations;
-	
+	const std::string _error_code;
+	const std::string _value;
 
   public:
-	Config();
-	~Config();
-	Config(const Config &);
-	Config &operator=(const Config &);
+	ReturnParam();
+	ReturnParam(const ReturnParam &src);
+	ReturnParam(const std::string &error_code, const std::string &value);
+	ReturnParam &operator=(const ReturnParam &src);
+	~ReturnParam();
 };
 
-#endif // CONFIG_HPP
+} // namespace statement
+
+#endif // RETURNPARAM_HPP

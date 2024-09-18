@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/17 14:13:55 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/18 17:08:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ Token *Lexer::CreateToken(size_t frontIT, size_t backIT, const string &line)
 	size_t size = frontIT - backIT + 1;
 	string value(line, backIT, size);
 
-	Token_Type type = Token::IdentifyToken(value);
+	Terminal_Type type = Token::IdentifyTerminal(value);
 
 	Token *token = new Token(value, type);
 
@@ -89,6 +89,7 @@ void Lexer::Tokenize()
 
 	for (size_t i = 0; i < _tokens.size(); i++) {
 		cout << "token[" << i << "]: " << _tokens[i]->getValue() << endl;
+		cout << "token[" << i << "]: " << _tokens[i]->getTerminal() << endl;
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:27:58 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/17 13:02:04 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/18 14:28:20 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,27 +19,22 @@
 
 namespace statement {
 
-enum Param_Type {
-	None,
-	root,
-	index,
-	server_name,
-	listen,
-	autoindex,
-	return_,
-};
-
 class Param : public Token
 {
   private:
-	Param_Type	_param_type;
-	std::string _error_code;
-	std::string _value;
+	const std::string _value;
 
   public:
 	Param();
 	Param(const Param &src);
+	Param(const std::string &value, enum Terminal_Type key);
 	Param &operator=(const Param &src);
+
+	// static Param_Type IdentifyParam(const std::string &key);
+	bool ConvertBool(const std::string &key);
+
+	const std::string &getValue() const;
+
 	~Param();
 };
 
