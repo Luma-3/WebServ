@@ -1,34 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   DenyMethod.cpp                                     :+:      :+:    :+:   */
+/*   ReturnParam.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/17 11:17:57 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 16:22:05 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/18 09:35:39 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/18 16:22:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser/statement/DenyMethod.hpp"
+#include "parser/statement/ReturnParam.hpp"
 
-using statement::DenyMethod;
+using statement::ReturnParam;
 
-DenyMethod::DenyMethod() : Token(S_DenyMethod) {}
+ReturnParam::ReturnParam() : Token(S_Return) {}
 
-DenyMethod::DenyMethod(const DenyMethod &src) :
+ReturnParam::ReturnParam(const ReturnParam &src) :
 	Token(src),
-	_methods(src._methods)
+	_error_code(src._error_code),
+	_value(src._value)
 {
 }
 
-DenyMethod::DenyMethod(const std::vector< std::string > &methods) :
-	Token(S_DenyMethod),
-	_methods(methods)
+ReturnParam::ReturnParam(const std::string &error_code,
+						 const std::string &value) :
+	Token(S_Return),
+	_error_code(error_code),
+	_value(value)
 {
 }
 
-DenyMethod &DenyMethod::operator=(const DenyMethod &src)
+ReturnParam &ReturnParam::operator=(const ReturnParam &src)
 {
 	if (this != &src) {
 		Token::operator=(src);
@@ -36,9 +39,4 @@ DenyMethod &DenyMethod::operator=(const DenyMethod &src)
 	return *this;
 }
 
-DenyMethod::~DenyMethod() {}
-
-const std::vector< std::string > &DenyMethod::getMethods() const
-{
-	return _methods;
-}
+ReturnParam::~ReturnParam() {}

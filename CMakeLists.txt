@@ -15,10 +15,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(WebServ 
 	sources/main.cpp
-	sources/parser/LexerException.cpp
+	sources/lexer/LexerException.cpp
+	sources/lexer/Lexer.cpp
+	sources/lexer/Token.cpp
 	sources/parser/Parser.cpp
-	sources/parser/Lexer.cpp
-	sources/parser/Token.cpp
+	sources/parser/Action.cpp
+	sources/parser/statement/DenyMethod.cpp
+	sources/parser/statement/Location.cpp
+	sources/parser/statement/ErrorPage.cpp
+	sources/parser/statement/Param.cpp
+	sources/parser/statement/ReturnParam.cpp
+	sources/parser/statement/Server.cpp
 
 )
 

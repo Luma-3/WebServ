@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/17 13:17:06 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/18 16:50:21 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,16 @@
 #include <string>
 #include <vector>
 
+#include "Action.hpp"
 #include "lexer/Token.hpp"
 
-// void initActionTable(std::map< std::pair< int, std::string >, Action >
-// &config)
-// {
-// 	config[std::make_pair(0, "server")] = Action(SHIFT, 1);
-// 	config[std::make_pair(1, "{")] = Action(SHIFT, 2);
-// 	config[std::make_pair(2, "port")] = Action(SHIFT, 3);
-// 	config[std::make_pair(3, "=")] = Action(SHIFT, 4);
-// 	config[std::make_pair(4, "")] = Action(SHIFT, 5);
-// 	config[std::make_pair(5, ";")] = Action(REDUCE, -1, );
-// }
+
+
+
 
 class Parser
 {
   private:
-	std::ifstream		   _config_file;
 	std::vector< Token * > _tokens;
 	int					   _status;
 	std::stack< Token * >  _parse_stack;
@@ -46,14 +39,14 @@ class Parser
   public:
 	Parser();
 	Parser(const Parser &src);
-	Parser(const char *file_path);
+	Parser(std::vector< Token * > tokens);
 	~Parser();
 
-	void Parse();
-	void Tokenize();
+	void setState(int state);
 
-	const std::vector< Token * > &getTokens() const;
-	void						  setState(int state);
+	void Parse();
+
+	const std::stack< Token * > &getParseStack() const;
 
 	Parser &operator=(const Parser &src);
 };

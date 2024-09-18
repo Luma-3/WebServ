@@ -34,11 +34,13 @@ ReturnParam		= 'return' '=' error_code ':' value ';'
 
 
 value_port 		= [0-9]+
-value_host		= [a-zA-Z0-9._-]+
+value_host		= @[a-zA-Z0-9.-]+
 error_code 	= [0-9]+3
-file_path	= [a-zA-Z0-9/._-]+
-value		= [a-zA-Z0-9/._-:]+
-path		= [a-zA-Z0-9/_-]+/
-file_name	= [a-zA-Z0-9._-]+.[a-zA-Z0-9]+
+file_path	= /[a-zA-Z0-9/._-]+
+path		= /[a-zA-Z0-9/_-]+/
+file_name	= [a-zA-Z0-9._-]+
 method		= 'GET' | 'POST' | 'DELETE'
 bool		= 'on' | 'off'
+value		= [a-zA-Z0-9/._-:]+
+
+/var/
