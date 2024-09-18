@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 16:50:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/18 19:08:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,6 @@
 #include "Action.hpp"
 #include "lexer/Token.hpp"
 
-
-
-
-
 class Parser
 {
   private:
@@ -39,7 +35,7 @@ class Parser
   public:
 	Parser();
 	Parser(const Parser &src);
-	Parser(std::vector< Token * > tokens);
+	Parser(const std::vector< Token * > &tokens);
 	~Parser();
 
 	void setState(int state);

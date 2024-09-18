@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 17:05:29 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/18 19:21:02 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 // TODO : clean useless includes
 
-Action::Action() {}
+Action::Action() : _type(ERROR), _next_state(-1), _rule_func(NULL) {}
 
 Action::Action(const Action &src) :
 	_type(src._type),
