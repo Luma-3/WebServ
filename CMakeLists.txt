@@ -14,6 +14,7 @@ add_executable(WebServ
 		sources/main.cpp
 		sources/Client.cpp
 		sources/Parser.cpp
+		sources/Parser_Url.cpp
 		)
 
 add_subdirectory(externals/googletest)

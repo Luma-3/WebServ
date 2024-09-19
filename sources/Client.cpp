@@ -3,60 +3,75 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/19 14:09:17 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/19 22:19:11 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-#include "Server.hpp"
-
-Client::Client()
+client::Client::Client()
 {
-	_haveHeader = false;
-	_codeResponse = "200";
+	_return_code = "200";
 }
 
-Client::Client(const Server &server) : Server(server)
-{
-	_haveHeader = false;
-	_codeResponse = "200";
-}
+client::Client::Client(const Server &server) : Server(server) {}
 
-Client::Client(const Client &src) : Server(src)
+client::Client::Client(const Client &src) : Server(src)
 {
 	if (this == &src) {
 		return;
 	}
-	_headers = src._headers;
-	_buffer = src._buffer;
-	_haveHeader = src._haveHeader;
-	_codeResponse = src._codeResponse;
+	_parser = src._parser;
+	_url = src._url;
+	_return_code = src._return_code;
 }
 
-Client::~Client() {}
+client::Client::~Client() {}
 
-Client &Client::operator=(const Client &src)
+client::Client &client::Client::operator=(const Client &src)
 {
 	if (this == &src) {
 		return *this;
 	}
-	_headers = src._headers;
-	_buffer = src._buffer;
-	_haveHeader = src._haveHeader;
-	_codeResponse = src._codeResponse;
+	_parser = src._parser;
+	_url = src._url;
+	_return_code = src._return_code;
 	return *this;
 }
 
-client::Parser &Client::getParser()
+client::Parser &client::Client::getParser()
 {
 	return _parser;
 }
 
-string Client::findStatusMessage(const std::string &code)
+string client::Client::findContentType(const string &file_extension)
+{
+	map< string, string > content_type_list;
+	content_type_list["html"] = "text/html";
+	content_type_list["css"] = "text/css";
+	content_type_list["js"] = "text/javascript";
+	content_type_list["jpg"] = "image/jpeg";
+	content_type_list["jpeg"] = "image/jpeg";
+	content_type_list["png"] = "image/png";
+	content_type_list["gif"] = "image/gif";
+	content_type_list["bmp"] = "image/bmp";
+	content_type_list["ico"] = "image/x-icon";
+	content_type_list["svg"] = "image/svg+xml";
+	content_type_list["json"] = "application/json";
+	content_type_list["pdf"] = "application/pdf";
+	content_type_list["zip"] = "application/zip";
+	content_type_list["tar"] = "application/x-tar";
+
+	if (content_type_list.find(file_extension) == content_type_list.end()) {
+		return "text/plain";
+	}
+	return content_type_list[file_extension];
+}
+
+string client::Client::findStatusMessage(const std::string &code)
 {
 	static map< std::string, std::string > status_message;
 	if (status_message.empty()) {
@@ -75,40 +90,39 @@ string Client::findStatusMessage(const std::string &code)
 	return "Unknown Status";
 }
 
-std::vector< char * > Client::readDataRequest(std::ifstream &file)
+void client::Client::getUrlDefaultErrorPage()
+{
+	_url = string(DEFAULT_ERROR_PAGE) + ToString(_return_code) + ".html";
+}
+
+std::vector< char > client::Client::createErrorPage()
+{
+	std::vector< char > body;
+	std::string			error_page = "<head><h1>ERROR " + _return_code +
+							 findStatusMessage(_return_code) + "</h1></head>";
+	body.assign(error_page.begin(), error_page.end());
+	return body;
+}
+
+std::vector< char > client::Client::readDataRequest(std::ifstream &file)
 {
 	file.seekg(0, std::ios::end);
 
 	size_t size = file.tellg();
 
 	file.seekg(0, std::ios::beg);
-	std::vector< char * > body;
+	std::vector< char > body;
 	body.resize(size);
-	file.read(body[0], static_cast< std::streamsize >(size));
+	file.read(&body[0], static_cast< std::streamsize >(size));
 	file.close();
 	return body;
 }
 
-void Client::getUrlDefaultErrorPage()
-{
-	_url = string(DEFAULT_ERROR_PAGE) + ToString(_codeResponse) + ".html";
-}
-
-std::vector< char * > Client::createErrorPage()
-{
-	std::vector< char * > body;
-	std::string			  error_page = "<head><h1>ERROR " + _codeResponse +
-							 findStatusMessage(_codeResponse) + "</h1></head>";
-	body.assign(error_page.begin(), error_page.end());
-	return body;
-}
-
-std::vector< char * > Client::getDataFromFileRequest(bool &key)
+std::vector< char > client::Client::getDataFromFileRequest(bool &key)
 {
 	while (true) {
 		std::ifstream file(_url.c_str(), std::ios::binary);
 
-		std::cout << "Url : " << _url << std::endl;
 		if (file.is_open()) {
 			return readDataRequest(file);
 		}
@@ -122,27 +136,63 @@ std::vector< char * > Client::getDataFromFileRequest(bool &key)
 	return createErrorPage();
 }
 
-string Client::buildResponse()
+void client::Client::findErrorFile(string &url_path)
 {
-	std::string response;
 
-	response =
-		"HTTP/1.1 " + _codeResponse + findStatusMessage(_codeResponse) + "\r\n";
-	response += "Content-Type: " + _content_type + "\r\n";
+	if (_locations[url_path]["root"].empty()) {
+		_url = DEFAULT_ERROR_PAGE + ToString(_return_code) + ".html";
+	} else {
+		_url = _locations[_return_code]["error_page"];
+	}
+}
 
+void client::Client::findFinalFileFromUrl()
+{
+	string url_path = _parser.getUrlPath();
+
+	if (_return_code != "200") {
+		return findErrorFile(url_path);
+	}
+
+	string path;
+
+	if (_locations[url_path]["root"].empty()) {
+		path = _locations["/"]["root"] + url_path;
+	} else {
+		path = _locations[url_path]["root"] + "/";
+	}
+	_url = path + _parser.getFilename() + "." + _parser.getFileExtension();
+
+	if (access(_url.c_str(), F_OK) != 0) {
+		if (errno == ENOENT) {
+			_return_code = "404";
+		} else {
+			_return_code = "402";
+		}
+		findErrorFile(url_path);
+	}
+}
+
+string client::Client::buildResponse()
+{
+	map< string, string > _headers = _parser.getHeaders();
 	bool				  key = true;
-	std::vector< char * > body = getDataFromFileRequest(key);
 
-	response += "Content-Length: " + _content_length + "\r\n";
+	_return_code = _parser.getCodeResponse();
+	findFinalFileFromUrl();
+
+	std::vector< char > body = getDataFromFileRequest(key);
+
+	string response =
+		"HTTP/1.1 " + _return_code + findStatusMessage(_return_code) + "\r\n";
+	response +=
+		"Content-Type: " + findContentType(_parser.getFileExtension()) + "\r\n";
+
+	response += "Content-Length: " + ToString(body.size()) + "\r\n";
+
 	response += "Connection: close\r\n\r\n";
 
-	std::vector< char > response_vector(response.begin(), response.end());
+	response += std::string(body.begin(), body.end());
 
-	response_vector.insert(response_vector.end(), body.begin(), body.end());
-
-	std::string final_response(response_vector.begin(), response_vector.end());
-
-	std::cout << response << std::endl;
-
-	return final_response;
+	return response;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 14:01:42 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/19 21:44:21 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,13 @@ int main()
 	Server server;
 
 	while (true) {
+
 		client::Client client(server);
-
-		int	 client_sock = accept(server_sock, NULL, NULL);
-		char buff[BUFFER_SIZE] = {0};
-		int	 valread = recv(client_sock, buff, BUFFER_SIZE, 0);
-
+		int			   valread = 0;
+		int			   client_sock = accept(server_sock, NULL, NULL);
+		char		   buff[BUFFER_SIZE] = {0};
+		valread = recv(client_sock, buff, BUFFER_SIZE, 0);
+		std::cout << "buffer : " << buff << std::endl;
 		client.getParser().parseRequest(buff);
 		client.buildResponse();
 		memset(buff, 0, BUFFER_SIZE);

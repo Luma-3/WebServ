@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/19 14:05:28 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/19 22:10:32 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,13 @@
 #include <unistd.h>
 #include <vector>
 
+#include "Parser.hpp"
 #include "Server.hpp"
 
 using std::map;
 using std::string;
 
-#define DEFAULT_ERROR_PAGE	"default_page/html/error"
-#define DEFAULT_ERROR_STYLE "default_page/css/style.css"
-#define DEFAULT_ERROR_IMG	"default_page/images/bg.jpg"
+#define DEFAULT_ERROR_PAGE "default_page/html/error"
 
 namespace client {
 
@@ -38,15 +37,16 @@ class Client : public Server
   private:
 	client::Parser _parser;
 	string		   _url;
-	string		   _content_type;
-	string		   _content_length;
-	string		   _codeResponse;
+	string		   _return_code;
 
-	std::vector< char * > readDataRequest(std::ifstream &file);
-	std::vector< char * > getDataFromFileRequest(bool &key);
-	void				  getUrlDefaultErrorPage();
-	std::vector< char * > createErrorPage();
-	static string		  findStatusMessage(const std::string &code);
+	std::vector< char > readDataRequest(std::ifstream &file);
+	std::vector< char > getDataFromFileRequest(bool &key);
+	std::vector< char > createErrorPage();
+	void				getUrlDefaultErrorPage();
+	static string		findStatusMessage(const std::string &code);
+	void				findFinalFileFromUrl();
+	static string		findContentType(const std::string &file_extension);
+	void				findErrorFile(string &url_path);
 
   public:
 	Client();
