@@ -17,6 +17,7 @@ add_executable(WebServ
 	sources/main.cpp
 	sources/lexer/LexerException.cpp
 	sources/lexer/Lexer.cpp
+	sources/lexer/regex.cpp
 	sources/lexer/Token.cpp
 	sources/parser/Parser.cpp
 	sources/parser/Action.cpp

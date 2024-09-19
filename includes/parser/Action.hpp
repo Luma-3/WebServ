@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 09:49:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 10:59:16 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ class Parser;
 enum ActionType {
 	SHIFT,
 	REDUCE,
-	ACCEPT,
 	ERROR
 };
 
@@ -50,6 +49,7 @@ class Action
 	void Execute(Token *token, std::stack< Token * > &stack,
 				 Parser &parser) const;
 };
+
 struct ActionEntry {
 	Action		  action;
 	int			  state;

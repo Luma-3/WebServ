@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 14:37:24 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 19:12:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 11:19:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define TOKEN_HPP
 
 #include <iostream>
+#include <ostream>
 #include <string>
 
 enum Token_Type {
@@ -78,19 +79,24 @@ class Token
 	std::string		   _value;
 	enum Token_Type	   _type;
 	enum Terminal_Type _terminal;
+	int				   _line;
+	int				   _col;
 
   public:
 	Token();
 	Token(const Token &src);
 	Token(enum Token_Type type);
-	Token(const std::string &value, enum Terminal_Type terminal);
+	Token(const std::string &value, enum Terminal_Type terminal, int line,
+		  int col);
 	Token(enum Token_Type type, enum Terminal_Type terminal);
 
 	Token &operator=(const Token &src);
 
+	virtual const std::string &getValue() const;
 	enum Token_Type			   getType() const;
 	enum Terminal_Type		   getTerminal() const;
-	virtual const std::string &getValue() const;
+	int						   getLine() const;
+	int						   getCol() const;
 
 	static Terminal_Type IdentifyTerminal(const std::string &value);
 
@@ -98,6 +104,8 @@ class Token
 
 	virtual ~Token();
 };
+
+std::ostream &operator<<(std::ostream &os, const Token &token);
 
 bool IsPort(const std::string &value);
 
