@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 17:39:42 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 09:47:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 #include "lexer/Lexer.hpp"
 #include "parser/Parser.hpp"
+#include "parser/statement/Server.hpp"
 
 using std::cerr;
 using std::endl;
@@ -47,8 +48,11 @@ int main(const int ac, const char **av)
 
 	std::stack< Token * > stack = parser.getParseStack();
 
+	std::cout << "Stack size: " << stack.size() << std::endl;
 	while (!stack.empty()) {
-		std::cout << stack.top() << std::endl;
+		statement::Server *server =
+			dynamic_cast< statement::Server * >(stack.top());
+		std::cout << *server << std::endl;
 		stack.pop();
 	}
 }

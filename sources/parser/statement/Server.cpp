@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 19:19:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 10:05:16 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,9 @@ Server::Server(const std::vector< Token * > &tokens) : _autoindex(false)
 			_locations.push_back(location);
 		} else {
 			// TODO : throw exception
+			std::cerr << tokens[i]->getType() << std::endl;
+			std::cerr << tokens[i]->getValue() << std::endl;
+			std::cerr << "i :" << i << std::endl;
 			std::cerr << "Error: Server::Server(const std::vector< Token * > "
 						 "&tokens) - Unknown token type"
 					  << std::endl;
