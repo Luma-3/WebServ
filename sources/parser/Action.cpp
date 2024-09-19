@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 19:21:02 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 10:01:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void Action::Execute(Token *token, std::stack< Token * > &stack,
 		std::cout << "Accept" << std::endl;
 	} else if (_type == ERROR) {
 		std::cout << "Error" << std::endl;
+		throw std::exception();
 	}
 }
 
@@ -101,7 +102,8 @@ void R1(std::stack< Token * > &stack)
 	do {
 		tokens.push_back(stack.top());
 		stack.pop();
-	} while (Token::IsKey(*tokens.back()));
+	} while (!Token::IsKey(*tokens.back()) ||
+			 tokens.back()->getType() != S_Terminal);
 
 	std::vector< Token * > params;
 
@@ -214,7 +216,12 @@ void R6(std::stack< Token * > &stack)
 	do {
 		tokens.push_back(stack.top());
 		stack.pop();
-	} while (!Token::IsKey(*tokens.back()));
+		if (Token::IsKey(*tokens.back()) &&
+			tokens.back()->getType() == S_Terminal) {
+			std::cout << "token: " << tokens.back()->getTerminal() << std::endl;
+		}
+	} while (!Token::IsKey(*tokens.back()) ||
+			 tokens.back()->getType() != S_Terminal);
 
 	std::string value = tokens[tokens.size() - 1]->getValue();
 

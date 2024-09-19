@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 19:22:02 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 10:11:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void Location::IdentifyParam(Token *token)
 
 Location::Location(const std::vector< Token * > &tokens,
 				   const std::string			&route) :
+	Token(S_Location),
 	_route(route),
 	_autoindex(false)
 {

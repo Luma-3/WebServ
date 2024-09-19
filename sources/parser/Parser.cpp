@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 19:08:55 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 09:50:31 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,10 @@ void Parser::Parse()
 				g_action[j].terminal == token->getTerminal()) {
 				g_action[j].action.Execute(token, _parse_stack, *this);
 				break;
+			} else if (j == NB_ACTIONS) {
+				g_action[j].action.Execute(token, _parse_stack, *this);
+				// TODO : throw exception
 			}
-			std::cout << "j: " << j << " | terminal: " << token->getTerminal()
-					  << " | state: " << _status << std::endl;
 		}
 	}
 }

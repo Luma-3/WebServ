@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 18:51:50 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 09:49:21 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 class Parser;
 
-#define NB_ACTIONS 79
+#define NB_ACTIONS 80
 
 enum ActionType {
 	SHIFT,
@@ -142,7 +142,8 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 	{Action(SHIFT,  51, NULL), 49, T_Path		},
 	{Action(SHIFT,  51, NULL), 49, T_FileName	},
 	{Action(REDUCE, 31, R4),	 50, T_Semi_Colon},
-	{Action(REDUCE, 31, R5),	 51, T_Semi_Colon}
+	{Action(REDUCE, 31, R5),	 51, T_Semi_Colon},
+	{Action(ERROR,  -1, NULL), -1, T_None		},
 };
 
 #endif // ACTION_HPP
