@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 11:21:16 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 13:38:59 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,11 @@
 
 using std::string;
 
+#define PORT_SIZE 5
+
 bool IsPort(const string &value) // TODO: Verif negative number
 {
-	if (value.size() > 5) {
+	if (value.size() > PORT_SIZE) {
 		return (false);
 	}
 
