@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 10:01:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 10:57:31 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,23 +57,15 @@ Action &Action::operator=(const Action &src)
 void Action::Shift(Token *token, std::stack< Token * > &stack,
 				   Parser &parser) const
 {
-	std::cout << "Shift: " << token->getValue() << std::endl;
 	stack.push(token);
-
 	parser.setState(_next_state);
 }
 
 void Action::Reduce(Token *token, std::stack< Token * > &stack,
 					Parser &parser) const
 {
-	// REDUCE FUNCTION
-	std::cout << "Reduce: " << token->getValue() << std::endl;
-	stack.push(token);
-
+	Shift(token, stack, parser);
 	_rule_func(stack);
-
-	// GOTO
-	parser.setState(_next_state);
 }
 
 void Action::Execute(Token *token, std::stack< Token * > &stack,
@@ -83,8 +75,6 @@ void Action::Execute(Token *token, std::stack< Token * > &stack,
 		Shift(token, stack, parser);
 	} else if (_type == REDUCE) {
 		Reduce(token, stack, parser);
-	} else if (_type == ACCEPT) {
-		std::cout << "Accept" << std::endl;
 	} else if (_type == ERROR) {
 		std::cout << "Error" << std::endl;
 		throw std::exception();
@@ -95,8 +85,6 @@ Action::~Action() {}
 
 void R1(std::stack< Token * > &stack)
 {
-	std::cout << "Rule 1" << std::endl;
-
 	std::vector< Token * > tokens;
 
 	do {
@@ -120,8 +108,6 @@ void R1(std::stack< Token * > &stack)
 
 void R2(std::stack< Token * > &stack)
 {
-	std::cout << "Rule 2" << std::endl;
-
 	std::vector< Token * > tokens;
 
 	for (size_t i = 0; i < 4; ++i) {
@@ -137,8 +123,6 @@ void R2(std::stack< Token * > &stack)
 
 void R3(std::stack< Token * > &stack)
 {
-	std::cout << "Rule 3" << std::endl;
-
 	std::vector< Token * > tokens;
 
 	do {
@@ -162,8 +146,6 @@ void R3(std::stack< Token * > &stack)
 
 void R4(std::stack< Token * > &stack)
 {
-	std::cout << "Rule 4" << std::endl;
-
 	std::vector< Token * > tokens;
 
 	do {
@@ -188,8 +170,6 @@ void R4(std::stack< Token * > &stack)
 
 void R5(std::stack< Token * > &stack)
 {
-	std::cout << "Rule 5" << std::endl;
-
 	std::vector< Token * > tokens;
 
 	do {
@@ -209,17 +189,11 @@ void R5(std::stack< Token * > &stack)
 
 void R6(std::stack< Token * > &stack)
 {
-	std::cout << "Rule 6" << std::endl;
-
 	std::vector< Token * > tokens;
 
 	do {
 		tokens.push_back(stack.top());
 		stack.pop();
-		if (Token::IsKey(*tokens.back()) &&
-			tokens.back()->getType() == S_Terminal) {
-			std::cout << "token: " << tokens.back()->getTerminal() << std::endl;
-		}
 	} while (!Token::IsKey(*tokens.back()) ||
 			 tokens.back()->getType() != S_Terminal);
 

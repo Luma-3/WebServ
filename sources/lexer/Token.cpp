@@ -6,17 +6,19 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 16:21:42 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 11:27:22 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer/Token.hpp"
 
-#include <cstdlib>
+#include <iomanip>
 
 using std::string;
 
-Token::Token() : _type(S_Terminal), _terminal(T_None) {}
+// Constructors
+
+Token::Token() : _type(S_Terminal), _terminal(T_None), _line(0), _col(0) {}
 
 Token::Token(const Token &src) :
 	_value(src._value),
@@ -24,6 +26,25 @@ Token::Token(const Token &src) :
 	_terminal(src._terminal)
 {
 }
+Token::Token(enum Token_Type type) : _type(type), _terminal(T_None) {}
+
+Token::Token(const std::string &value, enum Terminal_Type terminal, int line,
+			 int col) :
+	_value(value),
+	_type(S_Terminal),
+	_terminal(terminal),
+	_line(line),
+	_col(col)
+{
+}
+
+Token::Token(enum Token_Type type, enum Terminal_Type terminal) :
+	_type(type),
+	_terminal(terminal)
+{
+}
+
+// Operators
 
 Token &Token::operator=(const Token &src)
 {
@@ -34,22 +55,7 @@ Token &Token::operator=(const Token &src)
 	return (*this);
 }
 
-Token::Token(enum Token_Type type) : _type(type), _terminal(T_None) {}
-
-Token::Token(const std::string &value, enum Terminal_Type terminal) :
-	_value(value),
-	_type(S_Terminal),
-	_terminal(terminal)
-{
-}
-
-Token::Token(enum Token_Type type, enum Terminal_Type terminal) :
-	_type(type),
-	_terminal(terminal)
-{
-}
-
-Token::~Token() {}
+// Getters
 
 enum Token_Type Token::getType() const
 {
@@ -66,113 +72,24 @@ const std::string &Token::getValue() const
 	return (_value);
 }
 
-bool IsPort(const string &value) // TODO: Verif negative number
+int Token::getLine() const
 {
-	if (value.size() > 5) {
-		return (false);
-	}
-
-	for (size_t i = 0; i < value.size(); ++i) {
-		if (!isdigit(value[i])) {
-			return (false);
-		}
-	}
-
-	return (atoi(value.c_str()) <= PORT_MAX);
+	return (_line);
 }
 
-bool IsHost(const string &value)
+int Token::getCol() const
 {
-	if (value[0] != '@') {
-		return (false);
-	}
-	for (size_t i = 1; i < value.size(); ++i) {
-		if (!isalnum(value[i]) && value[i] != '.' && value[i] != '-') {
-			return (false);
-		}
-	}
-	return (true);
+	return (_col);
 }
 
-bool IsErrorCode(const string &value)
+// Static functions
+
+bool Token::IsKey(const Token &token)
 {
-	if (value.size() != 3) {
-		return (false);
-	}
+	Terminal_Type type = token.getTerminal();
 
-	for (size_t i = 0; i < value.size(); ++i) {
-		if (!isdigit(value[i])) {
-			return (false);
-		}
-	}
-
-	return (true);
-}
-
-bool IsFilePath(const string &value)
-{
-	if (value[0] != '/') {
-		return (false);
-	}
-	for (size_t i = 1; i < value.size(); ++i) {
-		if (!isalnum(value[i]) && value[i] != '.' && value[i] != '/' &&
-			value[i] != '_' && value[i] != '-') {
-			return (false);
-		}
-	}
-	return (true);
-}
-
-bool IsPath(const string &value)
-{
-	if (value[0] != '/') {
-		return (false);
-	}
-	for (size_t i = 1; i < value.size(); ++i) {
-		if (!isalnum(value[i]) && value[i] != '.' && value[i] != '/' &&
-			value[i] != '_' && value[i] != '-') {
-			return (false);
-		}
-	}
-	if (value[value.size() - 1] != '/') {
-		return (false);
-	}
-	return (true);
-}
-
-bool IsFileName(const string &value)
-{
-	for (size_t i = 0; i < value.size(); ++i) {
-		if (!isalnum(value[i]) && value[i] != '.' && value[i] != '_' &&
-			value[i] != '-') {
-			return (false);
-		}
-	}
-	return (true);
-}
-
-bool IsMethod(const string &value)
-{
-	static const int	size_key = 3;
-	static const string key[size_key] = {"GET", "POST", "DELETE"};
-
-	for (size_t i = 0; i < size_key; ++i) {
-		if (value == key[i]) {
-			return (true);
-		}
-	}
-	return (false);
-}
-
-bool IsBool(const string &value)
-{
-	static const int	size_key = 2;
-	static const string key[size_key] = {"on", "off"};
-
-	for (size_t i = 0; i < size_key; ++i) {
-		if (value == key[i]) {
-			return (true);
-		}
+	if (type <= T_AccessLog && type >= T_Server) {
+		return (true);
 	}
 	return (false);
 }
@@ -239,12 +156,18 @@ Terminal_Type Token::IdentifyTerminal(const string &value)
 	return (T_Value);
 }
 
-bool Token::IsKey(const Token &token)
-{
-	Terminal_Type type = token.getTerminal();
+// Destructor
 
-	if (type <= T_AccessLog && type >= T_Server) {
-		return (true);
-	}
-	return (false);
+Token::~Token() {}
+
+// Print Operator
+
+std::ostream &operator<<(std::ostream &os, const Token &token)
+{
+	os << std::setw(15) << std::left << token.getValue() << " | ";
+	os << std::left << "term: " << std::setw(5) << token.getTerminal() << " | ";
+	os << std::left << "line: " << std::setw(5) << token.getLine() << " | ";
+	os << std::left << "col: " << std::setw(7) << token.getCol();
+
+	return (os);
 }

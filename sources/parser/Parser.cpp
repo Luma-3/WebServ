@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 09:50:31 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 10:53:18 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,20 +42,22 @@ const std::stack< Token * > &Parser::getParseStack() const
 	return _parse_stack;
 }
 
+static Action findAction(int state, Terminal_Type terminal)
+{
+	for (size_t i = 0; i < NB_ACTIONS; ++i) {
+		if (g_action[i].state == state && g_action[i].terminal == terminal) {
+			return g_action[i].action;
+		}
+	}
+	return g_action[NB_ACTIONS - 1].action;
+}
+
 void Parser::Parse()
 {
 	for (size_t i = 0; i < _tokens.size(); ++i) {
 		Token *token = _tokens[i];
-		for (size_t j = 0; j < NB_ACTIONS; ++j) {
-			if (g_action[j].state == _status &&
-				g_action[j].terminal == token->getTerminal()) {
-				g_action[j].action.Execute(token, _parse_stack, *this);
-				break;
-			} else if (j == NB_ACTIONS) {
-				g_action[j].action.Execute(token, _parse_stack, *this);
-				// TODO : throw exception
-			}
-		}
+		Action action = findAction(_status, token->getTerminal());
+		action.Execute(token, _parse_stack, *this);
 	}
 }
 
