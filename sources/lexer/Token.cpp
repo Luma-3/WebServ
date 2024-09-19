@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 11:27:22 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 13:43:12 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,21 @@ Token::Token() : _type(S_Terminal), _terminal(T_None), _line(0), _col(0) {}
 Token::Token(const Token &src) :
 	_value(src._value),
 	_type(src._type),
-	_terminal(src._terminal)
+	_terminal(src._terminal),
+	_line(src._line),
+	_col(src._col)
 {
 }
-Token::Token(enum Token_Type type) : _type(type), _terminal(T_None) {}
+Token::Token(enum Token_Type type) :
+	_type(type),
+	_terminal(T_None),
+	_line(0),
+	_col(0)
+{
+}
 
-Token::Token(const std::string &value, enum Terminal_Type terminal, int line,
-			 int col) :
+Token::Token(const std::string &value, enum Terminal_Type terminal, size_t line,
+			 size_t col) :
 	_value(value),
 	_type(S_Terminal),
 	_terminal(terminal),
@@ -40,7 +48,9 @@ Token::Token(const std::string &value, enum Terminal_Type terminal, int line,
 
 Token::Token(enum Token_Type type, enum Terminal_Type terminal) :
 	_type(type),
-	_terminal(terminal)
+	_terminal(terminal),
+	_line(0),
+	_col(0)
 {
 }
 
@@ -72,12 +82,12 @@ const std::string &Token::getValue() const
 	return (_value);
 }
 
-int Token::getLine() const
+size_t Token::getLine() const
 {
 	return (_line);
 }
 
-int Token::getCol() const
+size_t Token::getCol() const
 {
 	return (_col);
 }
@@ -162,12 +172,21 @@ Token::~Token() {}
 
 // Print Operator
 
+#define SIZE_FORMAT 15
+
 std::ostream &operator<<(std::ostream &os, const Token &token)
 {
-	os << std::setw(15) << std::left << token.getValue() << " | ";
-	os << std::left << "term: " << std::setw(5) << token.getTerminal() << " | ";
-	os << std::left << "line: " << std::setw(5) << token.getLine() << " | ";
-	os << std::left << "col: " << std::setw(7) << token.getCol();
+	const std::string &value = token.getValue();
+
+	os << std::setw(SIZE_FORMAT) << std::left << (value.size() <= SIZE_FORMAT)
+		? value
+		: value.substr(0, SIZE_FORMAT - 1) + ".";
+	os << " | ";
+	os << std::left << "term: " << std::setw(SIZE_FORMAT) << token.getTerminal()
+	   << " | ";
+	os << std::left << "line: " << std::setw(SIZE_FORMAT) << token.getLine()
+	   << " | ";
+	os << std::left << "col: " << std::setw(SIZE_FORMAT) << token.getCol();
 
 	return (os);
 }

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 12:48:57 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 13:05:17 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@
 
 #include "lexer/Token.hpp"
 
-using std::cout;
-using std::endl;
 using std::string;
 using std::vector;
 
@@ -26,14 +24,10 @@ using std::vector;
 
 Lexer::Lexer() : _line(0), _col(0) {}
 
-Lexer::Lexer(const Lexer &other)
-{
-	*this = other;
-}
+Lexer::Lexer(const Lexer &other) : _line(other._line), _col(other._col) {}
 
-Lexer::Lexer(const char *file_path)
+Lexer::Lexer(const char *file_path) : _line(0), _col(0)
 {
-
 	string file_path_str(file_path);
 	size_t pos = file_path_str.find_last_of('.');
 	if (pos == string::npos) {
@@ -86,7 +80,8 @@ void Lexer::SkipSpace(const string &line, size_t &it)
 	}
 }
 
-Token *Lexer::CreateToken(size_t frontIT, size_t backIT, const string &line)
+Token *Lexer::CreateToken(size_t frontIT, size_t backIT,
+						  const string &line) const
 {
 
 	size_t size = frontIT - backIT + 1;

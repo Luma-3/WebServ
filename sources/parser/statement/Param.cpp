@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:44:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 16:22:45 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 13:44:28 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,11 @@ bool Param::ConvertBool(const string &key)
 {
 	if (key == "on") {
 		return true;
-	} else if (key == "off") {
+	}
+	if (key == "off") {
 		return false;
 	}
-	return false; // TODO : throw exception
+	return false;
 }
 
 const string &Param::getValue() const

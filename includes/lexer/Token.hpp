@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 14:37:24 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 11:19:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/19 13:08:33 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,15 +79,15 @@ class Token
 	std::string		   _value;
 	enum Token_Type	   _type;
 	enum Terminal_Type _terminal;
-	int				   _line;
-	int				   _col;
+	size_t			   _line;
+	size_t			   _col;
 
   public:
 	Token();
 	Token(const Token &src);
 	Token(enum Token_Type type);
-	Token(const std::string &value, enum Terminal_Type terminal, int line,
-		  int col);
+	Token(const std::string &value, enum Terminal_Type terminal, size_t line,
+		  size_t col);
 	Token(enum Token_Type type, enum Terminal_Type terminal);
 
 	Token &operator=(const Token &src);
@@ -95,8 +95,8 @@ class Token
 	virtual const std::string &getValue() const;
 	enum Token_Type			   getType() const;
 	enum Terminal_Type		   getTerminal() const;
-	int						   getLine() const;
-	int						   getCol() const;
+	size_t					   getLine() const;
+	size_t					   getCol() const;
 
 	static Terminal_Type IdentifyTerminal(const std::string &value);
 
