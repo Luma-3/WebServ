@@ -8,6 +8,12 @@ Checks: >
   hicpp-*,
   cppcoreguidelines-*,
   misc-*,
+  -readability-implicit-bool-conversion,
+  -readability-identifier-length,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
+
+

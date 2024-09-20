@@ -21,31 +21,38 @@ Server::Server(std::string servername, std::string hostname, std::string port) :
 {
 }
 
-int Server::getSocket(void) const
+int Server::getSocket() const
 {
 	return (_server_socket);
 }
 
-std::string Server::getName(void) const
+std::string Server::getName() const
 {
 	return (_name);
 }
 
-char *Server::getRequest(void) const
+std::string Server::getHost() const
+{
+	return (_hostname);
+}
+
+std::string Server::getPort() const
+{
+	return (_port);
+}
+
+char *Server::getRequest() const
 {
 	return (_request);
 }
 
 int Server::createSocket()
 {
-	// non-blocking flag added to socket
 	if (fcntl(_server_socket, F_SETFL, O_NONBLOCK) == -1) {
 		std::cerr << "Error on set nonblocking on " << _name << std::endl;
 		return (FAILURE);
 	}
 	int val = 1;
-	// make sure the port is not BURNED TO ASHES (otherwise it will take some
-	// time for the used port to be reusable)
 	if (setsockopt(_server_socket, SOL_SOCKET, SO_REUSEADDR, &val,
 				   sizeof(int)) == -1) {
 		std::cerr << "error on setting the port on reusable on " << _name
@@ -70,6 +77,11 @@ int Server::createSocket()
 		std::cerr << "getaddrinfo failed on" << _name << std::endl;
 		return (FAILURE);
 	}
+	return (SUCCESS);
+}
+
+int	Server::setSocket()
+{
 	if (bind(_server_socket, _info->ai_addr, _info->ai_addrlen) == -1) {
 		std::cerr << _name << ": bind failed on " << _name << std::endl;
 		return (FAILURE);
@@ -99,7 +111,6 @@ int Server::HandleConnexion()
 		return (FAILURE);
 	} else if (nb_bytes > 0) {
 		std::cout << _request << std::endl;
-
 		// this will be to uncomment and adjust with the client functions
 		// Client	serverClient = Client(getRequest());
 		// serverClient.HandleRequest();

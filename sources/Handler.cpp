@@ -16,7 +16,7 @@
 
 volatile int g_sig = 0;
 
-Handler::Handler() {}
+Handler::Handler() : _nbServ(0) {}
 
 // void	Handler::loadServ()
 // {
@@ -34,6 +34,24 @@ Handler::Handler() {}
 // 	}
 // }
 
+Handler::Handler(const Handler &src)
+{
+	*this = src;
+}
+
+Handler &Handler::operator=(const Handler &rhs)
+{
+	this->_epfd = epoll_create1(0);
+	this->_nbServ = rhs._nbServ;
+	this->_epfd = rhs._epfd;
+	for (int i = 0; i < _nbServ; i++) {
+		_servers.push_back(new Server(rhs._servers[i]->getName(),
+									  rhs._servers[i]->getHost(),
+									  rhs._servers[i]->getPort()));
+	}
+	return (*this);
+}
+
 void Handler::loadServTest()
 {
 	_nbServ = 4;
@@ -49,51 +67,44 @@ void Handler::loadServTest()
 
 int Handler::launchServers()
 {
-	// creation of epoll instance. it will be used to manage the sockets of all
-	// servers;
-	int epfd = epoll_create1(0);
-	if (epfd == -1) {
+	_epfd = epoll_create1(0);
+	if (_epfd == -1) {
 		std::cerr << "Error on epoll_create" << std::endl;
 		return (FAILURE);
 	}
 
-	for (int i = 0; i < _nbServ; ++i) {
-		// opening all servers sockets
-		_servers[i]->createSocket();
-
-		// creation of the struct epoll event that defines the events to watch
+	for (std::vector<Server *>::iterator it = _servers.begin(); it < _servers.end(); ++it) {
+		(*it)->createSocket();
+		(*it)->setSocket();
 		struct epoll_event event;
-		// watch only reading events on the given socket
 		event.events = EPOLLIN;
-		event.data.fd = _servers[i]->getSocket();
-
-		// adds the socket to the elements to watch
-		// to modify a socket : EPOLL_CTL_MOD. to delete a socket :
-		// EPOLL_CTL_DEL
-		if (epoll_ctl(epfd, EPOLL_CTL_ADD, _servers[i]->getSocket(), &event) ==
+		event.data.fd = (*it)->getSocket();
+		if (epoll_ctl(_epfd, EPOLL_CTL_ADD, (*it)->getSocket(), &event) ==
 			-1) {
 			std::cerr << "Error on epoll_ctl" << std::endl;
 			return (FAILURE);
 		}
 	}
+	return (SUCCESS);
+}
+
+int Handler::handleEvents()
+{
 	struct epoll_event events[MAX_EVENTS];
+
 	while (!g_sig) {
 		initSignal();
-		// wait for events to get. the last flag is the timeout, -1 being
-		// infinite
-
-		int nfds = epoll_wait(epfd, events, MAX_EVENTS, -1);
+		int nfds = epoll_wait(_epfd, events, MAX_EVENTS, -1);
 		if (nfds == -1 && !g_sig) {
 			std::cout << "Error on epoll_wait" << std::endl;
 			return (FAILURE);
 		}
 		for (int i = 0; i < nfds; ++i) {
-			// if epoll detects an event : checks on which socket it happenend
-			// and calls on the method from the designated server
 			if (events[i].events & EPOLLIN) {
-				for (int j = 0; j < _nbServ; j++) {
-					if (events[i].data.fd == _servers[j]->getSocket()) {
-						_servers[j]->HandleConnexion();
+				for (std::vector<Server *>::iterator it = _servers.begin();
+					 it < _servers.end(); ++it) {
+					if (events[i].data.fd == (*it)->getSocket()) {
+						(*it)->HandleConnexion();
 						break;
 					}
 				}
@@ -109,16 +120,6 @@ int Handler::launchServers()
 // 		throw(std::out_of_range("Error : invalid access index on Servers"));
 // 	return (_servers[index]);
 // }
-
-std::vector<Server *> Handler::getAllServ(void) const
-{
-	return (_servers);
-}
-
-int Handler::getNbServ(void) const
-{
-	return (_nbServ);
-}
 
 Handler::~Handler()
 {

@@ -19,6 +19,6 @@
 extern volatile int g_sig;
 
 void handler(int signum);
-void initSignal(void);
+void initSignal();
 
 #endif

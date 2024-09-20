@@ -19,7 +19,7 @@ void handler(int signum)
 	}
 }
 
-void initSignal(void)
+void initSignal()
 {
 	signal(SIGINT, handler);
 }

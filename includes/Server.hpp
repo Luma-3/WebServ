@@ -24,14 +24,12 @@
 #include <string>
 #include <unistd.h>
 
-#include "Client.hpp"
-
 #define SUCCESS 0
 #define FAILURE 1
 
 class Server
 {
-  protected:
+  private:
 	const std::string _name;
 	const std::string _hostname;
 	const std::string _port;
@@ -43,11 +41,14 @@ class Server
   public:
 	Server(std::string servername, std::string hostname, std::string port);
 
-	int			getSocket(void) const;
-	std::string getName(void) const;
-	char	   *getRequest(void) const;
+	int			getSocket() const;
+	std::string getName() const;
+	std::string getHost() const;
+	std::string getPort() const;
+	char	   *getRequest() const;
 
 	int createSocket();
+	int	setSocket();
 	int HandleConnexion();
 
 	~Server();

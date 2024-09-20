@@ -28,14 +28,17 @@ class Handler
   private:
 	std::vector<Server *> _servers;
 	int					  _nbServ;
+	int					  _epfd;
 
   public:
 	Handler();
 
-	void				  loadServTest();
-	int					  launchServers();
-	std::vector<Server *> getAllServ(void) const;
-	int					  getNbServ(void) const;
+	Handler(const Handler &src);
+	Handler &operator=(const Handler &rhs);
+
+	void loadServTest();
+	int	 launchServers();
+	int	 handleEvents();
 
 	// Server *operator[](const int index);
 
