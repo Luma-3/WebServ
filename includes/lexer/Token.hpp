@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 14:37:24 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 13:08:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/20 15:51:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,11 @@ struct IdentifyKey {
 	const std::string  key;
 };
 
+struct IdentifyTypeTerminal {
+	enum Terminal_Type type;
+	std::string		   term;
+};
+
 #define PORT_MAX 65535
 
 class Token
@@ -99,8 +104,9 @@ class Token
 	size_t					   getCol() const;
 
 	static Terminal_Type IdentifyTerminal(const std::string &value);
+	static bool			 IsKey(const Token &token);
 
-	static bool IsKey(const Token &token);
+	static const std::string &TerminalTypeToString(enum Terminal_Type type);
 
 	virtual ~Token();
 };

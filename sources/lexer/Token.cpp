@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 13:43:12 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:03:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,47 @@ Terminal_Type Token::IdentifyTerminal(const string &value)
 			break;
 	}
 	return (T_Value);
+}
+
+const std::string &Token::TerminalTypeToString(enum Terminal_Type type)
+{
+	static const int		 size_key = 27;
+	static const IdentifyKey key[size_key] = {
+		{T_Server,	   "server"					   },
+		{T_Port,		 "port"					   },
+		{T_Host,		 "host"					   },
+		{T_ErroLog,	"error_log"				   },
+		{T_AccessLog,  "acces_log"					 },
+		{T_Root,		 "root"					   },
+		{T_Index,	  "index"						 },
+		{T_AutoIndex,  "autoindex"					 },
+		{T_Return,	   "return"					   },
+		{T_Location,	 "location"				   },
+		{T_ErrorPage,  "error_page"				  },
+		{T_DenyMethod, "deny_method"				},
+		{T_Comma,	  ","						  },
+		{T_Semi_Colon, ";"						  },
+		{T_CBracket,	 "}"						  },
+		{T_OBracket,	 "{"						  },
+		{T_Colone,	   ":"						  },
+		{T_Equal,	  "="						  },
+		{T_Value,	  "`value`"					   },
+		{T_ErrorCode,  "`000`"						 },
+		{T_Method,	   "`GET` or `POST` or `DELETE`"},
+		{T_FileName,	 "`file_name`"				  },
+		{T_PortValue,  "`00000`"					   },
+		{T_HostValue,  "`host_value`"				},
+		{T_Path,		 "`path`"					 },
+		{T_FilePath,	 "`file_path`"				  },
+		{T_Bool,		 "`on` or `off`"				},
+	};
+
+	for (size_t i = 0; i < size_key; ++i) {
+		if (type == key[i].type) {
+			return (key[i].key);
+		}
+	}
+	return (key[0].key);
 }
 
 // Destructor

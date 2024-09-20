@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 10:53:18 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:39:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,16 +52,33 @@ static Action findAction(int state, Terminal_Type terminal)
 	return g_action[NB_ACTIONS - 1].action;
 }
 
+static struct ActionEntry findExpected(int state)
+{
+	for (size_t i = 0; i < NB_ACTIONS; ++i) {
+		if (g_action[i].state == state) {
+			return g_action[i];
+		}
+	}
+	return g_action[NB_ACTIONS - 1];
+}
+
 void Parser::Parse()
 {
 	for (size_t i = 0; i < _tokens.size(); ++i) {
 		Token *token = _tokens[i];
 		Action action = findAction(_status, token->getTerminal());
-		action.Execute(token, _parse_stack, *this);
+		if (action.Execute(token, _parse_stack, *this) == ERROR) {
+			throw InvalidTokenException(
+				token->getCol(), token->getLine(), token->getValue(),
+				Token::TerminalTypeToString(findExpected(_status).terminal));
+		}
 	}
 }
 
 Parser::~Parser()
 {
-	// TODO : Peut-etre
+	while (!_parse_stack.empty()) {
+		delete _parse_stack.top();
+		_parse_stack.pop();
+	}
 }

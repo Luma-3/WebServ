@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 10:59:16 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:21:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,16 @@ class Action
 	Action(ActionType type, int next_states,
 		   void (*rule_func)(std::stack< Token * > &));
 	Action(const Action &src);
+
 	Action &operator=(const Action &src);
-	~Action();
 
 	void Shift(Token *token, std::stack< Token * > &stack,
 			   Parser &parser) const;
 	void Reduce(Token *token, std::stack< Token * > &stack,
 				Parser &parser) const;
-	void Execute(Token *token, std::stack< Token * > &stack,
+	int	 Execute(Token *token, std::stack< Token  *> &stack,
 				 Parser &parser) const;
+	~Action();
 };
 
 struct ActionEntry {
@@ -145,5 +146,7 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 	{Action(REDUCE, 31, R5),	 51, T_Semi_Colon},
 	{Action(ERROR,  -1, NULL), -1, T_None		},
 };
+
+#include "ToString.tpp"
 
 #endif // ACTION_HPP

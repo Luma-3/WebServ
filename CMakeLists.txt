@@ -21,6 +21,7 @@ add_executable(WebServ
 	sources/lexer/Token.cpp
 	sources/parser/Parser.cpp
 	sources/parser/Action.cpp
+	sources/parser/ParserException.cpp
 	sources/parser/statement/DenyMethod.cpp
 	sources/parser/statement/Location.cpp
 	sources/parser/statement/ErrorPage.cpp
