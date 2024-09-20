@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Parser_Url.cpp                                     :+:      :+:    :+:   */
+/*   Parser_url.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 17:24:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/09/19 22:16:40 by anthony          ###   ########.fr       */
+/*   Updated: 2024/09/20 15:50:55 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ string client::Parser::extractPathAndFilename(string	   &url,
 
 	if (new_path.empty()) {
 		new_path = "/";
-		_filename = "index";
 	} else if (new_path[0] != '/') {
 		new_path = "/" + new_path;
 	}
@@ -40,7 +39,6 @@ string client::Parser::extractPathAndFilename(string	   &url,
 	if (_filename.empty()) {
 		_filename = "index";
 	}
-
 	return new_path;
 }
 

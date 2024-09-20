@@ -67,6 +67,7 @@
     "thread": "cpp",
     "cinttypes": "cpp",
     "variant": "cpp",
-    "semaphore": "cpp"
+    "semaphore": "cpp",
+    "*.tpp": "cpp"
   }
 }

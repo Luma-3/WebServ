@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/19 22:19:11 by anthony          ###   ########.fr       */
+/*   Updated: 2024/09/20 15:32:47 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ client::Client::Client(const Client &src) : Server(src)
 		return;
 	}
 	_parser = src._parser;
+	_path = src._path;
 	_url = src._url;
 	_return_code = src._return_code;
 }
@@ -37,6 +38,7 @@ client::Client &client::Client::operator=(const Client &src)
 		return *this;
 	}
 	_parser = src._parser;
+	_path = src._path;
 	_url = src._url;
 	_return_code = src._return_code;
 	return *this;
@@ -47,50 +49,7 @@ client::Parser &client::Client::getParser()
 	return _parser;
 }
 
-string client::Client::findContentType(const string &file_extension)
-{
-	map< string, string > content_type_list;
-	content_type_list["html"] = "text/html";
-	content_type_list["css"] = "text/css";
-	content_type_list["js"] = "text/javascript";
-	content_type_list["jpg"] = "image/jpeg";
-	content_type_list["jpeg"] = "image/jpeg";
-	content_type_list["png"] = "image/png";
-	content_type_list["gif"] = "image/gif";
-	content_type_list["bmp"] = "image/bmp";
-	content_type_list["ico"] = "image/x-icon";
-	content_type_list["svg"] = "image/svg+xml";
-	content_type_list["json"] = "application/json";
-	content_type_list["pdf"] = "application/pdf";
-	content_type_list["zip"] = "application/zip";
-	content_type_list["tar"] = "application/x-tar";
-
-	if (content_type_list.find(file_extension) == content_type_list.end()) {
-		return "text/plain";
-	}
-	return content_type_list[file_extension];
-}
-
-string client::Client::findStatusMessage(const std::string &code)
-{
-	static map< std::string, std::string > status_message;
-	if (status_message.empty()) {
-		status_message["200"] = " OK";
-		status_message["400"] = " Bad Request";
-		status_message["403"] = " Forbidden";
-		status_message["404"] = " Not Found";
-		status_message["405"] = " Method Not Allowed";
-		status_message["500"] = " Internal Server Error";
-	}
-
-	map< string, string >::const_iterator it = status_message.find(code);
-	if (it != status_message.end()) {
-		return it->second;
-	}
-	return "Unknown Status";
-}
-
-void client::Client::getUrlDefaultErrorPage()
+void client::Client::createUrlDefaultErrorPage()
 {
 	_url = string(DEFAULT_ERROR_PAGE) + ToString(_return_code) + ".html";
 }
@@ -98,10 +57,24 @@ void client::Client::getUrlDefaultErrorPage()
 std::vector< char > client::Client::createErrorPage()
 {
 	std::vector< char > body;
-	std::string			error_page = "<head><h1>ERROR " + _return_code +
-							 findStatusMessage(_return_code) + "</h1></head>";
+
+	std::string error_page = "<head><h1>ERROR " + _return_code +
+							 findStatusMessage(_return_code) +
+							 "Sorry for this ugly page bro < / h1 >< / head > ";
+
 	body.assign(error_page.begin(), error_page.end());
+
 	return body;
+}
+
+void client::Client::findErrorFile(string &url_path)
+{
+
+	if (_locations[url_path]["root"].empty()) {
+		_url = DEFAULT_ERROR_PAGE + ToString(_return_code) + ".html";
+	} else {
+		_url = _locations[_return_code]["error_page"];
+	}
 }
 
 std::vector< char > client::Client::readDataRequest(std::ifstream &file)
@@ -118,16 +91,64 @@ std::vector< char > client::Client::readDataRequest(std::ifstream &file)
 	return body;
 }
 
+// #include <iostream>
+// std::vector< char > client::Client::handleCGI()
+// {
+// 	std::cout << "GO TO CGI" << std::endl;
+// 	int	  pipefd[2];
+// 	pid_t pid;
+
+// 	pipe(pipefd);
+// 	// TODO : check if pipe is correctly created
+
+// 	pid = fork();
+// 	// TODO : check if fork is correctly created
+
+// 	if (pid == 0) {
+// 		const char *interpreter = "usr/bin/python3";
+// 		const char *script_path = _url.c_str();
+
+// 		close(pipefd[0]);
+// 		dup2(pipefd[1], 1);
+// 		close(pipefd[1]);
+
+// 		const char *argv[] = {interpreter, script_path, NULL};
+// 		const char *envp[] = {"PATH=/usr/bin", NULL};
+
+// 		std::cout << "EXECUTE CGI" << std::endl;
+// 		std::cout << "interpreter : " << interpreter << std::endl;
+// 		std::cout << "script_path : " << script_path << std::endl;
+// 		execve(interpreter, (char *const *)argv, (char *const *)envp);
+// 		_exit(1);
+// 		// TODO : check if execlp is correctly executed
+// 	} else {
+// 		close(pipefd[1]);
+// 		std::vector< char > body;
+// 		char				buffer[CHILD_BUFFER_SIZE];
+// 		int					bytes_read;
+
+// 		while ((bytes_read = read(pipefd[0], buffer, CHILD_BUFFER_SIZE)) > 0) {
+// 			body.insert(body.end(), buffer, buffer + bytes_read);
+// 		}
+// 		close(pipefd[0]);
+// 		waitpid(pid, NULL, 0);
+// 		return body;
+// 	}
+// }
+
 std::vector< char > client::Client::getDataFromFileRequest(bool &key)
 {
 	while (true) {
 		std::ifstream file(_url.c_str(), std::ios::binary);
 
+		// if (_parser.getFileExtension() == "py") {
+		// 	return handleCGI();
+		// }
 		if (file.is_open()) {
 			return readDataRequest(file);
 		}
 		if (key) {
-			getUrlDefaultErrorPage();
+			createUrlDefaultErrorPage();
 			key = false;
 		} else {
 			break;
@@ -136,16 +157,7 @@ std::vector< char > client::Client::getDataFromFileRequest(bool &key)
 	return createErrorPage();
 }
 
-void client::Client::findErrorFile(string &url_path)
-{
-
-	if (_locations[url_path]["root"].empty()) {
-		_url = DEFAULT_ERROR_PAGE + ToString(_return_code) + ".html";
-	} else {
-		_url = _locations[_return_code]["error_page"];
-	}
-}
-
+#include <iostream>
 void client::Client::findFinalFileFromUrl()
 {
 	string url_path = _parser.getUrlPath();
@@ -154,14 +166,13 @@ void client::Client::findFinalFileFromUrl()
 		return findErrorFile(url_path);
 	}
 
-	string path;
-
 	if (_locations[url_path]["root"].empty()) {
-		path = _locations["/"]["root"] + url_path;
+		_path = _locations["/"]["root"] + url_path + "/";
 	} else {
-		path = _locations[url_path]["root"] + "/";
+		_path = _locations[url_path]["root"] + "/";
 	}
-	_url = path + _parser.getFilename() + "." + _parser.getFileExtension();
+	_url = _path + _parser.getFilename() + "." + _parser.getFileExtension();
+	std::cout << "URL BEFORE ACCESS : " << _url << std::endl;
 
 	if (access(_url.c_str(), F_OK) != 0) {
 		if (errno == ENOENT) {
@@ -190,8 +201,11 @@ string client::Client::buildResponse()
 
 	response += "Content-Length: " + ToString(body.size()) + "\r\n";
 
-	response += "Connection: close\r\n\r\n";
-
+	if (_headers["Connection"] == "close") {
+		response += "Connection: close\r\n\r\n";
+	} else {
+		response += "Connection: keep-alive\r\n\r\n";
+	}
 	response += std::string(body.begin(), body.end());
 
 	return response;

@@ -3,31 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/19 22:06:23 by anthony          ###   ########.fr       */
+/*   Updated: 2024/09/20 17:24:02 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSER_HPP
 #define PARSER_HPP
 
-#include <algorithm>
-#include <fstream>
-#include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
 #include <unistd.h>
-#include <vector>
 
 using std::map;
 using std::string;
 
-
-#define DEFAULT_ERROR_STYLE "default_page/css/style.css"
-#define DEFAULT_ERROR_IMG	"default_page/images/bg.jpg"
+#include "Parser_utils.tpp"
 
 namespace client {
 
@@ -36,33 +30,36 @@ class Parser
   private:
 	map< string, string > _headers;
 	string				  _buffer;
-	bool				  _haveHeader;
 	string				  _url_path;
 	string				  _filename;
 	string				  _file_extension;
 	string				  _codeResponse;
+	bool				  _haveHeader;
 
-	void		  changeUrlError();
-	bool		  InvalidMethod();
-	bool		  InvalidHeader();
-	void		  checkRequest();
-	void		  getBodyFromRequest(size_t &line_break_pos);
-	static string getAndErase(string &str, const string &delim);
-	void		  handleUrl(std::string &url);
-	void		  getHeaderFromRequest(const size_t &line_break_pos);
-	string		  extractPathAndFilename(string &url, const size_t &l_slash,
-										 const size_t &l_dot);
-	string		  extractExtension(string &url, const size_t &l_dot);
+	void getHeaderFromRequest(const size_t &line_break_pos);
+	void getBodyFromRequest(size_t &line_break_pos);
+
+	string extractExtension(string &url, const size_t &l_dot);
+	void   handleUrl(std::string &url);
+	string extractPathAndFilename(string &url, const size_t &l_slash,
+								  const size_t &l_dot);
+
+	bool InvalidMethod();
+	bool InvalidHeader();
 
   public:
 	Parser();
+	Parser(const Parser &src);
+	Parser &operator=(const Parser &src);
 	~Parser();
-	void				   parseRequest(void *buff);
+
+	void parseRequest(void *buff);
+
 	map< string, string > &getHeaders();
-	string				  &getUrlPath();
-	string				  &getFilename();
-	string				  &getFileExtension();
-	string				  &getCodeResponse();
+	const string		  &getUrlPath();
+	const string		  &getFilename();
+	const string		  &getFileExtension();
+	const string		  &getCodeResponse();
 };
 
 } // namespace client

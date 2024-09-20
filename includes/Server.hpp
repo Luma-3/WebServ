@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:55:45 by anthony           #+#    #+#             */
-/*   Updated: 2024/09/16 18:51:56 by anthony          ###   ########.fr       */
+/*   Updated: 2024/09/20 17:15:58 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,6 @@ class Server
 		// Configuration pour les images
 		_locations["/images"]["root"] = images_root;
 
-		// Configuration pour la page d'erreur 404
-		// _locations["/404"]["root"] = html_root;
-		// _locations["/404"]["file"] = html_root + "/" + error404;
-
-		// Configuration pour la page d'erreur 500 (commentée)
-		// _locations["/500"]["root"] = html_root;
-		// _locations["/500"]["file"] = html_root + "/" + error500;
+		_locations["/icons"]["root"] = images_root;
 	}
 };
