@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 19:08:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:21:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,23 @@ class Parser
 	const std::stack< Token * > &getParseStack() const;
 
 	Parser &operator=(const Parser &src);
+
+	class InvalidTokenException : public std::exception
+	{
+	  private:
+		std::string _msg;
+
+	  public:
+		InvalidTokenException(size_t _col, size_t _line,
+							  const std::string &value,
+							  const std::string &expected);
+		InvalidTokenException(const InvalidTokenException &src);
+		InvalidTokenException &operator=(const InvalidTokenException &src);
+
+		virtual const char *what() const throw();
+
+		virtual ~InvalidTokenException() throw();
+	};
 };
 
 #endif // PARSER_HPP

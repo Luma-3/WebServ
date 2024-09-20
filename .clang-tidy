@@ -1,4 +1,5 @@
 HeaderFilterRegex: '.*'
+
 Checks: >
   -*,
   clang-analyzer-*,
@@ -10,7 +11,9 @@ Checks: >
   -readability-implicit-bool-conversion,
   -readability-identifier-length,
   -cppcoreguidelines-pro-bounds-constant-array-index,
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-macro-to-enum,
+  -misc-header-include-cycle
 
 
 WarningsAsErrors: '*'

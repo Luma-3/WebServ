@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 10:57:31 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:49:12 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,9 @@ Action &Action::operator=(const Action &src)
 void Action::Shift(Token *token, std::stack< Token * > &stack,
 				   Parser &parser) const
 {
-	stack.push(token);
+	Token *currentToken = new Token(*token);
+
+	stack.push(currentToken);
 	parser.setState(_next_state);
 }
 
@@ -68,20 +70,27 @@ void Action::Reduce(Token *token, std::stack< Token * > &stack,
 	_rule_func(stack);
 }
 
-void Action::Execute(Token *token, std::stack< Token * > &stack,
-					 Parser &parser) const
+int Action::Execute(Token *token, std::stack< Token * > &stack,
+					Parser &parser) const
 {
 	if (_type == SHIFT) {
 		Shift(token, stack, parser);
 	} else if (_type == REDUCE) {
 		Reduce(token, stack, parser);
 	} else if (_type == ERROR) {
-		std::cout << "Error" << std::endl;
-		throw std::exception();
+		return (2);
 	}
+	return (0);
 }
 
 Action::~Action() {}
+
+void deleteTmp(std::vector< Token * > &tokens)
+{
+	for (size_t i = 0; i < tokens.size(); ++i) {
+		delete tokens[i];
+	}
+}
 
 void R1(std::stack< Token * > &stack)
 {
@@ -102,7 +111,7 @@ void R1(std::stack< Token * > &stack)
 	}
 
 	statement::Server *server = new statement::Server(params);
-
+	deleteTmp(tokens);
 	stack.push(server);
 }
 
@@ -117,6 +126,7 @@ void R2(std::stack< Token * > &stack)
 
 	statement::Param *param =
 		new statement::Param(tokens[1]->getValue(), tokens[3]->getTerminal());
+	deleteTmp(tokens);
 
 	stack.push(param);
 }
@@ -140,6 +150,7 @@ void R3(std::stack< Token * > &stack)
 	}
 
 	statement::DenyMethod *deniedMethod = new statement::DenyMethod(method);
+	deleteTmp(tokens);
 
 	stack.push(deniedMethod);
 }
@@ -164,6 +175,7 @@ void R4(std::stack< Token * > &stack)
 	}
 
 	statement::ErrorPage *error = new statement::ErrorPage(errorCode, value);
+	deleteTmp(tokens);
 
 	stack.push(error);
 }
@@ -183,6 +195,7 @@ void R5(std::stack< Token * > &stack)
 
 	statement::ReturnParam *returnParam =
 		new statement::ReturnParam(code, value);
+	deleteTmp(tokens);
 
 	stack.push(returnParam);
 }
@@ -208,6 +221,7 @@ void R6(std::stack< Token * > &stack)
 	}
 
 	statement::Location *location = new statement::Location(params, value);
+	deleteTmp(tokens);
 
 	stack.push(location);
 }
