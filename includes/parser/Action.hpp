@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:20:06 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:42:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "Parser.hpp"
 
 namespace parser {
+
 class Parser;
 
 #define NB_ACTIONS 80

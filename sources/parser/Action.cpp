@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:17:55 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:42:26 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void deleteTmp(std::vector< Token * > &tokens)
 	}
 }
 
-void R1(std::stack< Token * > &stack)
+void parser::R1(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
 	Token				  *currentToken = stack.top();
@@ -122,7 +122,7 @@ void R1(std::stack< Token * > &stack)
 	stack.push(server);
 }
 
-void R2(std::stack< Token * > &stack)
+void parser::R2(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
 
@@ -138,7 +138,7 @@ void R2(std::stack< Token * > &stack)
 	stack.push(param);
 }
 
-void R3(std::stack< Token * > &stack)
+void parser::R3(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
 	Token				  *currentToken = stack.top();
@@ -165,7 +165,7 @@ void R3(std::stack< Token * > &stack)
 	stack.push(deniedMethod);
 }
 
-void R4(std::stack< Token * > &stack)
+void parser::R4(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
 	Token				  *currentToken = stack.top();
@@ -193,7 +193,7 @@ void R4(std::stack< Token * > &stack)
 	stack.push(error);
 }
 
-void R5(std::stack< Token * > &stack)
+void parser::R5(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
 	Token				  *currentToken = stack.top();
@@ -216,7 +216,7 @@ void R5(std::stack< Token * > &stack)
 	stack.push(returnParam);
 }
 
-void R6(std::stack< Token * > &stack)
+void parser::R6(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
 	Token				  *currentToken = stack.top();
