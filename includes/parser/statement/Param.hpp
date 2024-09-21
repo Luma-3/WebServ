@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:27:58 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 19:17:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 11:42:15 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ namespace statement {
 class Param : public Token
 {
   private:
-	const std::string _value;
+	std::string _value;
 
   public:
 	Param();

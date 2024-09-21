@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/20 16:21:05 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:20:06 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "lexer/Token.hpp"
 #include "Parser.hpp"
 
+namespace parser {
 class Parser;
 
 #define NB_ACTIONS 80
@@ -146,6 +147,8 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 	{Action(REDUCE, 31, R5),	 51, T_Semi_Colon},
 	{Action(ERROR,  -1, NULL), -1, T_None		},
 };
+
+} // namespace parser
 
 #include "ToString.tpp"
 

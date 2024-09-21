@@ -6,13 +6,21 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/20 16:39:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:28:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/Parser.hpp"
 
+#include <cstddef>
+#include <stack>
+#include <vector>
+
+#include "lexer/Token.hpp"
 #include "parser/Action.hpp"
+
+using parser::Action;
+using parser::Parser;
 
 Parser::Parser() : _status(0) {};
 
@@ -42,31 +50,42 @@ const std::stack< Token * > &Parser::getParseStack() const
 	return _parse_stack;
 }
 
-static Action findAction(int state, Terminal_Type terminal)
+/**
+ * This namespace is used to hide the findAction and findExpected functions
+ * is more appropriate to use a namespace than a static keyword in modern C++
+ * (cpp98 is ok with this)
+ */
+namespace {
+
+Action findAction(int state, Terminal_Type terminal)
 {
 	for (size_t i = 0; i < NB_ACTIONS; ++i) {
-		if (g_action[i].state == state && g_action[i].terminal == terminal) {
-			return g_action[i].action;
+		if (parser::g_action[i].state == state &&
+			parser::g_action[i].terminal == terminal) {
+			return parser::g_action[i].action;
 		}
 	}
-	return g_action[NB_ACTIONS - 1].action;
+	return parser::g_action[NB_ACTIONS - 1].action;
 }
 
-static struct ActionEntry findExpected(int state)
+struct parser::ActionEntry findExpected(int state)
 {
 	for (size_t i = 0; i < NB_ACTIONS; ++i) {
-		if (g_action[i].state == state) {
-			return g_action[i];
+		if (parser::g_action[i].state == state) {
+			return (parser::g_action[i]);
 		}
 	}
-	return g_action[NB_ACTIONS - 1];
+	return (parser::g_action[NB_ACTIONS - 1]);
 }
+
+} // namespace
 
 void Parser::Parse()
 {
 	for (size_t i = 0; i < _tokens.size(); ++i) {
-		Token *token = _tokens[i];
-		Action action = findAction(_status, token->getTerminal());
+		Token		*token = _tokens[i];
+		const Action action = findAction(_status, token->getTerminal());
+
 		if (action.Execute(token, _parse_stack, *this) == ERROR) {
 			throw InvalidTokenException(
 				token->getCol(), token->getLine(), token->getValue(),

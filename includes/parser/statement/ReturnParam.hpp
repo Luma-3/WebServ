@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:38:58 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 11:05:58 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 11:42:19 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ namespace statement {
 class ReturnParam : public Token
 {
   private:
-	const std::string _error_code;
-	const std::string _value;
+	std::string _error_code;
+	std::string _value;
 
   public:
 	ReturnParam();

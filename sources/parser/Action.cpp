@@ -6,15 +6,17 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/20 16:49:12 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:17:55 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/Action.hpp"
 
-#include <iostream>
+#include <cstddef>
+#include <cstdlib>
 #include <stack>
 #include <string>
+#include <vector>
 
 #include "lexer/Token.hpp"
 #include "parser/Parser.hpp"
@@ -24,6 +26,8 @@
 #include "parser/statement/Param.hpp"
 #include "parser/statement/ReturnParam.hpp"
 #include "parser/statement/Server.hpp"
+
+using parser::Action;
 
 // TODO : clean useless includes
 
@@ -95,12 +99,15 @@ void deleteTmp(std::vector< Token * > &tokens)
 void R1(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
+	Token				  *currentToken = stack.top();
+	stack.pop();
 
-	do {
-		tokens.push_back(stack.top());
+	while (!Token::IsKey(*currentToken) ||
+		   currentToken->getType() != S_Terminal) {
+		tokens.push_back(currentToken);
+		currentToken = stack.top();
 		stack.pop();
-	} while (!Token::IsKey(*tokens.back()) ||
-			 tokens.back()->getType() != S_Terminal);
+	}
 
 	std::vector< Token * > params;
 
@@ -134,11 +141,14 @@ void R2(std::stack< Token * > &stack)
 void R3(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
+	Token				  *currentToken = stack.top();
+	stack.pop();
 
-	do {
-		tokens.push_back(stack.top());
+	while (!Token::IsKey(*currentToken)) {
+		tokens.push_back(currentToken);
+		currentToken = stack.top();
 		stack.pop();
-	} while (!Token::IsKey(*tokens.back()));
+	}
 
 	std::vector< std::string > method;
 
@@ -158,13 +168,16 @@ void R3(std::stack< Token * > &stack)
 void R4(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
+	Token				  *currentToken = stack.top();
+	stack.pop();
 
-	do {
-		tokens.push_back(stack.top());
+	while (!Token::IsKey(*currentToken)) {
+		tokens.push_back(currentToken);
+		currentToken = stack.top();
 		stack.pop();
-	} while (!Token::IsKey(*tokens.back()));
+	}
 
-	std::string				   value = tokens[1]->getValue();
+	const std::string		   value = tokens[1]->getValue();
 	std::vector< std::string > errorCode;
 
 	for (size_t i = 3; i < tokens.size(); i += 2) {
@@ -183,15 +196,18 @@ void R4(std::stack< Token * > &stack)
 void R5(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
+	Token				  *currentToken = stack.top();
+	stack.pop();
 
-	do {
-		tokens.push_back(stack.top());
+	while (!Token::IsKey(*currentToken)) {
+		tokens.push_back(currentToken);
+		currentToken = stack.top();
 		stack.pop();
-	} while (!Token::IsKey(*tokens.back()));
+	}
 
-	std::string value = tokens[1]->getValue();
+	const std::string value = tokens[1]->getValue();
 
-	std::string code = tokens[3]->getValue();
+	const std::string code = tokens[3]->getValue();
 
 	statement::ReturnParam *returnParam =
 		new statement::ReturnParam(code, value);
@@ -203,14 +219,17 @@ void R5(std::stack< Token * > &stack)
 void R6(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
+	Token				  *currentToken = stack.top();
+	stack.pop();
 
-	do {
-		tokens.push_back(stack.top());
+	while (!Token::IsKey(*currentToken) ||
+		   currentToken->getType() != S_Terminal) {
+		tokens.push_back(currentToken);
+		currentToken = stack.top();
 		stack.pop();
-	} while (!Token::IsKey(*tokens.back()) ||
-			 tokens.back()->getType() != S_Terminal);
+	}
 
-	std::string value = tokens[tokens.size() - 1]->getValue();
+	const std::string value = tokens[tokens.size() - 1]->getValue();
 
 	std::vector< Token * > params;
 

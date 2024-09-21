@@ -6,11 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:35:39 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 16:22:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 10:55:40 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/statement/ReturnParam.hpp"
+
+#include "lexer/Token.hpp"
 
 using statement::ReturnParam;
 

@@ -6,11 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 11:20:36 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 16:47:06 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:34:55 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/statement/ErrorPage.hpp"
+
+#include "lexer/Token.hpp"
 
 using statement::ErrorPage;
 
@@ -35,6 +37,8 @@ ErrorPage &ErrorPage::operator=(const ErrorPage &src)
 {
 	if (this != &src) {
 		Token::operator=(src);
+		_error_code = src._error_code;
+		_value = src._value;
 	}
 	return *this;
 }

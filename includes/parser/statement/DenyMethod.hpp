@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:29:39 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 12:20:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 11:42:01 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ namespace statement {
 class DenyMethod : public Token
 {
   private:
-	const std::vector< std::string > _methods;
+	std::vector< std::string > _methods;
 
   public:
 	DenyMethod();

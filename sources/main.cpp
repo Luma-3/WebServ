@@ -6,18 +6,17 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 12:48:29 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:17:25 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cerrno>
 #include <cstdlib>
+#include <exception>
 #include <iostream>
-#include <istream>
 
 #include "lexer/Lexer.hpp"
 #include "parser/Parser.hpp"
-#include "parser/statement/Server.hpp"
 
 using std::cerr;
 using std::endl;
@@ -33,7 +32,7 @@ int StartWebServ(const int ac, const char **av)
 		Lexer Lexer(av[1]);
 		Lexer.Tokenize();
 
-		Parser parser(Lexer.getTokens());
+		parser::Parser parser(Lexer.getTokens());
 		parser.Parse();
 	} catch (const std::exception &e) {
 		cerr << e.what() << endl;
@@ -44,7 +43,7 @@ int StartWebServ(const int ac, const char **av)
 
 int main(const int ac, const char **av)
 {
-	int ret = StartWebServ(ac, av);
+	const int ret = StartWebServ(ac, av);
 	if (ret != 0) {
 		return (ret);
 	}

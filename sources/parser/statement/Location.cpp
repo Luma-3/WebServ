@@ -6,12 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 10:11:39 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:35:50 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/statement/Location.hpp"
 
+#include "lexer/Token.hpp"
 #include "parser/statement/DenyMethod.hpp"
 #include "parser/statement/Param.hpp"
 
@@ -30,27 +31,6 @@ Location::Location(const Location &src) :
 	_deny_methods(src._deny_methods),
 	_error_pages(src._error_pages)
 {
-}
-
-void Location::IdentifyParam(Token *token)
-{
-	Param *param = dynamic_cast< Param * >(token);
-	switch (param->getTerminal()) {
-		case T_Root:
-			_root = param->getValue();
-			break;
-		case T_Index:
-			_index = param->getValue();
-			break;
-		case T_AutoIndex:
-			_autoindex = Param::ConvertBool(param->getValue());
-			break;
-		case T_Return:
-			_return = param->getValue();
-			break;
-		default:
-			break;
-	}
 }
 
 Location::Location(const std::vector< Token * > &tokens,
@@ -74,6 +54,7 @@ Location::Location(const std::vector< Token * > &tokens,
 				<< "Error: Location::Location(const std::vector< Token * > "
 				   "&tokens) - Unknown token type"
 				<< std::endl;
+
 			// TODO : throw exception
 		}
 	}
@@ -91,6 +72,27 @@ Location &Location::operator=(const Location &src)
 		_error_pages = src._error_pages;
 	}
 	return *this;
+}
+
+void Location::IdentifyParam(Token *token)
+{
+	Param *param = dynamic_cast< Param * >(token);
+	switch (param->getTerminal()) {
+		case T_Root:
+			_root = param->getValue();
+			break;
+		case T_Index:
+			_index = param->getValue();
+			break;
+		case T_AutoIndex:
+			_autoindex = Param::ConvertBool(param->getValue());
+			break;
+		case T_Return:
+			_return = param->getValue();
+			break;
+		default:
+			break;
+	}
 }
 
 Location::~Location() {}
