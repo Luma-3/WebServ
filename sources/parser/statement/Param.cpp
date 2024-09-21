@@ -6,11 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:44:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 13:44:28 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 10:55:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/statement/Param.hpp"
+
+#include "lexer/Token.hpp"
 
 using statement::Param;
 using std::string;

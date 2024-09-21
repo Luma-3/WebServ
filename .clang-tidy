@@ -13,7 +13,11 @@ Checks: >
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-macro-to-enum,
-  -misc-header-include-cycle
+  -misc-header-include-cycle,
+  -performance-avoid-endl,
+  -bugprone-easily-swappable-parameters,
+  -misc-include-cleaner
+
 
 
 WarningsAsErrors: '*'

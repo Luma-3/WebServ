@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 10:05:16 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 10:55:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <iostream>
 
+#include "lexer/Token.hpp"
 #include "parser/statement/DenyMethod.hpp"
 #include "parser/statement/ErrorPage.hpp"
 #include "parser/statement/Location.hpp"

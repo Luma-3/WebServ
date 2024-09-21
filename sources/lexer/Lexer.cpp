@@ -6,14 +6,11 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/20 16:42:49 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:33:54 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer/Lexer.hpp"
-
-#include <iostream>
-#include <string>
 
 #include "lexer/Token.hpp"
 
@@ -28,12 +25,12 @@ Lexer::Lexer(const Lexer &other) : _line(other._line), _col(other._col) {}
 
 Lexer::Lexer(const char *file_path) : _line(0), _col(0)
 {
-	string file_path_str(file_path);
-	size_t pos = file_path_str.find_last_of('.');
+	const string file_path_str(file_path);
+	const size_t pos = file_path_str.find_last_of('.');
 	if (pos == string::npos) {
 		throw InvalidFileExtensionException(string("None"));
 	}
-	string extention = file_path_str.substr(pos + 1);
+	const string extention = file_path_str.substr(pos + 1);
 	if (extention != "conf") {
 		throw InvalidFileExtensionException(extention);
 	}
@@ -84,10 +81,10 @@ Token *Lexer::CreateToken(size_t frontIT, size_t backIT,
 						  const string &line) const
 {
 
-	size_t size = frontIT - backIT + 1;
-	string value(line, backIT, size);
+	const size_t size = frontIT - backIT + 1;
+	const string value(line, backIT, size);
 
-	Terminal_Type type = Token::IdentifyTerminal(value);
+	const Terminal_Type type = Token::IdentifyTerminal(value);
 
 	Token *token = new Token(value, type, _line, _col);
 

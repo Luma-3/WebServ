@@ -6,15 +6,14 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/20 16:03:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:34:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer/Token.hpp"
 
 #include <iomanip>
-
-using std::string;
+#include <string>
 
 // Constructors
 
@@ -96,7 +95,7 @@ size_t Token::getCol() const
 
 bool Token::IsKey(const Token &token)
 {
-	Terminal_Type type = token.getTerminal();
+	const Terminal_Type type = token.getTerminal();
 
 	if (type <= T_AccessLog && type >= T_Server) {
 		return (true);
@@ -104,7 +103,7 @@ bool Token::IsKey(const Token &token)
 	return (false);
 }
 
-Terminal_Type Token::IdentifyTerminal(const string &value)
+Terminal_Type Token::IdentifyTerminal(const std::string &value)
 {
 	static const int		 size_key = 12;
 	static const IdentifyKey key[size_key] = {
@@ -146,7 +145,7 @@ Terminal_Type Token::IdentifyTerminal(const string &value)
 		}
 	}
 
-	char c = *value.c_str();
+	const char c = *value.c_str();
 	switch (c) {
 		case ',':
 			return (T_Comma);

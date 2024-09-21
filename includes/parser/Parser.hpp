@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/20 16:21:23 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:17:21 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include "Action.hpp"
 #include "lexer/Token.hpp"
 
+namespace parser {
 class Parser
 {
   private:
@@ -63,5 +64,6 @@ class Parser
 		virtual ~InvalidTokenException() throw();
 	};
 };
+} // namespace parser
 
 #endif // PARSER_HPP

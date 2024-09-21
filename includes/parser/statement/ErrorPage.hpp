@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:38:58 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 16:48:36 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 13:39:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ namespace statement {
 class ErrorPage : public Token
 {
   private:
-	const std::vector< std::string > _error_code;
-	const std::string				 _value;
+	std::vector< std::string > _error_code;
+	std::string				   _value;
 
   public:
 	ErrorPage();

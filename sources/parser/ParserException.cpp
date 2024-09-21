@@ -6,11 +6,15 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 16:19:55 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/20 16:30:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:32:24 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/Parser.hpp"
+
+#
+
+using parser::Parser;
 
 Parser::InvalidTokenException::InvalidTokenException(
 	size_t _col, size_t _line, const std::string &value,
