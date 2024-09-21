@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:35:50 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:46:11 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,7 @@
 #include "parser/statement/DenyMethod.hpp"
 #include "parser/statement/Param.hpp"
 
-using statement::DenyMethod;
 using statement::Location;
-using statement::Param;
 
 Location::Location() : Token(S_Location), _autoindex(false) {}
 
