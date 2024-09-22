@@ -6,7 +6,7 @@
 /*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/09/18 22:49:39 by jdufour          ###   ########.fr       */
+/*   Updated: 2024/09/22 18:36:39 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,14 +73,14 @@ int Handler::launchServers()
 		return (FAILURE);
 	}
 
-	for (std::vector<Server *>::iterator it = _servers.begin(); it < _servers.end(); ++it) {
+	for (std::vector<Server *>::iterator it = _servers.begin();
+		 it < _servers.end(); ++it) {
 		(*it)->createSocket();
 		(*it)->setSocket();
 		struct epoll_event event;
 		event.events = EPOLLIN;
 		event.data.fd = (*it)->getSocket();
-		if (epoll_ctl(_epfd, EPOLL_CTL_ADD, (*it)->getSocket(), &event) ==
-			-1) {
+		if (epoll_ctl(_epfd, EPOLL_CTL_ADD, (*it)->getSocket(), &event) == -1) {
 			std::cerr << "Error on epoll_ctl" << std::endl;
 			return (FAILURE);
 		}
@@ -104,7 +104,8 @@ int Handler::handleEvents()
 				for (std::vector<Server *>::iterator it = _servers.begin();
 					 it < _servers.end(); ++it) {
 					if (events[i].data.fd == (*it)->getSocket()) {
-						(*it)->HandleConnexion();
+						(*it)->receiveRequest();
+						(*it)->sendResponse();
 						break;
 					}
 				}

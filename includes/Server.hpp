@@ -6,7 +6,7 @@
 /*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 22:49:45 by jdufour          ###   ########.fr       */
+/*   Updated: 2024/09/22 18:38:05 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,21 +35,24 @@ class Server
 	const std::string _port;
 	const int		  _server_socket;
 	int				  _new_socket;
+	int				  _nb_bytes;
+	std::string		  _request;
 	struct addrinfo	 *_info;
-	char			 *_request;
 
   public:
 	Server(std::string servername, std::string hostname, std::string port);
 
 	int			getSocket() const;
+	int			getNbBytes() const;
 	std::string getName() const;
 	std::string getHost() const;
 	std::string getPort() const;
-	char	   *getRequest() const;
+	std::string getRequest() const;
 
 	int createSocket();
-	int	setSocket();
-	int HandleConnexion();
+	int setSocket();
+	int receiveRequest();
+	int sendResponse();
 
 	~Server();
 };
