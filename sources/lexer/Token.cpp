@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:34:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 10:55:10 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,9 @@ Token &Token::operator=(const Token &src)
 	if (this != &src) {
 		this->_type = src._type;
 		this->_value = src._value;
+		this->_terminal = src._terminal;
+		this->_line = src._line;
+		this->_col = src._col;
 	}
 	return (*this);
 }
@@ -218,9 +221,10 @@ std::ostream &operator<<(std::ostream &os, const Token &token)
 {
 	const std::string &value = token.getValue();
 
-	os << std::setw(SIZE_FORMAT) << std::left << (value.size() <= SIZE_FORMAT)
-		? value
-		: value.substr(0, SIZE_FORMAT - 1) + ".";
+	os << std::setw(SIZE_FORMAT) << std::left
+	   << ((value.size() <= SIZE_FORMAT)
+			   ? value
+			   : value.substr(0, SIZE_FORMAT - 1) + ".");
 	os << " | ";
 	os << std::left << "term: " << std::setw(SIZE_FORMAT) << token.getTerminal()
 	   << " | ";

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:28:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 12:43:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,16 @@ void Parser::setState(int state)
 const std::stack< Token * > &Parser::getParseStack() const
 {
 	return _parse_stack;
+}
+
+const std::vector< Token * > &Parser::getTokens() const
+{
+	return _tokens;
+}
+
+const int &Parser::getState() const
+{
+	return _status;
 }
 
 /**

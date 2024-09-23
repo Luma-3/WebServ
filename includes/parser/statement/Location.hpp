@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:03:20 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 11:42:12 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 13:08:44 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,9 @@ class Location : public Token
 	{
 		return _error_pages;
 	}
+
+	bool operator==(const Location &rhs) const;
+	bool operator!=(const Location &rhs) const;
 
   private:
 	void IdentifyParam(Token *token);
