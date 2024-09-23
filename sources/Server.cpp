@@ -3,31 +3,62 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/22 18:38:31 by jdufour          ###   ########.fr       */
+/*   Updated: 2024/09/23 14:52:15 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
-Server::Server(std::string servername, std::string hostname, std::string port) :
+#define MAXREQEST 10
+
+Server::Server() : _server_socket(-1), _new_socket(0), _nb_bytes(0), _info() {}
+
+Server::Server(const std::string &servername, const std::string &hostname,
+			   const std::string &port) :
 	_name(servername),
 	_hostname(hostname),
 	_port(port),
-	_server_socket(socket(AF_INET, SOCK_STREAM, 0))
+	_server_socket(socket(AF_INET, SOCK_STREAM, 0)),
+	_new_socket(0),
+	_nb_bytes(0),
+	_info()
 {
 }
 
-int Server::getNbBytes() const
+Server::Server(const Server &src) :
+	_name(src._name),
+	_hostname(src._hostname),
+	_port(src._port),
+	_server_socket(src._server_socket),
+	_new_socket(src._new_socket),
+	_nb_bytes(src._nb_bytes),
+	_request(src._request),
+	_info(src._info)
 {
-	return (_nb_bytes);
+}
+
+Server &Server::operator=(const Server &src)
+{
+	if (this != &src) {
+		_new_socket = src._new_socket;
+		_nb_bytes = src._nb_bytes;
+		_request = src._request;
+		_info = src._info;
+	}
+	return (*this);
 }
 
 int Server::getSocket() const
 {
 	return (_server_socket);
+}
+
+int Server::getNbBytes() const
+{
+	return (_nb_bytes);
 }
 
 std::string Server::getName() const
@@ -90,7 +121,7 @@ int Server::setSocket()
 		std::cerr << _name << ": bind failed on " << _name << std::endl;
 		return (FAILURE);
 	}
-	if (listen(_server_socket, 10) == -1) {
+	if (listen(_server_socket, MAXREQEST) == -1) {
 		return (FAILURE);
 	}
 	return (SUCCESS);
@@ -106,15 +137,14 @@ int Server::receiveRequest()
 				  << std::endl;
 		return (FAILURE);
 	}
-	while (42) {
+	while (true) {
 		for (int i = 0; i < MAX_REQ_SIZE; ++i) {
 			buff[i] = 0;
 		}
-		_nb_bytes = recv(_new_socket, buff, MAX_REQ_SIZE, 0);
+		_nb_bytes = static_cast<int>(recv(_new_socket, buff, MAX_REQ_SIZE, 0));
 		if (_nb_bytes == -1 && (errno != EAGAIN && errno != EWOULDBLOCK)) {
 			std::cerr << "Error on recv on " << _name << std::endl;
 			close(_new_socket);
-			return (FAILURE);
 		} else if (_nb_bytes == 0) {
 			std::cout << "client disconnected on " << _name << std::endl;
 			close(_new_socket);
@@ -132,9 +162,11 @@ int Server::sendResponse()
 	// the following is to replace with the response constructor
 	if (_nb_bytes > 0) {
 		std::cout << _request << std::endl;
-		char repTest[110] = "HTTP/1.1 200 OK\nDate: Mon, 09 Sep 2024 12:00:00 "
-							"GMT\nContent-Length: 13\nConnection: "
-							"keep-alive\n\nca marche!!!!\n";
+		const int rep_size = 110;
+		char	  repTest[rep_size] =
+			"HTTP/1.1 200 OK\nDate: Mon, 09 Sep 2024 12:00:00 "
+			"GMT\nContent-Length: 13\nConnection: "
+			"keep-alive\n\nca marche!!!!\n";
 		if (send(_new_socket, repTest, strlen(repTest), 0) == -1) {
 			std::cerr << "Error on sending response on " << _name << std::endl;
 			return (FAILURE);

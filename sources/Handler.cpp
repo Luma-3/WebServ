@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/09/22 18:36:39 by jdufour          ###   ########.fr       */
+/*   Updated: 2024/09/23 14:53:00 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 volatile int g_sig = 0;
 
-Handler::Handler() : _nbServ(0) {}
+Handler::Handler() : _nbServ(0), _epfd(-1) {}
 
 // void	Handler::loadServ()
 // {
@@ -34,13 +34,16 @@ Handler::Handler() : _nbServ(0) {}
 // 	}
 // }
 
-Handler::Handler(const Handler &src)
+Handler::Handler(const Handler &src) : _nbServ(src._nbServ), _epfd(src._epfd)
 {
 	*this = src;
 }
 
 Handler &Handler::operator=(const Handler &rhs)
 {
+	if (this == &rhs) {
+		return (*this);
+	}
 	this->_epfd = epoll_create1(0);
 	this->_nbServ = rhs._nbServ;
 	this->_epfd = rhs._epfd;
@@ -77,9 +80,8 @@ int Handler::launchServers()
 		 it < _servers.end(); ++it) {
 		(*it)->createSocket();
 		(*it)->setSocket();
-		struct epoll_event event;
-		event.events = EPOLLIN;
-		event.data.fd = (*it)->getSocket();
+		struct epoll_event event = {.events = EPOLLIN,
+									.data = {.fd = (*it)->getSocket()}};
 		if (epoll_ctl(_epfd, EPOLL_CTL_ADD, (*it)->getSocket(), &event) == -1) {
 			std::cerr << "Error on epoll_ctl" << std::endl;
 			return (FAILURE);
@@ -124,6 +126,7 @@ int Handler::handleEvents()
 
 Handler::~Handler()
 {
-	for (int i = 0; i < _nbServ; ++i)
+	for (int i = 0; i < _nbServ; ++i) {
 		delete _servers[i];
+	}
 }

@@ -2,16 +2,22 @@ Checks: >
   -*,
   clang-analyzer-*,
   bugprone-*,
-  modernize-*,
   readability-*,
   performance-*,
-  hicpp-*,
   cppcoreguidelines-*,
   misc-*,
   -readability-implicit-bool-conversion,
   -readability-identifier-length,
   -cppcoreguidelines-pro-bounds-constant-array-index,
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-macro-to-enum,
+  -misc-header-include-cycle,
+  -performance-avoid-endl,
+  -bugprone-easily-swappable-parameters,
+  -misc-include-cleaner,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-type-vararg
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

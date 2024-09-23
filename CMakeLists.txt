@@ -2,12 +2,16 @@ cmake_minimum_required(VERSION 3.5)
 
 project(WebServ CXX)
 
-add_compile_options(-g3 -Wextra -Wall -Werror -Wunused -Wshadow)
+add_subdirectory(externals/googletest)
 
-include_directories(./includes)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wextra -Wall -Werror -Wunused -Wshadow")
+
+include_directories(includes)
 
 set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(WebServ 
 		sources/main.cpp
@@ -16,6 +20,8 @@ add_executable(WebServ
 		sources/Signal.cpp
 		)
 
-add_subdirectory(externals/googletest)
+
+target_include_directories(WebServ PRIVATE includes)
+
 
 add_subdirectory(tests)

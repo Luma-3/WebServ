@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Signal.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 21:27:56 by jdufour           #+#    #+#             */
-/*   Updated: 2024/09/18 22:49:34 by jdufour          ###   ########.fr       */
+/*   Updated: 2024/09/23 14:48:58 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void handler(int signum)
 {
 	if (signum == SIGINT) {
-		g_sig = 130;
+		g_sig = SIGINT;
 	}
 }
 

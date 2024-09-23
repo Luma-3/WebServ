@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/22 18:38:05 by jdufour          ###   ########.fr       */
+/*   Updated: 2024/09/23 14:51:13 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,11 @@ class Server
 	struct addrinfo	 *_info;
 
   public:
-	Server(std::string servername, std::string hostname, std::string port);
+	Server();
+	Server(const std::string &servername, const std::string &hostname,
+		   const std::string &port);
+	Server(const Server &src);
+	Server &operator=(const Server &src);
 
 	int			getSocket() const;
 	int			getNbBytes() const;
