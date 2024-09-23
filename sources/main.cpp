@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:19:07 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 22:49:38 by jdufour          ###   ########.fr       */
+/*   Updated: 2024/09/23 15:05:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Handler.hpp"
-#include "../includes/Server.hpp"
-#include "../includes/Signal.hpp"
+#include "Handler.hpp"
+#include "Server.hpp"
+#include "Signal.hpp"
 
 int main(void)
 {

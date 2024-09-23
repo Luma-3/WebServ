@@ -6,13 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/09/23 14:53:00 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:05:26 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Handler.hpp"
+#include "Handler.hpp"
 
-#include "../includes/Signal.hpp"
+#include "Signal.hpp"
 
 volatile int g_sig = 0;
 
