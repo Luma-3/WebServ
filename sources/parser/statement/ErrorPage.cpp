@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 11:20:36 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 13:09:20 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:15:59 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,7 @@ bool ErrorPage::operator==(const ErrorPage &rhs) const
 			return false;
 		}
 	}
-	if (_value != rhs._value) {
-		return false;
-	}
-	return true;
+	return (_value == rhs._value);
 }
 
 bool ErrorPage::operator!=(const ErrorPage &rhs) const

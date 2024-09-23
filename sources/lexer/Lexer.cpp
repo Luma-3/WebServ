@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 11:41:54 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:13:30 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ Lexer::Lexer(const char *file_path) : _line(0), _col(0)
 
 	_config_file.open(file_path);
 
-	struct stat buffer;
+	struct stat buffer = {};
 	if (!_config_file.is_open() ||
 		(stat(file_path, &buffer) == 0 && buffer.st_mode & S_IFDIR)) {
 		throw FileNotOpenException(file_path);
