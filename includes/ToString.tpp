@@ -1,26 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Test.cpp                                           :+:      :+:    :+:   */
+/*   ToString.tpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 14:25:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/06 16:24:09 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/20 16:10:53 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/20 16:16:29 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <gtest/gtest.h>
+#include <sstream>
 
-
-TEST(Parsing, truc)
+template < typename T > std::string ToString(const T &value)
 {
-	EXPECT_EQ(1, 1);
-}
-
-
-int main(void)
-{
-	::testing::InitGoogleTest();
-	return RUN_ALL_TESTS();
-}
+	std::stringstream ss;
+	ss << value;
+	return ss.str();
+};

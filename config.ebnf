@@ -1,0 +1,46 @@
+Config		= [ ServerBlock ]
+
+ServerBlock = 'server' '{' [ ServerParam ] '}'
+ServerParam = 	LocationBlock
+				|	PortParam
+				|	HostParam
+				|	ErrorPageParam
+				|	LogParam
+				|	RootParam
+				|	AutoindexParam
+				|	DenyMethodParam
+				|	ReturnParam
+				|	IndexParam
+
+LocationBlock = 'location' path '{' [ LocationParam ] '}'
+LocationParam =	RootParam
+				|	IndexParam
+				|	ErrorPageParam
+				|	AutoindexParam
+				|	DenyMethodParam
+				|	ReturnParam
+
+PortParam		= 'port' '=' value_port ';'
+HostParam		= 'host' '=' value_host ';'
+ErrorPageParam	= 'error_page' '='  error_code | [ error_code ',' ] ':' file_path ';'
+DenyMethodParam	= 'deny_method' '=' method | [ method ',' ] ';'
+RootParam		= 'root' '=' path ';'
+IndexParam		= 'index' '=' file_name ';'
+LogParam		= 'error_log' '=' file_path ';' | 'access_log' '=' file_path ';'
+
+autoindexParam	= 'autoindex' '=' bool ';'
+
+ReturnParam		= 'return' '=' error_code ':' value ';'
+
+
+value_port 		= [0-9]+
+value_host		= @[a-zA-Z0-9.-]+
+error_code 	= [0-9]+3
+file_path	= /[a-zA-Z0-9/._-]+
+path		= /[a-zA-Z0-9/_-]+/
+file_name	= [a-zA-Z0-9._-]+
+method		= 'GET' | 'POST' | 'DELETE'
+bool		= 'on' | 'off'
+value		= [a-zA-Z0-9/._-:]+
+
+/var/

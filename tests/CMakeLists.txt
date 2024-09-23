@@ -1,11 +1,29 @@
 enable_testing()
 
-add_executable(exemple_test Test.cpp)
+add_executable(TokenizeTest tokenize/TestTokenize.cpp
+							../sources/lexer/LexerException.cpp
+							../sources/lexer/Lexer.cpp
+							../sources/lexer/Token.cpp
+							../sources/lexer/regex.cpp)
 
-# include_directories(../externals/googletest/googletest/include)
+target_link_libraries(TokenizeTest gtest gtest_main)
 
-# add_dependencies(exemple_test gtest)
+add_test(NAME Tokenize_Test COMMAND ./TokenizeTest)
 
-target_link_libraries(exemple_test gtest gtest_main)
+add_executable(ParserTest	parser/TestParser.cpp
+							../sources/parser/Parser.cpp
+							../sources/parser/Action.cpp
+							../sources/parser/ParserException.cpp
+							../sources/parser/statement/DenyMethod.cpp
+							../sources/parser/statement/ErrorPage.cpp
+							../sources/parser/statement/Location.cpp
+							../sources/parser/statement/Param.cpp
+							../sources/parser/statement/ReturnParam.cpp
+							../sources/parser/statement/Server.cpp
+							../sources/lexer/Token.cpp
+							../sources/lexer/regex.cpp
+)
 
-add_test(NAME Test_name COMMAND exemple_test)
+target_link_libraries(ParserTest gtest gtest_main)
+
+add_test(NAME ParserTest COMMAND ./ParserTest)

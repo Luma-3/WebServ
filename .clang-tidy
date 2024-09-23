@@ -1,3 +1,5 @@
+HeaderFilterRegex: '.*'
+
 Checks: >
   -*,
   clang-analyzer-*,
@@ -21,5 +23,5 @@ Checks: >
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
-
+FormatStyle: file
 
