@@ -16,9 +16,12 @@ Checks: >
   -misc-header-include-cycle,
   -performance-avoid-endl,
   -bugprone-easily-swappable-parameters,
-  -misc-include-cleaner
-
-
+  -misc-include-cleaner,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-type-vararg
 
 WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
 FormatStyle: file
+

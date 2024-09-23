@@ -6,12 +6,12 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:04:03 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 12:55:34 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:56:00 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-#define SERVER_HPP
+#ifndef SERVERSTATEMENT_HPP
+#define SERVERSTATEMENT_HPP
 
 #include <ostream>
 #include <vector>
@@ -90,4 +90,4 @@ class Server : public Token
 
 std::ostream &operator<<(std::ostream &o, const statement::Server &server);
 
-#endif // SERVERCONFIG_HPP
+#endif // SERVERSTATEMENT_HPP

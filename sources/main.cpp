@@ -5,16 +5,21 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 14:15:39 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/09 12:19:07 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/23 15:05:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include <cerrno>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
 
+  
+#include "Handler.hpp"
+#include "Server.hpp"
+#include "Signal.hpp"
 #include "lexer/Lexer.hpp"
 #include "parser/Parser.hpp"
 #include "parser/statement/Server.hpp"
@@ -69,4 +74,14 @@ int main(const int ac, const char **av)
 	// 	std::cout << *server << std::endl;
 	// 	stack.pop();
 	// }
+  
+  	Handler serverVect = Handler();
+	serverVect.loadServTest();
+	if (serverVect.launchServers()) {
+		return (1);
+	}
+
+	serverVect.handleEvents();
+  
+  return 0;
 }

@@ -6,6 +6,8 @@
 		"bit": "cpp",
 		"*.tcc": "cpp",
 		"cctype": "cpp",
+
+		"charconv": "cpp",
 		"chrono": "cpp",
 		"clocale": "cpp",
 		"cmath": "cpp",
@@ -27,6 +29,7 @@
 		"list": "cpp",
 		"map": "cpp",
 		"set": "cpp",
+		"string": "cpp",
 		"unordered_map": "cpp",
 		"unordered_set": "cpp",
 		"vector": "cpp",
@@ -40,12 +43,12 @@
 		"optional": "cpp",
 		"random": "cpp",
 		"ratio": "cpp",
-		"string": "cpp",
 		"string_view": "cpp",
 		"system_error": "cpp",
 		"tuple": "cpp",
 		"type_traits": "cpp",
 		"utility": "cpp",
+		"format": "cpp",
 		"fstream": "cpp",
 		"initializer_list": "cpp",
 		"iomanip": "cpp",
@@ -57,7 +60,10 @@
 		"new": "cpp",
 		"numbers": "cpp",
 		"ostream": "cpp",
+
+		"semaphore": "cpp",
 		"ranges": "cpp",
+
 		"span": "cpp",
 		"sstream": "cpp",
 		"stdexcept": "cpp",
@@ -66,6 +72,8 @@
 		"thread": "cpp",
 		"cinttypes": "cpp",
 		"typeinfo": "cpp",
+		"variant": "cpp"
+	}
 		"variant": "cpp",
 		"semaphore": "cpp",
 		"bitset": "cpp",
