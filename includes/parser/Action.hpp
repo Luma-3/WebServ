@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:42:45 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 13:41:29 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 	{Action(SHIFT,  42, NULL), 36, T_Equal	 },
 	{Action(SHIFT,  43, NULL), 37, T_Equal	 },
 	{Action(SHIFT,  44, NULL), 38, T_ErrorCode },
-	{Action(SHIFT,  45, NULL), 39, T_FilePath	},
+	{Action(SHIFT,  45, NULL), 39, T_Path		},
 	{Action(SHIFT,  45, NULL), 40, T_FileName	},
 	{Action(SHIFT,  46, NULL), 41, T_ErrorCode },
 	{Action(SHIFT,  45, NULL), 42, T_Bool		},

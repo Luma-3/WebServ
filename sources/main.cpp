@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:17:25 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 14:15:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 #include "lexer/Lexer.hpp"
 #include "parser/Parser.hpp"
+#include "parser/statement/Server.hpp"
 
 using std::cerr;
 using std::endl;
@@ -32,8 +33,19 @@ int StartWebServ(const int ac, const char **av)
 		Lexer Lexer(av[1]);
 		Lexer.Tokenize();
 
+		std::vector< Token * > tokens = Lexer.getTokens();
+
+		for (size_t i = 0; i < tokens.size(); i++) {
+			std::cout << *tokens[i] << std::endl;
+		}
+
 		parser::Parser parser(Lexer.getTokens());
 		parser.Parse();
+
+		parser.getParseStack();
+		statement::Server *server =
+			dynamic_cast< statement::Server * >(parser.getParseStack().top());
+		std::cout << *server << std::endl;
 	} catch (const std::exception &e) {
 		cerr << e.what() << endl;
 		return (EXIT_FAILURE);

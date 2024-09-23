@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 10:55:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 13:09:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,47 @@ Server &Server::operator=(const Server &src)
 		_locations = src._locations;
 	}
 	return *this;
+}
+
+bool Server::operator==(const Server &rhs) const
+{
+	if (this == &rhs) {
+		return true;
+	}
+	if (_port != rhs._port) {
+		return false;
+	}
+	if (_host != rhs._host) {
+		return false;
+	}
+	if (_root != rhs._root) {
+		return false;
+	}
+	if (_index != rhs._index) {
+		return false;
+	}
+	if (_autoindex != rhs._autoindex) {
+		return false;
+	}
+	if (_return != rhs._return) {
+		return false;
+	}
+	for (size_t i = 0; i < _deny_methods.size(); ++i) {
+		if (_deny_methods[i] != rhs._deny_methods[i]) {
+			return false;
+		}
+	}
+	for (size_t i = 0; i < _error_pages.size(); ++i) {
+		if (_error_pages[i] != rhs._error_pages[i]) {
+			return false;
+		}
+	}
+	for (size_t i = 0; i < _locations.size(); ++i) {
+		if (*_locations[i] != *rhs._locations[i]) {
+			return false;
+		}
+	}
+	return true;
 }
 
 Server::~Server() {}

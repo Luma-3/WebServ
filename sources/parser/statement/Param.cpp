@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:44:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 10:55:45 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 14:08:14 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ Param::Param(const string &value, enum Terminal_Type key) :
 	Token(S_Parameter, key),
 	_value(value)
 {
+
+	std::cout << "value: " << value << std::endl;
+	std::cout << "key: " << key << std::endl;
 }
 
 Param &Param::operator=(const Param &src)
@@ -37,6 +40,8 @@ Param &Param::operator=(const Param &src)
 
 bool Param::ConvertBool(const string &key)
 {
+
+	std::cout << "convert key: " << key << std::endl;
 	if (key == "on") {
 		return true;
 	}

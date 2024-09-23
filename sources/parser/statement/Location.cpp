@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:46:11 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 13:51:35 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "lexer/Token.hpp"
 #include "parser/statement/DenyMethod.hpp"
 #include "parser/statement/Param.hpp"
+#include "parser/statement/ReturnParam.hpp"
 
 using statement::Location;
 
@@ -47,6 +48,8 @@ Location::Location(const std::vector< Token * > &tokens,
 		} else if (tokens[i]->Token::getType() == S_DenyMethod) {
 			_deny_methods =
 				dynamic_cast< DenyMethod * >(tokens[i])->getMethods();
+		} else if (tokens[i]->Token::getType() == S_Return) {
+			_return = dynamic_cast< ReturnParam * >(tokens[i])->getValue();
 		} else {
 			std::cerr
 				<< "Error: Location::Location(const std::vector< Token * > "
@@ -91,6 +94,44 @@ void Location::IdentifyParam(Token *token)
 		default:
 			break;
 	}
+}
+
+bool Location::operator==(const Location &rhs) const
+{
+	if (this == &rhs) {
+		return true;
+	}
+	if (_route != rhs._route) {
+		return false;
+	}
+	if (_root != rhs._root) {
+		return false;
+	}
+	if (_index != rhs._index) {
+		return false;
+	}
+	if (_autoindex != rhs._autoindex) {
+		return false;
+	}
+	if (_return != rhs._return) {
+		return false;
+	}
+	for (size_t i = 0; i < _deny_methods.size(); ++i) {
+		if (_deny_methods[i] != rhs._deny_methods[i]) {
+			return false;
+		}
+	}
+	for (size_t i = 0; i < _error_pages.size(); ++i) {
+		if (_error_pages[i] != rhs._error_pages[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Location::operator!=(const Location &rhs) const
+{
+	return !(*this == rhs);
 }
 
 Location::~Location() {}

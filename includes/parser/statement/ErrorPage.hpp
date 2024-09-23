@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:38:58 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 13:39:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 13:09:15 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ class ErrorPage : public Token
 	{
 		return _value;
 	}
+
+	bool operator==(const ErrorPage &rhs) const;
+	bool operator!=(const ErrorPage &rhs) const;
 
 	~ErrorPage();
 };

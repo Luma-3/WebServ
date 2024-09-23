@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:42:26 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 14:08:01 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,6 @@ void parser::R2(std::stack< Token * > &stack)
 		tokens.push_back(stack.top());
 		stack.pop();
 	}
-
 	statement::Param *param =
 		new statement::Param(tokens[1]->getValue(), tokens[3]->getTerminal());
 	deleteTmp(tokens);

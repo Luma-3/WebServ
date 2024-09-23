@@ -6,11 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:33:54 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/23 11:41:54 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer/Lexer.hpp"
+
+#include <sys/stat.h>
 
 #include "lexer/Token.hpp"
 
@@ -37,7 +39,9 @@ Lexer::Lexer(const char *file_path) : _line(0), _col(0)
 
 	_config_file.open(file_path);
 
-	if (!_config_file.is_open()) {
+	struct stat buffer;
+	if (!_config_file.is_open() ||
+		(stat(file_path, &buffer) == 0 && buffer.st_mode & S_IFDIR)) {
 		throw FileNotOpenException(file_path);
 	}
 }
@@ -86,9 +90,21 @@ Token *Lexer::CreateToken(size_t frontIT, size_t backIT,
 
 	const Terminal_Type type = Token::IdentifyTerminal(value);
 
+	if (value[0] == '\"' || value[0] == '\'') {
+		return new Token(value.substr(1, value.size() - 2), type, _line, _col);
+	}
+
 	Token *token = new Token(value, type, _line, _col);
 
 	return token;
+}
+
+void placeQuotes(const string &line, size_t &frontIT, char quoteType)
+{
+	frontIT++;
+	while (line[frontIT] && line[frontIT] != quoteType) {
+		frontIT++;
+	}
 }
 
 void Lexer::TokenizeLine(const string &line, vector< Token * > &tokens)
@@ -98,9 +114,12 @@ void Lexer::TokenizeLine(const string &line, vector< Token * > &tokens)
 
 	SkipSpace(line, frontIT);
 	while (frontIT < line.size()) {
+		SkipSpace(line, frontIT);
 		backIT = frontIT;
 		_col = backIT;
-		if (!IsDelimiter(line[frontIT])) {
+		if (line[frontIT] == '\"' || line[frontIT] == '\'') {
+			placeQuotes(line, frontIT, line[frontIT]);
+		} else if (!IsDelimiter(line[frontIT])) {
 			while (frontIT < line.size() && !IsDelimiter(line[frontIT + 1]) &&
 				   (isspace(line[frontIT + 1]) == 0)) {
 				frontIT++;
