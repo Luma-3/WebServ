@@ -14,14 +14,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(WebServ 
+
 		sources/main.cpp
 		sources/Server.cpp
 		sources/Handler.cpp
 		sources/Signal.cpp
+	  sources/lexer/LexerException.cpp
+	  sources/lexer/Lexer.cpp
+	  sources/lexer/regex.cpp
+	  sources/lexer/Token.cpp
+	  sources/parser/Parser.cpp
+	  sources/parser/Action.cpp
+	  sources/parser/ParserException.cpp
+	  sources/parser/statement/DenyMethod.cpp
+	  sources/parser/statement/Location.cpp
+	  sources/parser/statement/ErrorPage.cpp
+	  sources/parser/statement/Param.cpp
+	  sources/parser/statement/ReturnParam.cpp
+	  sources/parser/statement/Server.cpp
 		)
 
 
 target_include_directories(WebServ PRIVATE includes)
-
 
 add_subdirectory(tests)
