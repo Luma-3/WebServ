@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/20 15:48:57 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/24 15:17:53 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class Client : public Server
 	string		   _url;
 	string		   _return_code;
 
-	std::vector< char > readDataRequest(std::ifstream &file);
+	static std::vector< char > readDataRequest(std::ifstream &file);
 	std::vector< char > getDataFromFileRequest(bool &key);
 
 	std::vector< char > createErrorPage();

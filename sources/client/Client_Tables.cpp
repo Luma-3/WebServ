@@ -6,11 +6,11 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 10:39:08 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/20 10:45:36 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/24 15:10:10 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
+#include "client/Client.hpp"
 
 string client::Client::findContentType(const string &file_extension)
 {

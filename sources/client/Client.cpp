@@ -6,11 +6,11 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/20 15:32:47 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/24 15:17:35 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
+#include "client/Client.hpp"
 
 client::Client::Client()
 {

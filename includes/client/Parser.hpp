@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/20 17:24:02 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/24 15:17:48 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class Parser
 	void getHeaderFromRequest(const size_t &line_break_pos);
 	void getBodyFromRequest(size_t &line_break_pos);
 
-	string extractExtension(string &url, const size_t &l_dot);
+	static string extractExtension(string &url, const size_t &l_dot);
 	void   handleUrl(std::string &url);
 	string extractPathAndFilename(string &url, const size_t &l_slash,
 								  const size_t &l_dot);
