@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/24 15:17:35 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/25 00:59:34 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,9 @@ std::vector< char > client::Client::createErrorPage()
 
 void client::Client::findErrorFile(string &url_path)
 {
+	(void)url_path;
 
-	if (_locations[url_path]["root"].empty()) {
-		_url = DEFAULT_ERROR_PAGE + ToString(_return_code) + ".html";
-	} else {
-		_url = _locations[_return_code]["error_page"];
-	}
+	_url = DEFAULT_ERROR_PAGE + ToString(_return_code) + ".html";
 }
 
 std::vector< char > client::Client::readDataRequest(std::ifstream &file)
@@ -166,11 +163,23 @@ void client::Client::findFinalFileFromUrl()
 		return findErrorFile(url_path);
 	}
 
-	if (_locations[url_path]["root"].empty()) {
-		_path = _locations["/"]["root"] + url_path + "/";
-	} else {
-		_path = _locations[url_path]["root"] + "/";
+	std::vector< const statement::Location * >::const_iterator it =
+		getLocations().begin();
+
+	while (it != getLocations().end()) {
+		std::cout << "LOCATION : " << (*it)->getRoute() << std::endl;
+		if ((*it)->getRoute() == url_path) {
+			_path = (*it)->getRoot();
+			break;
+		}
+		(it++);
 	}
+	if (!_path.empty()) {
+		_path = _path.substr(1, _path.size() - 1);
+	}
+	// else {
+	// 	_path = DEFAULT_ERROR_PAGE
+	// }
 	_url = _path + _parser.getFilename() + "." + _parser.getFileExtension();
 	std::cout << "URL BEFORE ACCESS : " << _url << std::endl;
 
@@ -189,11 +198,16 @@ string client::Client::buildResponse()
 	map< string, string > _headers = _parser.getHeaders();
 	bool				  key = true;
 
+	std::cout << "GO to buildResponse" << std::endl;
 	_return_code = _parser.getCodeResponse();
+
+	std::cout << "GO to findFinalFileFromUrl" << std::endl;
 	findFinalFileFromUrl();
 
+	std::cout << "GO to getDataFromFileRequest" << std::endl;
 	std::vector< char > body = getDataFromFileRequest(key);
 
+	std::cout << "GO to response" << std::endl;
 	string response =
 		"HTTP/1.1 " + _return_code + findStatusMessage(_return_code) + "\r\n";
 	response +=

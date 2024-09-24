@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 13:21:45 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/25 00:59:57 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,20 @@ class Server
 	std::string getPort() const;
 	std::string getRequest() const;
 
-	int createSocket();
-	int setSocket();
-	int receiveRequest();
-	int sendResponse();
+	const std::string &getRoot() const;
+	const std::string &getIndex() const;
+	bool			   getAutoindex() const;
+	int				   getNewSocket() const;
+
+	const std::vector< std::string >				 &getDenyMethods() const;
+	const std::vector< statement::ErrorPage >		 &getErrorPages() const;
+	const std::vector< const statement::Location * > &getLocations() const;
+
+	int			createSocket();
+	int			setSocket();
+	int			receiveRequest(int &epfd);
+	std::string receiveClientRequest(int &client_socket);
+	int			sendResponse(const std::string &response, int socket);
 
 	~Server();
 
