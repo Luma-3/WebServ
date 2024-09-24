@@ -1,76 +1,106 @@
-// /* ************************************************************************** */
-// /*                                                                            */
-// /*                                                        :::      ::::::::   */
-// /*   main.cpp                                           :+:      :+:    :+:   */
-// /*                                                    +:+ +:+         +:+     */
-// /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
-// /*                                                +#+#+#+#+#+   +#+           */
-// /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-// /*   Updated: 2024/09/24 15:19:31 by Monsieur_Ca      ###   ########.fr       */
-// /*                                                                            */
-// /* ************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/09/24 15:30:40 by Monsieur_Ca      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-// #include <cerrno>
-// #include <cstring>
-// #include <iostream>
-// #include <netinet/in.h>
-// #include <sys/socket.h>
-// #include <unistd.h>
+#include <cerrno>
+#include <cstdlib>
+#include <exception>
+#include <iostream>
 
-// #include "client/Client.hpp"
-// #include "client/Parser.hpp"
-// #include "client/Server.hpp"
+#include "lexer/Lexer.hpp"
+#include "parser/Parser.hpp"
+#include "parser/statement/Server.hpp"
+#include "server/Handler.hpp"
+#include "server/Server.hpp"
+#include "server/Signal.hpp"
 
-// #define BUFFER_SIZE 1024
-// #define NB_CLIENTS	10
-
-// int main()
+// int StartWebServ(const int ac, const char **av)
 // {
-// 	int				   server_sock = socket(AF_INET, SOCK_STREAM, 0);
-// 	int				   server_port = 8080;
-// 	struct sockaddr_in server_addr;
-// 	int				   opt = 1;
-
-// 	server_addr.sin_family = AF_INET;
-// 	server_addr.sin_port = htons(server_port);
-// 	server_addr.sin_addr.s_addr = INADDR_ANY;
-
-// 	if (setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
-// 		perror("setsockopt");
-// 		_exit(1);
+// 	if (ac != 2) {
+// 		cerr << "Wrong Numbre of Argument" << endl;
+// 		return (EINVAL);
 // 	}
 
-// 	bind(server_sock, (struct sockaddr *)&server_addr, sizeof(server_addr));
-// 	if (server_sock == -1) {
-// 		std::cerr << "Error: " << strerror(errno) << std::endl;
-// 		return 1;
-// 	}
+// 	try {
+// 		Lexer Lexer(av[1]);
+// 		Lexer.Tokenize();
 
-// 	if (listen(server_sock, NB_CLIENTS) == -1) {
-// 		std::cerr << "Error: " << strerror(errno) << std::endl;
-// 		return 1;
-// 	}
+// 		std::vector< Token * > tokens = Lexer.getTokens();
 
-// 	std::cout << "Server listening on port " << server_port << std::endl;
-// 	Server server;
-
-// 	while (true) {
-
-// 		client::Client client(server);
-// 		int			   valread = 0;
-// 		int			   client_sock = accept(server_sock, NULL, NULL);
-// 		char		   buff[BUFFER_SIZE] = {0};
-// 		valread = recv(client_sock, buff, BUFFER_SIZE, 0);
-// 		if (buff[0] == '\0') {
-// 			close(client_sock);
-// 			continue;
+// 		for (size_t i = 0; i < tokens.size(); i++) {
+// 			std::cout << *tokens[i] << std::endl;
 // 		}
-// 		std::cout << "buffer : " << buff << std::endl;
-// 		client.getParser().parseRequest(buff);
-// 		memset(buff, 0, BUFFER_SIZE);
-// 		(void)valread;
-// 		std::string response = client.buildResponse();
-// 		send(client_sock, response.c_str(), response.length(), 0);
-// 		close(client_sock);
+
+// 		parser::Parser parser(Lexer.getTokens());
+// 		parser.Parse();
+
+// 		parser.getParseStack();
+// 		statement::Server *server =
+// 			dynamic_cast< statement::Server * >(parser.getParseStack().top());
+// 		std::cout << *server << std::endl;
+// 	} catch (const std::exception &e) {
+// 		cerr << e.what() << endl;
+// 		return (EXIT_FAILURE);
 // 	}
+// 	return (EXIT_SUCCESS);
 // }
+
+Handler *init_server(const int ac, const char **av)
+{
+	if (ac != 2) {
+		throw std::runtime_error("Wrong Numbre of Argument");
+	}
+
+	Lexer Lexer(av[1]);
+	Lexer.Tokenize();
+
+	std::vector< Token * > tokens = Lexer.getTokens();
+
+	parser::Parser parser(&Lexer);
+	parser.Parse();
+
+	std::vector< statement::Server * > servers;
+	std::stack< Token * >			   stack = parser.getParseStack();
+
+	while (!stack.empty()) {
+		statement::Server *server =
+			dynamic_cast< statement::Server * >(stack.top());
+		servers.push_back(server);
+		stack.pop();
+	}
+
+	Handler *handler = new Handler(servers);
+
+	return (handler);
+}
+
+int main(const int ac, const char **av, const char **env)
+{
+	(void)env;
+	Handler *handler = NULL;
+
+	try {
+		handler = init_server(ac, av);
+		handler->launchServers();
+		handler->handleEvents();
+	} catch (const std::runtime_error &e) {
+		std::cerr << e.what() << '\n';
+		return (1);
+	} catch (const std::exception &e) {
+		std::cerr << e.what() << '\n';
+		delete handler;
+		return (1);
+	}
+
+	delete handler;
+
+	return 0;
+}
