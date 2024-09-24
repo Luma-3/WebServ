@@ -6,12 +6,14 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/09/24 14:56:49 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 16:31:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server/Handler.hpp"
 
+#include "client/Client.hpp"
+#include "client/Client_Parser.hpp"
 #include "server/ServerException.hpp"
 #include "server/Signal.hpp"
 
@@ -87,8 +89,15 @@ int Handler::handleEvents()
 				for (std::vector< Server * >::iterator it = _servers.begin();
 					 it < _servers.end(); ++it) {
 					if (events[i].data.fd == (*it)->getSocket()) {
+
 						(*it)->receiveRequest();
-						(*it)->sendResponse();
+						std::cout << "Request received" << (*it)->getRequest()
+								  << std::endl;
+						client::Client client(**it);
+						client::Parser parser;
+						parser.parseRequest((*it)->getRequest());
+						client.setParser(parser);
+						(*it)->sendResponse(client.buildResponse());
 						break;
 					}
 				}

@@ -44,4 +44,3 @@ target_include_directories(WebServ PRIVATE includes)
 
 # add_subdirectory(tests)
 
-add_subdirectory(externals/googletest)

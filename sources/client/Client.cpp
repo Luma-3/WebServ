@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/24 15:17:35 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/24 16:32:10 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,11 @@ client::Parser &client::Client::getParser()
 	return _parser;
 }
 
+void client::Client::setParser(const Parser &parser)
+{
+	_parser = parser;
+}
+
 void client::Client::createUrlDefaultErrorPage()
 {
 	_url = string(DEFAULT_ERROR_PAGE) + ToString(_return_code) + ".html";
@@ -69,12 +74,13 @@ std::vector< char > client::Client::createErrorPage()
 
 void client::Client::findErrorFile(string &url_path)
 {
+	(void)url_path;
 
-	if (_locations[url_path]["root"].empty()) {
-		_url = DEFAULT_ERROR_PAGE + ToString(_return_code) + ".html";
-	} else {
-		_url = _locations[_return_code]["error_page"];
-	}
+	// if (_locations[url_path]["root"].empty()) {
+	// 	_url = DEFAULT_ERROR_PAGE + ToString(_return_code) + ".html";
+	// } else {
+	// 	_url = _locations[_return_code]["error_page"];
+	// }
 }
 
 std::vector< char > client::Client::readDataRequest(std::ifstream &file)
@@ -166,10 +172,14 @@ void client::Client::findFinalFileFromUrl()
 		return findErrorFile(url_path);
 	}
 
-	if (_locations[url_path]["root"].empty()) {
-		_path = _locations["/"]["root"] + url_path + "/";
-	} else {
-		_path = _locations[url_path]["root"] + "/";
+	std::vector< const statement::Location * >::const_iterator it =
+		getLocations().begin();
+
+	while (it != getLocations().end()) {
+		if ((*it)->getRoute() == url_path) {
+			_path = (*it)->getRoot();
+			break;
+		}
 	}
 	_url = _path + _parser.getFilename() + "." + _parser.getFileExtension();
 	std::cout << "URL BEFORE ACCESS : " << _url << std::endl;
@@ -208,5 +218,6 @@ string client::Client::buildResponse()
 	}
 	response += std::string(body.begin(), body.end());
 
+	std::cout << "Response : " << response << std::endl;
 	return response;
 }

@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Parser.hpp                                         :+:      :+:    :+:   */
+/*   Client_Parser.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/24 15:17:48 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/24 16:00:30 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_HPP
-#define PARSER_HPP
+#ifndef CLIENT_PARSER_HPP
+#define CLIENT_PARSER_HPP
 
 #include <map>
 #include <sstream>
@@ -34,15 +34,14 @@ class Parser
 	string				  _filename;
 	string				  _file_extension;
 	string				  _codeResponse;
-	bool				  _haveHeader;
 
 	void getHeaderFromRequest(const size_t &line_break_pos);
 	void getBodyFromRequest(size_t &line_break_pos);
 
 	static string extractExtension(string &url, const size_t &l_dot);
-	void   handleUrl(std::string &url);
-	string extractPathAndFilename(string &url, const size_t &l_slash,
-								  const size_t &l_dot);
+	void		  handleUrl(std::string &url);
+	string		  extractPathAndFilename(string &url, const size_t &l_slash,
+										 const size_t &l_dot);
 
 	bool InvalidMethod();
 	bool InvalidHeader();
@@ -53,7 +52,7 @@ class Parser
 	Parser &operator=(const Parser &src);
 	~Parser();
 
-	void parseRequest(void *buff);
+	void parseRequest(const string &request);
 
 	map< string, string > &getHeaders();
 	const string		  &getUrlPath();

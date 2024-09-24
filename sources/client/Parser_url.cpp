@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Parser_url.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 17:24:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/09/24 15:17:44 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/24 16:33:24 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client/Parser.hpp"
+#include "client/Client_Parser.hpp"
 
 string client::Parser::extractPathAndFilename(string	   &url,
 											  const size_t &l_slash,

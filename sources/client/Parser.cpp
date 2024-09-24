@@ -3,18 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/09/24 15:10:37 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/24 16:06:32 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client/Parser.hpp"
+#include "client/Client_Parser.hpp"
 
 client::Parser::Parser()
 {
-	_haveHeader = false;
 	_codeResponse = "200";
 }
 
@@ -25,7 +24,6 @@ client::Parser::Parser(const Parser &src)
 	}
 	_headers = src._headers;
 	_buffer = src._buffer;
-	_haveHeader = src._haveHeader;
 	_url_path = src._url_path;
 	_filename = src._filename;
 	_file_extension = src._file_extension;
@@ -39,7 +37,6 @@ client::Parser &client::Parser::operator=(const Parser &src)
 	}
 	_headers = src._headers;
 	_buffer = src._buffer;
-	_haveHeader = src._haveHeader;
 	_url_path = src._url_path;
 	_filename = src._filename;
 	_file_extension = src._file_extension;
@@ -133,24 +130,16 @@ void client::Parser::getHeaderFromRequest(const size_t &line_break_pos)
 	}
 
 	_buffer = _buffer.substr(line_break_pos + 2);
-	_haveHeader = true;
 }
 
-void client::Parser::parseRequest(void *buff)
+void client::Parser::parseRequest(const std::string &request)
 {
 	size_t line_break_pos = 0;
 	string line;
 
-	_buffer += static_cast< char * >(buff);
+	_buffer = request;
 	line_break_pos = _buffer.find("\r\n");
-
-	if (line_break_pos == string::npos) {
-		return;
-	}
-
-	if (!_haveHeader) {
-		getHeaderFromRequest(line_break_pos);
-	}
+	getHeaderFromRequest(line_break_pos);
 
 	getBodyFromRequest(line_break_pos);
 }

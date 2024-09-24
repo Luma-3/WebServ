@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 14:57:00 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 16:27:24 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,16 +77,6 @@ Server &Server::operator=(const Server &src)
 	return (*this);
 }
 
-int Server::getSocket() const
-{
-	return (_server_socket);
-}
-
-int Server::getNbBytes() const
-{
-	return (_nb_bytes);
-}
-
 std::string Server::getName() const
 {
 	return (_name);
@@ -102,9 +92,49 @@ std::string Server::getPort() const
 	return (_port);
 }
 
+int Server::getSocket() const
+{
+	return (_server_socket);
+}
+
+int Server::getNbBytes() const
+{
+	return (_nb_bytes);
+}
+
 std::string Server::getRequest() const
 {
 	return (_request);
+}
+
+const std::string &Server::getRoot() const
+{
+	return (_root);
+}
+
+const std::string &Server::getIndex() const
+{
+	return (_index);
+}
+
+bool Server::getAutoindex() const
+{
+	return (_autoindex);
+}
+
+const std::vector< std::string > &Server::getDenyMethods() const
+{
+	return (_deny_methods);
+}
+
+const std::vector< statement::ErrorPage > &Server::getErrorPages() const
+{
+	return (_error_pages);
+}
+
+const std::vector< const statement::Location * > &Server::getLocations() const
+{
+	return (_locations);
 }
 
 int Server::createSocket()
@@ -178,17 +208,17 @@ int Server::receiveRequest()
 	return (SUCCESS);
 }
 
-int Server::sendResponse()
+int Server::sendResponse(const std::string &reponse)
 {
 	// the following is to replace with the response constructor
 	if (_nb_bytes > 0) {
-		std::cout << _request << std::endl;
-		const int rep_size = 110;
-		char	  repTest[rep_size] =
-			"HTTP/1.1 200 OK\nDate: Mon, 09 Sep 2024 12:00:00 "
-			"GMT\nContent-Length: 13\nConnection: "
-			"keep-alive\n\nca marche!!!!\n";
-		if (send(_new_socket, repTest, strlen(repTest), 0) == -1) {
+		// std::cout << _request << std::endl;
+		// const int rep_size = 110;
+		// char	  repTest[rep_size] =
+		// 	"HTTP/1.1 200 OK\nDate: Mon, 09 Sep 2024 12:00:00 "
+		// 	"GMT\nContent-Length: 13\nConnection: "
+		// 	"keep-alive\n\nca marche!!!!\n";
+		if (send(_new_socket, reponse.c_str(), reponse.length(), 0) == -1) {
 			std::cerr << "Error on sending response on " << _name << std::endl;
 			return (FAILURE);
 		}

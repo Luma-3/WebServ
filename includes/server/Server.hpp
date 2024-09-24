@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 13:21:45 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 16:27:18 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,21 +60,29 @@ class Server
 	Server(const Server &src);
 	Server &operator=(const Server &src);
 
-	int			getSocket() const;
-	int			getNbBytes() const;
 	std::string getName() const;
 	std::string getHost() const;
 	std::string getPort() const;
+
+	int getSocket() const;
+	int getNbBytes() const;
+
 	std::string getRequest() const;
+
+	const std::string &getRoot() const;
+	const std::string &getIndex() const;
+	bool			   getAutoindex() const;
+
+	const std::vector< std::string >				 &getDenyMethods() const;
+	const std::vector< statement::ErrorPage >		 &getErrorPages() const;
+	const std::vector< const statement::Location * > &getLocations() const;
 
 	int createSocket();
 	int setSocket();
 	int receiveRequest();
-	int sendResponse();
+	int sendResponse(const std::string &response);
 
 	~Server();
-
-
 };
 
 #endif
