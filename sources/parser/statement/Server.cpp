@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 13:09:42 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 12:49:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void Server::IdentifyParam(Token *token)
 			_port = param->getValue();
 			break;
 		case T_Host:
-			_host = param->getValue();
+			_host = Param::TrimHostName(param->getValue());
 			break;
 		case T_Root:
 			_root = param->getValue();

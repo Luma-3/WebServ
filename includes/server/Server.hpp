@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 14:51:13 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 13:21:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,10 @@
 #include <string>
 #include <unistd.h>
 
+#include "parser/statement/ErrorPage.hpp"
+#include "parser/statement/Location.hpp"
+#include "parser/statement/Server.hpp"
+
 #define SUCCESS 0
 #define FAILURE 1
 
@@ -33,16 +37,26 @@ class Server
 	const std::string _name;
 	const std::string _hostname;
 	const std::string _port;
-	const int		  _server_socket;
-	int				  _new_socket;
-	int				  _nb_bytes;
-	std::string		  _request;
-	struct addrinfo	 *_info;
+
+	const std::string _root;
+	const std::string _index;
+	const bool		  _autoindex;
+	// TODO : add _return
+	const std::vector< std::string >				 _deny_methods;
+	const std::vector< statement::ErrorPage >		 _error_pages;
+	const std::vector< const statement::Location * > _locations;
+
+	const int		 _server_socket;
+	int				 _new_socket;
+	int				 _nb_bytes;
+	std::string		 _request;
+	struct addrinfo *_info;
 
   public:
 	Server();
-	Server(const std::string &servername, const std::string &hostname,
-		   const std::string &port);
+	// Server(const std::string &servername, const std::string &hostname,
+	// 	   const std::string &port);
+	Server(const statement::Server *server);
 	Server(const Server &src);
 	Server &operator=(const Server &src);
 
@@ -59,6 +73,8 @@ class Server
 	int sendResponse();
 
 	~Server();
+
+
 };
 
 #endif

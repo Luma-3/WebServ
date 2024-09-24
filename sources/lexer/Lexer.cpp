@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 15:13:30 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 14:01:59 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,11 @@ Lexer &Lexer::operator=(const Lexer &other)
 }
 
 // Getters
+
+vector< Token * > &Lexer::getTokens()
+{
+	return _tokens;
+}
 
 const vector< Token * > &Lexer::getTokens() const
 {

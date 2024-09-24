@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:46:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/18 22:49:47 by jdufour          ###   ########.fr       */
+/*   Updated: 2024/09/24 13:01:10 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,23 @@
 #include "Server.hpp"
 // # include "Config.hpp"
 
+#include "lexer/Token.hpp"
+
 class Handler
 {
   private:
-	std::vector<Server *> _servers;
-	int					  _nbServ;
-	int					  _epfd;
+	std::vector< Server * > _servers;
+	int						_nbServ;
+	int						_epfd;
 
   public:
 	Handler();
-
+	Handler(const std::vector< statement::Server * > &servers);
 	Handler(const Handler &src);
 	Handler &operator=(const Handler &rhs);
 
-	void loadServTest();
-	int	 launchServers();
-	int	 handleEvents();
+	int launchServers();
+	int handleEvents();
 
 	// Server *operator[](const int index);
 

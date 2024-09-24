@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 12:41:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 14:12:00 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,31 +21,32 @@
 #include <vector>
 
 #include "Action.hpp"
+#include "lexer/Lexer.hpp"
 #include "lexer/Token.hpp"
 
 namespace parser {
 class Parser
 {
   private:
-	std::vector< Token * > _tokens;
-	int					   _status;
-	std::stack< Token * >  _parse_stack;
+	Lexer				 *_lexer;
+	int					  _status;
+	std::stack< Token * > _parse_stack;
 
 	// std::map< std::pair< int, std::string >, Action > _config;
 
   public:
 	Parser();
 	Parser(const Parser &src);
-	Parser(const std::vector< Token * > &tokens);
+	Parser(Lexer *lexer);
 	~Parser();
 
 	void setState(int state);
 
 	void Parse();
 
-	const std::stack< Token * >	 &getParseStack() const;
-	const std::vector< Token * > &getTokens() const;
-	const int					 &getState() const;
+	const std::stack< Token * > &getParseStack() const;
+	const Lexer					&getLexer() const;
+	const int					&getState() const;
 
 	Parser &operator=(const Parser &src);
 

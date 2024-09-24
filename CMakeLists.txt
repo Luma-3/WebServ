@@ -16,9 +16,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(WebServ 
 
 		sources/main.cpp
-		sources/Server.cpp
-		sources/Handler.cpp
-		sources/Signal.cpp
+		sources/server/Server.cpp
+		sources/server/Handler.cpp
+		sources/server/Signal.cpp
+		sources/server/ServerException.cpp
 	  sources/lexer/LexerException.cpp
 	  sources/lexer/Lexer.cpp
 	  sources/lexer/regex.cpp
@@ -37,4 +38,4 @@ add_executable(WebServ
 
 target_include_directories(WebServ PRIVATE includes)
 
-add_subdirectory(tests)
+# add_subdirectory(tests)

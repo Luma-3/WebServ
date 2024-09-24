@@ -6,82 +6,101 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:19:07 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 15:05:45 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 15:07:32 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include <cerrno>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
 
-  
-#include "Handler.hpp"
-#include "Server.hpp"
-#include "Signal.hpp"
 #include "lexer/Lexer.hpp"
 #include "parser/Parser.hpp"
 #include "parser/statement/Server.hpp"
+#include "server/Handler.hpp"
+#include "server/Server.hpp"
+#include "server/Signal.hpp"
 
-using std::cerr;
-using std::endl;
+// int StartWebServ(const int ac, const char **av)
+// {
+// 	if (ac != 2) {
+// 		cerr << "Wrong Numbre of Argument" << endl;
+// 		return (EINVAL);
+// 	}
 
-int StartWebServ(const int ac, const char **av)
+// 	try {
+// 		Lexer Lexer(av[1]);
+// 		Lexer.Tokenize();
+
+// 		std::vector< Token * > tokens = Lexer.getTokens();
+
+// 		for (size_t i = 0; i < tokens.size(); i++) {
+// 			std::cout << *tokens[i] << std::endl;
+// 		}
+
+// 		parser::Parser parser(Lexer.getTokens());
+// 		parser.Parse();
+
+// 		parser.getParseStack();
+// 		statement::Server *server =
+// 			dynamic_cast< statement::Server * >(parser.getParseStack().top());
+// 		std::cout << *server << std::endl;
+// 	} catch (const std::exception &e) {
+// 		cerr << e.what() << endl;
+// 		return (EXIT_FAILURE);
+// 	}
+// 	return (EXIT_SUCCESS);
+// }
+
+Handler *init_server(const int ac, const char **av)
 {
 	if (ac != 2) {
-		cerr << "Wrong Numbre of Argument" << endl;
-		return (EINVAL);
+		throw std::runtime_error("Wrong Numbre of Argument");
 	}
 
-	try {
-		Lexer Lexer(av[1]);
-		Lexer.Tokenize();
+	Lexer Lexer(av[1]);
+	Lexer.Tokenize();
 
-		std::vector< Token * > tokens = Lexer.getTokens();
+	std::vector< Token * > tokens = Lexer.getTokens();
 
-		for (size_t i = 0; i < tokens.size(); i++) {
-			std::cout << *tokens[i] << std::endl;
-		}
+	parser::Parser parser(&Lexer);
+	parser.Parse();
 
-		parser::Parser parser(Lexer.getTokens());
-		parser.Parse();
+	std::vector< statement::Server * > servers;
+	std::stack< Token * >			   stack = parser.getParseStack();
 
-		parser.getParseStack();
+	while (!stack.empty()) {
 		statement::Server *server =
-			dynamic_cast< statement::Server * >(parser.getParseStack().top());
-		std::cout << *server << std::endl;
-	} catch (const std::exception &e) {
-		cerr << e.what() << endl;
-		return (EXIT_FAILURE);
+			dynamic_cast< statement::Server * >(stack.top());
+		servers.push_back(server);
+		stack.pop();
 	}
-	return (EXIT_SUCCESS);
+
+	Handler *handler = new Handler(servers);
+
+	return (handler);
 }
 
-int main(const int ac, const char **av)
+int main(const int ac, const char **av, const char **env)
 {
-	const int ret = StartWebServ(ac, av);
-	if (ret != 0) {
-		return (ret);
-	}
+	(void)env;
+	Handler *handler = NULL;
 
-	// std::stack< Token * > stack = parser.getParseStack();
-
-	// std::cout << "Stack size: " << stack.size() << std::endl;
-	// while (!stack.empty()) {
-	// 	statement::Server *server =
-	// 		dynamic_cast< statement::Server * >(stack.top());
-	// 	std::cout << *server << std::endl;
-	// 	stack.pop();
-	// }
-  
-  	Handler serverVect = Handler();
-	serverVect.loadServTest();
-	if (serverVect.launchServers()) {
+	try {
+		handler = init_server(ac, av);
+		handler->launchServers();
+		handler->handleEvents();
+	} catch (const std::runtime_error &e) {
+		std::cerr << e.what() << '\n';
+		return (1);
+	} catch (const std::exception &e) {
+		std::cerr << e.what() << '\n';
+		delete handler;
 		return (1);
 	}
 
-	serverVect.handleEvents();
-  
-  return 0;
+	delete handler;
+
+	return 0;
 }

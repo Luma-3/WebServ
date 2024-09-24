@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:32:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/19 13:04:59 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 14:02:17 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class Lexer
 	Lexer(const char *file_path);
 	Lexer &operator=(const Lexer &other);
 
+	std::vector< Token * >		 &getTokens();
 	const std::vector< Token * > &getTokens() const;
 	const std::ifstream			 &getConfigFile() const;
 

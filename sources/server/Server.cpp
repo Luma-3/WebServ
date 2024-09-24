@@ -6,32 +6,58 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 15:06:07 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 14:57:00 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "server/Server.hpp"
+
+#include "server/ServerException.hpp"
 
 #define MAXREQEST 10
 
-Server::Server() : _server_socket(-1), _new_socket(0), _nb_bytes(0), _info() {}
-
-Server::Server(const std::string &servername, const std::string &hostname,
-			   const std::string &port) :
-	_name(servername),
-	_hostname(hostname),
-	_port(port),
-	_server_socket(socket(AF_INET, SOCK_STREAM, 0)),
+Server::Server() :
+	_autoindex(0),
+	_server_socket(-1),
 	_new_socket(0),
 	_nb_bytes(0),
 	_info()
 {
 }
 
+Server::Server(const statement::Server *server) :
+	_name("default"), // TODO : add name in parser
+	_hostname(server->getHost()),
+	_port(server->getPort()),
+	_root(server->getRoot()),
+	_index(server->getIndex()),
+	_autoindex(server->getAutoindex()),
+	_deny_methods(server->getDenyMethods()),
+	_error_pages(server->getErrorPages()),
+	_locations(server->getLocations()),
+
+	_server_socket(socket(AF_INET, SOCK_STREAM, 0)),
+	_new_socket(-1),
+	_nb_bytes(-1),
+	_info()
+{
+	// delete server;
+	if (_server_socket == -1) {
+		throw InternalServerException("socket failed on " + _name);
+	}
+}
+
 Server::Server(const Server &src) :
 	_name(src._name),
 	_hostname(src._hostname),
 	_port(src._port),
+	_root(src._root),
+	_index(src._index),
+	_autoindex(src._autoindex),
+	_deny_methods(src._deny_methods),
+	_error_pages(src._error_pages),
+	_locations(src._locations),
+
 	_server_socket(src._server_socket),
 	_new_socket(src._new_socket),
 	_nb_bytes(src._nb_bytes),
@@ -83,34 +109,29 @@ std::string Server::getRequest() const
 
 int Server::createSocket()
 {
-	if (fcntl(_server_socket, F_SETFL, O_NONBLOCK) == -1) {
-		std::cerr << "Error on set nonblocking on " << _name << std::endl;
-		return (FAILURE);
-	}
 	int val = 1;
+	if (fcntl(_server_socket, F_SETFL, O_NONBLOCK) == -1) {
+		throw InternalServerException("Error on set nonblocking on " + _name);
+	}
 	if (setsockopt(_server_socket, SOL_SOCKET, SO_REUSEADDR, &val,
 				   sizeof(int)) == -1) {
-		std::cerr << "error on setting the port on reusable on " << _name
-				  << ": " << strerror(errno) << ". socket value is "
-				  << _server_socket << std::endl;
-		return (FAILURE);
+		throw InternalServerException(
+			"error on setting the port on reusable on " + _name + ": " +
+			strerror(errno));
 	}
-#ifdef SO_REUSEPORT
 	if (setsockopt(_server_socket, SOL_SOCKET, SO_REUSEPORT, &val,
 				   sizeof(int)) == -1) {
-		std::cerr << "error on setting the port on reusable on " << _name
-				  << ": " << strerror(errno) << std::endl;
-		return (FAILURE);
+		throw InternalServerException(
+			"error on setting the port on reusable on " + _name + ": " +
+			strerror(errno));
 	}
-#endif
-	std::cout << "Server " << _name << " is launched !" << std::endl;
+	std::cout << "Server " << _name << " is launched !"
+			  << std::endl; // TODO : go to logger
 	if (_server_socket == -1) {
-		std::cerr << "socket failed on " << _name << std::endl;
-		return (FAILURE);
+		throw InternalServerException("socket failed on " + _name);
 	}
 	if (getaddrinfo(_hostname.c_str(), _port.c_str(), NULL, &_info) != 0) {
-		std::cerr << "getaddrinfo failed on" << _name << std::endl;
-		return (FAILURE);
+		throw InternalServerException("getaddrinfo failed on" + _name);
 	}
 	return (SUCCESS);
 }
@@ -118,10 +139,10 @@ int Server::createSocket()
 int Server::setSocket()
 {
 	if (bind(_server_socket, _info->ai_addr, _info->ai_addrlen) == -1) {
-		std::cerr << _name << ": bind failed on " << _name << std::endl;
-		return (FAILURE);
+		throw InternalServerException("bind failed on " + _name);
 	}
 	if (listen(_server_socket, MAXREQEST) == -1) {
+		throw InternalServerException("listen failed on " + _name);
 		return (FAILURE);
 	}
 	return (SUCCESS);
@@ -133,15 +154,15 @@ int Server::receiveRequest()
 
 	_new_socket = accept(_server_socket, NULL, NULL);
 	if (_new_socket == -1) {
-		std::cerr << "Error on awaiting connection (accept) on " << _name
-				  << std::endl;
-		return (FAILURE);
+		throw InternalServerException(
+			"Error on awaiting connection (accept) on" + _name);
 	}
 	while (true) {
 		for (int i = 0; i < MAX_REQ_SIZE; ++i) {
 			buff[i] = 0;
 		}
-		_nb_bytes = static_cast<int>(recv(_new_socket, buff, MAX_REQ_SIZE, 0));
+		_nb_bytes =
+			static_cast< int >(recv(_new_socket, buff, MAX_REQ_SIZE, 0));
 		if (_nb_bytes == -1 && (errno != EAGAIN && errno != EWOULDBLOCK)) {
 			std::cerr << "Error on recv on " << _name << std::endl;
 			close(_new_socket);

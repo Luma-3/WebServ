@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 14:08:01 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 14:17:48 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ Action &Action::operator=(const Action &src)
 void Action::Shift(Token *token, std::stack< Token * > &stack,
 				   Parser &parser) const
 {
-	Token *currentToken = new Token(*token);
+	Token *currentToken = token;
 
 	stack.push(currentToken);
 	parser.setState(_next_state);
@@ -92,7 +92,9 @@ Action::~Action() {}
 void deleteTmp(std::vector< Token * > &tokens)
 {
 	for (size_t i = 0; i < tokens.size(); ++i) {
-		delete tokens[i];
+		if (tokens[i]->getType() != S_Terminal) {
+			delete tokens[i];
+		}
 	}
 }
 

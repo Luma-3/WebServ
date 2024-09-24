@@ -6,33 +6,30 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/09/23 15:05:26 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/24 14:56:49 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Handler.hpp"
+#include "server/Handler.hpp"
 
-#include "Signal.hpp"
+#include "server/ServerException.hpp"
+#include "server/Signal.hpp"
 
 volatile int g_sig = 0;
 
 Handler::Handler() : _nbServ(0), _epfd(-1) {}
 
-// void	Handler::loadServ()
-// {
-// 	Config	serverConf = Config.getConf(); //to be replaced by the real function
-// 	_nbServ =  serverConf.getNbServers(); //idem
+Handler::Handler(const std::vector< statement::Server * > &servers) :
+	_nbServ(0),
+	_epfd(-1)
+{
+	std::vector< statement::Server * >::const_iterator it = servers.begin();
 
-// 	for (int i = 0; i < _nbServ; i++)
-// 	{
-// 		// these 3 will be rewritten when the config class will be set
-// 		std::string	name = serverConf.getServerName(i);
-// 		std::string	hostname = serverConf.getHostname(i);
-// 		std::string	port = serverConf.getPort(i);
-// 		Server	server = Server( name, hostname, port);
-// 		_servers.push_back(server);
-// 	}
-// }
+	while (it != servers.end()) {
+		_servers.push_back(new Server(*it));
+		++it;
+	}
+}
 
 Handler::Handler(const Handler &src) : _nbServ(src._nbServ), _epfd(src._epfd)
 {
@@ -45,46 +42,31 @@ Handler &Handler::operator=(const Handler &rhs)
 		return (*this);
 	}
 	this->_epfd = epoll_create1(0);
-	this->_nbServ = rhs._nbServ;
 	this->_epfd = rhs._epfd;
-	for (int i = 0; i < _nbServ; i++) {
-		_servers.push_back(new Server(rhs._servers[i]->getName(),
-									  rhs._servers[i]->getHost(),
-									  rhs._servers[i]->getPort()));
+	std::vector< Server * >::const_iterator it = rhs._servers.begin();
+
+	while (it != _servers.end()) {
+		_servers.push_back(new Server(**it));
+		++it;
 	}
 	return (*this);
-}
-
-void Handler::loadServTest()
-{
-	_nbServ = 4;
-	std::string names[4] = {"server1", "server2", "server3", "server4"};
-	std::string ports[4] = {"8080", "8081", "8082", "9092"};
-
-	for (int i = 0; i < _nbServ; i++) {
-		std::string name = names[i];
-		std::string port = ports[i];
-		_servers.push_back(new Server(name, "localhost", port));
-	}
 }
 
 int Handler::launchServers()
 {
 	_epfd = epoll_create1(0);
 	if (_epfd == -1) {
-		std::cerr << "Error on epoll_create" << std::endl;
-		return (FAILURE);
+		throw InternalServerException("Error on epoll_create");
 	}
 
-	for (std::vector<Server *>::iterator it = _servers.begin();
+	for (std::vector< Server * >::iterator it = _servers.begin();
 		 it < _servers.end(); ++it) {
 		(*it)->createSocket();
 		(*it)->setSocket();
 		struct epoll_event event = {.events = EPOLLIN,
 									.data = {.fd = (*it)->getSocket()}};
 		if (epoll_ctl(_epfd, EPOLL_CTL_ADD, (*it)->getSocket(), &event) == -1) {
-			std::cerr << "Error on epoll_ctl" << std::endl;
-			return (FAILURE);
+			throw InternalServerException("Error on epoll_ctl");
 		}
 	}
 	return (SUCCESS);
@@ -98,12 +80,11 @@ int Handler::handleEvents()
 		initSignal();
 		int nfds = epoll_wait(_epfd, events, MAX_EVENTS, -1);
 		if (nfds == -1 && !g_sig) {
-			std::cout << "Error on epoll_wait" << std::endl;
-			return (FAILURE);
+			throw InternalServerException("Error on epoll_wait");
 		}
 		for (int i = 0; i < nfds; ++i) {
 			if (events[i].events & EPOLLIN) {
-				for (std::vector<Server *>::iterator it = _servers.begin();
+				for (std::vector< Server * >::iterator it = _servers.begin();
 					 it < _servers.end(); ++it) {
 					if (events[i].data.fd == (*it)->getSocket()) {
 						(*it)->receiveRequest();
@@ -126,7 +107,10 @@ int Handler::handleEvents()
 
 Handler::~Handler()
 {
-	for (int i = 0; i < _nbServ; ++i) {
-		delete _servers[i];
+	std::vector< Server * >::iterator it = _servers.begin();
+
+	while (it != _servers.end()) {
+		delete *it;
+		++it;
 	}
 }
