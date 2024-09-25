@@ -106,6 +106,7 @@ int Handler::handleEvents()
 								throw InternalServerException(
 									"Error on epoll_ctl");
 							}
+							added_sock.push_back((*it)->getNewSocket());
 						}
 					}
 					std::cout << "Request received" << (*it)->getRequest()
