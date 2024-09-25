@@ -6,12 +6,14 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/09/25 00:59:08 by anthony          ###   ########.fr       */
+/*   Updated: 2024/09/25 15:18:35 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server/Handler.hpp"
 
+#include "client/Client.hpp"
+#include "client/Parser.hpp"
 #include "server/ServerException.hpp"
 #include "server/Signal.hpp"
 

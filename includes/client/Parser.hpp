@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/24 15:17:48 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/25 11:24:15 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,9 @@ class Parser
 	void getBodyFromRequest(size_t &line_break_pos);
 
 	static string extractExtension(string &url, const size_t &l_dot);
-	void   handleUrl(std::string &url);
-	string extractPathAndFilename(string &url, const size_t &l_slash,
-								  const size_t &l_dot);
+	void		  handleUrl(std::string &url);
+	string		  extractPathAndFilename(string &url, const size_t &l_slash,
+										 const size_t &l_dot);
 
 	bool InvalidMethod();
 	bool InvalidHeader();
@@ -53,7 +53,7 @@ class Parser
 	Parser &operator=(const Parser &src);
 	~Parser();
 
-	void parseRequest(void *buff);
+	void parseRequest(std::string request);
 
 	map< string, string > &getHeaders();
 	const string		  &getUrlPath();

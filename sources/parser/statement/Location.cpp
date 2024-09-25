@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 13:51:35 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/25 15:54:25 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,18 @@ Location::Location() : Token(S_Location), _autoindex(false) {}
 
 Location::Location(const Location &src) :
 	Token(src),
+	_route(src._route),
 	_root(src._root),
 	_index(src._index),
 	_autoindex(src._autoindex),
-	_return(src._return),
-	_deny_methods(src._deny_methods),
-	_error_pages(src._error_pages)
+	_return(src._return)
 {
+	for (size_t i = 0; i < src._deny_methods.size(); ++i) {
+		_deny_methods.push_back(src._deny_methods[i]);
+	}
+	for (size_t i = 0; i < src._error_pages.size(); ++i) {
+		_error_pages.push_back(src._error_pages[i]);
+	}
 }
 
 Location::Location(const std::vector< Token * > &tokens,

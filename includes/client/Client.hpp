@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/24 15:17:53 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/25 15:07:37 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 #include <sys/wait.h>
 #include <vector>
 
-#include "Parser.hpp"
-#include "Server.hpp"
+#include "client/Parser.hpp"
+#include "server/Server.hpp"
 
 using std::map;
 using std::string;
@@ -38,7 +38,7 @@ class Client : public Server
 	string		   _return_code;
 
 	static std::vector< char > readDataRequest(std::ifstream &file);
-	std::vector< char > getDataFromFileRequest(bool &key);
+	std::vector< char >		   getDataFromFileRequest(bool &key);
 
 	std::vector< char > createErrorPage();
 	void				createUrlDefaultErrorPage();
@@ -58,6 +58,7 @@ class Client : public Server
 	~Client();
 
 	client::Parser &getParser();
+	void			setParser(const Parser &parser);
 
 	string buildResponse();
 };

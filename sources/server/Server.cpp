@@ -5,12 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-<<<<<<< Updated upstream
-/*   Updated: 2024/09/24 14:57:00 by jbrousse         ###   ########.fr       */
-=======
-/*   Updated: 2024/09/25 00:55:00 by anthony          ###   ########.fr       */
->>>>>>> Stashed changes
+/*   Created: 2024/09/25 11:12:31 by anthony           #+#    #+#             */
+/*   Updated: 2024/09/25 15:31:38 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +56,6 @@ Server::Server(const Server &src) :
 	_autoindex(src._autoindex),
 	_deny_methods(src._deny_methods),
 	_error_pages(src._error_pages),
-	_locations(src._locations),
 
 	_server_socket(src._server_socket),
 	_new_socket(src._new_socket),
@@ -68,6 +63,15 @@ Server::Server(const Server &src) :
 	_request(src._request),
 	_info(src._info)
 {
+	std::vector< const statement::Location * >::const_iterator it =
+		src._locations.begin();
+	while (it != src._locations.end()) {
+		std::cout << "Location route : " << (*it)->getRoute() << std::endl;
+		_locations.push_back(new statement::Location(**it));
+		std::cout << "Location route : " << _locations.back()->getRoute()
+				  << std::endl;
+		++it;
+	}
 }
 
 Server &Server::operator=(const Server &src)
@@ -114,6 +118,36 @@ std::string Server::getRequest() const
 int Server::getNewSocket() const
 {
 	return (_new_socket);
+}
+
+const std::string &Server::getRoot() const
+{
+	return (_root);
+}
+
+const std::string &Server::getIndex() const
+{
+	return (_index);
+}
+
+bool Server::getAutoindex() const
+{
+	return (_autoindex);
+}
+
+const std::vector< std::string > &Server::getDenyMethods() const
+{
+	return (_deny_methods);
+}
+
+const std::vector< statement::ErrorPage > &Server::getErrorPages() const
+{
+	return (_error_pages);
+}
+
+const std::vector< const statement::Location * > Server::getLocations() const
+{
+	return (_locations);
 }
 
 int Server::createSocket()
@@ -178,7 +212,7 @@ int Server::receiveRequest(int &epfd)
 		throw InternalServerException(
 			"Error on awaiting connection (accept) on" + _name);
 	}
-	_new_socket = setNonBlocking(_new_socket);
+	// _new_socket = setNonBlocking(_new_socket);
 
 	struct epoll_event ev;
 	ev.events = EPOLLIN | EPOLLET; // Edge-triggered
@@ -186,15 +220,11 @@ int Server::receiveRequest(int &epfd)
 	epoll_ctl(epfd, EPOLL_CTL_ADD, _new_socket, &ev);
 
 	while (true) {
-		std::cout << "Je rentre dans la boucle" << std::endl;
 		for (int i = 0; i < MAX_REQ_SIZE; ++i) {
 			buff[i] = 0;
 		}
 		_nb_bytes =
 			static_cast< int >(recv(_new_socket, buff, MAX_REQ_SIZE, 0));
-
-		std::cout << "Info receive" << std::endl;
-		std::cout << "buffer = " << buff << std::endl;
 		if (_nb_bytes == -1 && (errno != EAGAIN && errno != EWOULDBLOCK)) {
 			std::cerr << "Error on recv on " << _name << std::endl;
 			close(_new_socket);
@@ -212,19 +242,6 @@ int Server::receiveRequest(int &epfd)
 	return (SUCCESS);
 }
 
-<<<<<<< Updated upstream
-int Server::sendResponse()
-{
-	// the following is to replace with the response constructor
-	if (_nb_bytes > 0) {
-		std::cout << _request << std::endl;
-		const int rep_size = 110;
-		char	  repTest[rep_size] =
-			"HTTP/1.1 200 OK\nDate: Mon, 09 Sep 2024 12:00:00 "
-			"GMT\nContent-Length: 13\nConnection: "
-			"keep-alive\n\nca marche!!!!\n";
-		if (send(_new_socket, repTest, strlen(repTest), 0) == -1) {
-=======
 std::string Server::receiveClientRequest(int &client_socket)
 {
 	char		buff[MAX_REQ_SIZE];
@@ -268,7 +285,6 @@ int Server::sendResponse(const std::string &reponse, int socket)
 		// 	"GMT\nContent-Length: 13\nConnection: "
 		// 	"keep-alive\n\nca marche!!!!\n";
 		if (send(socket, reponse.c_str(), reponse.length(), 0) == -1) {
->>>>>>> Stashed changes
 			std::cerr << "Error on sending response on " << _name << std::endl;
 			return (FAILURE);
 		}
@@ -278,6 +294,7 @@ int Server::sendResponse(const std::string &reponse, int socket)
 
 Server::~Server()
 {
+	std::cout << "Server " << _name << " is closed !" << std::endl;
 	close(_server_socket);
 	freeaddrinfo(_info);
 }

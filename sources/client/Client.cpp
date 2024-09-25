@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/25 00:59:34 by anthony          ###   ########.fr       */
+/*   Updated: 2024/09/25 15:51:13 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,11 @@ client::Client &client::Client::operator=(const Client &src)
 client::Parser &client::Client::getParser()
 {
 	return _parser;
+}
+
+void client::Client::setParser(const Parser &parser)
+{
+	_parser = parser;
 }
 
 void client::Client::createUrlDefaultErrorPage()
@@ -158,17 +163,27 @@ std::vector< char > client::Client::getDataFromFileRequest(bool &key)
 void client::Client::findFinalFileFromUrl()
 {
 	string url_path = _parser.getUrlPath();
+	std::cout << "URL TO FIND IN LOCATIOn : " << url_path << std::endl;
 
 	if (_return_code != "200") {
 		return findErrorFile(url_path);
 	}
+	const std::vector< const statement::Location * > &location = getLocations();
+
+	if (location.empty()) {
+		std::cout << "NO LOCATION" << std::endl;
+	}
 
 	std::vector< const statement::Location * >::const_iterator it =
-		getLocations().begin();
-
-	while (it != getLocations().end()) {
-		std::cout << "LOCATION : " << (*it)->getRoute() << std::endl;
-		if ((*it)->getRoute() == url_path) {
+		location.begin();
+	while (it != location.end()) {
+		std::string route = (*it)->getRoute();
+		if (route[route.size() - 1] == '/' && route.size() > 1) {
+			route = route.substr(0, route.size() - 1);
+		}
+		std::cout << "ROUTE : " << route << std::endl;
+		std::cout << "URL PATH : " << url_path << std::endl;
+		if (route == url_path) {
 			_path = (*it)->getRoot();
 			break;
 		}
@@ -222,5 +237,6 @@ string client::Client::buildResponse()
 	}
 	response += std::string(body.begin(), body.end());
 
+	std::cout << "RESPONSE : " << response << std::endl;
 	return response;
 }

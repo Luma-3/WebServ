@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/09/24 15:10:37 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/09/25 11:24:35 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,21 +136,13 @@ void client::Parser::getHeaderFromRequest(const size_t &line_break_pos)
 	_haveHeader = true;
 }
 
-void client::Parser::parseRequest(void *buff)
+void client::Parser::parseRequest(std::string request)
 {
 	size_t line_break_pos = 0;
-	string line;
 
-	_buffer += static_cast< char * >(buff);
+	_buffer += request;
 	line_break_pos = _buffer.find("\r\n");
-
-	if (line_break_pos == string::npos) {
-		return;
-	}
-
-	if (!_haveHeader) {
-		getHeaderFromRequest(line_break_pos);
-	}
+	getHeaderFromRequest(line_break_pos);
 
 	getBodyFromRequest(line_break_pos);
 }
