@@ -19,7 +19,7 @@
 Server::Server() :
 	_autoindex(0),
 	_server_socket(-1),
-	_new_socket(0),
+	_client_socket(0),
 	_nb_bytes(0),
 	_info()
 {
@@ -37,7 +37,7 @@ Server::Server(const statement::Server *server) :
 	_locations(server->getLocations()),
 
 	_server_socket(socket(AF_INET, SOCK_STREAM, 0)),
-	_new_socket(-1),
+	_client_socket(-1),
 	_nb_bytes(-1),
 	_info()
 {
@@ -61,7 +61,7 @@ Server::Server(const Server &src) :
 	_error_pages(src._error_pages),
 
 	_server_socket(src._server_socket),
-	_new_socket(src._new_socket),
+	_client_socket(src._client_socket),
 	_nb_bytes(src._nb_bytes),
 	_request(src._request),
 	_info(src._info)
@@ -80,7 +80,7 @@ Server::Server(const Server &src) :
 Server &Server::operator=(const Server &src)
 {
 	if (this != &src) {
-		_new_socket = src._new_socket;
+		_client_socket = src._client_socket;
 		_nb_bytes = src._nb_bytes;
 		_request = src._request;
 		_info = src._info;
@@ -110,7 +110,7 @@ int Server::getSocket() const
 
 int Server::getNewSocket() const
 {
-	return (_new_socket);
+	return (_client_socket);
 }
 
 int Server::getNbBytes() const
@@ -155,7 +155,9 @@ const std::vector< const statement::Location * > &Server::getLocations() const
 
 int Server::createSocket()
 {
-	int val = 1;
+	int				val = 1;
+	struct addrinfo hints = {.ai_flags = AI_PASSIVE};
+
 	if (fcntl(_server_socket, F_SETFL, O_NONBLOCK) == -1) {
 		throw InternalServerException("Error on set nonblocking on " + _name);
 	}
@@ -176,7 +178,7 @@ int Server::createSocket()
 	if (_server_socket == -1) {
 		throw InternalServerException("socket failed on " + _name);
 	}
-	if (getaddrinfo(_hostname.c_str(), _port.c_str(), NULL, &_info) != 0) {
+	if (getaddrinfo(_hostname.c_str(), _port.c_str(), &hints, &_info) != 0) {
 		throw InternalServerException("getaddrinfo failed on" + _name);
 	}
 	return (SUCCESS);
@@ -194,28 +196,67 @@ int Server::setSocket()
 	return (SUCCESS);
 }
 
-int Server::receiveRequest()
+int Server::acceptRequest(int epfd, std::vector< int > &socktab)
 {
-	char buff[MAX_REQ_SIZE];
+	int			val = 1;
+	sockaddr_in addr;
+	socklen_t	len = sizeof(addr);
 
-	_new_socket = accept(_server_socket, NULL, NULL);
-	if (_new_socket == -1) {
+	_client_socket = accept(_server_socket, (sockaddr *)&addr, &len);
+	if (_client_socket == -1) {
 		throw InternalServerException(
 			"Error on awaiting connection (accept) on" + _name);
 	}
+	if (fcntl(_client_socket, F_SETFL, O_NONBLOCK) == -1) {
+		throw InternalServerException("Error on set nonblocking on " + _name);
+	}
+	if (setsockopt(_client_socket, SOL_SOCKET, SO_REUSEADDR, &val,
+				   sizeof(int)) == -1) {
+		throw InternalServerException(
+			"error on setting the port on reusable on " + _name + ": " +
+			strerror(errno));
+	}
+	if (setsockopt(_client_socket, SOL_SOCKET, SO_REUSEPORT, &val,
+				   sizeof(int)) == -1) {
+		throw InternalServerException(
+			"error on setting the port on reusable on " + _name + ": " +
+			strerror(errno));
+	}
+	if (setsockopt(_client_socket, SOL_SOCKET, SO_KEEPALIVE, &val,
+				   sizeof(int)) == -1) {
+		throw InternalServerException(
+			"error on setting the port on reusable on " + _name + ": " +
+			strerror(errno));
+	}
+	this->epolladd(epfd, _client_socket);
+	socktab.push_back(_client_socket);
+	return (SUCCESS);
+}
+
+int Server::receiveRequest(int epfd)
+{
+	char buff[MAX_REQ_SIZE];
+
 	while (true) {
 		for (int i = 0; i < MAX_REQ_SIZE; ++i) {
 			buff[i] = 0;
 		}
 		_nb_bytes =
-			static_cast< int >(recv(_new_socket, buff, MAX_REQ_SIZE, 0));
-		if (_nb_bytes == -1 && (errno != EAGAIN && errno != EWOULDBLOCK)) {
+			static_cast< int >(recv(_client_socket, buff, MAX_REQ_SIZE, 0));
+		if (_nb_bytes == -1) {
 			std::cerr << "Error on recv on " << _name << std::endl;
-			close(_new_socket);
+			std::cout << errno << std::endl;
+			close(_client_socket);
+			this->epolldel(epfd, _client_socket);
+			_client_socket = -1;
 		} else if (_nb_bytes == 0) {
 			std::cout << "client disconnected on " << _name << std::endl;
-			close(_new_socket);
+			close(_client_socket);
+			this->epolldel(epfd, _client_socket);
+			_client_socket = -1;
 		}
+		std::cout << _nb_bytes << std::endl;
+		std::cout << buff << std::endl;
 		_request.append(buff, _nb_bytes);
 		if (_nb_bytes < MAX_REQ_SIZE) {
 			break;
@@ -226,15 +267,8 @@ int Server::receiveRequest()
 
 int Server::sendResponse(const std::string &reponse)
 {
-	// the following is to replace with the response constructor
 	if (_nb_bytes > 0) {
-		// std::cout << _request << std::endl;
-		// const int rep_size = 110;
-		// char	  repTest[rep_size] =
-		// 	"HTTP/1.1 200 OK\nDate: Mon, 09 Sep 2024 12:00:00 "
-		// 	"GMT\nContent-Length: 13\nConnection: "
-		// 	"keep-alive\n\nca marche!!!!\n";
-		if (send(_new_socket, reponse.c_str(), reponse.length(), 0) == -1) {
+		if (send(_client_socket, reponse.c_str(), reponse.length(), 0) == -1) {
 			std::cerr << "Error on sending response on " << _name << std::endl;
 			return (FAILURE);
 		}
@@ -242,11 +276,37 @@ int Server::sendResponse(const std::string &reponse)
 	return (SUCCESS);
 }
 
+void Server::epolladd(int epfd, int socket)
+{
+	struct epoll_event event = {.events = EPOLLIN, .data = {.fd = socket}};
+	if (epoll_ctl(epfd, EPOLL_CTL_ADD, socket, &event) == -1) {
+		throw InternalServerException("Error on epoll_ctl for EPOLLIN");
+	}
+}
+
+void Server::epollmod(int epfd, int socket, int flag)
+{
+	struct epoll_event event = {.events = flag, .data = {.fd = socket}};
+	if (epoll_ctl(epfd, EPOLL_CTL_MOD, socket, &event) == -1) {
+		throw InternalServerException("Error on epoll_ctl for EPOLLOUT");
+	}
+}
+
+void Server::epolldel(int epfd, int socket)
+{
+	if (epoll_ctl(epfd, EPOLL_CTL_DEL, socket, NULL) == -1) {
+		throw InternalServerException("Error on epoll_ctl for EPOLLDEL");
+	}
+}
+
 Server::~Server()
 {
+	// if (_info) {
+	// 	freeaddrinfo(_info);
+	// 	_info = NULL;
+	// } TODO: handle inheritent destructor
 	close(_server_socket);
-	if (_new_socket != -1) {
-		close(_new_socket);
+	if (_client_socket != -1) {
+		close(_client_socket);
 	}
-	freeaddrinfo(_info);
 }

@@ -13,6 +13,7 @@
 #include "server/Handler.hpp"
 
 #include <algorithm>
+#include <map>
 
 #include "client/Client.hpp"
 #include "client/Client_Parser.hpp"
@@ -67,11 +68,7 @@ int Handler::launchServers()
 		 it < _servers.end(); ++it) {
 		(*it)->createSocket();
 		(*it)->setSocket();
-		struct epoll_event event = {.events = EPOLLIN,
-									.data = {.fd = (*it)->getSocket()}};
-		if (epoll_ctl(_epfd, EPOLL_CTL_ADD, (*it)->getSocket(), &event) == -1) {
-			throw InternalServerException("Error on epoll_ctl");
-		}
+		(*it)->epolladd(_epfd, (*it)->getSocket());
 	}
 
 	return (SUCCESS);
@@ -79,43 +76,45 @@ int Handler::launchServers()
 
 int Handler::handleEvents()
 {
-	struct epoll_event events[MAX_EVENTS];
-	std::vector< int > added_sock;
+	struct epoll_event event[MAX_EVENTS];
+	std::vector< int > sock_tab;
 
 	while (!g_sig) {
 		initSignal();
-		int nfds = epoll_wait(_epfd, events, MAX_EVENTS, -1);
+		int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
 		if (nfds == -1 && !g_sig) {
 			throw InternalServerException("Error on epoll_wait");
 		}
 		for (int i = 0; i < nfds; ++i) {
-			if (events[i].events & EPOLLIN) {
-				for (std::vector< Server * >::iterator it = _servers.begin();
-					 it < _servers.end(); ++it) {
-					if (events[i].data.fd == (*it)->getSocket()) {
-						(*it)->receiveRequest();
-						if (std::find(added_sock.begin(), added_sock.end(),
-									  (*it)->getNewSocket()) ==
-							added_sock.end()) {
-							struct epoll_event event = {
-								.events = EPOLLIN,
-								.data = {.fd = (*it)->getNewSocket()}};
-							if (epoll_ctl(_epfd, EPOLL_CTL_ADD,
-										  (*it)->getNewSocket(),
-										  &event) == -1) {
-								throw InternalServerException(
-									"Error on epoll_ctl");
-							}
-							added_sock.push_back((*it)->getNewSocket());
-						}
+			int event_fd = event[i].data.fd;
+
+			for (std::vector< Server * >::iterator it = _servers.begin();
+				 it < _servers.end(); ++it) {
+				if (event_fd == (*it)->getSocket()) {
+					(*it)->acceptRequest(_epfd, sock_tab);
+					// (*it)->receiveRequest(_epfd);
+					// std::cout << "Request received" << (*it)->getRequest()
+					// 		  << std::endl;
+					// client::Client client(**it);
+					// client::Parser parser;
+					// parser.parseRequest((*it)->getRequest());
+					// client.setParser(parser);
+					// (*it)->sendResponse(client.buildResponse());
+				}
+				for (std::vector< int >::iterator it2 = sock_tab.begin();
+					 it2 < sock_tab.end(); ++it) {
+					if (event_fd == *it2) {
+						std::cout << "ICI" << std::endl;
+						(*it)->receiveRequest(_epfd);
+						client::Client client(**it);
+						client::Parser parser;
+						parser.parseRequest((*it)->getRequest());
+						client.setParser(parser);
+						(*it)->epollmod(_epfd, (*it)->getNewSocket(), EPOLLOUT);
+						(*it)->sendResponse(client.buildResponse());
+						(*it)->epollmod(_epfd, (*it)->getNewSocket(),
+										EPOLLIN | EPOLLET);
 					}
-					std::cout << "Request received" << (*it)->getRequest()
-							  << std::endl;
-					client::Client client(**it);
-					client::Parser parser;
-					parser.parseRequest((*it)->getRequest());
-					client.setParser(parser);
-					(*it)->sendResponse(client.buildResponse());
 					break;
 				}
 			}
@@ -123,13 +122,6 @@ int Handler::handleEvents()
 	}
 	return (SUCCESS);
 }
-
-// Server *Handler::operator[](const int index)
-// {
-// 	if (index < 0 || index >= _nbServ || !_nbServ)
-// 		throw(std::out_of_range("Error : invalid access index on Servers"));
-// 	return (_servers[index]);
-// }
 
 Handler::~Handler()
 {

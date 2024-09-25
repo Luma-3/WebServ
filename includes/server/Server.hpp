@@ -22,6 +22,7 @@
 #include <iostream>
 #include <netdb.h>
 #include <string>
+#include <sys/epoll.h>
 #include <unistd.h>
 
 #include "parser/statement/ErrorPage.hpp"
@@ -47,7 +48,7 @@ class Server
 	std::vector< const statement::Location * > _locations;
 
 	const int		 _server_socket;
-	int				 _new_socket;
+	int				 _client_socket;
 	int				 _nb_bytes;
 	std::string		 _request;
 	struct addrinfo *_info;
@@ -80,10 +81,15 @@ class Server
 
 	int createSocket();
 	int setSocket();
-	int receiveRequest();
+	int acceptRequest(int epfd, std::vector<int> &socktab);
+	int receiveRequest(int epfd);
 	int sendResponse(const std::string &response);
 
-	~Server();
+	void epolladd(int epfd, int socket);
+	void epollmod(int epfd, int socket, int flag);
+	void epolldel(int epfd, int socket);
+
+	virtual ~Server();
 };
 
 #endif
