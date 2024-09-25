@@ -245,5 +245,8 @@ int Server::sendResponse(const std::string &reponse)
 Server::~Server()
 {
 	close(_server_socket);
+	if (_new_socket != -1) {
+		close(_new_socket);
+	}
 	freeaddrinfo(_info);
 }

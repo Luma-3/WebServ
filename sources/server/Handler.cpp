@@ -12,6 +12,8 @@
 
 #include "server/Handler.hpp"
 
+#include <algorithm>
+
 #include "client/Client.hpp"
 #include "client/Client_Parser.hpp"
 #include "server/ServerException.hpp"
@@ -70,12 +72,6 @@ int Handler::launchServers()
 		if (epoll_ctl(_epfd, EPOLL_CTL_ADD, (*it)->getSocket(), &event) == -1) {
 			throw InternalServerException("Error on epoll_ctl");
 		}
-		event.data.fd = (*it)->getNewSocket();
-		if (epoll_ctl(_epfd, EPOLL_CTL_ADD, (*it)->getNewSocket(), &event) ==
-			-1) {
-				std::cerr << "Error on new epoll_ctl" << std::endl;
-			throw InternalServerException("Error on epoll_ctl");
-		}
 	}
 
 	return (SUCCESS);
@@ -84,6 +80,7 @@ int Handler::launchServers()
 int Handler::handleEvents()
 {
 	struct epoll_event events[MAX_EVENTS];
+	std::vector< int > added_sock;
 
 	while (!g_sig) {
 		initSignal();
@@ -96,17 +93,29 @@ int Handler::handleEvents()
 				for (std::vector< Server * >::iterator it = _servers.begin();
 					 it < _servers.end(); ++it) {
 					if (events[i].data.fd == (*it)->getSocket()) {
-
 						(*it)->receiveRequest();
-						std::cout << "Request received" << (*it)->getRequest()
-								  << std::endl;
-						client::Client client(**it);
-						client::Parser parser;
-						parser.parseRequest((*it)->getRequest());
-						client.setParser(parser);
-						(*it)->sendResponse(client.buildResponse());
-						break;
+						if (std::find(added_sock.begin(), added_sock.end(),
+									  (*it)->getNewSocket()) ==
+							added_sock.end()) {
+							struct epoll_event event = {
+								.events = EPOLLIN,
+								.data = {.fd = (*it)->getNewSocket()}};
+							if (epoll_ctl(_epfd, EPOLL_CTL_ADD,
+										  (*it)->getNewSocket(),
+										  &event) == -1) {
+								throw InternalServerException(
+									"Error on epoll_ctl");
+							}
+						}
 					}
+					std::cout << "Request received" << (*it)->getRequest()
+							  << std::endl;
+					client::Client client(**it);
+					client::Parser parser;
+					parser.parseRequest((*it)->getRequest());
+					client.setParser(parser);
+					(*it)->sendResponse(client.buildResponse());
+					break;
 				}
 			}
 		}
