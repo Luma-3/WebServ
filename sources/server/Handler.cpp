@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/09/24 16:31:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/25 11:14:46 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,14 @@ int Handler::launchServers()
 		if (epoll_ctl(_epfd, EPOLL_CTL_ADD, (*it)->getSocket(), &event) == -1) {
 			throw InternalServerException("Error on epoll_ctl");
 		}
+		event.data.fd = (*it)->getNewSocket();
+		if (epoll_ctl(_epfd, EPOLL_CTL_ADD, (*it)->getNewSocket(), &event) ==
+			-1) {
+				std::cerr << "Error on new epoll_ctl" << std::endl;
+			throw InternalServerException("Error on epoll_ctl");
+		}
 	}
+
 	return (SUCCESS);
 }
 

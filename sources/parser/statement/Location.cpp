@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 13:51:35 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/25 10:38:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ Location::Location() : Token(S_Location), _autoindex(false) {}
 
 Location::Location(const Location &src) :
 	Token(src),
+	_route(src._route),
 	_root(src._root),
 	_index(src._index),
 	_autoindex(src._autoindex),

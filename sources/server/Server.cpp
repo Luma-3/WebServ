@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 16:27:24 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/25 11:07:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ Server::Server(const statement::Server *server) :
 	if (_server_socket == -1) {
 		throw InternalServerException("socket failed on " + _name);
 	}
+
+	std::cout << "Server location: " << _locations[0]->getRoute() << std::endl;
+	std::cout << "Server location: " << _locations[0]->getRoot() << std::endl;
 }
 
 Server::Server(const Server &src) :
@@ -56,7 +59,6 @@ Server::Server(const Server &src) :
 	_autoindex(src._autoindex),
 	_deny_methods(src._deny_methods),
 	_error_pages(src._error_pages),
-	_locations(src._locations),
 
 	_server_socket(src._server_socket),
 	_new_socket(src._new_socket),
@@ -64,6 +66,15 @@ Server::Server(const Server &src) :
 	_request(src._request),
 	_info(src._info)
 {
+
+	std::cout << "Server copy constructor" << std::endl;
+	std::vector< const statement::Location * >::const_iterator it =
+		src._locations.begin();
+
+	while (it != src._locations.end()) {
+		_locations.push_back(new statement::Location(**it));
+		++it;
+	}
 }
 
 Server &Server::operator=(const Server &src)
@@ -95,6 +106,11 @@ std::string Server::getPort() const
 int Server::getSocket() const
 {
 	return (_server_socket);
+}
+
+int Server::getNewSocket() const
+{
+	return (_new_socket);
 }
 
 int Server::getNbBytes() const

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/24 16:32:10 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/25 10:39:25 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,10 +176,15 @@ void client::Client::findFinalFileFromUrl()
 		getLocations().begin();
 
 	while (it != getLocations().end()) {
+		std::cout << "URL PATH : " << url_path << std::endl;
+		std::cout << "ROUTE : " << (*it)->getRoute() << std::endl;
 		if ((*it)->getRoute() == url_path) {
 			_path = (*it)->getRoot();
+			_path = _path.substr(1, _path.size() - 1);
+			std::cout << "PATH : " << _path << std::endl;
 			break;
 		}
+		++it;
 	}
 	_url = _path + _parser.getFilename() + "." + _parser.getFileExtension();
 	std::cout << "URL BEFORE ACCESS : " << _url << std::endl;
