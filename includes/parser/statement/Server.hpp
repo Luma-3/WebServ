@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:04:03 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 15:56:00 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/26 12:13:40 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ class Server : public Token
 	std::string				   _return;
 	std::vector< std::string > _deny_methods;
 
-	std::vector< statement::ErrorPage >		   _error_pages;
-	std::vector< const statement::Location * > _locations;
+	std::vector< statement::ErrorPage >	 _error_pages;
+	std::vector< statement::Location * > _locations;
 
   public:
 	Server();
@@ -75,7 +75,7 @@ class Server : public Token
 	{
 		return _error_pages;
 	}
-	const std::vector< const statement::Location * > &getLocations() const
+	const std::vector< statement::Location * > &getLocations() const
 	{
 		return _locations;
 	}

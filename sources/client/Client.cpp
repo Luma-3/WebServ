@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/25 15:51:13 by anthony          ###   ########.fr       */
+/*   Updated: 2024/09/26 12:10:41 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,14 +168,13 @@ void client::Client::findFinalFileFromUrl()
 	if (_return_code != "200") {
 		return findErrorFile(url_path);
 	}
-	const std::vector< const statement::Location * > &location = getLocations();
+	const std::vector< statement::Location * > &location = getLocations();
 
 	if (location.empty()) {
 		std::cout << "NO LOCATION" << std::endl;
 	}
 
-	std::vector< const statement::Location * >::const_iterator it =
-		location.begin();
+	std::vector< statement::Location * >::const_iterator it = location.begin();
 	while (it != location.end()) {
 		std::string route = (*it)->getRoute();
 		if (route[route.size() - 1] == '/' && route.size() > 1) {

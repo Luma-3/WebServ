@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 11:12:31 by anthony           #+#    #+#             */
-/*   Updated: 2024/09/25 15:31:38 by anthony          ###   ########.fr       */
+/*   Updated: 2024/09/26 12:23:38 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,14 @@ Server::Server(const statement::Server *server) :
 	_autoindex(server->getAutoindex()),
 	_deny_methods(server->getDenyMethods()),
 	_error_pages(server->getErrorPages()),
-	_locations(server->getLocations()),
 
 	_server_socket(socket(AF_INET, SOCK_STREAM, 0)),
 	_new_socket(-1),
 	_nb_bytes(-1),
 	_info()
 {
-	// delete server;
+	_locations = server->getLocations();
+
 	if (_server_socket == -1) {
 		throw InternalServerException("socket failed on " + _name);
 	}
@@ -63,13 +63,24 @@ Server::Server(const Server &src) :
 	_request(src._request),
 	_info(src._info)
 {
-	std::vector< const statement::Location * >::const_iterator it =
+	std::vector< statement::Location * >::const_iterator it =
 		src._locations.begin();
+	std::cout << "location size : " << src._locations.size() << std::endl;
 	while (it != src._locations.end()) {
-		std::cout << "Location route : " << (*it)->getRoute() << std::endl;
-		_locations.push_back(new statement::Location(**it));
-		std::cout << "Location route : " << _locations.back()->getRoute()
-				  << std::endl;
+		if (*it != NULL) {
+			try {
+				std::cout << "Location route : " << (*it)->getRoute()
+						  << std::endl;
+				_locations.push_back(new statement::Location(**it));
+				std::cout << "Location route : "
+						  << _locations.back()->getRoute() << std::endl;
+			} catch (const std::exception &e) {
+				std::cerr << "Error copying location: " << e.what()
+						  << std::endl;
+			}
+		} else {
+			std::cerr << "Null location pointer encountered" << std::endl;
+		}
 		++it;
 	}
 }
@@ -81,6 +92,7 @@ Server &Server::operator=(const Server &src)
 		_nb_bytes = src._nb_bytes;
 		_request = src._request;
 		_info = src._info;
+		_locations = src._locations;
 	}
 	return (*this);
 }
@@ -145,7 +157,7 @@ const std::vector< statement::ErrorPage > &Server::getErrorPages() const
 	return (_error_pages);
 }
 
-const std::vector< const statement::Location * > Server::getLocations() const
+std::vector< statement::Location * > Server::getLocations() const
 {
 	return (_locations);
 }
@@ -296,5 +308,5 @@ Server::~Server()
 {
 	std::cout << "Server " << _name << " is closed !" << std::endl;
 	close(_server_socket);
-	freeaddrinfo(_info);
+	// freeaddrinfo(_info);
 }

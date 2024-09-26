@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/25 15:06:47 by anthony          ###   ########.fr       */
+/*   Updated: 2024/09/26 12:06:22 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,9 @@ class Server
 	const std::string _index;
 	const bool		  _autoindex;
 	// TODO : add _return
-	const std::vector< std::string >		   _deny_methods;
-	const std::vector< statement::ErrorPage >  _error_pages;
-	std::vector< const statement::Location * > _locations;
+	const std::vector< std::string >		  _deny_methods;
+	const std::vector< statement::ErrorPage > _error_pages;
+	std::vector< statement::Location * >	  _locations;
 
 	const int		 _server_socket;
 	int				 _new_socket;
@@ -72,9 +72,9 @@ class Server
 	bool			   getAutoindex() const;
 	int				   getNewSocket() const;
 
-	const std::vector< std::string >				&getDenyMethods() const;
-	const std::vector< statement::ErrorPage >		&getErrorPages() const;
-	const std::vector< const statement::Location * > getLocations() const;
+	const std::vector< std::string >		  &getDenyMethods() const;
+	const std::vector< statement::ErrorPage > &getErrorPages() const;
+	std::vector< statement::Location * >	   getLocations() const;
 
 	int			createSocket();
 	int			setSocket();

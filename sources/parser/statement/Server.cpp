@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 12:49:23 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/26 12:14:20 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,8 +170,7 @@ std::ostream &operator<<(std::ostream &o, const statement::Server &server)
 	for (size_t i = 0; i < error_pages.size(); ++i) {
 		o << "Error page: " << error_pages[i] << std::endl;
 	}
-	std::vector< const statement::Location * > locations =
-		server.getLocations();
+	std::vector< statement::Location * > locations = server.getLocations();
 	for (size_t i = 0; i < locations.size(); ++i) {
 		o << "Location: " << *locations[i] << std::endl;
 	}

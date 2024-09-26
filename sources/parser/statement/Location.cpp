@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/25 15:54:25 by anthony          ###   ########.fr       */
+/*   Updated: 2024/09/26 12:25:17 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,8 @@ Location::Location(const Location &src) :
 	_autoindex(src._autoindex),
 	_return(src._return)
 {
-	for (size_t i = 0; i < src._deny_methods.size(); ++i) {
-		_deny_methods.push_back(src._deny_methods[i]);
-	}
-	for (size_t i = 0; i < src._error_pages.size(); ++i) {
-		_error_pages.push_back(src._error_pages[i]);
-	}
+	this->_deny_methods = src._deny_methods;
+	this->_error_pages = src._error_pages;
 }
 
 Location::Location(const std::vector< Token * > &tokens,
@@ -70,6 +66,7 @@ Location &Location::operator=(const Location &src)
 {
 	if (this != &src) {
 		Token::operator=(src);
+		_route = src._route;
 		_root = src._root;
 		_index = src._index;
 		_autoindex = src._autoindex;
