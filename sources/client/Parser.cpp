@@ -6,72 +6,74 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/09/24 16:06:32 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 13:45:46 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client/Client_Parser.hpp"
+#include "client/Parser.hpp"
 
-client::Parser::Parser()
+using client::Parser;
+using std::map;
+using std::string;
+
+Parser::Parser()
 {
 	_codeResponse = "200";
 }
 
-client::Parser::Parser(const Parser &src)
+Parser::Parser(const Parser &src)
 {
 	if (this == &src) {
 		return;
 	}
 	_headers = src._headers;
 	_buffer = src._buffer;
-	_url_path = src._url_path;
+	_requested_path = src._requested_path;
 	_filename = src._filename;
 	_file_extension = src._file_extension;
 	_codeResponse = src._codeResponse;
 }
 
-client::Parser &client::Parser::operator=(const Parser &src)
+Parser &Parser::operator=(const Parser &src)
 {
 	if (this == &src) {
 		return *this;
 	}
 	_headers = src._headers;
 	_buffer = src._buffer;
-	_url_path = src._url_path;
+	_requested_path = src._requested_path;
 	_filename = src._filename;
 	_file_extension = src._file_extension;
 	_codeResponse = src._codeResponse;
 	return *this;
 }
 
-client::Parser::~Parser() {}
-
-map< string, string > &client::Parser::getHeaders()
+const map< string, string > &Parser::getHeaders() const
 {
 	return _headers;
 }
 
-const string &client::Parser::getCodeResponse()
+const string &Parser::getCodeResponse() const
 {
 	return _codeResponse;
 }
 
-const string &client::Parser::getUrlPath()
+const string &Parser::getRequestedPath() const
 {
-	return _url_path;
+	return _requested_path;
 }
 
-const string &client::Parser::getFilename()
+const string &Parser::getFilename() const
 {
 	return _filename;
 }
 
-const string &client::Parser::getFileExtension()
+const string &Parser::getFileExtension() const
 {
 	return _file_extension;
 }
 
-bool client::Parser::InvalidMethod()
+bool Parser::InvalidMethod()
 {
 	string method = _headers["Method"];
 	if (method != "GET" && method != "POST" && method != "DELETE") {
@@ -81,7 +83,7 @@ bool client::Parser::InvalidMethod()
 	return false;
 }
 
-bool client::Parser::InvalidHeader()
+bool Parser::InvalidHeader()
 {
 	if (_headers["Method"].empty() || _headers["httpVersion"].empty() ||
 		_headers["Url"].empty() || _headers["httpVersion"] != "HTTP/1.1") {
@@ -91,7 +93,7 @@ bool client::Parser::InvalidHeader()
 	return false;
 }
 
-void client::Parser::getBodyFromRequest(size_t &line_break_pos)
+void Parser::getBodyFromRequest(size_t &line_break_pos)
 {
 	string line;
 	string key;
@@ -113,7 +115,7 @@ void client::Parser::getBodyFromRequest(size_t &line_break_pos)
 	}
 }
 
-void client::Parser::getHeaderFromRequest(const size_t &line_break_pos)
+void Parser::getHeaderFromRequest(const size_t &line_break_pos)
 {
 	string line = _buffer.substr(0, line_break_pos);
 	string space = " ";
@@ -132,14 +134,27 @@ void client::Parser::getHeaderFromRequest(const size_t &line_break_pos)
 	_buffer = _buffer.substr(line_break_pos + 2);
 }
 
-void client::Parser::parseRequest(const std::string &request)
+void Parser::parseRequest(const std::string &request)
 {
 	size_t line_break_pos = 0;
 	string line;
 
 	_buffer = request;
+	std::cout << "Request : " << _buffer << std::endl;
 	line_break_pos = _buffer.find("\r\n");
 	getHeaderFromRequest(line_break_pos);
 
 	getBodyFromRequest(line_break_pos);
 }
+
+void Parser::reset()
+{
+	_headers.clear();
+	_buffer.clear();
+	_requested_path.clear();
+	_filename.clear();
+	_file_extension.clear();
+	_codeResponse = "200";
+}
+
+Parser::~Parser() {}

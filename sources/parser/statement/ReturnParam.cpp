@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:35:39 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 10:55:40 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/27 10:15:57 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 using statement::ReturnParam;
 
 ReturnParam::ReturnParam() : Token(S_Return) {}
+
+// faire une copy profonde
 
 ReturnParam::ReturnParam(const ReturnParam &src) :
 	Token(src),

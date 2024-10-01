@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 15:30:40 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/01 14:53:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ int main(const int ac, const char **av, const char **env)
 {
 	(void)env;
 	Handler *handler = NULL;
+
+	initSignal();
 
 	try {
 		handler = init_server(ac, av);

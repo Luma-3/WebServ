@@ -5,224 +5,89 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/25 10:39:25 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/10/01 14:57:51 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client/Client.hpp"
 
-client::Client::Client()
+#include <exception>
+#include <unistd.h>
+
+using client::Client;
+
+Client::Client() : _server(NULL), _client_socket(-1) {}
+
+Client::Client(const Server *server, int client_socket) :
+	_server(server),
+	_client_socket(client_socket)
 {
-	_return_code = "200";
 }
 
-client::Client::Client(const Server &server) : Server(server) {}
-
-client::Client::Client(const Client &src) : Server(src)
+Client::Client(const Client &src) :
+	_server(src._server),
+	_client_socket(src._client_socket)
 {
-	if (this == &src) {
-		return;
-	}
-	_parser = src._parser;
-	_path = src._path;
-	_url = src._url;
-	_return_code = src._return_code;
 }
 
-client::Client::~Client() {}
-
-client::Client &client::Client::operator=(const Client &src)
+Client &Client::operator=(const Client &src)
 {
-	if (this == &src) {
-		return *this;
-	}
-	_parser = src._parser;
-	_path = src._path;
-	_url = src._url;
-	_return_code = src._return_code;
+	(void)src;
 	return *this;
 }
 
-client::Parser &client::Client::getParser()
+int Client::getSocket() const
 {
-	return _parser;
+	return _client_socket;
 }
 
-void client::Client::setParser(const Parser &parser)
+const Server *Client::getServer() const
 {
-	_parser = parser;
+	return _server;
 }
 
-void client::Client::createUrlDefaultErrorPage()
+const std::string &Client::getRequest() const
 {
-	_url = string(DEFAULT_ERROR_PAGE) + ToString(_return_code) + ".html";
+	return _request;
 }
 
-std::vector< char > client::Client::createErrorPage()
+void Client::receiveRequest()
 {
-	std::vector< char > body;
+	char   *buff = new char[MAX_REQ_SIZE];
+	ssize_t nb_bytes;
 
-	std::string error_page = "<head><h1>ERROR " + _return_code +
-							 findStatusMessage(_return_code) +
-							 "Sorry for this ugly page bro < / h1 >< / head > ";
-
-	body.assign(error_page.begin(), error_page.end());
-
-	return body;
-}
-
-void client::Client::findErrorFile(string &url_path)
-{
-	(void)url_path;
-
-	// if (_locations[url_path]["root"].empty()) {
-	// 	_url = DEFAULT_ERROR_PAGE + ToString(_return_code) + ".html";
-	// } else {
-	// 	_url = _locations[_return_code]["error_page"];
-	// }
-}
-
-std::vector< char > client::Client::readDataRequest(std::ifstream &file)
-{
-	file.seekg(0, std::ios::end);
-
-	size_t size = file.tellg();
-
-	file.seekg(0, std::ios::beg);
-	std::vector< char > body;
-	body.resize(size);
-	file.read(&body[0], static_cast< std::streamsize >(size));
-	file.close();
-	return body;
-}
-
-// #include <iostream>
-// std::vector< char > client::Client::handleCGI()
-// {
-// 	std::cout << "GO TO CGI" << std::endl;
-// 	int	  pipefd[2];
-// 	pid_t pid;
-
-// 	pipe(pipefd);
-// 	// TODO : check if pipe is correctly created
-
-// 	pid = fork();
-// 	// TODO : check if fork is correctly created
-
-// 	if (pid == 0) {
-// 		const char *interpreter = "usr/bin/python3";
-// 		const char *script_path = _url.c_str();
-
-// 		close(pipefd[0]);
-// 		dup2(pipefd[1], 1);
-// 		close(pipefd[1]);
-
-// 		const char *argv[] = {interpreter, script_path, NULL};
-// 		const char *envp[] = {"PATH=/usr/bin", NULL};
-
-// 		std::cout << "EXECUTE CGI" << std::endl;
-// 		std::cout << "interpreter : " << interpreter << std::endl;
-// 		std::cout << "script_path : " << script_path << std::endl;
-// 		execve(interpreter, (char *const *)argv, (char *const *)envp);
-// 		_exit(1);
-// 		// TODO : check if execlp is correctly executed
-// 	} else {
-// 		close(pipefd[1]);
-// 		std::vector< char > body;
-// 		char				buffer[CHILD_BUFFER_SIZE];
-// 		int					bytes_read;
-
-// 		while ((bytes_read = read(pipefd[0], buffer, CHILD_BUFFER_SIZE)) > 0) {
-// 			body.insert(body.end(), buffer, buffer + bytes_read);
-// 		}
-// 		close(pipefd[0]);
-// 		waitpid(pid, NULL, 0);
-// 		return body;
-// 	}
-// }
-
-std::vector< char > client::Client::getDataFromFileRequest(bool &key)
-{
 	while (true) {
-		std::ifstream file(_url.c_str(), std::ios::binary);
-
-		// if (_parser.getFileExtension() == "py") {
-		// 	return handleCGI();
-		// }
-		if (file.is_open()) {
-			return readDataRequest(file);
+		bzero(buff, MAX_REQ_SIZE);
+		nb_bytes = recv(_client_socket, buff, MAX_REQ_SIZE, 0);
+		if (nb_bytes == -1) {
+			std::cerr << strerror(errno) << std::endl;
+			throw std::runtime_error("Error on recv on " + _server->getName());
 		}
-		if (key) {
-			createUrlDefaultErrorPage();
-			key = false;
-		} else {
+		if (nb_bytes == 0) {
+			break;
+		}
+		_request.append(buff, static_cast< size_t >(nb_bytes));
+		if (nb_bytes < MAX_REQ_SIZE) {
 			break;
 		}
 	}
-	return createErrorPage();
+	delete[] buff;
+	std::cout << "balbalbnladf : " << _request << std::endl;
 }
 
-#include <iostream>
-void client::Client::findFinalFileFromUrl()
+void Client::sendResponse(const std::string &response)
 {
-	string url_path = _parser.getUrlPath();
-
-	if (_return_code != "200") {
-		return findErrorFile(url_path);
-	}
-
-	std::vector< const statement::Location * >::const_iterator it =
-		getLocations().begin();
-
-	while (it != getLocations().end()) {
-		std::cout << "URL PATH : " << url_path << std::endl;
-		std::cout << "ROUTE : " << (*it)->getRoute() << std::endl;
-		if ((*it)->getRoute() == url_path) {
-			_path = (*it)->getRoot();
-			_path = _path.substr(1, _path.size() - 1);
-			std::cout << "PATH : " << _path << std::endl;
-			break;
+	if (send(_client_socket, response.c_str(), response.size(), 0) == -1) {
+		std::cerr << strerror(errno) << std::endl;
+		// throw std::runtime_error("Error on send on " + _server->getName());
 		}
-		++it;
-	}
-	_url = _path + _parser.getFilename() + "." + _parser.getFileExtension();
-	std::cout << "URL BEFORE ACCESS : " << _url << std::endl;
-
-	if (access(_url.c_str(), F_OK) != 0) {
-		if (errno == ENOENT) {
-			_return_code = "404";
-		} else {
-			_return_code = "402";
-		}
-		findErrorFile(url_path);
-	}
+	_request.clear();
 }
 
-string client::Client::buildResponse()
+void Client::ParseRequest(client::Parser &parser)
 {
-	map< string, string > _headers = _parser.getHeaders();
-	bool				  key = true;
-
-	_return_code = _parser.getCodeResponse();
-	findFinalFileFromUrl();
-
-	std::vector< char > body = getDataFromFileRequest(key);
-
-	string response =
-		"HTTP/1.1 " + _return_code + findStatusMessage(_return_code) + "\r\n";
-	response +=
-		"Content-Type: " + findContentType(_parser.getFileExtension()) + "\r\n";
-
-	response += "Content-Length: " + ToString(body.size()) + "\r\n";
-
-	if (_headers["Connection"] == "close") {
-		response += "Connection: close\r\n\r\n";
-	} else {
-		response += "Connection: keep-alive\r\n\r\n";
-	}
-	response += std::string(body.begin(), body.end());
-
-	std::cout << "Response : " << response << std::endl;
-	return response;
+	parser.parseRequest(_request);
 }
+
+Client::~Client() {}

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/25 10:50:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 12:32:33 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ using statement::Server;
 
 Server::Server() : Token(S_Server), _autoindex(false) {}
 
+// faire une copy profonde
 Server::Server(const Server &src) :
 	Token(src),
 	_port(src._port),
@@ -74,7 +75,7 @@ Server::Server(const std::vector< Token * > &tokens) : _autoindex(false)
 		} else if (tokens[i]->Token::getType() == S_ErrorPage) {
 			statement::ErrorPage *error_page =
 				dynamic_cast< statement::ErrorPage * >(tokens[i]);
-			_error_pages.push_back(*error_page);
+			_error_pages.push_back(error_page);
 		} else if (tokens[i]->Token::getType() == S_DenyMethod) {
 			_deny_methods =
 				dynamic_cast< DenyMethod * >(tokens[i])->getMethods();
@@ -166,7 +167,8 @@ std::ostream &operator<<(std::ostream &o, const statement::Server &server)
 	for (size_t i = 0; i < deny_methods.size(); ++i) {
 		o << "Deny method: " << deny_methods[i] << std::endl;
 	}
-	std::vector< statement::ErrorPage > error_pages = server.getErrorPages();
+	std::vector< const statement::ErrorPage * > error_pages =
+		server.getErrorPages();
 	for (size_t i = 0; i < error_pages.size(); ++i) {
 		o << "Error page: " << error_pages[i] << std::endl;
 	}

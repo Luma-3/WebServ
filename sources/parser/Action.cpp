@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 14:17:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 12:45:13 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ void parser::R1(std::stack< Token * > &stack)
 	}
 
 	statement::Server *server = new statement::Server(params);
-	deleteTmp(tokens);
+	// deleteTmp(tokens);
 	stack.push(server);
 }
 
@@ -134,7 +134,7 @@ void parser::R2(std::stack< Token * > &stack)
 	}
 	statement::Param *param =
 		new statement::Param(tokens[1]->getValue(), tokens[3]->getTerminal());
-	deleteTmp(tokens);
+	// deleteTmp(tokens);
 
 	stack.push(param);
 }
@@ -161,7 +161,7 @@ void parser::R3(std::stack< Token * > &stack)
 	}
 
 	statement::DenyMethod *deniedMethod = new statement::DenyMethod(method);
-	deleteTmp(tokens);
+	// deleteTmp(tokens);
 
 	stack.push(deniedMethod);
 }
@@ -189,7 +189,7 @@ void parser::R4(std::stack< Token * > &stack)
 	}
 
 	statement::ErrorPage *error = new statement::ErrorPage(errorCode, value);
-	deleteTmp(tokens);
+	// deleteTmp(tokens);
 
 	stack.push(error);
 }
@@ -212,7 +212,7 @@ void parser::R5(std::stack< Token * > &stack)
 
 	statement::ReturnParam *returnParam =
 		new statement::ReturnParam(code, value);
-	deleteTmp(tokens);
+	// deleteTmp(tokens);
 
 	stack.push(returnParam);
 }
@@ -241,7 +241,7 @@ void parser::R6(std::stack< Token * > &stack)
 	}
 
 	statement::Location *location = new statement::Location(params, value);
-	deleteTmp(tokens);
+	// deleteTmp(tokens);
 
 	stack.push(location);
 }

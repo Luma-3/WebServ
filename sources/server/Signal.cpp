@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 21:27:56 by jdufour           #+#    #+#             */
-/*   Updated: 2024/09/24 15:04:02 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 13:20:21 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,6 @@ void handler(int signum)
 
 void initSignal()
 {
+	signal(SIGPIPE, SIG_IGN);
 	signal(SIGINT, handler);
 }

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 13:41:29 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 11:00:57 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,9 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 	{Action(SHIFT,  21, NULL), 12, T_PortValue },
 	{Action(SHIFT,  21, NULL), 13, T_HostValue },
 	{Action(SHIFT,  22, NULL), 14, T_ErrorCode },
-	{Action(SHIFT,  21, NULL), 15, T_FilePath	},
+	{Action(SHIFT,  21, NULL), 15, T_File		},
 	{Action(SHIFT,  21, NULL), 16, T_Path		},
-	{Action(SHIFT,  21, NULL), 17, T_FileName	},
+	{Action(SHIFT,  21, NULL), 17, T_File		},
 	{Action(SHIFT,  23, NULL), 18, T_ErrorCode },
 	{Action(SHIFT,  21, NULL), 19, T_Bool		},
 	{Action(SHIFT,  24, NULL), 20, T_Method	  },
@@ -105,11 +105,11 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 	{Action(SHIFT,  26, NULL), 23, T_Colone	  },
 	{Action(REDUCE, 2,  R3),	24, T_Semi_Colon},
 	{Action(SHIFT,  20, NULL), 24, T_Comma	 },
-	{Action(SHIFT,  27, NULL), 25, T_FilePath	},
-	{Action(SHIFT,  28, NULL), 26, T_FilePath	},
+	{Action(SHIFT,  27, NULL), 25, T_File		},
+	{Action(SHIFT,  28, NULL), 26, T_File		},
 	{Action(SHIFT,  28, NULL), 26, T_Value	 },
 	{Action(SHIFT,  28, NULL), 26, T_Path		},
-	{Action(SHIFT,  28, NULL), 26, T_FileName	},
+	{Action(SHIFT,  28, NULL), 26, T_File		},
 	{Action(REDUCE, 2,  R4),	27, T_Semi_Colon},
 	{Action(REDUCE, 2,  R5),	28, T_Semi_Colon},
 	{Action(SHIFT,  30, NULL), 29, T_Path		},
@@ -129,7 +129,7 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 	{Action(SHIFT,  43, NULL), 37, T_Equal	 },
 	{Action(SHIFT,  44, NULL), 38, T_ErrorCode },
 	{Action(SHIFT,  45, NULL), 39, T_Path		},
-	{Action(SHIFT,  45, NULL), 40, T_FileName	},
+	{Action(SHIFT,  45, NULL), 40, T_File		},
 	{Action(SHIFT,  46, NULL), 41, T_ErrorCode },
 	{Action(SHIFT,  45, NULL), 42, T_Bool		},
 	{Action(SHIFT,  47, NULL), 43, T_Method	  },
@@ -139,11 +139,11 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 	{Action(SHIFT,  49, NULL), 46, T_Colone	  },
 	{Action(REDUCE, 31, R3),	 47, T_Semi_Colon},
 	{Action(SHIFT,  43, NULL), 47, T_Comma	 },
-	{Action(SHIFT,  50, NULL), 48, T_FilePath	},
-	{Action(SHIFT,  51, NULL), 49, T_FilePath	},
+	{Action(SHIFT,  50, NULL), 48, T_File		},
+	{Action(SHIFT,  51, NULL), 49, T_File		},
 	{Action(SHIFT,  51, NULL), 49, T_Value	 },
 	{Action(SHIFT,  51, NULL), 49, T_Path		},
-	{Action(SHIFT,  51, NULL), 49, T_FileName	},
+	{Action(SHIFT,  51, NULL), 49, T_File		},
 	{Action(REDUCE, 31, R4),	 50, T_Semi_Colon},
 	{Action(REDUCE, 31, R5),	 51, T_Semi_Colon},
 	{Action(ERROR,  -1, NULL), -1, T_None		},

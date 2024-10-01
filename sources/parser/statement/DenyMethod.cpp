@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 11:17:57 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:34:49 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/27 10:16:15 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 using statement::DenyMethod;
 
 DenyMethod::DenyMethod() : Token(S_DenyMethod) {}
+
+// faire une copy profonde
 
 DenyMethod::DenyMethod(const DenyMethod &src) :
 	Token(src),

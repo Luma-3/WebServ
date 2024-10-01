@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:36:56 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 10:57:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,25 +63,8 @@ bool IsErrorCode(const string &value)
 	return (true);
 }
 
-bool IsFilePath(const string &value)
-{
-	if (value[0] != '/') {
-		return (false);
-	}
-	for (size_t i = 1; i < value.size(); ++i) {
-		if (!isalnum(value[i]) && value[i] != '.' && value[i] != '/' &&
-			value[i] != '_' && value[i] != '-') {
-			return (false);
-		}
-	}
-	return (true);
-}
-
 bool IsPath(const string &value)
 {
-	if (value[0] != '/') {
-		return (false);
-	}
 	for (size_t i = 1; i < value.size(); ++i) {
 		if (!isalnum(value[i]) && value[i] != '.' && value[i] != '/' &&
 			value[i] != '_' && value[i] != '-') {
@@ -94,11 +77,11 @@ bool IsPath(const string &value)
 	return (true);
 }
 
-bool IsFileName(const string &value)
+bool IsFile(const string &value)
 {
 	for (size_t i = 0; i < value.size(); ++i) {
 		if (!isalnum(value[i]) && value[i] != '.' && value[i] != '_' &&
-			value[i] != '-') {
+			value[i] != '-' && value[i] != '/') {
 			return (false);
 		}
 	}

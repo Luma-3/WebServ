@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 14:37:24 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 11:03:04 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 11:01:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,9 @@ enum Terminal_Type {
 	T_Value,
 	T_ErrorCode,
 	T_Method,
-	T_FileName,
+	T_File,
 	T_PortValue,
 	T_Path,
-	T_FilePath,
 	T_HostValue,
 	T_Bool,
 };
@@ -119,14 +118,12 @@ bool IsHost(const std::string &value);
 
 bool IsErrorCode(const std::string &value);
 
-bool IsFilePath(const std::string &value);
-
 bool IsPath(const std::string &value);
 
 bool IsBool(const std::string &value);
 
 bool IsMethod(const std::string &value);
 
-bool IsFileName(const std::string &value);
+bool IsFile(const std::string &value);
 
 #endif // TOKEN_HPP

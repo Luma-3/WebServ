@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:03:20 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 13:08:44 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/27 13:25:11 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ class Location : public Token
 
 	std::vector< std::string > _deny_methods;
 
-	std::vector< statement::ErrorPage > _error_pages;
+	std::vector< const statement::ErrorPage * > _error_pages;
 
   public:
 	Location();
@@ -72,7 +72,7 @@ class Location : public Token
 		return _deny_methods;
 	}
 
-	const std::vector< statement::ErrorPage > &getErrorPages() const
+	const std::vector< const statement::ErrorPage * > &getErrorPages() const
 	{
 		return _error_pages;
 	}

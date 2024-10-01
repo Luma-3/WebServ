@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:04:03 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 15:56:00 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 09:32:08 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ class Server : public Token
 	std::string				   _return;
 	std::vector< std::string > _deny_methods;
 
-	std::vector< statement::ErrorPage >		   _error_pages;
-	std::vector< const statement::Location * > _locations;
+	std::vector< const statement::ErrorPage * > _error_pages;
+	std::vector< const statement::Location * >	_locations;
 
   public:
 	Server();
@@ -71,7 +71,7 @@ class Server : public Token
 	{
 		return _deny_methods;
 	}
-	const std::vector< statement::ErrorPage > &getErrorPages() const
+	const std::vector< const statement::ErrorPage * > &getErrorPages() const
 	{
 		return _error_pages;
 	}

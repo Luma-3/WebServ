@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 11:20:36 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 15:15:59 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/09/27 10:16:18 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 using statement::ErrorPage;
 
 ErrorPage::ErrorPage() : Token(S_ErrorPage) {}
+
+// faire une copy profonde
 
 ErrorPage::ErrorPage(const ErrorPage &src) :
 	Token(src),

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 10:55:10 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 11:03:14 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 		}
 	}
 
-	static const int		   size_regexs = 8;
+	static const int		   size_regexs = 7;
 	static const IdentifyRegex regexs[size_regexs] = {
 		{T_Method,	   IsMethod   },
 		{T_Bool,		 IsBool	   },
@@ -138,8 +138,7 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 		{T_PortValue, IsPort		},
 		{T_HostValue, IsHost		},
 		{T_Path,		 IsPath	   },
-		{T_FilePath,	 IsFilePath },
-		{T_FileName,	 IsFileName },
+		{T_File,		 IsFile	   },
 	};
 
 	for (size_t i = 0; i < size_regexs; ++i) {
@@ -170,7 +169,7 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 
 const std::string &Token::TerminalTypeToString(enum Terminal_Type type)
 {
-	static const int		 size_key = 27;
+	static const int		 size_key = 26;
 	static const IdentifyKey key[size_key] = {
 		{T_Server,	   "server"					   },
 		{T_Port,		 "port"					   },
@@ -193,11 +192,10 @@ const std::string &Token::TerminalTypeToString(enum Terminal_Type type)
 		{T_Value,	  "`value`"					   },
 		{T_ErrorCode,  "`000`"						 },
 		{T_Method,	   "`GET` or `POST` or `DELETE`"},
-		{T_FileName,	 "`file_name`"				  },
+		{T_File,		 "`file`"					 },
 		{T_PortValue,  "`00000`"					   },
 		{T_HostValue,  "`host_value`"				},
 		{T_Path,		 "`path`"					 },
-		{T_FilePath,	 "`file_path`"				  },
 		{T_Bool,		 "`on` or `off`"				},
 	};
 

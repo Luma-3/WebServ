@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 15:41:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 15:41:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 09:47:54 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ template < typename T > std::string ToString(const T &value)
 
 template < typename T > std::string getAndErase(T &str, const T &delim)
 {
-	size_t pos = str.find(delim);
-	string ret = str.substr(0, pos);
+	size_t		pos = str.find(delim);
+	std::string ret = str.substr(0, pos);
 
-	if (pos == string::npos) {
+	if (pos == std::string::npos) {
 		return ret;
 	}
 

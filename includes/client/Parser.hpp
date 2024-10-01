@@ -1,25 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client_Parser.hpp                                  :+:      :+:    :+:   */
+/*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/24 16:00:30 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 10:20:20 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENT_PARSER_HPP
-#define CLIENT_PARSER_HPP
+#ifndef C_PARSER_HPP
+#define C_PARSER_HPP
 
+#include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
 #include <unistd.h>
-
-using std::map;
-using std::string;
 
 #include "Parser_utils.tpp"
 
@@ -28,20 +26,20 @@ namespace client {
 class Parser
 {
   private:
-	map< string, string > _headers;
-	string				  _buffer;
-	string				  _url_path;
-	string				  _filename;
-	string				  _file_extension;
-	string				  _codeResponse;
+	std::map< std::string, std::string > _headers;
+	std::string							 _buffer;
+	std::string							 _requested_path;
+	std::string							 _filename;
+	std::string							 _file_extension;
+	std::string							 _codeResponse;
 
 	void getHeaderFromRequest(const size_t &line_break_pos);
 	void getBodyFromRequest(size_t &line_break_pos);
 
-	static string extractExtension(string &url, const size_t &l_dot);
-	void		  handleUrl(std::string &url);
-	string		  extractPathAndFilename(string &url, const size_t &l_slash,
-										 const size_t &l_dot);
+	static std::string extractExtension(std::string &url, const size_t &l_dot);
+	void			   handleUrl(std::string &url);
+	std::string extractPathAndFilename(std::string &url, const size_t &l_slash,
+									   const size_t &l_dot);
 
 	bool InvalidMethod();
 	bool InvalidHeader();
@@ -52,13 +50,15 @@ class Parser
 	Parser &operator=(const Parser &src);
 	~Parser();
 
-	void parseRequest(const string &request);
+	void parseRequest(const std::string &request);
 
-	map< string, string > &getHeaders();
-	const string		  &getUrlPath();
-	const string		  &getFilename();
-	const string		  &getFileExtension();
-	const string		  &getCodeResponse();
+	void reset();
+
+	const std::map< std::string, std::string > &getHeaders() const;
+	const std::string						   &getRequestedPath() const;
+	const std::string						   &getFilename() const;
+	const std::string						   &getFileExtension() const;
+	const std::string						   &getCodeResponse() const;
 };
 
 } // namespace client

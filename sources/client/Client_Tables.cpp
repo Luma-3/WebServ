@@ -3,16 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   Client_Tables.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 10:39:08 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/09/24 15:10:10 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/01 10:05:44 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client/Client.hpp"
+#include "client/Builder.hpp"
 
-string client::Client::findContentType(const string &file_extension)
+using std::map;
+using std::string;
+
+string client::Builder::findContentType(const string &file_extension)
 {
 	static map< string, string > content_type_list;
 	content_type_list["html"] = "text/html";
@@ -36,7 +39,7 @@ string client::Client::findContentType(const string &file_extension)
 	return content_type_list[file_extension];
 }
 
-string client::Client::findStatusMessage(const std::string &code)
+string client::Builder::findStatusMessage(const std::string &code)
 {
 	static map< std::string, std::string > status_message;
 	status_message["200"] = " OK";

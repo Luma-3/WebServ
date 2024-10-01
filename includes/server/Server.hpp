@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/25 11:07:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 09:39:40 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,12 @@ class Server
 	const std::string _index;
 	const bool		  _autoindex;
 	// TODO : add _return
-	const std::vector< std::string >		   _deny_methods;
-	const std::vector< statement::ErrorPage >  _error_pages;
-	std::vector< const statement::Location * > _locations;
+	const std::vector< std::string >			_deny_methods;
+	std::vector< const statement::ErrorPage * > _error_pages;
+	std::vector< const statement::Location * >	_locations;
 
-	const int		 _server_socket;
-	int				 _client_socket;
+	const int _server_socket;
+	// int				 _client_socket;
 	int				 _nb_bytes;
 	std::string		 _request;
 	struct addrinfo *_info;
@@ -66,7 +66,7 @@ class Server
 	std::string getPort() const;
 
 	int getSocket() const;
-	int getNewSocket() const;
+	// int getNewSocket() const;
 	int getNbBytes() const;
 
 	std::string getRequest() const;
@@ -75,21 +75,24 @@ class Server
 	const std::string &getIndex() const;
 	bool			   getAutoindex() const;
 
-	const std::vector< std::string >				 &getDenyMethods() const;
-	const std::vector< statement::ErrorPage >		 &getErrorPages() const;
-	const std::vector< const statement::Location * > &getLocations() const;
+	const std::vector< std::string >				  &getDenyMethods() const;
+	const std::vector< const statement::ErrorPage * > &getErrorPages() const;
+	const std::vector< const statement::Location * >  &getLocations() const;
 
 	int createSocket();
 	int setSocket();
-	int acceptRequest(int epfd, std::vector<int> &socktab);
-	int receiveRequest(int epfd);
-	int sendResponse(const std::string &response);
+	int acceptRequest(int epfd);
+	int receiveRequest(int epfd, int client_socket);
+	int sendResponse(const std::string &response, int client_socket);
 
+	// Voir si on peu pas mettre danss le handler
 	void epolladd(int epfd, int socket);
 	void epollmod(int epfd, int socket, int flag);
 	void epolldel(int epfd, int socket);
 
 	virtual ~Server();
 };
+
+#include "template/vector_deep_copy.tpp"
 
 #endif

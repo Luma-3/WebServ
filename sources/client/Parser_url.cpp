@@ -6,11 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 17:24:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/09/24 16:33:24 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 11:08:49 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client/Client_Parser.hpp"
+#include "client/Parser.hpp"
+
+using std::string;
 
 string client::Parser::extractPathAndFilename(string	   &url,
 											  const size_t &l_slash,
@@ -22,7 +24,7 @@ string client::Parser::extractPathAndFilename(string	   &url,
 		new_path = "/";
 		_filename = url;
 	} else {
-		new_path = url.substr(0, l_slash);
+		new_path = url.substr(0, l_slash + 1);
 		_filename = url.substr(l_slash + 1, l_dot - l_slash - 1);
 	}
 
@@ -39,6 +41,9 @@ string client::Parser::extractPathAndFilename(string	   &url,
 	if (_filename.empty()) {
 		_filename = "index";
 	}
+
+	std::cout << "filename: " << _filename << std::endl;
+
 	return new_path;
 }
 
@@ -59,7 +64,9 @@ void client::Parser::handleUrl(string &url)
 	size_t last_slash = url.find_last_of('/');
 	size_t last_dot = url.find_last_of('.');
 
-	_url_path = extractPathAndFilename(url, last_slash, last_dot);
+	_requested_path = extractPathAndFilename(url, last_slash, last_dot);
 
 	_file_extension = extractExtension(url, last_dot);
+
+	std::cout << "Requested path: " << _requested_path << std::endl;
 }

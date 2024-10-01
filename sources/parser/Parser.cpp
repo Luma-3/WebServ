@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 15:07:59 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 12:38:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,10 +103,10 @@ void Parser::Parse()
 
 Parser::~Parser()
 {
-	while (!_parse_stack.empty()) {
-		if (_parse_stack.top()->getType() != S_Terminal) {
-			delete _parse_stack.top();
-		}
-		_parse_stack.pop();
-	}
+	// while (!_parse_stack.empty()) {
+	// 	if (_parse_stack.top()->getType() != S_Terminal) {
+	// 		delete _parse_stack.top();
+	// 	}
+	// 	_parse_stack.pop();
+	// }
 }

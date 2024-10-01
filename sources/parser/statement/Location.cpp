@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/25 10:38:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/01 12:29:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 using statement::Location;
 
 Location::Location() : Token(S_Location), _autoindex(false) {}
+
+// faire une copy profonde
 
 Location::Location(const Location &src) :
 	Token(src),
@@ -39,13 +41,16 @@ Location::Location(const std::vector< Token * > &tokens,
 	_route(route),
 	_autoindex(false)
 {
+
+	std::cout << "Location constructor" << std::endl;
+	std::cout << "Route : " << route << std::endl;
 	for (size_t i = 0; i < tokens.size(); ++i) {
 		if (tokens[i]->Token::getType() == S_Parameter) {
 			IdentifyParam(tokens[i]);
 		} else if (tokens[i]->Token::getType() == S_ErrorPage) {
 			statement::ErrorPage *error_page =
 				dynamic_cast< statement::ErrorPage * >(tokens[i]);
-			_error_pages.push_back(*error_page);
+			_error_pages.push_back(error_page);
 		} else if (tokens[i]->Token::getType() == S_DenyMethod) {
 			_deny_methods =
 				dynamic_cast< DenyMethod * >(tokens[i])->getMethods();
@@ -148,7 +153,8 @@ std::ostream &operator<<(std::ostream &o, const statement::Location &location)
 	for (size_t i = 0; i < deny_methods.size(); ++i) {
 		o << "Deny method: " << deny_methods[i] << std::endl;
 	}
-	std::vector< statement::ErrorPage > error_pages = location.getErrorPages();
+	std::vector< const statement::ErrorPage * > error_pages =
+		location.getErrorPages();
 	for (size_t i = 0; i < error_pages.size(); ++i) {
 		o << error_pages[i];
 	}
