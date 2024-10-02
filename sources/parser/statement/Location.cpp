@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 12:29:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 12:55:40 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,7 @@ Location::Location(const Location &src) :
 {
 }
 
-Location::Location(const std::vector< Token * > &tokens,
-				   const std::string			&route) :
+Location::Location(std::vector< Token * > &tokens, const std::string &route) :
 	Token(S_Location),
 	_route(route),
 	_autoindex(false)
@@ -45,6 +44,8 @@ Location::Location(const std::vector< Token * > &tokens,
 	std::cout << "Location constructor" << std::endl;
 	std::cout << "Route : " << route << std::endl;
 	for (size_t i = 0; i < tokens.size(); ++i) {
+		std::cout << "type of [" << i << "] : " << tokens[i]->getType()
+				  << std::endl;
 		if (tokens[i]->Token::getType() == S_Parameter) {
 			IdentifyParam(tokens[i]);
 		} else if (tokens[i]->Token::getType() == S_ErrorPage) {
@@ -52,10 +53,16 @@ Location::Location(const std::vector< Token * > &tokens,
 				dynamic_cast< statement::ErrorPage * >(tokens[i]);
 			_error_pages.push_back(error_page);
 		} else if (tokens[i]->Token::getType() == S_DenyMethod) {
-			_deny_methods =
-				dynamic_cast< DenyMethod * >(tokens[i])->getMethods();
+			std::cout << "denymethode delete" << std::endl;
+			statement::DenyMethod *deny_method =
+				dynamic_cast< statement::DenyMethod * >(tokens[i]);
+			_deny_methods = deny_method->getMethods();
+			delete deny_method;
 		} else if (tokens[i]->Token::getType() == S_Return) {
-			_return = dynamic_cast< ReturnParam * >(tokens[i])->getValue();
+			statement::ReturnParam *return_param =
+				dynamic_cast< statement::ReturnParam * >(tokens[i]);
+			_return = *return_param;
+			delete return_param;
 		} else {
 			std::cerr
 				<< "Error: Location::Location(const std::vector< Token * > "
@@ -94,53 +101,57 @@ void Location::IdentifyParam(Token *token)
 		case T_AutoIndex:
 			_autoindex = Param::ConvertBool(param->getValue());
 			break;
-		case T_Return:
-			_return = param->getValue();
-			break;
 		default:
 			break;
 	}
+	delete param;
 }
 
-bool Location::operator==(const Location &rhs) const
+// bool Location::operator==(const Location &rhs) const
+// {
+// 	if (this == &rhs) {
+// 		return true;
+// 	}
+// 	if (_route != rhs._route) {
+// 		return false;
+// 	}
+// 	if (_root != rhs._root) {
+// 		return false;
+// 	}
+// 	if (_index != rhs._index) {
+// 		return false;
+// 	}
+// 	if (_autoindex != rhs._autoindex) {
+// 		return false;
+// 	}
+// 	for (size_t i = 0; i < _deny_methods.size(); ++i) {
+// 		if (_deny_methods[i] != rhs._deny_methods[i]) {
+// 			return false;
+// 		}
+// 	}
+// 	for (size_t i = 0; i < _error_pages.size(); ++i) {
+// 		if (_error_pages[i] != rhs._error_pages[i]) {
+// 			return false;
+// 		}
+// 	}
+// 	return true;
+// }
+
+// bool Location::operator!=(const Location &rhs) const
+// {
+// 	return !(*this == rhs);
+// }
+
+Location::~Location()
 {
-	if (this == &rhs) {
-		return true;
-	}
-	if (_route != rhs._route) {
-		return false;
-	}
-	if (_root != rhs._root) {
-		return false;
-	}
-	if (_index != rhs._index) {
-		return false;
-	}
-	if (_autoindex != rhs._autoindex) {
-		return false;
-	}
-	if (_return != rhs._return) {
-		return false;
-	}
-	for (size_t i = 0; i < _deny_methods.size(); ++i) {
-		if (_deny_methods[i] != rhs._deny_methods[i]) {
-			return false;
-		}
-	}
-	for (size_t i = 0; i < _error_pages.size(); ++i) {
-		if (_error_pages[i] != rhs._error_pages[i]) {
-			return false;
-		}
-	}
-	return true;
-}
+	std::vector< const statement::ErrorPage * >::const_iterator it =
+		_error_pages.begin();
 
-bool Location::operator!=(const Location &rhs) const
-{
-	return !(*this == rhs);
+	while (it != _error_pages.end()) {
+		delete *it;
+		++it;
+	}
 }
-
-Location::~Location() {}
 
 std::ostream &operator<<(std::ostream &o, const statement::Location &location)
 {

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 11:03:14 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 11:27:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,9 @@ std::ostream &operator<<(std::ostream &os, const Token &token)
 	   << " | ";
 	os << std::left << "line: " << std::setw(SIZE_FORMAT) << token.getLine()
 	   << " | ";
-	os << std::left << "col: " << std::setw(SIZE_FORMAT) << token.getCol();
+	os << std::left << "col: " << std::setw(SIZE_FORMAT) << token.getCol()
+	   << " | ";
+	os << std::left << "type: " << std::setw(SIZE_FORMAT) << token.getType();
 
 	return (os);
 }

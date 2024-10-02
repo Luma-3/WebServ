@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 14:12:00 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 11:15:49 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ class Parser
 
 	void Parse();
 
-	const std::stack< Token * > &getParseStack() const;
-	const Lexer					&getLexer() const;
-	const int					&getState() const;
+	std::stack< Token * > &getParseStack();
+	const Lexer			  &getLexer() const;
+	const int			  &getState() const;
 
 	Parser &operator=(const Parser &src);
 

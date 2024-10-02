@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:32:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 14:02:17 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 09:43:07 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define LEXER_HPP
 
 #include <fstream>
+#include <queue>
 #include <string>
 #include <vector>
 
@@ -22,15 +23,15 @@
 class Lexer
 {
   private:
-	std::ifstream		   _config_file;
-	std::vector< Token * > _tokens;
+	std::ifstream		  _config_file;
+	std::queue< Token * > _tokens;
 
 	size_t _line;
 	size_t _col;
 
 	static bool IsDelimiter(char c);
 	static void SkipSpace(const std::string &line, size_t &it);
-	void TokenizeLine(const std::string &line, std::vector< Token * > &tokens);
+	void TokenizeLine(const std::string &line, std::queue< Token * > &tokens);
 
 	Token *CreateToken(size_t frontIT, size_t backIT,
 					   const std::string &line) const;
@@ -42,9 +43,9 @@ class Lexer
 	Lexer(const char *file_path);
 	Lexer &operator=(const Lexer &other);
 
-	std::vector< Token * >		 &getTokens();
-	const std::vector< Token * > &getTokens() const;
-	const std::ifstream			 &getConfigFile() const;
+	std::queue< Token * >		&getTokens();
+	const std::queue< Token * > &getTokens() const;
+	const std::ifstream			&getConfigFile() const;
 
 	void Tokenize();
 

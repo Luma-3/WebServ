@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:03:20 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/27 13:25:11 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 11:04:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,18 @@
 
 #include "lexer/Token.hpp"
 #include "parser/statement/ErrorPage.hpp"
+#include "parser/statement/ReturnParam.hpp"
 
 namespace statement {
 
 class Location : public Token
 {
   private:
-	std::string _route;
-	std::string _root;
-	std::string _index;
-	bool		_autoindex;
-	std::string _return;
+	std::string			   _route;
+	std::string			   _root;
+	std::string			   _index;
+	bool				   _autoindex;
+	statement::ReturnParam _return;
 
 	std::vector< std::string > _deny_methods;
 
@@ -38,7 +39,7 @@ class Location : public Token
   public:
 	Location();
 	Location(const Location &src);
-	Location(const std::vector< Token * > &tokens, const std::string &route);
+	Location(std::vector< Token * > &tokens, const std::string &route);
 	Location &operator=(const Location &src);
 	~Location();
 
@@ -62,7 +63,7 @@ class Location : public Token
 		return _autoindex;
 	}
 
-	const std::string &getReturn() const
+	const statement::ReturnParam &getReturn() const
 	{
 		return _return;
 	}

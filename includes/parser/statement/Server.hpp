@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:04:03 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 09:32:08 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 11:04:11 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "lexer/Token.hpp"
 #include "parser/statement/ErrorPage.hpp"
 #include "parser/statement/Location.hpp"
+#include "parser/statement/ReturnParam.hpp"
 
 namespace statement {
 
@@ -30,7 +31,7 @@ class Server : public Token
 	std::string				   _root;
 	std::string				   _index;
 	bool					   _autoindex;
-	std::string				   _return;
+	statement::ReturnParam	   _return;
 	std::vector< std::string > _deny_methods;
 
 	std::vector< const statement::ErrorPage * > _error_pages;
@@ -63,7 +64,7 @@ class Server : public Token
 	{
 		return _autoindex;
 	}
-	const std::string &getReturn() const
+	const statement::ReturnParam &getReturn() const
 	{
 		return _return;
 	}

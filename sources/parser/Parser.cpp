@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 12:38:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 11:15:40 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void Parser::setState(int state)
 	_status = state;
 }
 
-const std::stack< Token * > &Parser::getParseStack() const
+std::stack< Token * > &Parser::getParseStack()
 {
 	return _parse_stack;
 }
@@ -89,8 +89,10 @@ struct parser::ActionEntry findExpected(int state)
 
 void Parser::Parse()
 {
-	for (size_t i = 0; i < _lexer->getTokens().size(); ++i) {
-		Token		*token = _lexer->getTokens()[i];
+	std::queue< Token * > &tokens = _lexer->getTokens();
+
+	while (!tokens.empty()) {
+		Token		*token = tokens.front();
 		const Action action = findAction(_status, token->getTerminal());
 
 		if (action.Execute(token, _parse_stack, *this) == ERROR) {
@@ -98,15 +100,14 @@ void Parser::Parse()
 				token->getCol(), token->getLine(), token->getValue(),
 				Token::TerminalTypeToString(findExpected(_status).terminal));
 		}
+		tokens.pop();
 	}
 }
 
 Parser::~Parser()
 {
-	// while (!_parse_stack.empty()) {
-	// 	if (_parse_stack.top()->getType() != S_Terminal) {
-	// 		delete _parse_stack.top();
-	// 	}
-	// 	_parse_stack.pop();
-	// }
+	while (!_parse_stack.empty()) {
+		delete _parse_stack.top();
+		_parse_stack.pop();
+	}
 }

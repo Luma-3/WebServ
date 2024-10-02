@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 12:32:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 12:55:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,17 +59,18 @@ void Server::IdentifyParam(Token *token)
 		case T_AutoIndex:
 			_autoindex = Param::ConvertBool(param->getValue());
 			break;
-		case T_Return:
-			_return = param->getValue();
-			break;
 		default:
 			break;
 	}
+	delete param;
 }
 
 Server::Server(const std::vector< Token * > &tokens) : _autoindex(false)
 {
+
+	std::cout << "C MOI !!!" << std::endl;
 	for (size_t i = 0; i < tokens.size(); ++i) {
+
 		if (tokens[i]->Token::getType() == S_Parameter) {
 			IdentifyParam(tokens[i]);
 		} else if (tokens[i]->Token::getType() == S_ErrorPage) {
@@ -77,12 +78,20 @@ Server::Server(const std::vector< Token * > &tokens) : _autoindex(false)
 				dynamic_cast< statement::ErrorPage * >(tokens[i]);
 			_error_pages.push_back(error_page);
 		} else if (tokens[i]->Token::getType() == S_DenyMethod) {
-			_deny_methods =
-				dynamic_cast< DenyMethod * >(tokens[i])->getMethods();
+			std::cout << "denymethode delete" << std::endl;
+			statement::DenyMethod *deny_method =
+				dynamic_cast< statement::DenyMethod * >(tokens[i]);
+			_deny_methods = deny_method->getMethods();
+			delete deny_method;
 		} else if (tokens[i]->Token::getType() == S_Location) {
 			statement::Location *location =
 				dynamic_cast< statement::Location * >(tokens[i]);
 			_locations.push_back(location);
+		} else if (tokens[i]->Token::getType() == S_Return) {
+			statement::ReturnParam *return_param =
+				dynamic_cast< statement::ReturnParam * >(tokens[i]);
+			_return = *return_param;
+			delete return_param;
 		} else {
 			// TODO : throw exception
 			std::cerr << tokens[i]->getType() << std::endl;
@@ -112,46 +121,46 @@ Server &Server::operator=(const Server &src)
 	return *this;
 }
 
-bool Server::operator==(const Server &rhs) const
-{
-	if (this == &rhs) {
-		return true;
-	}
-	if (_port != rhs._port) {
-		return false;
-	}
-	if (_host != rhs._host) {
-		return false;
-	}
-	if (_root != rhs._root) {
-		return false;
-	}
-	if (_index != rhs._index) {
-		return false;
-	}
-	if (_autoindex != rhs._autoindex) {
-		return false;
-	}
-	if (_return != rhs._return) {
-		return false;
-	}
-	for (size_t i = 0; i < _deny_methods.size(); ++i) {
-		if (_deny_methods[i] != rhs._deny_methods[i]) {
-			return false;
-		}
-	}
-	for (size_t i = 0; i < _error_pages.size(); ++i) {
-		if (_error_pages[i] != rhs._error_pages[i]) {
-			return false;
-		}
-	}
-	for (size_t i = 0; i < _locations.size(); ++i) {
-		if (*_locations[i] != *rhs._locations[i]) {
-			return false;
-		}
-	}
-	return true;
-}
+// bool Server::operator==(const Server &rhs) const
+// {
+// 	if (this == &rhs) {
+// 		return true;
+// 	}
+// 	if (_port != rhs._port) {
+// 		return false;
+// 	}
+// 	if (_host != rhs._host) {
+// 		return false;
+// 	}
+// 	if (_root != rhs._root) {
+// 		return false;
+// 	}
+// 	if (_index != rhs._index) {
+// 		return false;
+// 	}
+// 	if (_autoindex != rhs._autoindex) {
+// 		return false;
+// 	}
+// 	if (_return != rhs._return) {
+// 		return false;
+// 	}
+// 	for (size_t i = 0; i < _deny_methods.size(); ++i) {
+// 		if (_deny_methods[i] != rhs._deny_methods[i]) {
+// 			return false;
+// 		}
+// 	}
+// 	for (size_t i = 0; i < _error_pages.size(); ++i) {
+// 		if (_error_pages[i] != rhs._error_pages[i]) {
+// 			return false;
+// 		}
+// 	}
+// 	for (size_t i = 0; i < _locations.size(); ++i) {
+// 		if (*_locations[i] != *rhs._locations[i]) {
+// 			return false;
+// 		}
+// 	}
+// 	return true;
+// }
 
 Server::~Server() {}
 

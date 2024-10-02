@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 12:38:36 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 13:12:13 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 #include "lexer/Token.hpp"
 
+using std::queue;
 using std::string;
 using std::vector;
 
@@ -56,12 +57,12 @@ Lexer &Lexer::operator=(const Lexer &other)
 
 // Getters
 
-vector< Token * > &Lexer::getTokens()
+queue< Token * > &Lexer::getTokens()
 {
 	return _tokens;
 }
 
-const vector< Token * > &Lexer::getTokens() const
+const queue< Token * > &Lexer::getTokens() const
 {
 	return _tokens;
 }
@@ -96,7 +97,8 @@ Token *Lexer::CreateToken(size_t frontIT, size_t backIT,
 	const Terminal_Type type = Token::IdentifyTerminal(value);
 
 	if (value[0] == '\"' || value[0] == '\'') {
-		return new Token(value.substr(1, value.size() - 2), type, _line, _col);
+		return (
+			new Token(value.substr(1, value.size() - 2), type, _line, _col));
 	}
 
 	Token *token = new Token(value, type, _line, _col);
@@ -112,7 +114,7 @@ void placeQuotes(const string &line, size_t &frontIT, char quoteType)
 	}
 }
 
-void Lexer::TokenizeLine(const string &line, vector< Token * > &tokens)
+void Lexer::TokenizeLine(const string &line, queue< Token * > &tokens)
 {
 	size_t frontIT = 0;
 	size_t backIT = 0;
@@ -130,7 +132,7 @@ void Lexer::TokenizeLine(const string &line, vector< Token * > &tokens)
 				frontIT++;
 			}
 		}
-		tokens.push_back(CreateToken(frontIT, backIT, line));
+		tokens.push(CreateToken(frontIT, backIT, line));
 		if (frontIT < line.size()) {
 			frontIT++;
 		}
@@ -148,7 +150,9 @@ void Lexer::Tokenize()
 
 Lexer::~Lexer()
 {
-	// for (size_t i = 0; i < _tokens.size(); i++) {
-	// 	delete _tokens[i];
-	// }
+	std::cout << "Token size: " << _tokens.size() << std::endl;
+	while (!_tokens.empty()) {
+		delete _tokens.front();
+		_tokens.pop();
+	}
 }

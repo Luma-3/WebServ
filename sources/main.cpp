@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 14:53:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 11:15:18 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,13 +62,13 @@ Handler *init_server(const int ac, const char **av)
 	Lexer Lexer(av[1]);
 	Lexer.Tokenize();
 
-	std::vector< Token * > tokens = Lexer.getTokens();
+	std::cout << "Token size MAIN: " << Lexer.getTokens().size() << std::endl;
 
 	parser::Parser parser(&Lexer);
 	parser.Parse();
 
 	std::vector< statement::Server * > servers;
-	std::stack< Token * >			   stack = parser.getParseStack();
+	std::stack< Token * >			  &stack = parser.getParseStack();
 
 	while (!stack.empty()) {
 		statement::Server *server =

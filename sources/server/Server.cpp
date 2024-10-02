@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 15:39:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 10:36:13 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ Server::Server(const statement::Server *server) :
 	_info()
 {
 	std::cout << "Server constructor" << std::endl;
+	delete server;
 	// delete server;
 	if (_server_socket == -1) {
 		throw InternalServerException("socket failed on " + _name);
@@ -197,6 +198,7 @@ int Server::setSocket()
 	if (bind(_server_socket, _info->ai_addr, _info->ai_addrlen) == -1) {
 		throw InternalServerException("bind failed on " + _name);
 	}
+	freeaddrinfo(_info);
 	if (listen(_server_socket, MAXREQEST) == -1) {
 		throw InternalServerException("listen failed on " + _name);
 		return (FAILURE);
@@ -344,4 +346,20 @@ Server::~Server()
 	// if (_client_socket != -1) {
 	// 	close(_client_socket);
 	// }
+
+	std::vector< const statement::Location * >::const_iterator it =
+		_locations.begin();
+
+	while (it != _locations.end()) {
+		delete *it;
+		++it;
+	}
+
+	std::vector< const statement::ErrorPage * >::const_iterator it2 =
+		_error_pages.begin();
+
+	while (it2 != _error_pages.end()) {
+		delete *it2;
+		++it2;
+	}
 }
