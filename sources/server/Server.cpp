@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 10:36:13 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 19:48:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,9 +156,11 @@ const std::vector< const statement::Location * > &Server::getLocations() const
 int Server::createSocket()
 {
 	int				val = 1;
-	struct addrinfo hints = {.ai_flags = AI_PASSIVE,
-							 .ai_family = AF_INET,
-							 .ai_socktype = SOCK_STREAM};
+	struct addrinfo hints = {};
+
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
 
 	if (fcntl(_server_socket, F_SETFL, O_NONBLOCK) == -1) {
 		throw InternalServerException("Error on set nonblocking on " + _name);
@@ -319,13 +321,13 @@ void Server::epolladd(int epfd, int socket)
 
 // Mettre ca dans le handler
 
-void Server::epollmod(int epfd, int socket, int flag)
-{
-	struct epoll_event event = {.events = flag, .data = {.fd = socket}};
-	if (epoll_ctl(epfd, EPOLL_CTL_MOD, socket, &event) == -1) {
-		throw InternalServerException("Error on epoll_ctl for EPOLLOUT");
-	}
-}
+// void Server::epollmod(int epfd, int socket, int flag)
+// {
+// 	struct epoll_event event = {.events = flag, .data = {.fd = socket}};
+// 	if (epoll_ctl(epfd, EPOLL_CTL_MOD, socket, &event) == -1) {
+// 		throw InternalServerException("Error on epoll_ctl for EPOLLOUT");
+// 	}
+// }
 
 // Mettre ca dans le handler
 

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 13:18:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/02 23:26:48 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,11 @@ int Action::Execute(Token *token, std::stack< Token * > &stack,
 {
 	if (_type == SHIFT) {
 		Shift(token, stack, parser);
-	} else if (_type == REDUCE) {
+	}
+	else if (_type == REDUCE) {
 		Reduce(token, stack, parser);
-	} else if (_type == ERROR) {
+	}
+	else if (_type == ERROR) {
 		return (2);
 	}
 	return (0);
@@ -89,37 +91,47 @@ int Action::Execute(Token *token, std::stack< Token * > &stack,
 
 Action::~Action() {}
 
-void deleteTmp(std::vector< Token * > &tokens)
+void TakeTo(std::stack< Token * > &dst, std::stack< Token * > &stack,
+			bool (*breaker)(const Token &))
 {
-	for (size_t i = 0; i < tokens.size(); ++i) {
-		std::cout << "Delete : " << *tokens[i] << std::endl;
-		delete tokens[i];
+	while (!stack.empty()) {
+		if (breaker(*stack.top())) {
+			break;
+		}
+		dst.push(stack.top());
+		stack.pop();
 	}
+	dst.push(stack.top());
+	stack.pop();
+}
+
+bool R1Breaker(const Token &token)
+{
+	return (token.getTerminal() == T_Server);
+}
+
+bool R6Breaker(const Token &token)
+{
+	return (token.getTerminal() == T_Location);
 }
 
 void parser::R1(std::stack< Token * > &stack)
 {
-	std::vector< Token * > tokens;
-	Token				  *currentToken = stack.top();
-	stack.pop();
-
-	while (!Token::IsKey(*currentToken) ||
-		   currentToken->getType() != S_Terminal) {
-		tokens.push_back(currentToken);
-		currentToken = stack.top();
-		stack.pop();
-	}
-	delete currentToken;
-
+	std::stack< Token * >  tokens;
 	std::vector< Token * > params;
 
-	size_t i = 1;
-	while (i < tokens.size() && tokens[i]->getTerminal() != T_OBracket) {
-		params.push_back(tokens[i]);
-		++i;
+	TakeTo(tokens, stack, R1Breaker);
+
+	while (!tokens.empty()) {
+
+		if (tokens.top()->getType() != S_Terminal) {
+			params.push_back(tokens.top());
+		}
+		else {
+			delete tokens.top();
+		}
+		tokens.pop();
 	}
-	tokens.erase(tokens.begin() + 1, tokens.begin() + i);
-	deleteTmp(tokens);
 
 	statement::Server *server = new statement::Server(params);
 	stack.push(server);
@@ -133,66 +145,55 @@ void parser::R2(std::stack< Token * > &stack)
 		tokens.push_back(stack.top());
 		stack.pop();
 	}
+
 	statement::Param *param =
 		new statement::Param(tokens[1]->getValue(), tokens[3]->getTerminal());
 
-	deleteTmp(tokens);
-
+	for (size_t i = 0; i < tokens.size(); ++i) {
+		delete tokens[i];
+	}
 	stack.push(param);
 }
 
 void parser::R3(std::stack< Token * > &stack)
 {
-	std::vector< Token * > tokens;
-	Token				  *currentToken = stack.top();
-	stack.pop();
-
-	while (!Token::IsKey(*currentToken)) {
-		tokens.push_back(currentToken);
-		currentToken = stack.top();
-		stack.pop();
-	}
-	delete currentToken;
-
+	std::stack< Token * >	   tokens;
 	std::vector< std::string > method;
 
-	for (size_t i = 1; i < tokens.size(); ++i) {
-		// if (Token::IsKey(*tokens[i])) {
-		// 	break;
-		// }
-		method.push_back(tokens[i]->getValue());
+	TakeTo(tokens, stack, Token::IsKey);
+
+	while (!tokens.empty()) {
+		if (tokens.top()->getTerminal() == T_Method) {
+			method.push_back(tokens.top()->getValue());
+		}
+		delete tokens.top();
+		tokens.pop();
 	}
-	deleteTmp(tokens);
 
 	statement::DenyMethod *deniedMethod = new statement::DenyMethod(method);
-
 	stack.push(deniedMethod);
 }
 
 void parser::R4(std::stack< Token * > &stack)
 {
-	std::vector< Token * > tokens;
-	Token				  *currentToken = stack.top();
-	stack.pop();
+	std::stack< Token * > tokens;
 
-	while (!Token::IsKey(*currentToken)) {
-		tokens.push_back(currentToken);
-		currentToken = stack.top();
-		stack.pop();
-	}
-	delete currentToken;
+	TakeTo(tokens, stack, Token::IsKey);
 
-	const std::string		   value = tokens[1]->getValue();
+	std::string				   value;
 	std::vector< std::string > errorCode;
 
-	for (size_t i = 3; i < tokens.size(); ++i) {
-		// if (Token::IsKey(*tokens[i])) {
-		// 	delete tokens[i];
-		// 	break;
-		// }
-		errorCode.push_back(tokens[i]->getValue());
+	while (!tokens.empty()) {
+		if (tokens.top()->getTerminal() == T_ErrorCode) {
+			errorCode.push_back(tokens.top()->getValue());
+		}
+		else if (tokens.top()->getTerminal() == T_File) {
+			value = tokens.top()->getValue();
+		}
+		delete tokens.top();
+		tokens.pop();
 	}
-	deleteTmp(tokens);
+
 	statement::ErrorPage *error = new statement::ErrorPage(errorCode, value);
 
 	stack.push(error);
@@ -200,25 +201,26 @@ void parser::R4(std::stack< Token * > &stack)
 
 void parser::R5(std::stack< Token * > &stack)
 {
-	std::vector< Token * > tokens;
-	Token				  *currentToken = stack.top();
-	stack.pop();
+	std::stack< Token * > tokens;
 
-	while (!Token::IsKey(*currentToken)) {
-		tokens.push_back(currentToken);
-		currentToken = stack.top();
-		stack.pop();
+	TakeTo(tokens, stack, Token::IsKey);
+
+	std::string value;
+	std::string code;
+
+	while (!tokens.empty()) {
+		if (tokens.top()->getTerminal() == T_Value ||
+			tokens.top()->getTerminal() == T_Path ||
+			tokens.top()->getTerminal() == T_File) {
+			value = tokens.top()->getValue();
+		}
+		else if (tokens.top()->getTerminal() == T_ErrorCode) {
+			code = tokens.top()->getValue();
+		}
+		delete tokens.top();
+		tokens.pop();
 	}
-	delete currentToken;
 
-	std::cout << "Tokens return : " << tokens.size() << std::endl;
-
-	const std::string value = tokens[1]->getValue();
-
-	const std::string code = tokens[3]->getValue();
-
-	deleteTmp(tokens);
-	std::cout << "ReturnParam : " << value << std::endl;
 	statement::ReturnParam *returnParam =
 		new statement::ReturnParam(code, value);
 
@@ -227,39 +229,26 @@ void parser::R5(std::stack< Token * > &stack)
 
 void parser::R6(std::stack< Token * > &stack)
 {
-	std::vector< Token * > tokens;
-	Token				  *currentToken = stack.top();
-	stack.pop();
+	std::stack< Token * > tokens;
 
-	while (!Token::IsKey(*currentToken) ||
-		   currentToken->getType() != S_Terminal) {
-		tokens.push_back(currentToken);
-		currentToken = stack.top();
-		stack.pop();
-	}
-	delete currentToken;
+	TakeTo(tokens, stack, R6Breaker);
 
-	std::cout << "Tokens : " << tokens.size() << std::endl;
-	for (size_t i = 0; i < tokens.size(); ++i) {
-		std::cout << *tokens[i] << std::endl;
-		statement::DenyMethod *deniedMethod =
-			dynamic_cast< statement::DenyMethod * >(tokens[i]);
-		if (tokens[i]->getType() == S_DenyMethod) {
-			std::cout << "DenyMethod : " << *deniedMethod << std::endl;
-		}
-	}
-
-	const std::string value = tokens[tokens.size() - 1]->getValue();
-
+	std::string			   value;
 	std::vector< Token * > params;
 
-	size_t i = 1;
-	while (i < tokens.size() && tokens[i]->getTerminal() != T_OBracket) {
-		params.push_back(tokens[i]);
-		++i;
+	while (!tokens.empty()) {
+		if (tokens.top()->getTerminal() == T_Path) {
+			value = tokens.top()->getValue();
+			delete tokens.top();
+		}
+		else if (tokens.top()->getType() != S_Terminal) {
+			params.push_back(tokens.top());
+		}
+		else {
+			delete tokens.top();
+		}
+		tokens.pop();
 	}
-	tokens.erase(tokens.begin() + 1, tokens.begin() + i);
-	deleteTmp(tokens);
 
 	statement::Location *location = new statement::Location(params, value);
 
