@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/01 10:29:08 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 15:50:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ class Builder
 	std::vector< char > createErrorPage();
 	void				createUrlDefaultErrorPage();
 
-	static std::string findStatusMessage(const std::string &code);
+	// static std::string findStatusMessage(const std::string &code);
 	static std::string findContentType(const std::string &file_extension);
 	void			   FindErrorFile(const std::string &requires_path);
 	void			   findFinalFileFromUrl(const std::string &url_path,
@@ -63,5 +63,7 @@ class Builder
 };
 
 } // namespace client
+
+std::string findStatusMessage(const std::string &code); // namespace client
 
 #endif

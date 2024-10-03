@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 19:48:42 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 15:05:14 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,11 @@ const std::string &Server::getIndex() const
 bool Server::getAutoindex() const
 {
 	return (_autoindex);
+}
+
+const statement::ReturnParam &Server::getReturns() const
+{
+	return (_returns);
 }
 
 const std::vector< std::string > &Server::getDenyMethods() const

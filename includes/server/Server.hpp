@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 09:39:40 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 15:04:44 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ class Server
 	const std::string _hostname;
 	const std::string _port;
 
-	const std::string _root;
-	const std::string _index;
-	const bool		  _autoindex;
-	// TODO : add _return
+	const std::string							_root;
+	const std::string							_index;
+	const bool									_autoindex;
+	const statement::ReturnParam				_returns;
 	const std::vector< std::string >			_deny_methods;
 	std::vector< const statement::ErrorPage * > _error_pages;
 	std::vector< const statement::Location * >	_locations;
@@ -78,6 +78,7 @@ class Server
 	const std::vector< std::string >				  &getDenyMethods() const;
 	const std::vector< const statement::ErrorPage * > &getErrorPages() const;
 	const std::vector< const statement::Location * >  &getLocations() const;
+	const statement::ReturnParam					  &getReturns() const;
 
 	int createSocket();
 	int setSocket();

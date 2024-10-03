@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 14:57:51 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 13:35:14 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,19 @@
 
 using client::Client;
 
-Client::Client() : _server(NULL), _client_socket(-1) {}
+Client::Client() : _server(NULL), _default_server(NULL), _client_socket(-1) {}
 
-Client::Client(const Server *server, int client_socket) :
+Client::Client(const Server *server, const Server *default_s,
+			   int client_socket) :
 	_server(server),
+	_default_server(default_s),
 	_client_socket(client_socket)
 {
 }
 
 Client::Client(const Client &src) :
 	_server(src._server),
+	_default_server(src._default_server),
 	_client_socket(src._client_socket)
 {
 }
@@ -76,18 +79,22 @@ void Client::receiveRequest()
 	std::cout << "balbalbnladf : " << _request << std::endl;
 }
 
-void Client::sendResponse(const std::string &response)
+void Client::sendResponse()
 {
-	if (send(_client_socket, response.c_str(), response.size(), 0) == -1) {
+	if (send(_client_socket, _response.c_str(), _response.size(), 0) == -1) {
 		std::cerr << strerror(errno) << std::endl;
 		// throw std::runtime_error("Error on send on " + _server->getName());
-		}
+	}
 	_request.clear();
 }
 
-void Client::ParseRequest(client::Parser &parser)
+void Client::handleRequest()
 {
+	Builder builder;
+	Parser	parser(_server, _default_server);
+
 	parser.parseRequest(_request);
+	_response = builder.BuildResponse(parser, _server, _default_server);
 }
 
 Client::~Client() {}

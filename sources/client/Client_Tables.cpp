@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 10:39:08 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/01 10:05:44 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 15:19:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,12 @@ string client::Builder::findContentType(const string &file_extension)
 	content_type_list["tar"] = "application/x-tar";
 
 	if (content_type_list[file_extension].empty()) {
-		return "text/plain";
+		return "application/octet-stream";
 	}
 	return content_type_list[file_extension];
 }
 
-string client::Builder::findStatusMessage(const std::string &code)
+string findStatusMessage(const std::string &code)
 {
 	static map< std::string, std::string > status_message;
 	status_message["200"] = " OK";

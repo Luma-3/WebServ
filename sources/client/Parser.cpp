@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/01 13:45:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 13:26:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,17 @@ Parser::Parser(const Parser &src)
 	}
 	_headers = src._headers;
 	_buffer = src._buffer;
-	_requested_path = src._requested_path;
+	_path = src._path;
 	_filename = src._filename;
 	_file_extension = src._file_extension;
 	_codeResponse = src._codeResponse;
+}
+
+Parser::Parser(const Server *server, const Server *default_server) :
+	_server(server),
+	_default_server(default_server),
+	_codeResponse("200")
+{
 }
 
 Parser &Parser::operator=(const Parser &src)
@@ -41,7 +48,7 @@ Parser &Parser::operator=(const Parser &src)
 	}
 	_headers = src._headers;
 	_buffer = src._buffer;
-	_requested_path = src._requested_path;
+	_path = src._path;
 	_filename = src._filename;
 	_file_extension = src._file_extension;
 	_codeResponse = src._codeResponse;
@@ -60,7 +67,7 @@ const string &Parser::getCodeResponse() const
 
 const string &Parser::getRequestedPath() const
 {
-	return _requested_path;
+	return _path;
 }
 
 const string &Parser::getFilename() const
@@ -125,7 +132,7 @@ void Parser::getHeaderFromRequest(const size_t &line_break_pos)
 	_headers["Url"] = getAndErase(line, space);
 	_headers["httpVersion"] = getAndErase(line, end_of_line);
 
-	handleUrl(_headers["Url"]);
+	handleRequestedPath(_headers["Url"]);
 
 	if (InvalidMethod() || InvalidHeader()) {
 		return;
@@ -151,7 +158,7 @@ void Parser::reset()
 {
 	_headers.clear();
 	_buffer.clear();
-	_requested_path.clear();
+	_path.clear();
 	_filename.clear();
 	_file_extension.clear();
 	_codeResponse = "200";

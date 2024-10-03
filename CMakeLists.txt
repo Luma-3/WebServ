@@ -25,6 +25,7 @@ add_executable(WebServ
 		sources/client/Parser.cpp
 		sources/client/Parser_url.cpp
 		sources/client/Builder.cpp
+		sources/client/finderConfigParam.cpp
 	  sources/lexer/LexerException.cpp
 	  sources/lexer/Lexer.cpp
 	  sources/lexer/regex.cpp

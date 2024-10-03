@@ -6,67 +6,56 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 17:24:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/01 11:08:49 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 15:57:44 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client/Parser.hpp"
 
 using std::string;
+using std::vector;
 
-string client::Parser::extractPathAndFilename(string	   &url,
-											  const size_t &l_slash,
-											  const size_t &l_dot)
+string client::Parser::getConfigParam(const string &param,
+									  IdentifyParam identify)
 {
-	string new_path;
-
-	if (l_slash == string::npos) {
-		new_path = "/";
-		_filename = url;
-	} else {
-		new_path = url.substr(0, l_slash + 1);
-		_filename = url.substr(l_slash + 1, l_dot - l_slash - 1);
+	typedef string (client::Parser::*MemberFunction)(const std::string &,
+													 IdentifyParam);
+	MemberFunction function[5] = {&client::Parser::find_param_location,
+								  &client::Parser::find_param_server,
+								  &client::Parser::find_param_location_default,
+								  &client::Parser::find_param_default_server,
+								  &client::Parser::find_hard_code};
+	string		   found_value;
+	for (size_t i = 0; i < 5; i++) {
+		found_value = (this->*function[i])(param, identify);
+		if (found_value != "") return found_value;
 	}
-
-	if (new_path.empty()) {
-		new_path = "/";
-	} else if (new_path[0] != '/') {
-		new_path = "/" + new_path;
-	}
-
-	if (l_dot != string::npos && l_dot > l_slash) {
-		_filename = url.substr(l_slash + 1, l_dot - l_slash - 1);
-	}
-
-	if (_filename.empty()) {
-		_filename = "index";
-	}
-
-	std::cout << "filename: " << _filename << std::endl;
-
-	return new_path;
+	return "";
 }
 
-string client::Parser::extractExtension(string &url, const size_t &l_dot)
+// void ConstructPath(string &path, string &filename, string &file_extension)
+// {
+// 	statement::Location *location =
+// }
+
+void client::Parser::handleRequestedPath(string &requested_path)
 {
-	string new_extension;
+	size_t last_slash = requested_path.find_last_of('/');
+	size_t last_dot = requested_path.find_last_of('.');
 
-	if (l_dot == string::npos) {
-		new_extension = "html";
-	} else {
-		new_extension = url.substr(l_dot + 1);
-	}
-	return (new_extension);
-}
+	_requested_path = requested_path.substr(0, last_slash + 1);
 
-void client::Parser::handleUrl(string &url)
-{
-	size_t last_slash = url.find_last_of('/');
-	size_t last_dot = url.find_last_of('.');
+	_filename =
+		requested_path.substr(last_slash + 1, last_dot - last_slash - 1);
 
-	_requested_path = extractPathAndFilename(url, last_slash, last_dot);
+	_file_extension =
+		last_dot == string::npos ? "" : requested_path.substr(last_dot + 1);
 
-	_file_extension = extractExtension(url, last_dot);
+	std::cout << "Requested Path: " << _requested_path << std::endl;
+	std::cout << "Filename: " << _filename << std::endl;
+	std::cout << "File extension: " << _file_extension << std::endl;
 
-	std::cout << "Requested path: " << _requested_path << std::endl;
+	string root = getConfigParam(_requested_path, P_INDEX);
+
+	std::cout << "Root: " << root << std::endl;
 }

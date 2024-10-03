@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/01 10:20:20 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 15:44:55 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,26 +20,60 @@
 #include <unistd.h>
 
 #include "Parser_utils.tpp"
+#include "server/Server.hpp"
 
 namespace client {
 
+enum IdentifyParam {
+	P_INDEX,
+	P_ROOT,
+	P_AUTOINDEX,
+	P_RETURN,
+	P_ERRORPAGE,
+	P_DENYMETHOD,
+};
 class Parser
 {
   private:
+	const Server						*_server;
+	const Server						*_default_server;
 	std::map< std::string, std::string > _headers;
 	std::string							 _buffer;
 	std::string							 _requested_path;
+	std::string							 _path;
 	std::string							 _filename;
 	std::string							 _file_extension;
+	std::vector< std::string >			 _methods;
 	std::string							 _codeResponse;
 
 	void getHeaderFromRequest(const size_t &line_break_pos);
 	void getBodyFromRequest(size_t &line_break_pos);
 
-	static std::string extractExtension(std::string &url, const size_t &l_dot);
-	void			   handleUrl(std::string &url);
-	std::string extractPathAndFilename(std::string &url, const size_t &l_slash,
-									   const size_t &l_dot);
+	void handleRequestedPath(std::string &url);
+
+	std::string getConfigParam(
+		const std::string									&param,
+		std::vector< std::string (*)(const std::string &) > &functions);
+
+	const statement::Location *find_location(const std::string &path,
+											 const Server	   *server);
+	std::string				   find_param_location(const std::string &path,
+												   IdentifyParam	  identifier);
+	std::string				   find_param_server(const std::string &path,
+												 IdentifyParam		identifier);
+	std::string find_param_location_default(const std::string &path,
+											IdentifyParam	   identifier);
+	std::string find_param_default_server(const std::string &path,
+										  IdentifyParam		 identifier);
+	std::string find_hard_code(const std::string &path,
+							   IdentifyParam	  identifier);
+
+	std::string getParam(IdentifyParam				identifier,
+						 const statement::Location *location);
+	std::string getParam(IdentifyParam identifier, const Server *Server);
+
+	std::string getConfigParam(const std::string &param,
+							   IdentifyParam	  identify);
 
 	bool InvalidMethod();
 	bool InvalidHeader();
@@ -47,6 +81,7 @@ class Parser
   public:
 	Parser();
 	Parser(const Parser &src);
+	Parser(const Server *server, const Server *default_server);
 	Parser &operator=(const Parser &src);
 	~Parser();
 

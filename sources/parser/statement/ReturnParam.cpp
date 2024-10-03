@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:35:39 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/27 10:15:57 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 14:46:49 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,16 @@ ReturnParam::ReturnParam(const std::string &error_code,
 	_error_code(error_code),
 	_value(value)
 {
+}
+
+const std::string &ReturnParam::getErrorCode() const
+{
+	return _error_code;
+}
+
+const std::string &ReturnParam::getValue() const
+{
+	return _value;
 }
 
 ReturnParam &ReturnParam::operator=(const ReturnParam &src)

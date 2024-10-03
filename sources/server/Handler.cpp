@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/01 15:04:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 15:45:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,6 @@ int Handler::handleEvents()
 	// std::vector< int > sock_tab;
 
 	client::Builder builder;
-	client::Parser	parser;
 
 	std::vector< client::Client * > clients;
 
@@ -158,15 +157,13 @@ int Handler::handleEvents()
 				int client_socket = server->acceptRequest(_epfd);
 
 				client::Client *client =
-					new client::Client(server, client_socket);
+					new client::Client(server, NULL, client_socket);
 				client->receiveRequest();
-				parser.parseRequest(client->getRequest());
-				client->sendResponse(
-					builder.BuildResponse(parser, server, server));
+				client->handleRequest();
+				client->sendResponse();
 				clients.push_back(client);
-				parser.reset();
-
-			} else if (event[i].events & EPOLLRDHUP) {
+			}
+			else if (event[i].events & EPOLLRDHUP) {
 				client::Client *client = findClient(event_fd, clients);
 				if (client) {
 					clients.erase(
@@ -174,14 +171,13 @@ int Handler::handleEvents()
 						clients.end());
 					close(event_fd);
 				}
-			} else {
+			}
+			else {
 				client::Client *client = findClient(event_fd, clients);
 				if (client) {
 					client->receiveRequest();
-					parser.parseRequest(client->getRequest());
-					client->sendResponse(builder.BuildResponse(
-						parser, client->getServer(), client->getServer()));
-					parser.reset();
+					client->handleRequest();
+					client->sendResponse();
 				}
 			}
 		}

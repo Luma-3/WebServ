@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 10:03:49 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 13:48:34 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <string>
 
+#include "client/Builder.hpp"
 #include "client/Parser.hpp"
 #include "server/Server.hpp"
 
@@ -24,12 +25,16 @@ class Client
 {
   private:
 	const Server *_server;
+	const Server *_default_server;
 	const int	  _client_socket;
 	std::string	  _request;
+	std::string	  _response;
+
+
 
   public:
 	Client();
-	Client(const Server *server, int client_socket);
+	Client(const Server *server, const Server *default_s, int client_socket);
 	Client(const Client &src);
 	Client &operator=(const Client &src);
 	~Client();
@@ -39,9 +44,9 @@ class Client
 	const std::string &getRequest() const;
 
 	void receiveRequest();
-	void sendResponse(const std::string &response);
+	void sendResponse();
 
-	void ParseRequest(client::Parser &parser);
+	void handleRequest();
 };
 
 } // namespace client
