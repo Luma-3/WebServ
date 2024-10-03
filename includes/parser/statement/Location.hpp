@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:03:20 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 11:04:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 10:34:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,5 +88,7 @@ class Location : public Token
 } // namespace statement
 
 std::ostream &operator<<(std::ostream &o, const statement::Location &location);
+
+#include "template/Cast.tpp"
 
 #endif // LOCATIONCONFIG_HPP

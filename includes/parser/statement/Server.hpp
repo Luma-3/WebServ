@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:04:03 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 11:04:11 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 10:21:53 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,5 +90,7 @@ class Server : public Token
 } // namespace statement
 
 std::ostream &operator<<(std::ostream &o, const statement::Server &server);
+
+#include "template/Cast.tpp"
 
 #endif // SERVERSTATEMENT_HPP

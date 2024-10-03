@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 23:30:12 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 09:28:34 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ void Parser::Parse()
 
 Parser::~Parser()
 {
+	std::cout << "Stack size: " << _parse_stack.size() << std::endl;
 	while (!_parse_stack.empty()) {
 		delete _parse_stack.top();
 		_parse_stack.pop();

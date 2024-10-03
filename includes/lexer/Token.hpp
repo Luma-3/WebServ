@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 14:37:24 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 11:01:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 10:28:33 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,16 @@ class Token
 	static bool			 IsKey(const Token &token);
 
 	static const std::string &TerminalTypeToString(enum Terminal_Type type);
+
+	class InvalidTokenException : public std::exception
+	{
+	  public:
+		InvalidTokenException();
+		InvalidTokenException(const InvalidTokenException &src);
+		virtual ~InvalidTokenException() throw();
+		InvalidTokenException &operator=(const InvalidTokenException &src);
+		virtual const char	  *what() const throw();
+	};
 
 	virtual ~Token();
 };

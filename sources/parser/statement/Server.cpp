@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 19:54:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 10:41:24 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,10 @@
 #include "parser/statement/Param.hpp"
 #include "parser/statement/ReturnParam.hpp"
 
+using statement::DenyMethod;
+using statement::ErrorPage;
+using statement::Location;
+using statement::Param;
 using statement::Server;
 
 Server::Server() : Token(S_Server), _autoindex(false) {}
@@ -68,38 +72,36 @@ void Server::IdentifyParam(Token *token)
 Server::Server(const std::vector< Token * > &tokens) : _autoindex(false)
 {
 
-	std::cout << "C MOI !!!" << std::endl;
 	for (size_t i = 0; i < tokens.size(); ++i) {
-
-		if (tokens[i]->Token::getType() == S_Parameter) {
-			IdentifyParam(tokens[i]);
-		} else if (tokens[i]->Token::getType() == S_ErrorPage) {
-			statement::ErrorPage *error_page =
-				dynamic_cast< statement::ErrorPage * >(tokens[i]);
-			_error_pages.push_back(error_page);
-		} else if (tokens[i]->Token::getType() == S_DenyMethod) {
-			std::cout << "denymethode delete" << std::endl;
-			statement::DenyMethod *deny_method =
-				dynamic_cast< statement::DenyMethod * >(tokens[i]);
-			_deny_methods = deny_method->getMethods();
-			delete deny_method;
-		} else if (tokens[i]->Token::getType() == S_Location) {
-			statement::Location *location =
-				dynamic_cast< statement::Location * >(tokens[i]);
-			_locations.push_back(location);
-		} else if (tokens[i]->Token::getType() == S_Return) {
-			statement::ReturnParam *return_param =
-				dynamic_cast< statement::ReturnParam * >(tokens[i]);
-			_return = *return_param;
-			delete return_param;
-		} else {
-			// TODO : throw exception
-			std::cerr << tokens[i]->getType() << std::endl;
-			std::cerr << tokens[i]->getValue() << std::endl;
-			std::cerr << "i :" << i << std::endl;
-			std::cerr << "Error: Server::Server(const std::vector< Token * > "
-						 "&tokens) - Unknown token type"
-					  << std::endl;
+		switch (tokens[i]->getType()) {
+			case S_Parameter:
+				IdentifyParam(tokens[i]);
+				break;
+			case S_ErrorPage: {
+				ErrorPage *error_page = D_Cast< ErrorPage >(tokens[i]);
+				_error_pages.push_back(error_page);
+				break;
+			}
+			case S_DenyMethod: {
+				DenyMethod *deny_method = D_Cast< DenyMethod >(tokens[i]);
+				_deny_methods = deny_method->getMethods();
+				delete deny_method;
+				break;
+			}
+			case S_Location: {
+				Location *location = D_Cast< Location >(tokens[i]);
+				_locations.push_back(location);
+				break;
+			}
+			case S_Return: {
+				ReturnParam *return_param = D_Cast< ReturnParam >(tokens[i]);
+				_return = *return_param;
+				delete return_param;
+				break;
+			}
+			default:
+				throw Token::InvalidTokenException();
+				break;
 		}
 	}
 }
@@ -162,7 +164,24 @@ Server &Server::operator=(const Server &src)
 // 	return true;
 // }
 
-Server::~Server() {}
+Server::~Server()
+{
+	std::vector< const statement::Location * >::const_iterator it =
+		_locations.begin();
+
+	while (it != _locations.end()) {
+		delete *it;
+		++it;
+	}
+
+	std::vector< const statement::ErrorPage * >::const_iterator it2 =
+		_error_pages.begin();
+
+	while (it2 != _error_pages.end()) {
+		delete *it2;
+		++it2;
+	}
+}
 
 std::ostream &operator<<(std::ostream &o, const statement::Server &server)
 {

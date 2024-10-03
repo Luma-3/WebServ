@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 23:26:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 09:40:26 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,7 @@ void parser::R1(std::stack< Token * > &stack)
 
 	statement::Server *server = new statement::Server(params);
 	stack.push(server);
+	std::cout << "Stack Parser Size : " << stack.size() << std::endl;
 }
 
 void parser::R2(std::stack< Token * > &stack)

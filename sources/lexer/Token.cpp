@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 11:27:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/03 10:31:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,6 +210,29 @@ const std::string &Token::TerminalTypeToString(enum Terminal_Type type)
 // Destructor
 
 Token::~Token() {}
+
+// Exceptions
+
+Token::InvalidTokenException::InvalidTokenException() {}
+Token::InvalidTokenException::InvalidTokenException(
+	const InvalidTokenException &src)
+{
+	*this = src;
+}
+
+Token::InvalidTokenException &
+Token::InvalidTokenException::operator=(const InvalidTokenException &src)
+{
+	(void)src;
+	return (*this);
+}
+
+Token::InvalidTokenException::~InvalidTokenException() throw() {}
+
+const char *Token::InvalidTokenException::what() const throw()
+{
+	return ("Invalid Token");
+}
 
 // Print Operator
 
