@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 23:19:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/04 12:55:30 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,37 +21,6 @@
 #include "server/Handler.hpp"
 #include "server/Server.hpp"
 #include "server/Signal.hpp"
-
-// int StartWebServ(const int ac, const char **av)
-// {
-// 	if (ac != 2) {
-// 		cerr << "Wrong Numbre of Argument" << endl;
-// 		return (EINVAL);
-// 	}
-
-// 	try {
-// 		Lexer Lexer(av[1]);
-// 		Lexer.Tokenize();
-
-// 		std::vector< Token * > tokens = Lexer.getTokens();
-
-// 		for (size_t i = 0; i < tokens.size(); i++) {
-// 			std::cout << *tokens[i] << std::endl;
-// 		}
-
-// 		parser::Parser parser(Lexer.getTokens());
-// 		parser.Parse();
-
-// 		parser.getParseStack();
-// 		statement::Server *server =
-// 			dynamic_cast< statement::Server * >(parser.getParseStack().top());
-// 		std::cout << *server << std::endl;
-// 	} catch (const std::exception &e) {
-// 		cerr << e.what() << endl;
-// 		return (EXIT_FAILURE);
-// 	}
-// 	return (EXIT_SUCCESS);
-// }
 
 Handler *init_server(const int ac, const char **av)
 {
@@ -91,8 +60,7 @@ int main(const int ac, const char **av, const char **env)
 
 	try {
 		handler = init_server(ac, av);
-		handler->launchServers();
-		handler->handleEvents();
+		handler->runEventLoop();
 	} catch (const std::runtime_error &e) {
 		std::cerr << e.what() << '\n';
 		return (1);

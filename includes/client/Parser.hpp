@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/03 15:44:55 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/04 12:39:33 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 #include <string>
 #include <unistd.h>
 
-#include "Parser_utils.tpp"
 #include "server/Server.hpp"
+#include "template/StringUtils.tpp"
 
 namespace client {
 

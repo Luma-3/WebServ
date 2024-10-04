@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:50:17 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/03 15:54:50 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/04 13:17:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ string Parser::getParam(IdentifyParam			   identifier,
 				}
 				++it_pages;
 			}
+			break;
 		}
 		case P_DENYMETHOD: {
 			_methods = location->getDenyMethods();
@@ -119,6 +120,7 @@ string Parser::getParam(IdentifyParam identifier, const Server *server)
 				}
 				++it_pages;
 			}
+			break;
 		}
 		case P_DENYMETHOD: {
 			_methods = server->getDenyMethods();

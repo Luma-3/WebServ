@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 11:00:57 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/04 12:40:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,6 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 
 } // namespace parser
 
-#include "ToString.tpp"
+#include "template/StringUtils.tpp"
 
 #endif // ACTION_HPP

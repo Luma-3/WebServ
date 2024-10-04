@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/03 13:35:14 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/04 13:42:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,9 @@ void Client::receiveRequest()
 
 void Client::sendResponse()
 {
+	// TODO : Chunck response
 	if (send(_client_socket, _response.c_str(), _response.size(), 0) == -1) {
 		std::cerr << strerror(errno) << std::endl;
-		// throw std::runtime_error("Error on send on " + _server->getName());
 	}
 	_request.clear();
 }
@@ -94,7 +94,7 @@ void Client::handleRequest()
 	Parser	parser(_server, _default_server);
 
 	parser.parseRequest(_request);
-	_response = builder.BuildResponse(parser, _server, _default_server);
+	// _response = builder.BuildResponse(parser, _server, _default_server);
 }
 
 Client::~Client() {}

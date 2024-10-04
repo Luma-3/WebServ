@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/03 13:26:39 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/04 13:22:06 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,7 @@ void Parser::getHeaderFromRequest(const size_t &line_break_pos)
 	_headers["Url"] = getAndErase(line, space);
 	_headers["httpVersion"] = getAndErase(line, end_of_line);
 
+	std::cout << "youhou" << std::endl;
 	handleRequestedPath(_headers["Url"]);
 
 	if (InvalidMethod() || InvalidHeader()) {

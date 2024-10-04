@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:46:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 13:01:10 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/04 12:36:56 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,27 @@
 #include <sys/epoll.h>
 #include <vector>
 
-#include "Server.hpp"
-// # include "Config.hpp"
-
+#include "client/Client.hpp"
 #include "lexer/Token.hpp"
+#include "Server.hpp"
 
 class Handler
 {
   private:
-	std::vector< Server * > _servers;
-	int						_nbServ;
-	int						_epfd;
+	const int						_epfd;
+	int								_nbServ;
+	std::vector< Server * >			_servers;
+	std::vector< client::Client * > _clients;
+
+	Server		   *findServer(int fd);
+	client::Client *findClient(int fd);
+
+	void handleNewConnection(const Server *server);
+	void handleClientRequest(int event_fd);
+
+	void addEvent(int fd, uint32_t events) const;
+	void removeEvent(int fd) const;
+	void modifyEvent(int fd, uint32_t events) const;
 
   public:
 	Handler();
@@ -38,10 +48,7 @@ class Handler
 	Handler(const Handler &src);
 	Handler &operator=(const Handler &rhs);
 
-	int launchServers();
-	int handleEvents();
-
-	// Server *operator[](const int index);
+	int runEventLoop();
 
 	~Handler();
 };

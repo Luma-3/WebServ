@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/03 13:48:34 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/04 13:01:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ class Client
 	const int	  _client_socket;
 	std::string	  _request;
 	std::string	  _response;
-
-
 
   public:
 	Client();

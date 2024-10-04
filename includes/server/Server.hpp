@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/03 15:04:44 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/04 12:03:48 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,12 @@
 #define SUCCESS 0
 #define FAILURE 1
 
+#define MAXREQEST 10
 class Server
 {
   private:
+	const int _socket;
+
 	const std::string _name;
 	const std::string _hostname;
 	const std::string _port;
@@ -47,16 +50,12 @@ class Server
 	std::vector< const statement::ErrorPage * > _error_pages;
 	std::vector< const statement::Location * >	_locations;
 
-	const int _server_socket;
-	// int				 _client_socket;
-	int				 _nb_bytes;
-	std::string		 _request;
-	struct addrinfo *_info;
+	// Constructor anex
+	void setSocketOptions();
+	void bindAndListenSocket();
 
   public:
 	Server();
-	// Server(const std::string &servername, const std::string &hostname,
-	// 	   const std::string &port);
 	Server(const statement::Server *server);
 	Server(const Server &src);
 	Server &operator=(const Server &src);
@@ -66,10 +65,6 @@ class Server
 	std::string getPort() const;
 
 	int getSocket() const;
-	// int getNewSocket() const;
-	int getNbBytes() const;
-
-	std::string getRequest() const;
 
 	const std::string &getRoot() const;
 	const std::string &getIndex() const;
@@ -80,16 +75,7 @@ class Server
 	const std::vector< const statement::Location * >  &getLocations() const;
 	const statement::ReturnParam					  &getReturns() const;
 
-	int createSocket();
-	int setSocket();
-	int acceptRequest(int epfd);
-	int receiveRequest(int epfd, int client_socket);
-	int sendResponse(const std::string &response, int client_socket);
-
-	// Voir si on peu pas mettre danss le handler
-	void epolladd(int epfd, int socket);
-	void epollmod(int epfd, int socket, int flag);
-	void epolldel(int epfd, int socket);
+	int acceptRequest() const;
 
 	virtual ~Server();
 };
