@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/03 10:31:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 16:40:25 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ bool Token::IsKey(const Token &token)
 {
 	const Terminal_Type type = token.getTerminal();
 
-	if (type <= T_AccessLog && type >= T_Server) {
+	if (type <= T_Name && type >= T_Server) {
 		return (true);
 	}
 	return (false);
@@ -108,20 +108,21 @@ bool Token::IsKey(const Token &token)
 
 Terminal_Type Token::IdentifyTerminal(const std::string &value)
 {
-	static const int		 size_key = 12;
+	static const int		 size_key = 13;
 	static const IdentifyKey key[size_key] = {
 		{T_Server,	   "server"	   },
-		{T_Port,		 "port"	   },
-		{T_Host,		 "host"	   },
-		{T_ErroLog,	"error_log"  },
-		{T_AccessLog,  "acces_log"	 },
-		{T_Root,		 "root"	   },
-		{T_Index,	  "index"		 },
-		{T_AutoIndex,  "autoindex"	 },
-		{T_Return,	   "return"	   },
 		{T_Location,	 "location"   },
 		{T_ErrorPage,  "error_page" },
 		{T_DenyMethod, "deny_method"},
+		{T_Return,	   "return"	   },
+		{T_Port,		 "port"	   },
+		{T_Host,		 "host"	   },
+		{T_Index,	  "index"		 },
+		{T_AutoIndex,  "autoindex"	 },
+		{T_Root,		 "root"	   },
+		{T_Log,		"log"		 },
+		{T_BodySize,	 "body_size"	},
+		{T_Name,		 "name"	   }
 	};
 
 	for (size_t i = 0; i < size_key; ++i) {
@@ -130,15 +131,13 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 		}
 	}
 
-	static const int		   size_regexs = 7;
+	static const int		   size_regexs = 5;
 	static const IdentifyRegex regexs[size_regexs] = {
-		{T_Method,	   IsMethod   },
-		{T_Bool,		 IsBool	   },
-		{T_ErrorCode, IsErrorCode},
-		{T_PortValue, IsPort		},
-		{T_HostValue, IsHost		},
-		{T_Path,		 IsPath	   },
-		{T_File,		 IsFile	   },
+		{T_Bool,	 IsBool	   },
+		  {T_Method,	 IsMethod	 },
+		{T_LogLevel, IsLogLevel},
+		{T_Path,	 IsPath	   },
+		  {T_Digits,	 IsDigit	},
 	};
 
 	for (size_t i = 0; i < size_regexs; ++i) {
@@ -151,52 +150,53 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 	switch (c) {
 		case ',':
 			return (T_Comma);
-		case ':':
-			return (T_Colone);
 		case ';':
 			return (T_Semi_Colon);
 		case '{':
 			return (T_OBracket);
 		case '}':
 			return (T_CBracket);
-		case '=':
-			return (T_Equal);
+		case '[':
+			return (T_OSquareBracket);
+		case ']':
+			return (T_CSquareBracket);
 		default:
 			break;
 	}
-	return (T_Value);
+	return (T_Identifier);
 }
 
 const std::string &Token::TerminalTypeToString(enum Terminal_Type type)
 {
 	static const int		 size_key = 26;
 	static const IdentifyKey key[size_key] = {
-		{T_Server,	   "server"					   },
-		{T_Port,		 "port"					   },
-		{T_Host,		 "host"					   },
-		{T_ErroLog,	"error_log"				   },
-		{T_AccessLog,  "acces_log"					 },
-		{T_Root,		 "root"					   },
-		{T_Index,	  "index"						 },
-		{T_AutoIndex,  "autoindex"					 },
-		{T_Return,	   "return"					   },
-		{T_Location,	 "location"				   },
-		{T_ErrorPage,  "error_page"				  },
-		{T_DenyMethod, "deny_method"				},
-		{T_Comma,	  ","						  },
-		{T_Semi_Colon, ";"						  },
-		{T_CBracket,	 "}"						  },
-		{T_OBracket,	 "{"						  },
-		{T_Colone,	   ":"						  },
-		{T_Equal,	  "="						  },
-		{T_Value,	  "`value`"					   },
-		{T_ErrorCode,  "`000`"						 },
-		{T_Method,	   "`GET` or `POST` or `DELETE`"},
-		{T_File,		 "`file`"					 },
-		{T_PortValue,  "`00000`"					   },
-		{T_HostValue,  "`host_value`"				},
-		{T_Path,		 "`path`"					 },
-		{T_Bool,		 "`on` or `off`"				},
+		{T_Server,		   "server"								   },
+		{T_Location,		 "location"								 },
+		{T_ErrorPage,	  "error_page"								  },
+		{T_DenyMethod,	   "deny_method"								},
+		{T_Return,		   "return"								   },
+		{T_Port,			 "port"									 },
+		{T_Host,			 "host"									 },
+		{T_Index,		  "index"									},
+		{T_AutoIndex,	  "autoindex"								 },
+		{T_Root,			 "root"									 },
+		{T_Log,			"log"									  },
+		{T_BodySize,		 "body_size"								},
+		{T_Name,			 "name"									 },
+
+		{T_Comma,		  ","										},
+		{T_Semi_Colon,	   ";"										},
+		{T_CBracket,		 "}"										},
+		{T_OBracket,		 "{"										},
+		{T_OSquareBracket, "["										},
+		{T_CSquareBracket, "]"										},
+
+		{T_Identifier,	   "`identifier`"							 },
+		{T_Digits,		   "`[0-9]+`"								 },
+		{T_Method,		   "`GET` or `POST` or `DELETE`"				},
+		{T_Path,			 "`path`"								   },
+		{T_Bool,			 "`on` or `off`"							},
+		{T_LogLevel,		 "`Debug` or `Info` or `Warning` or `Error`"},
 	};
 
 	for (size_t i = 0; i < size_key; ++i) {

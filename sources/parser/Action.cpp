@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/03 09:40:26 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 18:49:54 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 #include "parser/statement/ErrorPage.hpp"
 #include "parser/statement/Location.hpp"
 #include "parser/statement/Param.hpp"
-#include "parser/statement/ReturnParam.hpp"
+#include "parser/statement/ParamDouble.hpp"
 #include "parser/statement/Server.hpp"
 
 using parser::Action;
@@ -45,6 +45,13 @@ Action::Action(ActionType type, int next_states,
 	_type(type),
 	_next_state(next_states),
 	_rule_func(rule_func)
+{
+}
+
+Action::Action(ActionType type, int next_states) :
+	_type(type),
+	_next_state(next_states),
+	_rule_func(NULL)
 {
 }
 
@@ -115,7 +122,7 @@ bool R6Breaker(const Token &token)
 	return (token.getTerminal() == T_Location);
 }
 
-void parser::R1(std::stack< Token * > &stack)
+void parser::R1_Server(std::stack< Token * > &stack)
 {
 	std::stack< Token * >  tokens;
 	std::vector< Token * > params;
@@ -135,20 +142,19 @@ void parser::R1(std::stack< Token * > &stack)
 
 	statement::Server *server = new statement::Server(params);
 	stack.push(server);
-	std::cout << "Stack Parser Size : " << stack.size() << std::endl;
 }
 
-void parser::R2(std::stack< Token * > &stack)
+void parser::R2_Param(std::stack< Token * > &stack)
 {
 	std::vector< Token * > tokens;
 
-	for (size_t i = 0; i < 4; ++i) {
+	for (size_t i = 0; i < 3; ++i) {
 		tokens.push_back(stack.top());
 		stack.pop();
 	}
 
 	statement::Param *param =
-		new statement::Param(tokens[1]->getValue(), tokens[3]->getTerminal());
+		new statement::Param(tokens[1]->getValue(), tokens[2]->getTerminal());
 
 	for (size_t i = 0; i < tokens.size(); ++i) {
 		delete tokens[i];
@@ -156,7 +162,76 @@ void parser::R2(std::stack< Token * > &stack)
 	stack.push(param);
 }
 
-void parser::R3(std::stack< Token * > &stack)
+void parser::R3_DoubleParam(std::stack< Token * > &stack)
+{
+	std::stack< Token * > tokens;
+
+	TakeTo(tokens, stack, Token::IsKey);
+
+	std::string value1;
+	std::string value2;
+
+	Terminal_Type term_type = tokens.top()->getTerminal();
+	Token_Type	  type;
+
+	while (!tokens.empty()) {
+		if (term_type == T_Return) {
+			type = S_Return;
+			if (tokens.top()->getTerminal() == T_Digits) {
+				value1 = tokens.top()->getValue();
+			}
+			else if (tokens.top()->getTerminal() == T_Identifier ||
+					 tokens.top()->getTerminal() == T_Path) {
+				value2 = tokens.top()->getValue();
+			}
+		}
+		else {
+			type = S_Log;
+			if (tokens.top()->getTerminal() == T_LogLevel) {
+				value1 = tokens.top()->getValue();
+				std::cout << "value1: " << value1 << std::endl;
+			}
+			else if (tokens.top()->getTerminal() == T_Identifier) {
+				value2 = tokens.top()->getValue();
+				std::cout << "value2: " << value2 << std::endl;
+			}
+		}
+		delete tokens.top();
+		tokens.pop();
+	}
+
+	statement::ParamDouble *returnParam =
+		new statement::ParamDouble(value1, value2, type);
+
+	stack.push(returnParam);
+}
+
+void parser::R4_ErrorPage(std::stack< Token * > &stack) // R5
+{
+	std::stack< Token * > tokens;
+
+	TakeTo(tokens, stack, Token::IsKey);
+
+	std::string				   value;
+	std::vector< std::string > errorCode;
+
+	while (!tokens.empty()) {
+		if (tokens.top()->getTerminal() == T_Digits) {
+			errorCode.push_back(tokens.top()->getValue());
+		}
+		else if (tokens.top()->getTerminal() == T_Identifier) {
+			value = tokens.top()->getValue();
+		}
+		delete tokens.top();
+		tokens.pop();
+	}
+
+	statement::ErrorPage *error = new statement::ErrorPage(errorCode, value);
+
+	stack.push(error);
+}
+
+void parser::R5_DenyMethod(std::stack< Token * > &stack) // R6
 {
 	std::stack< Token * >	   tokens;
 	std::vector< std::string > method;
@@ -174,61 +249,7 @@ void parser::R3(std::stack< Token * > &stack)
 	statement::DenyMethod *deniedMethod = new statement::DenyMethod(method);
 	stack.push(deniedMethod);
 }
-
-void parser::R4(std::stack< Token * > &stack)
-{
-	std::stack< Token * > tokens;
-
-	TakeTo(tokens, stack, Token::IsKey);
-
-	std::string				   value;
-	std::vector< std::string > errorCode;
-
-	while (!tokens.empty()) {
-		if (tokens.top()->getTerminal() == T_ErrorCode) {
-			errorCode.push_back(tokens.top()->getValue());
-		}
-		else if (tokens.top()->getTerminal() == T_File) {
-			value = tokens.top()->getValue();
-		}
-		delete tokens.top();
-		tokens.pop();
-	}
-
-	statement::ErrorPage *error = new statement::ErrorPage(errorCode, value);
-
-	stack.push(error);
-}
-
-void parser::R5(std::stack< Token * > &stack)
-{
-	std::stack< Token * > tokens;
-
-	TakeTo(tokens, stack, Token::IsKey);
-
-	std::string value;
-	std::string code;
-
-	while (!tokens.empty()) {
-		if (tokens.top()->getTerminal() == T_Value ||
-			tokens.top()->getTerminal() == T_Path ||
-			tokens.top()->getTerminal() == T_File) {
-			value = tokens.top()->getValue();
-		}
-		else if (tokens.top()->getTerminal() == T_ErrorCode) {
-			code = tokens.top()->getValue();
-		}
-		delete tokens.top();
-		tokens.pop();
-	}
-
-	statement::ReturnParam *returnParam =
-		new statement::ReturnParam(code, value);
-
-	stack.push(returnParam);
-}
-
-void parser::R6(std::stack< Token * > &stack)
+void parser::R6_Location(std::stack< Token * > &stack)
 {
 	std::stack< Token * > tokens;
 

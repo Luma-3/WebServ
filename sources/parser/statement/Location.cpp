@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/03 10:40:51 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 16:42:18 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "lexer/Token.hpp"
 #include "parser/statement/DenyMethod.hpp"
 #include "parser/statement/Param.hpp"
-#include "parser/statement/ReturnParam.hpp"
+#include "parser/statement/ParamDouble.hpp"
 #include "template/vector_deep_copy.tpp"
 
 using statement::Location;
@@ -59,7 +59,7 @@ Location::Location(std::vector< Token * > &tokens, const std::string &route) :
 				break;
 			}
 			case S_Return: {
-				ReturnParam *return_param = D_Cast< ReturnParam >(tokens[i]);
+				ParamDouble *return_param = D_Cast< ParamDouble >(tokens[i]);
 				_return = *return_param;
 				delete return_param;
 				break;

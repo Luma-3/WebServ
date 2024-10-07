@@ -26,6 +26,7 @@ add_executable(WebServ
 		sources/client/Parser_url.cpp
 		sources/client/Builder.cpp
 		sources/client/finderConfigParam.cpp
+		sources/Logger.cpp
 	  sources/lexer/LexerException.cpp
 	  sources/lexer/Lexer.cpp
 	  sources/lexer/regex.cpp
@@ -37,7 +38,7 @@ add_executable(WebServ
 	  sources/parser/statement/Location.cpp
 	  sources/parser/statement/ErrorPage.cpp
 	  sources/parser/statement/Param.cpp
-	  sources/parser/statement/ReturnParam.cpp
+	  sources/parser/statement/ParamDouble.cpp
 	  sources/parser/statement/Server.cpp
 		)
 

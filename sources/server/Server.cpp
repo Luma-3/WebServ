@@ -6,12 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/04 13:27:45 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 18:57:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server/Server.hpp"
 
+#include "Logger.hpp"
 #include "server/ServerException.hpp"
 #include "template/vector_deep_copy.tpp"
 
@@ -20,7 +21,7 @@ Server::Server() : _socket(-1), _autoindex(0) {}
 Server::Server(const statement::Server *server) :
 	_socket(socket(AF_INET, SOCK_STREAM, 0)),
 
-	_name("default"), // TODO : add name in parser
+	_name("default"),
 	_hostname(server->getHost()),
 	_port(server->getPort()),
 	_root(server->getRoot()),
@@ -31,8 +32,12 @@ Server::Server(const statement::Server *server) :
 	_locations(vector_deep_copy(server->getLocations()))
 
 {
-	std::cout << "Server created" << std::endl;
+
+	_logger =
+		new Logger(server->getLog().getValue2(),
+				   Logger::StringToLogLevel(server->getLog().getValue1()));
 	delete server;
+	_logger->log(INFO, "Server " + _name + " created");
 	if (_socket == -1) {
 		throw InternalServerException("socket failed on " + _name);
 	}
@@ -43,6 +48,7 @@ Server::Server(const statement::Server *server) :
 void Server::setSocketOptions()
 {
 	int val = 1;
+	_logger->log(INFO, "Setting socket options on " + _name);
 	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(int)) ==
 		-1) {
 		throw InternalServerException(
@@ -63,6 +69,7 @@ void Server::bindAndListenSocket()
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 
+	_logger->log(INFO, "Binding and listening socket on " + _name);
 	if (getaddrinfo(_hostname.c_str(), _port.c_str(), &hints, &info) != 0) {
 		throw InternalServerException("getaddrinfo failed on" + _name);
 	}
@@ -135,7 +142,7 @@ bool Server::getAutoindex() const
 	return (_autoindex);
 }
 
-const statement::ReturnParam &Server::getReturns() const
+const statement::ParamDouble &Server::getReturns() const
 {
 	return (_returns);
 }
@@ -165,6 +172,7 @@ int Server::acceptRequest() const
 		throw InternalServerException(
 			"Error on awaiting connection (accept) on" + _name);
 	}
+	_logger->log(INFO, "Connection accepted on " + _name);
 
 	if (setsockopt(client_socket, SOL_SOCKET, SO_KEEPALIVE, &val,
 				   sizeof(int)) == -1) {
@@ -172,6 +180,8 @@ int Server::acceptRequest() const
 			"error on setting the port on reusable on " + _name + ": " +
 			strerror(errno));
 	}
+	_logger->log(INFO,
+				 "Socket options set on New Connexion for Server " + _name);
 	return (client_socket);
 }
 
@@ -193,4 +203,5 @@ Server::~Server()
 		delete *it2;
 		++it2;
 	}
+	delete _logger;
 }

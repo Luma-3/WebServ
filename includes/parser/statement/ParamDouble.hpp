@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ReturnParam.hpp                                    :+:      :+:    :+:   */
+/*   ParamDouble.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:38:58 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/03 14:46:50 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 18:29:06 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RETURNPARAM_HPP
-#define RETURNPARAM_HPP
+#ifndef PARAMDOUBLE_HPP
+#define PARAMDOUBLE_HPP
 
 #include <string>
 #include <vector>
@@ -20,23 +20,24 @@
 
 namespace statement {
 
-class ReturnParam : public Token
+class ParamDouble : public Token
 {
   private:
-	std::string _error_code;
-	std::string _value;
+	std::string _value1;
+	std::string _value2;
 
   public:
-	ReturnParam();
-	ReturnParam(const ReturnParam &src);
-	ReturnParam(const std::string &error_code, const std::string &value);
-	ReturnParam &operator=(const ReturnParam &src);
-	~ReturnParam();
+	ParamDouble();
+	ParamDouble(const ParamDouble &src);
+	ParamDouble(const std::string &value1, const std::string &value2,
+				Token_Type type);
+	ParamDouble &operator=(const ParamDouble &src);
+	~ParamDouble();
 
-	const std::string &getErrorCode() const;
-	const std::string &getValue() const;
+	const std::string &getValue1() const;
+	const std::string &getValue2() const;
 };
 
 } // namespace statement
 
-#endif // RETURNPARAM_HPP
+#endif // PARAMDOUBLE_HPP

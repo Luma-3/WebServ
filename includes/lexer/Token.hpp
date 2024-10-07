@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 14:37:24 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/03 10:28:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 18:32:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ enum Token_Type {
 	S_Return,
 	S_Location,
 	S_Server,
+	S_Log
 };
 
 enum Terminal_Type {
@@ -40,24 +41,23 @@ enum Terminal_Type {
 	T_Index,
 	T_AutoIndex,
 	T_Root,
-	T_ErroLog,
-	T_AccessLog,
+	T_Log,
+	T_BodySize,
+	T_Name,
 
 	T_Comma,
 	T_Semi_Colon,
 	T_CBracket,
 	T_OBracket,
-	T_Colone,
-	T_Equal,
+	T_OSquareBracket,
+	T_CSquareBracket,
 
-	T_Value,
-	T_ErrorCode,
+	T_Identifier,
+	T_Digits,
 	T_Method,
-	T_File,
-	T_PortValue,
 	T_Path,
-	T_HostValue,
 	T_Bool,
+	T_LogLevel
 };
 
 struct IdentifyRegex {
@@ -122,18 +122,14 @@ class Token
 
 std::ostream &operator<<(std::ostream &os, const Token &token);
 
-bool IsPort(const std::string &value);
-
-bool IsHost(const std::string &value);
-
-bool IsErrorCode(const std::string &value);
-
-bool IsPath(const std::string &value);
-
 bool IsBool(const std::string &value);
 
 bool IsMethod(const std::string &value);
 
-bool IsFile(const std::string &value);
+bool IsLogLevel(const std::string &value);
+
+bool IsPath(const std::string &value);
+
+bool IsDigit(const std::string &value);
 
 #endif // TOKEN_HPP

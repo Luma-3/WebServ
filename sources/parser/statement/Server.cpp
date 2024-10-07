@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/03 10:41:24 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 18:56:57 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "parser/statement/ErrorPage.hpp"
 #include "parser/statement/Location.hpp"
 #include "parser/statement/Param.hpp"
-#include "parser/statement/ReturnParam.hpp"
+#include "parser/statement/ParamDouble.hpp"
 
 using statement::DenyMethod;
 using statement::ErrorPage;
@@ -52,7 +52,7 @@ void Server::IdentifyParam(Token *token)
 			_port = param->getValue();
 			break;
 		case T_Host:
-			_host = Param::TrimHostName(param->getValue());
+			_host = param->getValue();
 			break;
 		case T_Root:
 			_root = param->getValue();
@@ -94,9 +94,17 @@ Server::Server(const std::vector< Token * > &tokens) : _autoindex(false)
 				break;
 			}
 			case S_Return: {
-				ReturnParam *return_param = D_Cast< ReturnParam >(tokens[i]);
+				ParamDouble *return_param = D_Cast< ParamDouble >(tokens[i]);
 				_return = *return_param;
 				delete return_param;
+				break;
+			}
+			case S_Log: {
+				ParamDouble *log_param = D_Cast< ParamDouble >(tokens[i]);
+				std::cout << "log get: " << log_param->getValue1() << std::endl;
+				_log = *log_param;
+				std::cout << "log: " << _log.getValue1() << std::endl;
+				delete log_param;
 				break;
 			}
 			default:

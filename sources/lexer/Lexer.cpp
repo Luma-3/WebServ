@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 13:12:13 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 16:51:31 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,8 @@ const std::ifstream &Lexer::getConfigFile() const
 
 bool Lexer::IsDelimiter(char c)
 {
-	return (c == ':' || c == ';' || c == '{' || c == '}' || c == '=' ||
-			c == ',');
+	return (c == ';' || c == '{' || c == '}' || c == ',' || c == '[' ||
+			c == ']');
 }
 
 void Lexer::SkipSpace(const string &line, size_t &it)
@@ -126,7 +126,8 @@ void Lexer::TokenizeLine(const string &line, queue< Token * > &tokens)
 		_col = backIT;
 		if (line[frontIT] == '\"' || line[frontIT] == '\'') {
 			placeQuotes(line, frontIT, line[frontIT]);
-		} else if (!IsDelimiter(line[frontIT])) {
+		}
+		else if (!IsDelimiter(line[frontIT])) {
 			while (frontIT < line.size() && !IsDelimiter(line[frontIT + 1]) &&
 				   (isspace(line[frontIT + 1]) == 0)) {
 				frontIT++;

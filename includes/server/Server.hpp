@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/04 12:03:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 18:19:00 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include <sys/epoll.h>
 #include <unistd.h>
 
+#include "Logger.hpp"
 #include "parser/statement/ErrorPage.hpp"
 #include "parser/statement/Location.hpp"
 #include "parser/statement/Server.hpp"
@@ -37,15 +38,16 @@ class Server
 {
   private:
 	const int _socket;
+	Logger	 *_logger;
 
-	const std::string _name;
+	std::string		  _name;
 	const std::string _hostname;
 	const std::string _port;
 
 	const std::string							_root;
 	const std::string							_index;
 	const bool									_autoindex;
-	const statement::ReturnParam				_returns;
+	const statement::ParamDouble				_returns;
 	const std::vector< std::string >			_deny_methods;
 	std::vector< const statement::ErrorPage * > _error_pages;
 	std::vector< const statement::Location * >	_locations;
@@ -73,7 +75,7 @@ class Server
 	const std::vector< std::string >				  &getDenyMethods() const;
 	const std::vector< const statement::ErrorPage * > &getErrorPages() const;
 	const std::vector< const statement::Location * >  &getLocations() const;
-	const statement::ReturnParam					  &getReturns() const;
+	const statement::ParamDouble					  &getReturns() const;
 
 	int acceptRequest() const;
 

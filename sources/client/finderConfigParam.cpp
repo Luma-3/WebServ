@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:50:17 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/04 13:17:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 16:40:25 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ string Parser::getParam(IdentifyParam			   identifier,
 			return state ? "on" : "off";
 		}
 		case P_RETURN: {
-			statement::ReturnParam value = location->getReturn();
-			_codeResponse = value.getErrorCode();
+			statement::ParamDouble value = location->getReturn();
+			_codeResponse = value.getValue1();
 			return value.getValue();
 		}
 		case P_ERRORPAGE: {
@@ -97,8 +97,8 @@ string Parser::getParam(IdentifyParam identifier, const Server *server)
 			return state ? "on" : "off";
 		}
 		case P_RETURN: {
-			statement::ReturnParam value = server->getReturns();
-			_codeResponse = value.getErrorCode();
+			statement::ParamDouble value = server->getReturns();
+			_codeResponse = value.getValue1();
 			return value.getValue();
 		}
 		case P_ERRORPAGE: {

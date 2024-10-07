@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/01 10:57:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 14:48:57 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,48 +18,13 @@
 
 using std::string;
 
-#define PORT_SIZE 5
-
-bool IsPort(const string &value) // TODO: Verif negative number
+bool IsDigit(const string &value)
 {
-	if (value.size() > PORT_SIZE) {
-		return (false);
-	}
-
 	for (size_t i = 0; i < value.size(); ++i) {
 		if (!isdigit(value[i])) {
 			return (false);
 		}
 	}
-
-	return (atoi(value.c_str()) <= PORT_MAX);
-}
-
-bool IsHost(const string &value)
-{
-	if (value[0] != '@') {
-		return (false);
-	}
-	for (size_t i = 1; i < value.size(); ++i) {
-		if (!isalnum(value[i]) && value[i] != '.' && value[i] != '-') {
-			return (false);
-		}
-	}
-	return (true);
-}
-
-bool IsErrorCode(const string &value)
-{
-	if (value.size() != 3) {
-		return (false);
-	}
-
-	for (size_t i = 0; i < value.size(); ++i) {
-		if (!isdigit(value[i])) {
-			return (false);
-		}
-	}
-
 	return (true);
 }
 
@@ -77,21 +42,23 @@ bool IsPath(const string &value)
 	return (true);
 }
 
-bool IsFile(const string &value)
-{
-	for (size_t i = 0; i < value.size(); ++i) {
-		if (!isalnum(value[i]) && value[i] != '.' && value[i] != '_' &&
-			value[i] != '-' && value[i] != '/') {
-			return (false);
-		}
-	}
-	return (true);
-}
-
 bool IsMethod(const string &value)
 {
 	static const int	size_key = 3;
 	static const string key[size_key] = {"GET", "POST", "DELETE"};
+
+	for (size_t i = 0; i < size_key; ++i) {
+		if (value == key[i]) {
+			return (true);
+		}
+	}
+	return (false);
+}
+
+bool IsLogLevel(const string &value)
+{
+	static const int	size_key = 4;
+	static const string key[size_key] = {"Debug", "Info", "Warning", "Error"};
 
 	for (size_t i = 0; i < size_key; ++i) {
 		if (value == key[i]) {

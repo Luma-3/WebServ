@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/04 13:42:08 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 19:00:35 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,7 @@ int Handler::runEventLoop()
 						std::remove(_clients.begin(), _clients.end(), client),
 						_clients.end());
 					close(event_fd);
+					delete client;
 				}
 			}
 			else {
@@ -194,5 +195,9 @@ Handler::~Handler()
 	while (it != _servers.end()) {
 		delete *it;
 		++it;
+	}
+	while (!_clients.empty()) {
+		delete _clients.back();
+		_clients.pop_back();
 	}
 }

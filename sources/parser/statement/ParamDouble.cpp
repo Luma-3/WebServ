@@ -1,56 +1,58 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ReturnParam.cpp                                    :+:      :+:    :+:   */
+/*   ParamDouble.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 09:35:39 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/03 14:46:49 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/07 18:53:20 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser/statement/ReturnParam.hpp"
+#include "parser/statement/ParamDouble.hpp"
 
 #include "lexer/Token.hpp"
 
-using statement::ReturnParam;
+using statement::ParamDouble;
 
-ReturnParam::ReturnParam() : Token(S_Return) {}
+ParamDouble::ParamDouble() : Token(S_Return) {}
 
 // faire une copy profonde
 
-ReturnParam::ReturnParam(const ReturnParam &src) :
+ParamDouble::ParamDouble(const ParamDouble &src) :
 	Token(src),
-	_error_code(src._error_code),
-	_value(src._value)
+	_value1(src._value1),
+	_value2(src._value2)
 {
 }
 
-ReturnParam::ReturnParam(const std::string &error_code,
-						 const std::string &value) :
-	Token(S_Return),
-	_error_code(error_code),
-	_value(value)
+ParamDouble::ParamDouble(const std::string &value1, const std::string &value2,
+						 Token_Type type) :
+	Token(type),
+	_value1(value1),
+	_value2(value2)
 {
 }
 
-const std::string &ReturnParam::getErrorCode() const
+const std::string &ParamDouble::getValue1() const
 {
-	return _error_code;
+	return _value1;
 }
 
-const std::string &ReturnParam::getValue() const
+const std::string &ParamDouble::getValue2() const
 {
-	return _value;
+	return _value2;
 }
 
-ReturnParam &ReturnParam::operator=(const ReturnParam &src)
+ParamDouble &ParamDouble::operator=(const ParamDouble &src)
 {
 	if (this != &src) {
 		Token::operator=(src);
+		_value1 = src._value1;
+		_value2 = src._value2;
 	}
 	return *this;
 }
 
-ReturnParam::~ReturnParam() {}
+ParamDouble::~ParamDouble() {}
