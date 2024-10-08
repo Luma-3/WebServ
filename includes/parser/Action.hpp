@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 18:43:06 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 10:53:09 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ namespace parser {
 
 class Parser;
 
-#define NB_ACTIONS 65
+#define NB_ACTIONS 69
 
 enum ActionType {
 	SHIFT,
@@ -74,7 +74,7 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 	{Action(REDUCE, 0, R1_Server), 2, T_CBracket},
 	{Action(SHIFT, 3), 2, T_Port},
 	{Action(SHIFT, 4), 2, T_Name},
-	{Action(SHIFT, 4), 2, T_BodySize},
+	{Action(SHIFT, 41), 2, T_BodySize},
 	{Action(SHIFT, 4), 2, T_Host},
 	{Action(SHIFT, 5), 2, T_ErrorPage},
 	{Action(SHIFT, 6), 2, T_Log},
@@ -106,7 +106,7 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 	{Action(SHIFT, 22), 21, T_Path},
 	{Action(SHIFT, 23), 22, T_OBracket},
 	{Action(REDUCE, 2, R6_Location), 23, T_CBracket},
-	{Action(SHIFT, 24), 23, T_BodySize},
+	{Action(SHIFT, 42), 23, T_BodySize},
 	{Action(SHIFT, 25), 23, T_ErrorPage},
 	{Action(SHIFT, 26), 23, T_Root},
 	{Action(SHIFT, 24), 23, T_Index},
@@ -132,6 +132,10 @@ static const ActionEntry g_action[NB_ACTIONS] = {
 	{Action(REDUCE, 23, R5_DenyMethod), 38, T_Semi_Colon},
 	{Action(SHIFT, 19), 39, T_Identifier},
 	{Action(SHIFT, 37), 40, T_Identifier},
+	{Action(SHIFT, 11), 41, T_Identifier},
+	{Action(SHIFT, 11), 41, T_Digits},
+	{Action(SHIFT, 30), 42, T_Identifier},
+	{Action(SHIFT, 30), 42, T_Digits},
 	{Action(ERROR, -1), -1, T_None},
 };
 

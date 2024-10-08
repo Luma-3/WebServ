@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 18:56:57 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 12:45:29 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,23 +16,27 @@
 // #include <
 
 #include "lexer/Token.hpp"
+#include "parser/Parser.hpp"
 #include "parser/statement/DenyMethod.hpp"
 #include "parser/statement/ErrorPage.hpp"
 #include "parser/statement/Location.hpp"
 #include "parser/statement/Param.hpp"
 #include "parser/statement/ParamDouble.hpp"
+#include "template/vector_deep_copy.tpp"
 
+using parser::Parser;
 using statement::DenyMethod;
 using statement::ErrorPage;
 using statement::Location;
 using statement::Param;
 using statement::Server;
 
-Server::Server() : Token(S_Server), _autoindex(false) {}
+Server::Server() : Token(S_Server), _name("none"), _autoindex(false) {}
 
 // faire une copy profonde
 Server::Server(const Server &src) :
 	Token(src),
+	_name(src._name),
 	_port(src._port),
 	_host(src._host),
 	_root(src._root),
@@ -50,6 +54,7 @@ void Server::IdentifyParam(Token *token)
 	switch (param->getTerminal()) {
 		case T_Port:
 			_port = param->getValue();
+			// std::cout << "port: " << _port << std::endl;
 			break;
 		case T_Host:
 			_host = param->getValue();
@@ -62,6 +67,9 @@ void Server::IdentifyParam(Token *token)
 			break;
 		case T_AutoIndex:
 			_autoindex = Param::ConvertBool(param->getValue());
+			break;
+		case T_Name:
+			_name = param->getValue();
 			break;
 		default:
 			break;
@@ -111,6 +119,22 @@ Server::Server(const std::vector< Token * > &tokens) : _autoindex(false)
 				throw Token::InvalidTokenException();
 				break;
 		}
+	}
+
+	if (_host.empty()) {
+		deleteVector(_error_pages);
+		deleteVector(_locations);
+		throw Parser::MissingParamException("host");
+	}
+	if (_port.empty()) {
+		deleteVector(_error_pages);
+		deleteVector(_locations);
+		throw Parser::MissingParamException("port");
+	}
+	if (_name.empty()) {
+		deleteVector(_error_pages);
+		deleteVector(_locations);
+		throw Parser::MissingParamException("name");
 	}
 }
 
@@ -174,21 +198,8 @@ Server &Server::operator=(const Server &src)
 
 Server::~Server()
 {
-	std::vector< const statement::Location * >::const_iterator it =
-		_locations.begin();
-
-	while (it != _locations.end()) {
-		delete *it;
-		++it;
-	}
-
-	std::vector< const statement::ErrorPage * >::const_iterator it2 =
-		_error_pages.begin();
-
-	while (it2 != _error_pages.end()) {
-		delete *it2;
-		++it2;
-	}
+	deleteVector(_locations);
+	deleteVector(_error_pages);
 }
 
 std::ostream &operator<<(std::ostream &o, const statement::Server &server)

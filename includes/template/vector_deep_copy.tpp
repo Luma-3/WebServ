@@ -24,4 +24,12 @@ std::vector< T > vector_deep_copy(const std::vector< T > &src)
 	return dst;
 };
 
+template < typename T > void deleteVector(const std::vector< T > &src)
+{
+	for (typename std::vector< T >::const_iterator it = src.begin();
+		 it != src.end(); ++it) {
+		delete *it;
+	}
+}
+
 #endif // VECTOR_DEEP_COPY_TPP

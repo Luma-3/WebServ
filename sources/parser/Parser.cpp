@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 17:35:57 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 12:28:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,12 +95,12 @@ void Parser::Parse()
 		Token		*token = tokens.front();
 		const Action action = findAction(_status, token->getTerminal());
 
+		tokens.pop();
 		if (action.Execute(token, _parse_stack, *this) == ERROR) {
 			throw InvalidTokenException(
 				token->getCol(), token->getLine(), token->getValue(),
 				Token::TerminalTypeToString(findExpected(_status).terminal));
 		}
-		tokens.pop();
 	}
 }
 

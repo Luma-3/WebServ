@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 16:40:25 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 10:46:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 		{T_AutoIndex,  "autoindex"	 },
 		{T_Root,		 "root"	   },
 		{T_Log,		"log"		 },
-		{T_BodySize,	 "body_size"	},
+		{T_BodySize,	 "max_body_size"	},
 		{T_Name,		 "name"	   }
 	};
 

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 14:48:57 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 10:44:30 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,4 +79,59 @@ bool IsBool(const string &value)
 		}
 	}
 	return (false);
+}
+
+bool IsErrorCode(const string &value)
+{
+	if (value.size() != 3) {
+		return (false);
+	}
+	if (value[0] >= '1' && value[0] <= '5') {
+		return (true);
+	}
+	return (true);
+}
+
+bool IsPort(const string &value)
+{
+	if (value.size() > 5) {
+		return (false);
+	}
+	int integer = atoi(value.c_str());
+	if (integer < 0 || integer > PORT_MAX) {
+		return (false);
+	}
+	return (true);
+}
+
+bool IsHost(const string &value)
+{
+	if (value.size() > 255 || value.size() == 0) {
+		return (false);
+	}
+	for (size_t i = 0; i < value.size(); ++i) {
+		if (!isalnum(value[i]) && value[i] != '.' && value[i] != '-') {
+			return (false);
+		}
+	}
+	return (true);
+}
+
+bool IsBodySize(const string &value)
+{
+	size_t size = value.size();
+	for (size_t i = 0; i < size - 1; ++i) {
+		if (!isdigit(value[i])) {
+			return (false);
+		}
+	}
+	char last = value[size - 1];
+	if (isdigit(last)) {
+		return (true);
+	}
+	last = toupper(last);
+	if (last != 'K' && last != 'M' && last != 'G') {
+		return (false);
+	}
+	return (true);
 }

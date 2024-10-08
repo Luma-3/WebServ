@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 11:15:49 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 11:54:59 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,28 @@ class Parser
 							  const std::string &value,
 							  const std::string &expected);
 		InvalidTokenException(const InvalidTokenException &src);
+
 		InvalidTokenException &operator=(const InvalidTokenException &src);
 
 		virtual const char *what() const throw();
 
 		virtual ~InvalidTokenException() throw();
+	};
+
+	class MissingParamException : public std::exception
+	{
+	  private:
+		std::string _msg;
+
+	  public:
+		MissingParamException(const std::string &value);
+		MissingParamException(const MissingParamException &src);
+
+		MissingParamException &operator=(const MissingParamException &src);
+
+		virtual const char *what() const throw();
+
+		virtual ~MissingParamException() throw();
 	};
 };
 } // namespace parser

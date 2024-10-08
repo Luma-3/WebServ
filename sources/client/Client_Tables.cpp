@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 10:39:08 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/03 15:19:43 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 10:12:53 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ string findStatusMessage(const std::string &code)
 	status_message["403"] = " Forbidden";
 	status_message["404"] = " Not Found";
 	status_message["405"] = " Method Not Allowed";
+	status_message["413"] = " Request Entity Too Large";
 	status_message["500"] = " Internal Server Error";
 
 	if (status_message[code].empty()) {

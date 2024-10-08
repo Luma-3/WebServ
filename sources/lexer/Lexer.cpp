@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 16:51:31 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 12:29:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ const std::ifstream &Lexer::getConfigFile() const
 bool Lexer::IsDelimiter(char c)
 {
 	return (c == ';' || c == '{' || c == '}' || c == ',' || c == '[' ||
-			c == ']');
+			c == ']' || c == '#');
 }
 
 void Lexer::SkipSpace(const string &line, size_t &it)
@@ -132,6 +132,9 @@ void Lexer::TokenizeLine(const string &line, queue< Token * > &tokens)
 				   (isspace(line[frontIT + 1]) == 0)) {
 				frontIT++;
 			}
+		}
+		if (line[frontIT] == '#') {
+			break;
 		}
 		tokens.push(CreateToken(frontIT, backIT, line));
 		if (frontIT < line.size()) {

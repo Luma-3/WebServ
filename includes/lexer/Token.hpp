@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 14:37:24 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 18:32:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 10:43:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,5 +131,13 @@ bool IsLogLevel(const std::string &value);
 bool IsPath(const std::string &value);
 
 bool IsDigit(const std::string &value);
+
+bool IsErrorCode(const std::string &value);
+
+bool IsPort(const std::string &value);
+
+bool IsHost(const std::string &value);
+
+bool IsBodySize(const std::string &value);
 
 #endif // TOKEN_HPP

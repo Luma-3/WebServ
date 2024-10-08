@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 18:49:54 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 12:25:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,8 +139,9 @@ void parser::R1_Server(std::stack< Token * > &stack)
 		}
 		tokens.pop();
 	}
-
+	
 	statement::Server *server = new statement::Server(params);
+	std::cout << "COUCOU" << std::endl;
 	stack.push(server);
 }
 
@@ -153,8 +154,26 @@ void parser::R2_Param(std::stack< Token * > &stack)
 		stack.pop();
 	}
 
-	statement::Param *param =
-		new statement::Param(tokens[1]->getValue(), tokens[2]->getTerminal());
+	Terminal_Type term_type = tokens[2]->getTerminal();
+	std::string	  value = tokens[1]->getValue();
+
+	if (term_type == T_Host) {
+		if (!IsHost(value)) {
+			throw Token::InvalidTokenException();
+		}
+	}
+	else if (term_type == T_Port) {
+		if (!IsPort(value)) {
+			throw Token::InvalidTokenException();
+		}
+	}
+	else if (term_type == T_BodySize) {
+		if (!IsBodySize(value)) {
+			throw Token::InvalidTokenException();
+		}
+	}
+
+	statement::Param *param = new statement::Param(value, term_type);
 
 	for (size_t i = 0; i < tokens.size(); ++i) {
 		delete tokens[i];
@@ -178,6 +197,9 @@ void parser::R3_DoubleParam(std::stack< Token * > &stack)
 		if (term_type == T_Return) {
 			type = S_Return;
 			if (tokens.top()->getTerminal() == T_Digits) {
+				if (!IsErrorCode(tokens.top()->getValue())) {
+					throw Token::InvalidTokenException();
+				}
 				value1 = tokens.top()->getValue();
 			}
 			else if (tokens.top()->getTerminal() == T_Identifier ||
@@ -206,7 +228,7 @@ void parser::R3_DoubleParam(std::stack< Token * > &stack)
 	stack.push(returnParam);
 }
 
-void parser::R4_ErrorPage(std::stack< Token * > &stack) // R5
+void parser::R4_ErrorPage(std::stack< Token * > &stack)
 {
 	std::stack< Token * > tokens;
 
@@ -217,6 +239,9 @@ void parser::R4_ErrorPage(std::stack< Token * > &stack) // R5
 
 	while (!tokens.empty()) {
 		if (tokens.top()->getTerminal() == T_Digits) {
+			if (!IsErrorCode(tokens.top()->getValue())) {
+				throw Token::InvalidTokenException();
+			}
 			errorCode.push_back(tokens.top()->getValue());
 		}
 		else if (tokens.top()->getTerminal() == T_Identifier) {
@@ -231,7 +256,7 @@ void parser::R4_ErrorPage(std::stack< Token * > &stack) // R5
 	stack.push(error);
 }
 
-void parser::R5_DenyMethod(std::stack< Token * > &stack) // R6
+void parser::R5_DenyMethod(std::stack< Token * > &stack)
 {
 	std::stack< Token * >	   tokens;
 	std::vector< std::string > method;

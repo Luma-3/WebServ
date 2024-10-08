@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 18:57:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 11:44:21 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void Server::bindAndListenSocket()
 	hints.ai_flags = AI_PASSIVE;
 
 	_logger->log(INFO, "Binding and listening socket on " + _name);
+	std::cout << "port: " << _port << std::endl;
 	if (getaddrinfo(_hostname.c_str(), _port.c_str(), &hints, &info) != 0) {
 		throw InternalServerException("getaddrinfo failed on" + _name);
 	}

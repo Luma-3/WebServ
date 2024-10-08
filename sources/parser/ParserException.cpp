@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 16:19:55 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/21 14:32:24 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 11:52:44 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,3 +45,30 @@ Parser::InvalidTokenException::operator=(const InvalidTokenException &src)
 }
 
 Parser::InvalidTokenException::~InvalidTokenException() throw() {}
+
+Parser::MissingParamException::MissingParamException(const std::string &value) :
+	_msg("Error: missing parameter: " + value)
+{
+}
+
+const char *Parser::MissingParamException::what() const throw()
+{
+	return _msg.c_str();
+}
+
+Parser::MissingParamException::MissingParamException(
+	const MissingParamException &src) :
+	_msg(src._msg)
+{
+}
+
+Parser::MissingParamException &
+Parser::MissingParamException::operator=(const MissingParamException &src)
+{
+	if (this != &src) {
+		_msg = src._msg;
+	}
+	return *this;
+}
+
+Parser::MissingParamException::~MissingParamException() throw() {}
