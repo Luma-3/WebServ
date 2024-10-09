@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 15:30:40 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/06 23:13:37 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,13 @@ Handler *init_server(const int ac, const char **av)
 int main(const int ac, const char **av, const char **env)
 {
 	(void)env;
-	Handler *handler = NULL;
+	(void)ac;
+	(void)av;
+	Handler *handler = new Handler();
 
 	try {
-		handler = init_server(ac, av);
+		// handler = init_server(ac, av);
+		handler->loadServTest();
 		handler->launchServers();
 		handler->handleEvents();
 	} catch (const std::runtime_error &e) {

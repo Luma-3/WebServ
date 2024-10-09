@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/25 11:07:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 18:09:29 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,20 @@ Server::Server() :
 	_nb_bytes(0),
 	_info()
 {
+}
+
+Server::Server(const std::string &servername, const std::string &host,
+			   const std::string &port) :
+	_name(servername),
+	_hostname(host),
+	_port(port),
+	_autoindex(0),
+	_server_socket(socket(AF_INET, SOCK_STREAM, 0)),
+	_nb_bytes(-1)
+{
+	if (_server_socket == -1) {
+		throw InternalServerException("socket failed on " + _name);
+	}
 }
 
 Server::Server(const statement::Server *server) :
@@ -103,22 +117,22 @@ std::string Server::getPort() const
 	return (_port);
 }
 
-int Server::getSocket() const
+const int &Server::getSocket() const
 {
 	return (_server_socket);
 }
 
-int Server::getNewSocket() const
+const std::vector< int > &Server::getClientSock() const
 {
 	return (_client_socket);
 }
 
-int Server::getNbBytes() const
+const int &Server::getNbBytes() const
 {
 	return (_nb_bytes);
 }
 
-std::string Server::getRequest() const
+const std::vector< std::string > &Server::getRequest() const
 {
 	return (_request);
 }
@@ -196,81 +210,87 @@ int Server::setSocket()
 	return (SUCCESS);
 }
 
-int Server::acceptRequest(int epfd, std::vector< int > &socktab)
+int Server::acceptRequest(int epfd)
 {
 	int			val = 1;
 	sockaddr_in addr;
 	socklen_t	len = sizeof(addr);
+	int			tmp_sock;
 
-	_client_socket = accept(_server_socket, (sockaddr *)&addr, &len);
-	if (_client_socket == -1) {
+	tmp_sock = accept(_server_socket, (sockaddr *)&addr, &len);
+	if (tmp_sock == -1) {
 		throw InternalServerException(
 			"Error on awaiting connection (accept) on" + _name);
 	}
-	if (fcntl(_client_socket, F_SETFL, O_NONBLOCK) == -1) {
+	if (fcntl(tmp_sock, F_SETFL, O_NONBLOCK) == -1) {
 		throw InternalServerException("Error on set nonblocking on " + _name);
 	}
-	if (setsockopt(_client_socket, SOL_SOCKET, SO_REUSEADDR, &val,
-				   sizeof(int)) == -1) {
+	if (setsockopt(tmp_sock, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(int)) ==
+		-1) {
 		throw InternalServerException(
 			"error on setting the port on reusable on " + _name + ": " +
 			strerror(errno));
 	}
-	if (setsockopt(_client_socket, SOL_SOCKET, SO_REUSEPORT, &val,
-				   sizeof(int)) == -1) {
+	if (setsockopt(tmp_sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(int)) ==
+		-1) {
 		throw InternalServerException(
 			"error on setting the port on reusable on " + _name + ": " +
 			strerror(errno));
 	}
-	if (setsockopt(_client_socket, SOL_SOCKET, SO_KEEPALIVE, &val,
-				   sizeof(int)) == -1) {
+	if (setsockopt(tmp_sock, SOL_SOCKET, SO_KEEPALIVE, &val, sizeof(int)) ==
+		-1) {
 		throw InternalServerException(
 			"error on setting the port on reusable on " + _name + ": " +
 			strerror(errno));
 	}
-	this->epolladd(epfd, _client_socket);
-	socktab.push_back(_client_socket);
+	_client_socket.push_back(tmp_sock);
+	epolladd(epfd, tmp_sock);
 	return (SUCCESS);
 }
 
-int Server::receiveRequest(int epfd)
+int Server::receiveRequest(int epfd, int socket, int req_nb)
 {
-	char buff[MAX_REQ_SIZE];
+	char buff[MAX_REQ_SIZE] = {0};
 
-	while (true) {
-		for (int i = 0; i < MAX_REQ_SIZE; ++i) {
-			buff[i] = 0;
-		}
-		_nb_bytes =
-			static_cast< int >(recv(_client_socket, buff, MAX_REQ_SIZE, 0));
-		if (_nb_bytes == -1) {
-			std::cerr << "Error on recv on " << _name << std::endl;
-			std::cout << errno << std::endl;
-			close(_client_socket);
-			this->epolldel(epfd, _client_socket);
-			_client_socket = -1;
-		} else if (_nb_bytes == 0) {
-			std::cout << "client disconnected on " << _name << std::endl;
-			close(_client_socket);
-			this->epolldel(epfd, _client_socket);
-			_client_socket = -1;
-		}
+	if (static_cast<unsigned long>(req_nb) >= _request.size())
+		_request.push_back(buff);
+	_nb_bytes = static_cast< int >(recv(socket, buff, MAX_REQ_SIZE, 0));
+	_request[req_nb].append(buff);
+	if (_nb_bytes == -1 && (errno != EAGAIN && errno != EWOULDBLOCK)) {
+		std::cerr << "Error on recv on " << _name << std::endl;
+		std::cout << errno << std::endl;
+		_request[req_nb].clear();
+		this->epolldel(epfd, socket);
+		close(socket);
+		socket = -1;
+	} else
+	if (_nb_bytes == 0) {
+		std::cout << "client disconnected on " << _name << std::endl;
+		close(socket);
+		_request[req_nb].clear();
+		this->epolldel(epfd, socket);
+		socket = -1;
+	} else {
 		std::cout << _nb_bytes << std::endl;
 		std::cout << buff << std::endl;
-		_request.append(buff, _nb_bytes);
-		if (_nb_bytes < MAX_REQ_SIZE) {
-			break;
-		}
 	}
 	return (SUCCESS);
 }
 
-int Server::sendResponse(const std::string &reponse)
+int Server::sendResponse(const std::string &reponse, int socket)
 {
-	if (_nb_bytes > 0) {
-		if (send(_client_socket, reponse.c_str(), reponse.length(), 0) == -1) {
-			std::cerr << "Error on sending response on " << _name << std::endl;
-			return (FAILURE);
+	int sent = 0;
+	std::cout << "sent = " << sent << std::endl;
+
+	while (sent < static_cast< int >(reponse.length())) {
+		if (_nb_bytes >= 0) {
+			sent += send(socket, reponse.c_str() + sent, MAX_REQ_SIZE, 0);
+			std::cout << "sent = " << sent << std::endl;
+			if (sent < 0) {
+				std::cerr << "Error on sending response on " << _name
+						  << std::endl;
+				return (FAILURE);
+			}
 		}
 	}
 	return (SUCCESS);
@@ -306,7 +326,4 @@ Server::~Server()
 	// 	_info = NULL;
 	// } TODO: handle inheritent destructor
 	close(_server_socket);
-	if (_client_socket != -1) {
-		close(_client_socket);
-	}
 }

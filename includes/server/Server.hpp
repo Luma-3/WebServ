@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/25 11:07:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 17:40:22 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,16 +47,16 @@ class Server
 	const std::vector< statement::ErrorPage >  _error_pages;
 	std::vector< const statement::Location * > _locations;
 
-	const int		 _server_socket;
-	int				 _client_socket;
-	int				 _nb_bytes;
-	std::string		 _request;
-	struct addrinfo *_info;
+	const int				   _server_socket;
+	std::vector< int >		   _client_socket;
+	int						   _nb_bytes;
+	std::vector< std::string > _request;
+	struct addrinfo			  *_info;
 
   public:
 	Server();
-	// Server(const std::string &servername, const std::string &hostname,
-	// 	   const std::string &port);
+	Server(const std::string &servername, const std::string &hostname,
+		   const std::string &port);
 	Server(const statement::Server *server);
 	Server(const Server &src);
 	Server &operator=(const Server &src);
@@ -65,11 +65,11 @@ class Server
 	std::string getHost() const;
 	std::string getPort() const;
 
-	int getSocket() const;
-	int getNewSocket() const;
-	int getNbBytes() const;
+	const std::vector< int > &getClientSock() const;
+	const int				 &getSocket() const;
+	const int				 &getNbBytes() const;
 
-	std::string getRequest() const;
+	const std::vector< std::string > &getRequest() const;
 
 	const std::string &getRoot() const;
 	const std::string &getIndex() const;
@@ -81,9 +81,9 @@ class Server
 
 	int createSocket();
 	int setSocket();
-	int acceptRequest(int epfd, std::vector<int> &socktab);
-	int receiveRequest(int epfd);
-	int sendResponse(const std::string &response);
+	int acceptRequest(int epfd);
+	int receiveRequest(int epfd, int socket, int i);
+	int sendResponse(const std::string &response, int socket);
 
 	void epolladd(int epfd, int socket);
 	void epollmod(int epfd, int socket, int flag);

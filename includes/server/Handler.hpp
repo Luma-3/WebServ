@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:46:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 13:01:10 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/06 22:54:51 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ class Handler
 {
   private:
 	std::vector< Server * > _servers;
-	int						_nbServ;
 	int						_epfd;
 
   public:
@@ -38,8 +37,9 @@ class Handler
 	Handler(const Handler &src);
 	Handler &operator=(const Handler &rhs);
 
-	int launchServers();
-	int handleEvents();
+	void loadServTest();
+	int	 launchServers();
+	int	 handleEvents();
 
 	// Server *operator[](const int index);
 
