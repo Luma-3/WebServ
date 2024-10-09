@@ -6,14 +6,12 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 14:37:23 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/09 10:52:01 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 #define SERVER_HPP
-
-#define MAX_REQ_SIZE 100
 
 #include <cerrno>
 #include <cstdlib>
@@ -33,7 +31,7 @@
 #define SUCCESS 0
 #define FAILURE 1
 
-#define MAXREQEST 10
+#define MAXREQUEST 10
 class Server
 {
   private:

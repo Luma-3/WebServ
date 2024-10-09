@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 17:24:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/08 14:53:04 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/09 13:09:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,6 @@ string client::Parser::getConfigParam(const string &param,
 	}
 	return "";
 }
-
-// void ConstructPath(string &path, string &filename, string &file_extension)
-// {
-// 	statement::Location *location =
-// }
 
 void client::Parser::handleRequestedPath(string &requested_path)
 {

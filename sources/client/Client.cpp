@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 15:30:40 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/09 15:12:26 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,11 @@ const std::string &Client::getRequest() const
 	return _request;
 }
 
+const std::string &Client::getBody() const
+{
+	return _body;
+}
+
 void Client::receiveRequest()
 {
 	char   *buff = new char[MAX_REQ_SIZE];
@@ -63,33 +68,49 @@ void Client::receiveRequest()
 	while (true) {
 		bzero(buff, MAX_REQ_SIZE);
 		nb_bytes = recv(_client_socket, buff, MAX_REQ_SIZE, 0);
-		std::cout << "nb_bytes : " << nb_bytes << std::endl;
 		if (nb_bytes == -1) {
-			std::cerr << strerror(errno) << std::endl;
-			throw std::runtime_error("Error on recv on " + _server->getName());
-		}
-		if (nb_bytes == 0) {
 			break;
 		}
-		std::cout << "buffer:" << buff << std::endl;
 		_request.append(buff, static_cast< size_t >(nb_bytes));
 		if (nb_bytes < MAX_REQ_SIZE) {
+			break;
+		}
+		else if (_request.find("\r\n\r\n") != std::string::npos) {
 			break;
 		}
 		nb_bytes = 0;
 	}
 	delete[] buff;
-	std::cout << "balbalbnladf : " << _request << std::endl;
 }
 
 void Client::sendResponse()
 {
-	// TODO : Chunck response
 	if (send(_client_socket, _response.c_str(), _response.size(), 0) == -1) {
-		std::cerr << strerror(errno) << std::endl;
+		//	TODO Throw
+		return;
 	}
 	_request.clear();
 }
+
+// void Client::sendResponseCGI()
+// {
+// 	if (!_header.empty()) {
+// 		if (send(_client_socket, _header.c_str(), _header.size(), 0) == -1) {
+// 			return;
+// 		}
+// 		_header.clear();
+// 	}
+
+// 	while (send(_client_socket, _body.c_str(), PACKET_SIZE, 0) > 0) {
+// 		if (_body.size() > PACKET_SIZE) {
+// 			_body = _body.substr(PACKET_SIZE);
+// 		}
+// 		else {
+// 			_body.clear();
+// 		}
+// 	}
+// 	_request.clear();
+// }
 
 void Client::handleRequest()
 {
@@ -97,7 +118,8 @@ void Client::handleRequest()
 	Parser	parser(_server, _default_server);
 
 	parser.parseRequest(_request);
-	_response = builder.BuildResponse(parser, _server, _default_server);
+	builder.BuildResponse(parser, _server, _default_server);
+	_response = builder.getResponse();
 }
 
 Client::~Client() {}

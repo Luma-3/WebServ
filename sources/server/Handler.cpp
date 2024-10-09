@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/08 15:17:42 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/09 15:09:17 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,11 +118,6 @@ void Handler::handleNewConnection(const Server *server)
 	client::Client *client =
 		new client::Client(server, server->getDefault(), client_socket);
 	addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
-	client->receiveRequest();
-	client->handleRequest();
-	modifyEvent(client_socket, EPOLLOUT | EPOLLRDHUP);
-	client->sendResponse();
-	modifyEvent(client_socket, EPOLLIN | EPOLLRDHUP);
 	_clients.push_back(client);
 }
 
@@ -131,8 +126,17 @@ void Handler::handleClientRequest(int event_fd)
 	client::Client *client = findClient(event_fd);
 	if (client) {
 		client->receiveRequest();
-		client->handleRequest();
-		modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP);
+		if (client->getRequest().find("\r\n\r\n") != std::string::npos) {
+			client->handleRequest();
+			modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP);
+		}
+	}
+}
+
+void Handler::handleClientResponse(int event_fd)
+{
+	client::Client *client = findClient(event_fd);
+	if (client) {
 		client->sendResponse();
 		modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP);
 	}
@@ -151,7 +155,7 @@ void Handler::addEvent(int fd, uint32_t events) const
 void Handler::removeEvent(int fd) const
 {
 	if (epoll_ctl(_epfd, EPOLL_CTL_DEL, fd, NULL) == -1) {
-		throw InternalServerException("Error on epoll_ctl");
+		throw InternalServerException("Error on epoll_ctl Remove");
 	}
 }
 
@@ -173,9 +177,7 @@ int Handler::runEventLoop()
 	client::Builder builder;
 
 	while (!g_sig) {
-		std::cout << "Waiting for events" << std::endl;
 		int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
-		std::cout << "Events received" << std::endl;
 		if (nfds == -1 && !g_sig) {
 			throw InternalServerException("Error on epoll_wait");
 		}
@@ -184,20 +186,29 @@ int Handler::runEventLoop()
 			Server *server = findServer(event_fd);
 			if (server) {
 				handleNewConnection(server);
+				continue;
 			}
 			else if (event[i].events & EPOLLRDHUP) {
-				// TODO : handle client disconnection on a disociated Method
+				// TODO : handle client disconnection on a disociated
+				// Method
 				client::Client *client = findClient(event_fd);
+				std::cout << "Client disconnected" << std::endl;
 				if (client) {
 					_clients.erase(
 						std::remove(_clients.begin(), _clients.end(), client),
 						_clients.end());
+					removeEvent(event_fd);
 					close(event_fd);
 					delete client;
 				}
 			}
-			else {
+			else if (event[i].events & EPOLLIN) {
 				handleClientRequest(event_fd);
+				continue;
+			}
+			else if (event[i].events & EPOLLOUT) {
+				handleClientResponse(event_fd);
+				continue;
 			}
 		}
 	}

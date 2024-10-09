@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 14:37:38 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/09 10:51:40 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void Server::bindAndListenSocket()
 		throw InternalServerException("bind failed on " + _name);
 	}
 	freeaddrinfo(info);
-	if (listen(_socket, MAXREQEST) == -1) {
+	if (listen(_socket, MAXREQUEST) == -1) {
 		throw InternalServerException("listen failed on " + _name);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:46:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 14:32:07 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/09 10:48:26 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class Handler
 
 	void handleNewConnection(const Server *server);
 	void handleClientRequest(int event_fd);
+	void handleClientResponse(int event_fd);
 
 	void		  addEvent(int fd, uint32_t events) const;
 	void		  removeEvent(int fd) const;

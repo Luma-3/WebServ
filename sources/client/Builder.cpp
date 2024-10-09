@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/08 15:01:22 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/09 15:17:10 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,56 +75,6 @@ Builder::findLocation(const std::string &requested_path)
 	return NULL;
 }
 
-// const statement::ErrorPage *
-// Builder::findErrorPage(const statement::Location *location)
-// {
-// 	std::vector< const statement::ErrorPage * > error_page;
-
-// 	if (location == NULL) {
-// 		error_page = _server->getErrorPages();
-// 	} else {
-// 		error_page = location->getErrorPages();
-// 	}
-
-// 	std::vector< const statement::ErrorPage * >::const_iterator it =
-// 		error_page.begin();
-
-// 	while (it != error_page.end()) {
-// 		if ((*it)->getValue() == _return_code) {
-// 			return (*it);
-// 		}
-// 		++it;
-// 	}
-// 	return NULL;
-// }
-
-// void Builder::FindErrorFile(const string &requested_path)
-// {
-// 	const statement::Location  *location = findLocation(requested_path);
-// 	const statement::ErrorPage *error_page = NULL;
-// 	string						path;
-
-// 	if (location != NULL) {
-// 		error_page = findErrorPage(location);
-// 		if (error_page != NULL) {
-// 			if (location->getRoot().empty() == false)
-// 				path = location->getRoot() + error_page->getValue();
-// 			else {
-// 				path = _server->getRoot() + error_page->getValue();
-// 			}
-// 			_url = path;
-// 			return;
-// 		} else {
-// 			error_page = findErrorPage();
-// 			if (error_page != NULL) {
-// 				path = _server->getRoot() + error_page->getValue();
-// 			} else {
-// 				path = NULL;
-// 			}
-// 		}
-// 	}
-// }
-
 std::vector< char > Builder::readDataRequest(std::ifstream &file)
 {
 	file.seekg(0, std::ios::end);
@@ -161,24 +111,41 @@ std::vector< char > Builder::getDataFromFileRequest(bool &key)
 	return createErrorPage();
 }
 
+const string &Builder::getResponse() const
+{
+	return _response;
+}
+
+// void Builder::setErrorPath(const string &code, const Parser &parser)
+// {
+// 	string new_path = parser.getConfigParam(code, P_ERRORPAGE);
+// 	if (new_path.empty()) {
+// 		_url = DEFAULT_ERROR_PAGE + code + ".html";
+// 	}
+// 	else {
+// 		_url = new_path;
+// 	}
+// }
+
 void Builder::accessRequestedFile(const Parser &parser)
 {
-
-	_url = parser.getPath() + parser.getFilename();
-	std::cout << "URL BEFORE ACCESS : " << _url << std::endl;
+if (_return_code == "200") {
+	_url = parser.getPath() + parser.getFilename(); }
 
 	if (access(_url.c_str(), F_OK) != 0) {
 		if (errno == ENOENT) {
 			_return_code = "404";
+			// setErrorPath("404", parser);
 		}
 		else {
 			_return_code = "402";
+			// setErrorPath("402", parser);
 		}
 	}
 }
 
-string Builder::BuildResponse(client::Parser &parser, const Server *server,
-							  const Server *default_server)
+void Builder::BuildResponse(client::Parser &parser, const Server *server,
+							const Server *default_server)
 {
 	_server = server;
 	(void)default_server;
@@ -191,25 +158,23 @@ string Builder::BuildResponse(client::Parser &parser, const Server *server,
 
 	std::vector< char > body = getDataFromFileRequest(key);
 
-	std::cout << "Y'a t'il un body ? " << body.size() << std::endl;
-	string response =
+	_response =
 		"HTTP/1.1 " + _return_code + findStatusMessage(_return_code) + "\r\n";
-	response +=
+	_response +=
 		"Content-Type: " + findContentType(parser.getFileExtension()) + "\r\n";
 
-	response += "Content-Length: " + ToString(body.size()) + "\r\n";
+	_response += "Content-Length: " + ToString(body.size()) + "\r\n";
 
 	if (_headers["Connection"] == "close") {
-		response += "Connection: close\r\n\r\n";
+		_response += "Connection: close\r\n\r\n";
 	}
 	else {
-		response += "Connection: keep-alive\r\n\r\n";
+		_response += "Connection: keep-alive\r\n\r\n";
 	}
-	response += std::string(body.begin(), body.end());
+	_response += std::string(body.begin(), body.end());
 
 	// std::cout << "Response : " << response << std::endl;
 	reset();
-	return response;
 }
 
 void Builder::reset()

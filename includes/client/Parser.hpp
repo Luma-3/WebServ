@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/08 14:57:11 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/09 13:09:12 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,6 @@ class Parser
 						 const statement::Location *location);
 	std::string getParam(IdentifyParam identifier, const Server *Server);
 
-	std::string getConfigParam(const std::string &param,
-							   IdentifyParam	  identify);
-
 	bool InvalidMethod();
 	bool InvalidHeader();
 
@@ -95,6 +92,8 @@ class Parser
 	const std::string						   &getFilename() const;
 	const std::string						   &getFileExtension() const;
 	const std::string						   &getCodeResponse() const;
+	std::string getConfigParam(const std::string &param,
+							   IdentifyParam	  identify) ;
 };
 
 } // namespace client

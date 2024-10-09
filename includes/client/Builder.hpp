@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/08 14:55:18 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/09 15:04:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class Builder
 
 	std::string _url;
 	std::string _return_code;
+	std::string _response;
 
 	static std::vector< char > readDataRequest(std::ifstream &file);
 	std::vector< char >		   getDataFromFileRequest(bool &key);
@@ -51,14 +52,18 @@ class Builder
 	 findErrorPage(const statement::Location *location = NULL);
 	void reset();
 
+	// void setErrorPath(const string &code, Parser &parser);
+
   public:
 	Builder();
 	Builder(const Builder &src);
 	Builder &operator=(const Builder &src);
 	~Builder();
 
-	std::string BuildResponse(client::Parser &parser, const Server *server,
-							  const Server *default_server);
+	void BuildResponse(client::Parser &parser, const Server *server,
+					   const Server *default_server);
+
+	const std::string &getResponse() const;
 };
 
 } // namespace client
