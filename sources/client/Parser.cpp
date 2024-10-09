@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/04 13:22:06 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 14:57:06 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,11 @@ const string &Parser::getCodeResponse() const
 }
 
 const string &Parser::getRequestedPath() const
+{
+	return _requested_path;
+}
+
+const string &Parser::getPath() const
 {
 	return _path;
 }

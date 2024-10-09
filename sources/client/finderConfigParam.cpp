@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:50:17 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 16:40:25 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 14:36:18 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ const statement::Location *Parser::find_location(const string &path,
 string Parser::getParam(IdentifyParam			   identifier,
 						const statement::Location *location)
 {
-
 	switch (identifier) {
 		case P_ROOT:
 			return location->getRoot();
@@ -86,7 +85,6 @@ string Parser::getParam(IdentifyParam			   identifier,
 
 string Parser::getParam(IdentifyParam identifier, const Server *server)
 {
-
 	switch (identifier) {
 		case P_ROOT:
 			return server->getRoot();
@@ -154,6 +152,9 @@ string Parser::find_param_server(const string &path, IdentifyParam identifier)
 string Parser::find_param_location_default(const string &path,
 										   IdentifyParam identifier)
 {
+	if (_default_server == NULL) {
+		return "";
+	}
 	const statement::Location *location = find_location(path, _default_server);
 
 	if (location == NULL) {
@@ -165,6 +166,9 @@ string Parser::find_param_location_default(const string &path,
 string Parser::find_param_default_server(const string &path,
 										 IdentifyParam identifier)
 {
+	if (_default_server == NULL) {
+		return "";
+	}
 	(void)path;
 	return getParam(identifier, _default_server);
 }

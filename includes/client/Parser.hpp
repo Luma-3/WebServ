@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/04 12:39:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 14:57:11 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ class Parser
 
 	const std::map< std::string, std::string > &getHeaders() const;
 	const std::string						   &getRequestedPath() const;
+	const std::string						   &getPath() const;
 	const std::string						   &getFilename() const;
 	const std::string						   &getFileExtension() const;
 	const std::string						   &getCodeResponse() const;

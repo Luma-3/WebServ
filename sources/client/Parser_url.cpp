@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 17:24:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/03 15:57:44 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 14:53:04 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,22 +40,19 @@ string client::Parser::getConfigParam(const string &param,
 
 void client::Parser::handleRequestedPath(string &requested_path)
 {
-	size_t last_slash = requested_path.find_last_of('/');
-	size_t last_dot = requested_path.find_last_of('.');
+	size_t		last_slash = requested_path.find_last_of('/');
+	std::string file;
 
 	_requested_path = requested_path.substr(0, last_slash + 1);
 
-	_filename =
-		requested_path.substr(last_slash + 1, last_dot - last_slash - 1);
+	_filename = requested_path.substr(last_slash + 1);
+	if (_filename.empty()) {
+		_filename = getConfigParam(_requested_path, P_INDEX);
+	}
+	size_t last_dot = _filename.find_last_of('.');
 
 	_file_extension =
-		last_dot == string::npos ? "" : requested_path.substr(last_dot + 1);
+		last_dot == string::npos ? "" : _filename.substr(last_dot + 1);
 
-	std::cout << "Requested Path: " << _requested_path << std::endl;
-	std::cout << "Filename: " << _filename << std::endl;
-	std::cout << "File extension: " << _file_extension << std::endl;
-
-	string root = getConfigParam(_requested_path, P_INDEX);
-
-	std::cout << "Root: " << root << std::endl;
+	_path = getConfigParam(_requested_path, P_ROOT);
 }

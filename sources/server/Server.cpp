@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 11:44:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 14:37:38 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,13 @@
 
 Server::Server() : _socket(-1), _autoindex(0) {}
 
-Server::Server(const statement::Server *server) :
+Server::Server(const statement::Server *server, const Server *default_server) :
 	_socket(socket(AF_INET, SOCK_STREAM, 0)),
 
 	_name("default"),
 	_hostname(server->getHost()),
 	_port(server->getPort()),
+	_default(default_server),
 	_root(server->getRoot()),
 	_index(server->getIndex()),
 	_autoindex(server->getAutoindex()),
@@ -161,6 +162,11 @@ const std::vector< const statement::ErrorPage * > &Server::getErrorPages() const
 const std::vector< const statement::Location * > &Server::getLocations() const
 {
 	return (_locations);
+}
+
+const Server *Server::getDefault() const
+{
+	return (_default);
 }
 
 int Server::acceptRequest() const

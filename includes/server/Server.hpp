@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:56:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 18:19:00 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 14:37:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class Server
 	const std::string _hostname;
 	const std::string _port;
 
+	const Server							   *_default;
 	const std::string							_root;
 	const std::string							_index;
 	const bool									_autoindex;
@@ -58,7 +59,7 @@ class Server
 
   public:
 	Server();
-	Server(const statement::Server *server);
+	Server(const statement::Server *server, const Server *default_server);
 	Server(const Server &src);
 	Server &operator=(const Server &src);
 
@@ -76,6 +77,8 @@ class Server
 	const std::vector< const statement::ErrorPage * > &getErrorPages() const;
 	const std::vector< const statement::Location * >  &getLocations() const;
 	const statement::ParamDouble					  &getReturns() const;
+
+	const Server *getDefault() const;
 
 	int acceptRequest() const;
 

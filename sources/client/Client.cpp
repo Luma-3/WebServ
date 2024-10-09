@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/04 13:42:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 15:30:40 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void Client::receiveRequest()
 	while (true) {
 		bzero(buff, MAX_REQ_SIZE);
 		nb_bytes = recv(_client_socket, buff, MAX_REQ_SIZE, 0);
+		std::cout << "nb_bytes : " << nb_bytes << std::endl;
 		if (nb_bytes == -1) {
 			std::cerr << strerror(errno) << std::endl;
 			throw std::runtime_error("Error on recv on " + _server->getName());
@@ -70,10 +71,12 @@ void Client::receiveRequest()
 		if (nb_bytes == 0) {
 			break;
 		}
+		std::cout << "buffer:" << buff << std::endl;
 		_request.append(buff, static_cast< size_t >(nb_bytes));
 		if (nb_bytes < MAX_REQ_SIZE) {
 			break;
 		}
+		nb_bytes = 0;
 	}
 	delete[] buff;
 	std::cout << "balbalbnladf : " << _request << std::endl;
@@ -94,7 +97,7 @@ void Client::handleRequest()
 	Parser	parser(_server, _default_server);
 
 	parser.parseRequest(_request);
-	// _response = builder.BuildResponse(parser, _server, _default_server);
+	_response = builder.BuildResponse(parser, _server, _default_server);
 }
 
 Client::~Client() {}

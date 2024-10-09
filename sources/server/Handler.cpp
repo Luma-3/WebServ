@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/07 19:00:35 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 15:17:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ Handler::Handler(const std::vector< statement::Server * > &servers) :
 	std::vector< statement::Server * >::const_iterator it = servers.begin();
 
 	while (it != servers.end()) {
-		Server *server = new Server(*it);
+		Server *server = new Server(
+			*it, getDefaultServer((*it)->getPort(), (*it)->getHost()));
 		addEvent(server->getSocket(), EPOLLIN | EPOLLRDHUP);
 		_servers.push_back(server);
 		++it;
@@ -74,6 +75,20 @@ Handler &Handler::operator=(const Handler &rhs)
 	return (*this);
 }
 
+const Server *Handler::getDefaultServer(const std::string &port,
+										const std::string &host) const
+{
+	std::vector< Server * >::const_iterator it = _servers.begin();
+
+	while (it != _servers.end()) {
+		if ((*it)->getPort() == port && (*it)->getHost() == host) {
+			return (*it);
+		}
+		++it;
+	}
+	return (NULL);
+}
+
 Server *Handler::findServer(int fd)
 {
 	for (std::vector< Server * >::const_iterator it = _servers.begin();
@@ -100,13 +115,14 @@ void Handler::handleNewConnection(const Server *server)
 {
 	int client_socket = server->acceptRequest();
 
-	client::Client *client = new client::Client(server, NULL, client_socket);
+	client::Client *client =
+		new client::Client(server, server->getDefault(), client_socket);
 	addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
 	client->receiveRequest();
 	client->handleRequest();
-	// modifyEvent(client_socket, EPOLLOUT | EPOLLRDHUP);
+	modifyEvent(client_socket, EPOLLOUT | EPOLLRDHUP);
 	client->sendResponse();
-	// modifyEvent(client_socket, EPOLLIN | EPOLLRDHUP);
+	modifyEvent(client_socket, EPOLLIN | EPOLLRDHUP);
 	_clients.push_back(client);
 }
 
@@ -116,9 +132,9 @@ void Handler::handleClientRequest(int event_fd)
 	if (client) {
 		client->receiveRequest();
 		client->handleRequest();
-		// modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP);
+		modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP);
 		client->sendResponse();
-		// modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP);
+		modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP);
 	}
 }
 

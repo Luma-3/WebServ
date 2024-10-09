@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/03 15:50:39 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/08 14:55:18 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,7 @@ class Builder
 	// static std::string findStatusMessage(const std::string &code);
 	static std::string findContentType(const std::string &file_extension);
 	void			   FindErrorFile(const std::string &requires_path);
-	void			   findFinalFileFromUrl(const std::string &url_path,
-											const Parser	  &parser);
+	void			   accessRequestedFile(const Parser &parser);
 
 	const statement::Location *findLocation(const std::string &requested_path);
 	const statement::ErrorPage		*
