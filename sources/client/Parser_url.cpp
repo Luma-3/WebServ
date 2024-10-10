@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser_url.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 17:24:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/09 13:09:05 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/10 14:40:49 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,39 +15,40 @@
 using std::string;
 using std::vector;
 
-string client::Parser::getConfigParam(const string &param,
-									  IdentifyParam identify)
+std::pair< string, string >
+client::Parser::getConfigParam(const string &param, IdentifyParam identify)
 {
 	typedef string (client::Parser::*MemberFunction)(const std::string &,
 													 IdentifyParam);
-	MemberFunction function[5] = {&client::Parser::find_param_location,
+	MemberFunction function[4] = {&client::Parser::find_param_location,
 								  &client::Parser::find_param_server,
 								  &client::Parser::find_param_location_default,
-								  &client::Parser::find_param_default_server,
-								  &client::Parser::find_hard_code};
+								  &client::Parser::find_param_default_server};
 	string		   found_value;
-	for (size_t i = 0; i < 5; i++) {
+	string		   found_root;
+	for (size_t i = 0; i < 4; i++) {
 		found_value = (this->*function[i])(param, identify);
-		if (found_value != "") return found_value;
+		if (found_value != "") {
+			found_root = (this->*function[i])(param, P_ROOT);
+			return std::make_pair(found_value, found_root);
+		}
 	}
-	return "";
+	return std::make_pair("", "");
 }
 
 void client::Parser::handleRequestedPath(string &requested_path)
 {
-	size_t		last_slash = requested_path.find_last_of('/');
-	std::string file;
+	size_t						last_slash = requested_path.find_last_of('/');
+	std::string					file;
+	std::pair< string, string > found_param;
 
 	_requested_path = requested_path.substr(0, last_slash + 1);
 
 	_filename = requested_path.substr(last_slash + 1);
 	if (_filename.empty()) {
-		_filename = getConfigParam(_requested_path, P_INDEX);
+		found_param = getConfigParam(_requested_path, P_INDEX);
+		_filename = found_param.first;
 	}
-	size_t last_dot = _filename.find_last_of('.');
-
-	_file_extension =
-		last_dot == string::npos ? "" : _filename.substr(last_dot + 1);
-
-	_path = getConfigParam(_requested_path, P_ROOT);
+	found_param = getConfigParam(_requested_path, P_ROOT);
+	_path = found_param.first;
 }

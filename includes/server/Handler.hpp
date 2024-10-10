@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:46:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/09 10:48:26 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:08:08 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class Handler
 	void		  modifyEvent(int fd, uint32_t events) const;
 	const Server *getDefaultServer(const std::string &port,
 								   const std::string &host) const;
+
 
   public:
 	Handler();

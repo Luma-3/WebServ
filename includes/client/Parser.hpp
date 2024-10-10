@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/09 13:09:12 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:09:50 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,16 +35,17 @@ enum IdentifyParam {
 class Parser
 {
   private:
-	const Server						*_server;
-	const Server						*_default_server;
+	const Server *_server;
+	const Server *_default_server;
+
 	std::map< std::string, std::string > _headers;
-	std::string							 _buffer;
-	std::string							 _requested_path;
-	std::string							 _path;
-	std::string							 _filename;
-	std::string							 _file_extension;
 	std::vector< std::string >			 _methods;
-	std::string							 _codeResponse;
+
+	std::string _buffer;
+	std::string _requested_path;
+	std::string _path;
+	std::string _filename;
+	std::string _codeResponse;
 
 	void getHeaderFromRequest(const size_t &line_break_pos);
 	void getBodyFromRequest(size_t &line_break_pos);
@@ -86,14 +87,20 @@ class Parser
 
 	void reset();
 
+	void setPath(const std::string &path);
+	void setCodeResponse(const std::string &code);
+	void setFilename(const std::string &filename);
+	void setPathAndFilename(const std::string &path,
+							const std::string &filename);
+
 	const std::map< std::string, std::string > &getHeaders() const;
 	const std::string						   &getRequestedPath() const;
 	const std::string						   &getPath() const;
 	const std::string						   &getFilename() const;
-	const std::string						   &getFileExtension() const;
+	const std::string							getFileExtension() const;
 	const std::string						   &getCodeResponse() const;
-	std::string getConfigParam(const std::string &param,
-							   IdentifyParam	  identify) ;
+	std::pair< std::string, std::string >
+	getConfigParam(const std::string &param, IdentifyParam identify);
 };
 
 } // namespace client

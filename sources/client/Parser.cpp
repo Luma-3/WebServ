@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/09 12:30:28 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:10:05 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ Parser::Parser(const Parser &src)
 	_buffer = src._buffer;
 	_path = src._path;
 	_filename = src._filename;
-	_file_extension = src._file_extension;
 	_codeResponse = src._codeResponse;
 }
 
@@ -50,7 +49,6 @@ Parser &Parser::operator=(const Parser &src)
 	_buffer = src._buffer;
 	_path = src._path;
 	_filename = src._filename;
-	_file_extension = src._file_extension;
 	_codeResponse = src._codeResponse;
 	return *this;
 }
@@ -80,9 +78,30 @@ const string &Parser::getFilename() const
 	return _filename;
 }
 
-const string &Parser::getFileExtension() const
+void Parser::setPath(const string &path)
 {
-	return _file_extension;
+	_path = path;
+}
+
+void Parser::setCodeResponse(const string &code)
+{
+	_codeResponse = code;
+}
+
+const std::string Parser::getFileExtension() const
+{
+	return _filename.substr(_filename.find_last_of('.') + 1);
+}
+
+void Parser::setFilename(const string &url)
+{
+	_filename = url.substr(url.find_last_of('/') + 1);
+}
+
+void Parser::setPathAndFilename(const string &path, const string &filename)
+{
+	_path = path;
+	_filename = filename;
 }
 
 bool Parser::InvalidMethod()
@@ -164,7 +183,6 @@ void Parser::reset()
 	_buffer.clear();
 	_path.clear();
 	_filename.clear();
-	_file_extension.clear();
 	_codeResponse = "200";
 }
 

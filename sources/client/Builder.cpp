@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/09 15:17:10 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:43:09 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ using client::Builder;
 using std::map;
 using std::string;
 
-Builder::Builder() : _return_code("200") {}
+Builder::Builder() {}
 
 Builder::Builder(const Builder &src) :
 	_path(src._path),
-	_url(src._url),
-	_return_code(src._return_code)
+	_final_url(src._final_url),
+	_response(src._response)
 {
 }
 
@@ -35,22 +35,22 @@ Builder &Builder::operator=(const Builder &src)
 		return *this;
 	}
 	_path = src._path;
-	_url = src._url;
-	_return_code = src._return_code;
+	_final_url = src._final_url;
+	_response = src._response;
 	return *this;
 }
 
-void Builder::createUrlDefaultErrorPage()
+const string &Builder::getResponse() const
 {
-	_url = string(DEFAULT_ERROR_PAGE) + ToString(_return_code) + ".html";
+	return _response;
 }
 
-std::vector< char > Builder::createErrorPage()
+std::vector< char > Builder::createErrorPage(const std::string &return_code)
 {
 	std::vector< char > body;
 
-	std::string error_page = "<head><h1>ERROR " + _return_code +
-							 findStatusMessage(_return_code) +
+	std::string error_page = "<head><h1>ERROR " +
+							 findStatusMessage(return_code) +
 							 "Sorry for this ugly page bro </h1></head>";
 
 	body.assign(error_page.begin(), error_page.end());
@@ -58,25 +58,9 @@ std::vector< char > Builder::createErrorPage()
 	return body;
 }
 
-const statement::Location *
-Builder::findLocation(const std::string &requested_path)
+std::vector< char > Builder::readDataRequest()
 {
-	std::vector< const statement::Location * > locations;
-
-	std::vector< const statement::Location * >::const_iterator it =
-		_server->getLocations().begin();
-
-	while (it != _server->getLocations().end()) {
-		if ((*it)->getRoute() == requested_path) {
-			return (*it);
-		}
-		++it;
-	}
-	return NULL;
-}
-
-std::vector< char > Builder::readDataRequest(std::ifstream &file)
-{
+	std::ifstream file(_final_url.c_str(), std::ios::binary);
 	file.seekg(0, std::ios::end);
 
 	size_t size = file.tellg();
@@ -89,91 +73,93 @@ std::vector< char > Builder::readDataRequest(std::ifstream &file)
 	return body;
 }
 
-std::vector< char > Builder::getDataFromFileRequest(bool &key)
+void Builder::findDefaultErrorPath(Parser &parser)
 {
-	while (true) {
-		std::ifstream file(_url.c_str(), std::ios::binary);
+	parser.setPathAndFilename(DEFAULT_ERROR_PAGE,
+							  "error" + parser.getCodeResponse() + ".html");
+	_final_url = parser.getPath() + parser.getFilename();
+	if (access(_final_url.c_str(), F_OK) != 0) {
+		_final_url = "";
+		parser.setPathAndFilename("", ".html");
+	}
+}
 
-		// if (_parser.getFileExtension() == "py") {
-		// 	return handleCGI();
-		// }
-		if (file.is_open()) {
-			return readDataRequest(file);
-		}
-		if (key) {
-			createUrlDefaultErrorPage();
-			key = false;
-		}
-		else {
-			break;
+void Builder::findErrorPath(Parser &parser)
+{
+	std::pair< string, string > error_page =
+		parser.getConfigParam(parser.getRequestedPath(), P_ERRORPAGE);
+
+	if (error_page.first.empty()) {
+		findDefaultErrorPath(parser);
+	}
+	else {
+		parser.setPathAndFilename(error_page.second, error_page.first);
+		_final_url = parser.getPath() + parser.getFilename();
+		if (access(_final_url.c_str(), F_OK) != 0) {
+			findDefaultErrorPath(parser);
 		}
 	}
-	return createErrorPage();
 }
-
-const string &Builder::getResponse() const
+void Builder::accessRequestedFile(Parser &parser)
 {
-	return _response;
-}
-
-// void Builder::setErrorPath(const string &code, const Parser &parser)
-// {
-// 	string new_path = parser.getConfigParam(code, P_ERRORPAGE);
-// 	if (new_path.empty()) {
-// 		_url = DEFAULT_ERROR_PAGE + code + ".html";
-// 	}
-// 	else {
-// 		_url = new_path;
-// 	}
-// }
-
-void Builder::accessRequestedFile(const Parser &parser)
-{
-if (_return_code == "200") {
-	_url = parser.getPath() + parser.getFilename(); }
-
-	if (access(_url.c_str(), F_OK) != 0) {
+	if (parser.getCodeResponse() != "200") {
+		findErrorPath(parser);
+	}
+	_final_url = parser.getPath() + parser.getFilename();
+	if (access(_final_url.c_str(), F_OK) != 0) {
 		if (errno == ENOENT) {
-			_return_code = "404";
-			// setErrorPath("404", parser);
+			parser.setCodeResponse("404");
+			findErrorPath(parser);
 		}
 		else {
-			_return_code = "402";
-			// setErrorPath("402", parser);
+			parser.setCodeResponse("402");
+			findErrorPath(parser);
 		}
+	}
+}
+
+void Builder::buildHeader(const Parser &parser, std::vector< char > &body)
+{
+	std::map< string, string > headers = parser.getHeaders();
+	string					   code = parser.getCodeResponse();
+	string					   state = findStatusMessage(code);
+	string content_type = findContentType(parser.getFileExtension());
+
+	_response = "HTTP/1.1 " + code + state + "\r\n";
+
+	_response += "Content-Type: " + content_type + "\r\n";
+
+	_response += "Content-Length: " + ToString(body.size()) + "\r\n";
+
+	if (headers["Connection"] == "close") {
+		_response += "Connection: close\r\n\r\n";
+	}
+	else {
+		_response += "Connection: keep-alive\r\n\r\n";
 	}
 }
 
 void Builder::BuildResponse(client::Parser &parser, const Server *server,
 							const Server *default_server)
 {
+	std::vector< char > body;
+
 	_server = server;
 	(void)default_server;
 
-	map< string, string > _headers = parser.getHeaders();
-	bool				  key = true;
-	_return_code = parser.getCodeResponse();
-
 	accessRequestedFile(parser);
-
-	std::vector< char > body = getDataFromFileRequest(key);
-
-	_response =
-		"HTTP/1.1 " + _return_code + findStatusMessage(_return_code) + "\r\n";
-	_response +=
-		"Content-Type: " + findContentType(parser.getFileExtension()) + "\r\n";
-
-	_response += "Content-Length: " + ToString(body.size()) + "\r\n";
-
-	if (_headers["Connection"] == "close") {
-		_response += "Connection: close\r\n\r\n";
+	if (_final_url.empty()) {
+		body = createErrorPage(parser.getCodeResponse());
 	}
-	else {
-		_response += "Connection: keep-alive\r\n\r\n";
-	}
-	_response += std::string(body.begin(), body.end());
+	else
+		body = readDataRequest();
+	buildHeader(parser, body);
 
-	// std::cout << "Response : " << response << std::endl;
+	if (parser.getHeaders().at("Method") == "GET" ||
+		parser.getCodeResponse() != "200") {
+		_response += std::string(body.begin(), body.end());
+	}
+	// TODO POST and DELETE
 	reset();
 }
 
@@ -181,6 +167,5 @@ void Builder::reset()
 {
 	_server = NULL;
 	_path.clear();
-	_url.clear();
-	_return_code = "200";
+	_final_url.clear();
 }

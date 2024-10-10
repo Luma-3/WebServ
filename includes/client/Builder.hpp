@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/09 15:04:43 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:41:31 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include "client/Parser.hpp"
 #include "server/Server.hpp"
 
-#define DEFAULT_ERROR_PAGE "default_page/html/error"
+#define DEFAULT_ERROR_PAGE "default_page/html/"
 #define CHILD_BUFFER_SIZE  4096
 
 namespace client {
@@ -32,27 +32,19 @@ class Builder
 	const Server *_server;
 	std::string	  _path;
 
-	std::string _url;
-	std::string _return_code;
+	std::string _final_url;
 	std::string _response;
 
-	static std::vector< char > readDataRequest(std::ifstream &file);
-	std::vector< char >		   getDataFromFileRequest(bool &key);
+	std::vector< char > readDataRequest();
+	std::vector< char > createErrorPage(const std::string &return_code);
 
-	std::vector< char > createErrorPage();
-	void				createUrlDefaultErrorPage();
+	void accessRequestedFile(Parser &parser);
+	void findDefaultErrorPath(Parser &parser);
+	void findErrorPath(Parser &parser);
 
-	// static std::string findStatusMessage(const std::string &code);
+	void buildHeader(const Parser &parser, std::vector< char > &body);
 	static std::string findContentType(const std::string &file_extension);
-	void			   FindErrorFile(const std::string &requires_path);
-	void			   accessRequestedFile(const Parser &parser);
-
-	const statement::Location *findLocation(const std::string &requested_path);
-	const statement::ErrorPage		*
-	 findErrorPage(const statement::Location *location = NULL);
-	void reset();
-
-	// void setErrorPath(const string &code, Parser &parser);
+	void			   reset();
 
   public:
 	Builder();

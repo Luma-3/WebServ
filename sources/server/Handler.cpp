@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/09 15:09:17 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/10 13:35:03 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,8 @@ void Handler::handleClientRequest(int event_fd)
 		if (client->getRequest().find("\r\n\r\n") != std::string::npos) {
 			client->handleRequest();
 			modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP);
+			std::cout << "Client request received" << client->getRequest()
+					  << std::endl;
 		}
 	}
 }
