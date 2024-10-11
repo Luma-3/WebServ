@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 12:25:42 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/11 10:08:55 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,8 @@ int Action::Execute(Token *token, std::stack< Token * > &stack,
 	else if (_type == REDUCE) {
 		Reduce(token, stack, parser);
 	}
-	else if (_type == ERROR) {
-		return (2);
+	else {
+		return (ERROR);
 	}
 	return (0);
 }
@@ -139,9 +139,8 @@ void parser::R1_Server(std::stack< Token * > &stack)
 		}
 		tokens.pop();
 	}
-	
+
 	statement::Server *server = new statement::Server(params);
-	std::cout << "COUCOU" << std::endl;
 	stack.push(server);
 }
 
@@ -211,11 +210,9 @@ void parser::R3_DoubleParam(std::stack< Token * > &stack)
 			type = S_Log;
 			if (tokens.top()->getTerminal() == T_LogLevel) {
 				value1 = tokens.top()->getValue();
-				std::cout << "value1: " << value1 << std::endl;
 			}
 			else if (tokens.top()->getTerminal() == T_Identifier) {
 				value2 = tokens.top()->getValue();
-				std::cout << "value2: " << value2 << std::endl;
 			}
 		}
 		delete tokens.top();
@@ -274,6 +271,7 @@ void parser::R5_DenyMethod(std::stack< Token * > &stack)
 	statement::DenyMethod *deniedMethod = new statement::DenyMethod(method);
 	stack.push(deniedMethod);
 }
+
 void parser::R6_Location(std::stack< Token * > &stack)
 {
 	std::stack< Token * > tokens;

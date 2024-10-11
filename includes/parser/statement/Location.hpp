@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:03:20 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 16:01:40 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/11 10:57:13 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ class Location : public Token
 		return _autoindex;
 	}
 
-	const statement::ParamDouble &getReturn() const
+	const statement::ParamDouble &getReturns() const
 	{
 		return _return;
 	}

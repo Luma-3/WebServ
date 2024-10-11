@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 13:05:48 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 12:45:29 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/11 09:28:12 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,7 @@ Server::Server(const std::vector< Token * > &tokens) : _autoindex(false)
 			}
 			case S_Log: {
 				ParamDouble *log_param = D_Cast< ParamDouble >(tokens[i]);
-				std::cout << "log get: " << log_param->getValue1() << std::endl;
 				_log = *log_param;
-				std::cout << "log: " << _log.getValue1() << std::endl;
 				delete log_param;
 				break;
 			}

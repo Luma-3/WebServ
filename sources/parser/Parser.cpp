@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 12:28:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/11 10:09:38 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,12 @@ void Parser::Parse()
 
 		tokens.pop();
 		if (action.Execute(token, _parse_stack, *this) == ERROR) {
+			std::string value = token->getValue();
+			size_t		col = token->getCol();
+			size_t		line = token->getLine();
+			delete token;
 			throw InvalidTokenException(
-				token->getCol(), token->getLine(), token->getValue(),
+				col, line, value,
 				Token::TerminalTypeToString(findExpected(_status).terminal));
 		}
 	}

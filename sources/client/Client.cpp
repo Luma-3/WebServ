@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/09 15:12:26 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/11 12:59:56 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void Client::handleRequest()
 	Parser	parser(_server, _default_server);
 
 	parser.parseRequest(_request);
-	builder.BuildResponse(parser, _server, _default_server);
+	builder.BuildResponse(parser);
 	_response = builder.getResponse();
 }
 

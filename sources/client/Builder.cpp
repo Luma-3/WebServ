@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/10 15:43:09 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/11 14:34:13 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,17 @@ const string &Builder::getResponse() const
 	return _response;
 }
 
-std::vector< char > Builder::createErrorPage(const std::string &return_code)
+void Builder::createErrorPage(const std::string	  &return_code,
+							  std::vector< char > &body)
 {
-	std::vector< char > body;
+	string error_page = DEFAULT_ERROR_PAGE;
 
-	std::string error_page = "<head><h1>ERROR " +
-							 findStatusMessage(return_code) +
-							 "Sorry for this ugly page bro </h1></head>";
+	error_page.replace(error_page.find("%@title@%"), 9, "Error " + return_code);
+	error_page.replace(error_page.find("%@title@%"), 9, "Error " + return_code);
+	error_page.replace(error_page.find("%@message@%"), 11,
+					   findStatusMessage(return_code));
 
 	body.assign(error_page.begin(), error_page.end());
-
-	return body;
 }
 
 std::vector< char > Builder::readDataRequest()
@@ -75,43 +75,47 @@ std::vector< char > Builder::readDataRequest()
 
 void Builder::findDefaultErrorPath(Parser &parser)
 {
-	parser.setPathAndFilename(DEFAULT_ERROR_PAGE,
-							  "error" + parser.getCodeResponse() + ".html");
-	_final_url = parser.getPath() + parser.getFilename();
-	if (access(_final_url.c_str(), F_OK) != 0) {
-		_final_url = "";
-		parser.setPathAndFilename("", ".html");
-	}
+	string error_page = DEFAULT_ERROR_PAGE;
+	std::cout << error_page << std::endl;
+	error_page.replace(error_page.find("%@title@%"), 9,
+					   "Error " + parser.getCodeResponse());
+	error_page.replace(error_page.find("%@title@%"), 9,
+					   "Error " + parser.getCodeResponse());
+	error_page.replace(error_page.find("%@message@%"), 11,
+					   findStatusMessage(parser.getCodeResponse()));
 }
 
 void Builder::findErrorPath(Parser &parser)
 {
-	std::pair< string, string > error_page =
-		parser.getConfigParam(parser.getRequestedPath(), P_ERRORPAGE);
+	s_info_param info;
 
-	if (error_page.first.empty()) {
-		findDefaultErrorPath(parser);
-	}
-	else {
-		parser.setPathAndFilename(error_page.second, error_page.first);
+	bool found_param = parser.getConfigParam(info, F_ERRORPAGE, F_ROOT);
+	if (found_param && !info.error_page.empty()) {
+		std::cout << "J;ai trouve un error page a cette root : " << info.root
+				  << std::endl;
+		parser.setPathAndFilename(info.root, info.error_page);
 		_final_url = parser.getPath() + parser.getFilename();
-		if (access(_final_url.c_str(), F_OK) != 0) {
-			findDefaultErrorPath(parser);
+		if (access(_final_url.c_str(), F_OK | R_OK) == 0) {
+			return;
 		}
 	}
+	_final_url = "";
 }
 void Builder::accessRequestedFile(Parser &parser)
 {
 	if (parser.getCodeResponse() != "200") {
 		findErrorPath(parser);
+		return;
 	}
 	_final_url = parser.getPath() + parser.getFilename();
-	if (access(_final_url.c_str(), F_OK) != 0) {
+	if (access(_final_url.c_str(), F_OK | R_OK) != 0) {
 		if (errno == ENOENT) {
+			std::cout << "code 404" << std::endl;
 			parser.setCodeResponse("404");
 			findErrorPath(parser);
 		}
 		else {
+			std::cout << "code 402" << std::endl;
 			parser.setCodeResponse("402");
 			findErrorPath(parser);
 		}
@@ -139,17 +143,13 @@ void Builder::buildHeader(const Parser &parser, std::vector< char > &body)
 	}
 }
 
-void Builder::BuildResponse(client::Parser &parser, const Server *server,
-							const Server *default_server)
+void Builder::BuildResponse(client::Parser &parser)
 {
 	std::vector< char > body;
 
-	_server = server;
-	(void)default_server;
-
 	accessRequestedFile(parser);
 	if (_final_url.empty()) {
-		body = createErrorPage(parser.getCodeResponse());
+		createErrorPage(parser.getCodeResponse(), body);
 	}
 	else
 		body = readDataRequest();
@@ -165,7 +165,6 @@ void Builder::BuildResponse(client::Parser &parser, const Server *server,
 
 void Builder::reset()
 {
-	_server = NULL;
 	_path.clear();
 	_final_url.clear();
 }

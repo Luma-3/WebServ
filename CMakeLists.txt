@@ -4,7 +4,7 @@ project(WebServ CXX)
 
 add_subdirectory(externals/googletest)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wextra -Wall -Werror -Wunused -Wshadow -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wextra -Wall -Wunused -Wshadow -O3")
 
 include_directories(includes)
 

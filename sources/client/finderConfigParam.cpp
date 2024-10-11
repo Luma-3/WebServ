@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   finderConfigParam.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:50:17 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/10 14:20:17 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/11 14:37:59 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,33 @@ using client::IdentifyParam;
 using client::Parser;
 using std::string;
 
-const statement::Location *Parser::find_location(const string &path,
-												 const Server *server)
+bool client::Parser::getConfigParam(s_info_param &info, int flags, int annexes,
+									int start)
 {
+	typedef bool (client::Parser::*MemberFunction)(s_info_param &, int, int);
+	MemberFunction function[4] = {&client::Parser::find_param_location,
+								  &client::Parser::find_param_server,
+								  &client::Parser::find_param_location_default,
+								  &client::Parser::find_param_server_default};
+	bool		   ret = false;
+	while (start < 4) {
+		ret = (this->*function[start])(info, flags, annexes);
+		++start;
+		if (ret) return (ret);
+	}
+	return (ret);
+}
+
+const statement::Location *Parser::find_location(const Server *server)
+{
+	if (server == NULL) {
+		return NULL;
+	}
 	std::vector< const statement::Location * >::const_iterator it =
 		server->getLocations().begin();
 
 	while (it != server->getLocations().end()) {
-		if (path == (*it)->getRoute()) {
+		if (_requested_path == (*it)->getRoute()) {
 			return *it;
 		}
 		++it;
@@ -32,152 +51,157 @@ const statement::Location *Parser::find_location(const string &path,
 	return NULL;
 }
 
-string Parser::getParam(IdentifyParam			   identifier,
-						const statement::Location *location)
+void Parser::getParam(s_info_param &info, int param,
+					  const statement::Location *location)
 {
-	switch (identifier) {
-		case P_ROOT:
-			return location->getRoot();
-		case P_INDEX:
-			return location->getIndex();
-		case P_AUTOINDEX: {
-			bool state = location->getAutoindex();
-			return state ? "on" : "off";
-		}
-		case P_RETURN: {
-			statement::ParamDouble value = location->getReturn();
-			_codeResponse = value.getValue1();
-			return value.getValue();
-		}
-		case P_ERRORPAGE: {
-			const std::vector< const statement::ErrorPage * > errorPages =
-				location->getErrorPages();
-			std::vector< const statement::ErrorPage * >::const_iterator
-				it_pages = errorPages.begin();
-
-			while (it_pages != errorPages.end()) {
-				std::vector< string >::const_iterator it_code =
-					(*it_pages)->getErrorCode().begin();
-
-				while (it_code != (*it_pages)->getErrorCode().end()) {
-					if (_codeResponse == *it_code) {
-						return location->getRoot() + (*it_pages)->getValue();
-					}
-					++it_code;
-				}
-				++it_pages;
-			}
-			break;
-		}
-		case P_DENYMETHOD: {
-			_methods = location->getDenyMethods();
-			if (_methods.empty()) {
-				return "";
-			}
-			return "true";
-		}
-		default:
-			break;
+	if (param & F_ROOT) {
+		info.root = location->getRoot();
 	}
-	return "";
+	if (param & F_INDEX) {
+		std::cout << "index: " << location->getIndex() << std::endl;
+		info.index = location->getIndex();
+	}
+	if (param & F_AUTOINDEX) {
+		info.autoindex = location->getAutoindex();
+	}
+	if (param & F_RETURN) {
+		statement::ParamDouble value = location->getReturns();
+		info.return_code = value.getValue1();
+		info.return_value = value.getValue();
+	}
+	if (param & F_ERRORPAGE) {
+		const std::vector< const statement::ErrorPage * > errorPages =
+			location->getErrorPages();
+
+		std::vector< const statement::ErrorPage * >::const_iterator it_pages =
+			errorPages.begin();
+
+		while (it_pages != errorPages.end()) {
+			std::vector< string >::const_iterator it_code =
+				(*it_pages)->getErrorCode().begin();
+
+			while (it_code != (*it_pages)->getErrorCode().end()) {
+				if (_codeResponse == *it_code) {
+					info.error_page = (*it_pages)->getValue();
+					break;
+				}
+				++it_code;
+			}
+			++it_pages;
+		}
+	}
+	if (param & F_DENYMETHOD) {
+		info.deny_methods = location->getDenyMethods();
+	}
 }
 
-string Parser::getParam(IdentifyParam identifier, const Server *server)
+void Parser::getParam(s_info_param &info, int param, const Server *server)
 {
-	switch (identifier) {
-		case P_ROOT:
-			return server->getRoot();
-		case P_INDEX:
-			return server->getIndex();
-		case P_AUTOINDEX: {
-			bool state = server->getAutoindex();
-			return state ? "on" : "off";
-		}
-		case P_RETURN: {
-			statement::ParamDouble value = server->getReturns();
-			_codeResponse = value.getValue1();
-			return value.getValue();
-		}
-		case P_ERRORPAGE: {
-			const std::vector< const statement::ErrorPage * > errorPages =
-				server->getErrorPages();
-			std::vector< const statement::ErrorPage * >::const_iterator
-				it_pages = errorPages.begin();
-
-			while (it_pages != errorPages.end()) {
-
-				std::vector< string >::const_iterator it_code =
-					(*it_pages)->getErrorCode().begin();
-
-				while (it_code != (*it_pages)->getErrorCode().end()) {
-					if (_codeResponse == *it_code) {
-						return (*it_pages)->getValue();
-					}
-					++it_code;
-				}
-				++it_pages;
-			}
-			break;
-		}
-		case P_DENYMETHOD: {
-			_methods = server->getDenyMethods();
-			if (_methods.empty()) {
-				return "";
-			}
-			return "true";
-		}
-		default:
-			break;
+	if (param & F_ROOT) {
+		info.root = server->getRoot();
 	}
-	return "";
+	if (param & F_INDEX) {
+		info.index = server->getIndex();
+	}
+	if (param & F_AUTOINDEX) {
+		info.autoindex = server->getAutoindex();
+	}
+	if (param & F_RETURN) {
+		statement::ParamDouble value = server->getReturns();
+		info.return_code = value.getValue1();
+		info.return_value = value.getValue();
+	}
+	if (param & F_ERRORPAGE) {
+		const std::vector< const statement::ErrorPage * > errorPages =
+			server->getErrorPages();
+
+		std::vector< const statement::ErrorPage * >::const_iterator it_pages =
+			errorPages.begin();
+
+		while (it_pages != errorPages.end()) {
+			std::vector< string >::const_iterator it_code =
+				(*it_pages)->getErrorCode().begin();
+
+			while (it_code != (*it_pages)->getErrorCode().end()) {
+				if (_codeResponse == *it_code) {
+					info.error_page = (*it_pages)->getValue();
+					break;
+				}
+				++it_code;
+			}
+			++it_pages;
+		}
+	}
+	if (param & F_DENYMETHOD) {
+		info.deny_methods = server->getDenyMethods();
+	}
 }
 
-string Parser::find_param_location(const string &path, IdentifyParam identifier)
+bool Parser::find_param_location(s_info_param &info, int param, int annexes)
 {
-	const statement::Location *location = find_location(path, _server);
+	const statement::Location *location = find_location(_server);
 
 	if (location == NULL) {
-		return "";
+		return false;
 	}
-	return getParam(identifier, location);
+	getParam(info, param, location);
+	if (info.isEmpty()) {
+		return false;
+	}
+	if (annexes != 0) {
+		getConfigParam(info, annexes, 0);
+	}
+	return true;
 }
 
-string Parser::find_param_server(const string &path, IdentifyParam identifier)
+bool Parser::find_param_server(s_info_param &info, int param, int annexes)
 {
-	{
-		(void)path;
-		return getParam(identifier, _server);
+	getParam(info, param, _server);
+	if (info.isEmpty()) {
+		return false;
 	}
+	if (annexes != 0) {
+		getConfigParam(info, annexes, 0, 1);
+	}
+	return true;
 }
 
-string Parser::find_param_location_default(const string &path,
-										   IdentifyParam identifier)
+bool Parser::find_param_location_default(s_info_param &info, int param,
+										 int annexes)
 {
-	{
-		if (_default_server == NULL) {
-			return "";
-		}
-		const statement::Location *location =
-			find_location(path, _default_server);
+	const statement::Location *location = find_location(_default_server);
 
-		if (location == NULL) {
-			return "";
-		}
-		return getParam(identifier, location);
+	if (location == NULL) {
+		return false;
 	}
+	getParam(info, param, location);
+	if (info.isEmpty()) {
+		return false;
+	}
+	if (annexes != 0) {
+		getConfigParam(info, annexes, 0, 2);
+	}
+	return true;
 }
 
-string Parser::find_param_default_server(const string &path,
-										 IdentifyParam identifier)
+bool Parser::find_param_server_default(s_info_param &info, int param,
+									   int annexes)
 {
 	if (_default_server == NULL) {
-		return "";
+		return false;
 	}
-	(void)path;
-	return getParam(identifier, _default_server);
+	getParam(info, param, _default_server);
+	if (info.isEmpty()) {
+		return false;
+	}
+	if (annexes != 0) {
+		getConfigParam(info, annexes, 0, 3);
+	}
+	return true;
 }
 
-// string Parser::find_hard_code(const string &path, IdentifyParam identifier)
+// string Parser::find_hard_code(const string &path, IdentifyParam
+// identifier)
 // {
 // 	{
 // 		(void)path;

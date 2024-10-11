@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/10 15:41:31 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/11 13:27:47 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,21 @@
 #include "client/Parser.hpp"
 #include "server/Server.hpp"
 
-#define DEFAULT_ERROR_PAGE "default_page/html/"
-#define CHILD_BUFFER_SIZE  4096
+#define CHILD_BUFFER_SIZE 4096
 
 namespace client {
 
 class Builder
 {
   private:
-	const Server *_server;
-	std::string	  _path;
+	std::string _path;
 
 	std::string _final_url;
 	std::string _response;
 
 	std::vector< char > readDataRequest();
-	std::vector< char > createErrorPage(const std::string &return_code);
+	void				createErrorPage(const std::string	&return_code,
+										std::vector< char > &body);
 
 	void accessRequestedFile(Parser &parser);
 	void findDefaultErrorPath(Parser &parser);
@@ -52,8 +51,7 @@ class Builder
 	Builder &operator=(const Builder &src);
 	~Builder();
 
-	void BuildResponse(client::Parser &parser, const Server *server,
-					   const Server *default_server);
+	void BuildResponse(client::Parser &parser);
 
 	const std::string &getResponse() const;
 };
@@ -61,5 +59,24 @@ class Builder
 } // namespace client
 
 std::string findStatusMessage(const std::string &code); // namespace client
+
+#define DEFAULT_ERROR_PAGE \
+	"<!DOCTYPE html> \
+<html lang=\"en\">\
+<head>\
+	<style>\
+	.container {width: 80%;margin: auto;overflow: hidden;}\
+	.title {color: white;font-size: 2rem;text-align: center;justify-content: center;border: 4px solid black;padding: 1rem;border-radius: 10px;background-color: #EE92C2;margin-bottom: 20px;margin-top: 20px;}\
+	.errorMessage {width: 100%;height: 30%;padding: 0;margin: 0 auto 0 auto;position: center;display: flex;justify-content: center;background-color: #EE92C2;align-items: center;flex-wrap: wrap;}\
+	</style>\
+	<meta charset=\"UTF-8\">\
+	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\
+	<title>%@title@%</title>\
+</head>\
+<body>\
+	<div class=\"container\"><div class=\"title\"><h2>%@title@%</h2><br></div></div>\
+	<div class=\"errorMessage\"><h3>%@message@%</h3></div>\
+</body>\
+</html>"
 
 #endif

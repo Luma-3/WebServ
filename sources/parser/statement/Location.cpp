@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 16:42:18 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/11 11:23:18 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ std::ostream &operator<<(std::ostream &o, const statement::Location &location)
 	o << "Root: " << location.getRoot() << std::endl;
 	o << "Index: " << location.getIndex() << std::endl;
 	o << "Autoindex: " << location.getAutoindex() << std::endl;
-	o << "Return: " << location.getReturn() << std::endl;
+	o << "Return: " << location.getReturns() << std::endl;
 	std::vector< std::string > deny_methods = location.getDenyMethods();
 	for (size_t i = 0; i < deny_methods.size(); ++i) {
 		o << "Deny method: " << deny_methods[i] << std::endl;
