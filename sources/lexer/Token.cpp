@@ -5,125 +5,70 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/11 15:00:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 10:46:45 by jbrousse         ###   ########.fr       */
+/*   Created: 2024/10/12 19:37:45 by jbrousse          #+#    #+#             */
+/*   Updated: 2024/10/13 12:17:59 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer/Token.hpp"
 
-#include <iomanip>
-#include <string>
+#include <iostream>
 
-// Constructors
+Token::Token() : _type(TOKEN), _key("") {}
 
-Token::Token() : _type(S_Terminal), _terminal(T_None), _line(0), _col(0) {}
-
-Token::Token(const Token &src) :
-	_value(src._value),
-	_type(src._type),
-	_terminal(src._terminal),
-	_line(src._line),
-	_col(src._col)
-{
-}
-Token::Token(enum Token_Type type) :
-	_type(type),
-	_terminal(T_None),
-	_line(0),
-	_col(0)
-{
-}
-
-Token::Token(const std::string &value, enum Terminal_Type terminal, size_t line,
-			 size_t col) :
-	_value(value),
-	_type(S_Terminal),
-	_terminal(terminal),
+Token::Token(const std::string &key, Terminal_Type term, int line, int col) :
+	_type(TOKEN),
+	_key(key),
+	_terminal(term),
 	_line(line),
 	_col(col)
 {
 }
 
-Token::Token(enum Token_Type type, enum Terminal_Type terminal) :
-	_type(type),
-	_terminal(terminal),
-	_line(0),
-	_col(0)
+Token::Token(const Token &src) : _type(src._type), _key(src._key) {}
+
+Token &Token::operator=(const Token &rhs)
 {
+	if (this == &rhs) return *this;
+	_type = rhs._type;
+	_key = rhs._key;
+	return *this;
 }
 
-// Operators
+Token::~Token() {}
 
-Token &Token::operator=(const Token &src)
-{
-	if (this != &src) {
-		this->_type = src._type;
-		this->_value = src._value;
-		this->_terminal = src._terminal;
-		this->_line = src._line;
-		this->_col = src._col;
-	}
-	return (*this);
-}
-
-// Getters
-
-enum Token_Type Token::getType() const
-{
-	return (_type);
-}
-
-enum Terminal_Type Token::getTerminal() const
-{
-	return (_terminal);
-}
-
-const std::string &Token::getValue() const
-{
-	return (_value);
-}
-
-size_t Token::getLine() const
-{
-	return (_line);
-}
-
-size_t Token::getCol() const
-{
-	return (_col);
-}
-
-// Static functions
-
-bool Token::IsKey(const Token &token)
+bool Token::IsKey(const IParserToken &token)
 {
 	const Terminal_Type type = token.getTerminal();
 
-	if (type <= T_Name && type >= T_Server) {
+	if (type <= T_BodySize && type >= T_Server) {
 		return (true);
 	}
 	return (false);
 }
 
+void Token::print() const
+{
+	std::cout << "Token value: " << _key << std::endl;
+}
+
 Terminal_Type Token::IdentifyTerminal(const std::string &value)
 {
-	static const int		 size_key = 13;
+	static const int		 size_key = 12;
 	static const IdentifyKey key[size_key] = {
 		{T_Server,	   "server"	   },
-		{T_Location,	 "location"   },
-		{T_ErrorPage,  "error_page" },
-		{T_DenyMethod, "deny_method"},
+		{T_Location,	 "location"	   },
+		{T_ErrorPage,  "error_page"	  },
+		{T_DenyMethod, "deny_method"	},
 		{T_Return,	   "return"	   },
-		{T_Port,		 "port"	   },
-		{T_Host,		 "host"	   },
+		{T_Listen,	   "listen"	   },
+		{T_Hostname,	 "hostname"	   },
 		{T_Index,	  "index"		 },
 		{T_AutoIndex,  "autoindex"	 },
-		{T_Root,		 "root"	   },
-		{T_Log,		"log"		 },
-		{T_BodySize,	 "max_body_size"	},
-		{T_Name,		 "name"	   }
-	};
+		{T_Root,		 "root"		   },
+		{T_Log,		"log"			 },
+		{T_BodySize,	 "max_body_size"}
+	 };
 
 	for (size_t i = 0; i < size_key; ++i) {
 		if (value == key[i].key) {
@@ -152,6 +97,8 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 			return (T_Comma);
 		case ';':
 			return (T_Semi_Colon);
+		case ':':
+			return (T_Colon);
 		case '{':
 			return (T_OBracket);
 		case '}':
@@ -166,54 +113,10 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 	return (T_Identifier);
 }
 
-const std::string &Token::TerminalTypeToString(enum Terminal_Type type)
-{
-	static const int		 size_key = 26;
-	static const IdentifyKey key[size_key] = {
-		{T_Server,		   "server"								   },
-		{T_Location,		 "location"								 },
-		{T_ErrorPage,	  "error_page"								  },
-		{T_DenyMethod,	   "deny_method"								},
-		{T_Return,		   "return"								   },
-		{T_Port,			 "port"									 },
-		{T_Host,			 "host"									 },
-		{T_Index,		  "index"									},
-		{T_AutoIndex,	  "autoindex"								 },
-		{T_Root,			 "root"									 },
-		{T_Log,			"log"									  },
-		{T_BodySize,		 "body_size"								},
-		{T_Name,			 "name"									 },
-
-		{T_Comma,		  ","										},
-		{T_Semi_Colon,	   ";"										},
-		{T_CBracket,		 "}"										},
-		{T_OBracket,		 "{"										},
-		{T_OSquareBracket, "["										},
-		{T_CSquareBracket, "]"										},
-
-		{T_Identifier,	   "`identifier`"							 },
-		{T_Digits,		   "`[0-9]+`"								 },
-		{T_Method,		   "`GET` or `POST` or `DELETE`"				},
-		{T_Path,			 "`path`"								   },
-		{T_Bool,			 "`on` or `off`"							},
-		{T_LogLevel,		 "`Debug` or `Info` or `Warning` or `Error`"},
-	};
-
-	for (size_t i = 0; i < size_key; ++i) {
-		if (type == key[i].type) {
-			return (key[i].key);
-		}
-	}
-	return (key[0].key);
-}
-
-// Destructor
-
-Token::~Token() {}
-
 // Exceptions
 
 Token::InvalidTokenException::InvalidTokenException() {}
+
 Token::InvalidTokenException::InvalidTokenException(
 	const InvalidTokenException &src)
 {
@@ -234,26 +137,29 @@ const char *Token::InvalidTokenException::what() const throw()
 	return ("Invalid Token");
 }
 
-// Print Operator
+Token::MissingParamException::MissingParamException() {}
 
-#define SIZE_FORMAT 15
-
-std::ostream &operator<<(std::ostream &os, const Token &token)
+Token::MissingParamException::MissingParamException(const std::string &param) :
+	_msg("Missing Param: " + param)
 {
-	const std::string &value = token.getValue();
+}
 
-	os << std::setw(SIZE_FORMAT) << std::left
-	   << ((value.size() <= SIZE_FORMAT)
-			   ? value
-			   : value.substr(0, SIZE_FORMAT - 1) + ".");
-	os << " | ";
-	os << std::left << "term: " << std::setw(SIZE_FORMAT) << token.getTerminal()
-	   << " | ";
-	os << std::left << "line: " << std::setw(SIZE_FORMAT) << token.getLine()
-	   << " | ";
-	os << std::left << "col: " << std::setw(SIZE_FORMAT) << token.getCol()
-	   << " | ";
-	os << std::left << "type: " << std::setw(SIZE_FORMAT) << token.getType();
+Token::MissingParamException::MissingParamException(
+	const MissingParamException &src)
+{
+	*this = src;
+}
 
-	return (os);
+Token::MissingParamException &
+Token::MissingParamException::operator=(const MissingParamException &src)
+{
+	(void)src;
+	return (*this);
+}
+
+Token::MissingParamException::~MissingParamException() throw() {}
+
+const char *Token::MissingParamException::what() const throw()
+{
+	return (_msg.c_str());
 }

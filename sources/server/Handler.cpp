@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/10 13:35:03 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/13 12:56:46 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,14 @@
 
 #include "client/Builder.hpp"
 #include "client/Parser.hpp"
-#include "server/Server.hpp"
 #include "server/ServerException.hpp"
-#include "server/Signal.hpp"
+#include "server/ServerHost.hpp"
+
+using std::string;
 
 volatile int g_sig = 0;
 
-Handler::Handler() : _epfd(-1), _nbServ(0) {}
-
-Handler::Handler(const std::vector< statement::Server * > &servers) :
+Handler::Handler(const std::vector< VirtualServer * > &servers) :
 	_epfd(epoll_create1(0)),
 	_nbServ(0)
 {
@@ -33,99 +32,58 @@ Handler::Handler(const std::vector< statement::Server * > &servers) :
 		throw InternalServerException("Error on epoll_create");
 	}
 
-	std::vector< statement::Server * >::const_iterator it = servers.begin();
+	std::cout << "Handler created" << std::endl;
+
+	std::vector< VirtualServer * >::const_iterator it = servers.begin();
 
 	while (it != servers.end()) {
-		Server *server = new Server(
-			*it, getDefaultServer((*it)->getPort(), (*it)->getHost()));
-		addEvent(server->getSocket(), EPOLLIN | EPOLLRDHUP);
-		_servers.push_back(server);
-		++it;
-	}
-}
+		const Param *listen = (*it)->getParam("listen");
 
-Handler::Handler(const Handler &src) :
-	_epfd(epoll_create1(0)),
-	_nbServ(src._nbServ)
-{
-	if (_epfd == -1) {
-		throw InternalServerException("Error on epoll_create");
-	}
+		std::string hostkey =
+			listen->getPair().first + ":" + listen->getPair().second;
+		std::cout << "HostKey: " << hostkey << std::endl;
 
-	std::vector< Server * >::const_iterator it = src._servers.begin();
+		if (_hostptofd.find(hostkey) == _hostptofd.end()) {
+			std::cout << "ServerHost not found, creating one" << std::endl;
 
-	while (it != _servers.end()) {
-		_servers.push_back(new Server(**it));
-		++it;
-	}
-}
-
-Handler &Handler::operator=(const Handler &rhs)
-{
-	if (this == &rhs) {
-		return (*this);
-	}
-	_nbServ = rhs._nbServ;
-	std::vector< Server * >::const_iterator it = rhs._servers.begin();
-
-	while (it != _servers.end()) {
-		_servers.push_back(new Server(**it));
-		++it;
-	}
-	return (*this);
-}
-
-const Server *Handler::getDefaultServer(const std::string &port,
-										const std::string &host) const
-{
-	std::vector< Server * >::const_iterator it = _servers.begin();
-
-	while (it != _servers.end()) {
-		if ((*it)->getPort() == port && (*it)->getHost() == host) {
-			return (*it);
+			ServerHost *host = new ServerHost(listen->getPair().first,
+											  listen->getPair().second);
+			_hostptofd[hostkey] = host->getSocket();
+			_servers[host->getSocket()] = host;
+			addEvent(host->getSocket(), EPOLLIN | EPOLLRDHUP);
+			_nbServ++;
 		}
+		int fd = _hostptofd[hostkey];
+		std::cout << "Adding server to ServerHost" << std::endl;
+		_servers[fd]->AddServer((*it)->getParam("hostname")->getValue(), *it);
 		++it;
 	}
-	return (NULL);
 }
 
-Server *Handler::findServer(int fd)
+void Handler::handleNewConnection(const ServerHost *server)
 {
-	for (std::vector< Server * >::const_iterator it = _servers.begin();
-		 it < _servers.end(); ++it) {
-		if (fd == (*it)->getSocket()) {
-			return (*it);
-		}
+	int client_socket = server->acceptClient();
+
+	string request = server->recvRequest(client_socket);
+	string hostname = findHostName(request);
+
+	const VirtualServer *vhost = server->getVhost(hostname);
+	if (vhost == NULL) {
+		vhost = server->getDefaultVhost();
 	}
-	return (NULL);
-}
-
-client::Client *Handler::findClient(int fd)
-{
-	for (std::vector< client::Client * >::iterator it = _clients.begin();
-		 it < _clients.end(); ++it) {
-		if (fd == (*it)->getSocket()) {
-			return (*it);
-		}
-	}
-	return (NULL);
-}
-
-void Handler::handleNewConnection(const Server *server)
-{
-	int client_socket = server->acceptRequest();
 
 	client::Client *client =
-		new client::Client(server, server->getDefault(), client_socket);
+		new client::Client(vhost, server->getDefaultVhost(), client_socket);
+	client->setRequest(request);
+
 	addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
-	_clients.push_back(client);
+	_clients[client_socket] = client;
 }
 
 void Handler::handleClientRequest(int event_fd)
 {
-	client::Client *client = findClient(event_fd);
+	client::Client *client = _clients[event_fd];
 	if (client) {
-		client->receiveRequest();
 		if (client->getRequest().find("\r\n\r\n") != std::string::npos) {
 			client->handleRequest();
 			modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP);
@@ -137,9 +95,9 @@ void Handler::handleClientRequest(int event_fd)
 
 void Handler::handleClientResponse(int event_fd)
 {
-	client::Client *client = findClient(event_fd);
+	client::Client *client = _clients[event_fd];
 	if (client) {
-		client->sendResponse();
+
 		modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP);
 	}
 }
@@ -171,7 +129,7 @@ void Handler::modifyEvent(int fd, uint32_t events) const
 	}
 }
 
-int Handler::runEventLoop()
+void Handler::runEventLoop()
 {
 	struct epoll_event event[MAX_EVENTS];
 	int				   event_fd;
@@ -179,13 +137,15 @@ int Handler::runEventLoop()
 	client::Builder builder;
 
 	while (!g_sig) {
+		std::cout << "Waiting for events" << std::endl;
 		int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
+		std::cout << "Events received" << std::endl;
 		if (nfds == -1 && !g_sig) {
 			throw InternalServerException("Error on epoll_wait");
 		}
 		for (int i = 0; i < nfds; ++i) {
 			event_fd = event[i].data.fd;
-			Server *server = findServer(event_fd);
+			ServerHost *server = _servers[event_fd];
 			if (server) {
 				handleNewConnection(server);
 				continue;
@@ -193,12 +153,10 @@ int Handler::runEventLoop()
 			else if (event[i].events & EPOLLRDHUP) {
 				// TODO : handle client disconnection on a disociated
 				// Method
-				client::Client *client = findClient(event_fd);
+				client::Client *client = _clients[event_fd];
 				std::cout << "Client disconnected" << std::endl;
 				if (client) {
-					_clients.erase(
-						std::remove(_clients.begin(), _clients.end(), client),
-						_clients.end());
+					_clients.erase(event_fd);
 					removeEvent(event_fd);
 					close(event_fd);
 					delete client;
@@ -214,19 +172,14 @@ int Handler::runEventLoop()
 			}
 		}
 	}
-	return (SUCCESS);
 }
 
 Handler::~Handler()
 {
-	std::vector< Server * >::iterator it = _servers.begin();
-
+	std::map< int, ServerHost * >::iterator it = _servers.begin();
 	while (it != _servers.end()) {
-		delete *it;
+		delete it->second;
 		++it;
 	}
-	while (!_clients.empty()) {
-		delete _clients.back();
-		_clients.pop_back();
-	}
+	close(_epfd);
 }

@@ -1,90 +1,92 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
+/*   old_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/09 10:51:40 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/12 17:25:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server/Server.hpp"
+#include "server/old_Server.hpp"
 
 #include "Logger.hpp"
 #include "server/ServerException.hpp"
 #include "template/vector_deep_copy.tpp"
 
-Server::Server() : _socket(-1), _autoindex(0) {}
+old_Server::old_Server() : _socket(-1), _autoindex(0) {}
 
-Server::Server(const statement::Server *server, const Server *default_server) :
-	_socket(socket(AF_INET, SOCK_STREAM, 0)),
-
-	_name("default"),
-	_hostname(server->getHost()),
+old_Server::Server(const statement::Server *server) :
+	_ip(server->getIp()),
 	_port(server->getPort()),
-	_default(default_server),
-	_root(server->getRoot()),
-	_index(server->getIndex()),
-	_autoindex(server->getAutoindex()),
-	_deny_methods(vector_deep_copy(server->getDenyMethods())),
-	_error_pages(vector_deep_copy(server->getErrorPages())),
-	_locations(vector_deep_copy(server->getLocations()))
-
+	_hostname(server->getHost()),
 {
-
 	_logger =
 		new Logger(server->getLog().getValue2(),
 				   Logger::StringToLogLevel(server->getLog().getValue1()));
 	delete server;
-	_logger->log(INFO, "Server " + _name + " created");
-	if (_socket == -1) {
-		throw InternalServerException("socket failed on " + _name);
-	}
-	setSocketOptions();
-	bindAndListenSocket();
-}
 
-void Server::setSocketOptions()
-{
-	int val = 1;
-	_logger->log(INFO, "Setting socket options on " + _name);
-	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(int)) ==
-		-1) {
-		throw InternalServerException(
-			"error on setting the port on reusable on " + _name + ": " +
-			strerror(errno));
-	}
-	if (fcntl(_socket, F_SETFL, O_NONBLOCK) == -1) {
-		throw InternalServerException("Error on set nonblocking on " + _name);
-	}
-}
-
-void Server::bindAndListenSocket()
-{
 	struct addrinfo	 hints = {};
 	struct addrinfo *info;
-
-	hints.ai_family = AF_INET;
+	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 
-	_logger->log(INFO, "Binding and listening socket on " + _name);
-	std::cout << "port: " << _port << std::endl;
-	if (getaddrinfo(_hostname.c_str(), _port.c_str(), &hints, &info) != 0) {
-		throw InternalServerException("getaddrinfo failed on" + _name);
+	int status = getaddrinfo(_ip.c_str(), _port.c_str(), &hints, &info);
+	if (status != 0) {
+		throw InternalServerException("getaddrinfo failed on" + _hostname +
+									  ": " + gai_strerror(status));
 	}
+	_socket = socket(info->ai_family, info->ai_socktype, info->ai_protocol);
+	if (_socket == -1) {
+		throw InternalServerException("socket failed on " + _hostname + ": " +
+									  strerror(errno));
+	}
+	setSocketOptions();
+
 	if (bind(_socket, info->ai_addr, info->ai_addrlen) == -1) {
-		throw InternalServerException("bind failed on " + _name);
+		throw InternalServerException("bind failed on " + _hostname + ": " +
+									  strerror(errno));
 	}
 	freeaddrinfo(info);
 	if (listen(_socket, MAXREQUEST) == -1) {
-		throw InternalServerException("listen failed on " + _name);
+		throw InternalServerException("listen failed on " + _hostname + ": " +
+									  strerror(errno));
 	}
 }
 
-Server::Server(const Server &src) :
+void old_Server::setSocketOptions()
+{
+	int val = 1;
+	_logger->log(INFO, "Setting socket options on " + _hostname);
+	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(int)) ==
+		-1) {
+		throw InternalServerException(
+			"error on setting the port on reusable on " + _hostname + ": " +
+			strerror(errno));
+	}
+	if (fcntl(_socket, F_SETFL, O_NONBLOCK) == -1) {
+		throw InternalServerException("Error on set nonblocking on " +
+									  _hostname + ": " + strerror(errno));
+	}
+}
+
+void old_Server::bindAndListenSocket(struct addrinfo *info)
+{
+	_logger->log(INFO, "Binding and listening socket on " + _hostname);
+	if (bind(_socket, info->ai_addr, info->ai_addrlen) == -1) {
+		throw InternalServerException("bind failed on " + _hostname + ": " +
+									  strerror(errno));
+	}
+	freeaddrinfo(info);
+	if (listen(_socket, MAXREQUEST) == -1) {
+		throw InternalServerException("listen failed on " + _hostname);
+	}
+}
+
+old_Server::old_Server(const old_Server &src) :
 	_socket(src._socket),
 
 	_name(src._name),
@@ -101,7 +103,7 @@ Server::Server(const Server &src) :
 {
 }
 
-Server &Server::operator=(const Server &src)
+old_Server &old_Server::operator=(const old_Server &src)
 {
 	if (this != &src) {
 		return (*this);
@@ -109,67 +111,69 @@ Server &Server::operator=(const Server &src)
 	return (*this);
 }
 
-std::string Server::getName() const
+std::string old_Server::getName() const
 {
 	return (_name);
 }
 
-std::string Server::getHost() const
+std::string old_Server::getHost() const
 {
 	return (_hostname);
 }
 
-std::string Server::getPort() const
+std::string old_Server::getPort() const
 {
 	return (_port);
 }
 
-int Server::getSocket() const
+int old_Server::getSocket() const
 {
 	return (_socket);
 }
 
-const std::string &Server::getRoot() const
+const std::string &old_Server::getRoot() const
 {
 	return (_root);
 }
 
-const std::string &Server::getIndex() const
+const std::string &old_Server::getIndex() const
 {
 	return (_index);
 }
 
-bool Server::getAutoindex() const
+bool old_Server::getAutoindex() const
 {
 	return (_autoindex);
 }
 
-const statement::ParamDouble &Server::getReturns() const
+const statement::ParamDouble &old_Server::getReturns() const
 {
 	return (_returns);
 }
 
-const std::vector< std::string > &Server::getDenyMethods() const
+const std::vector< std::string > &old_Server::getDenyMethods() const
 {
 	return (_deny_methods);
 }
 
-const std::vector< const statement::ErrorPage * > &Server::getErrorPages() const
+const std::vector< const statement::ErrorPage * > &
+old_Server::getErrorPages() const
 {
 	return (_error_pages);
 }
 
-const std::vector< const statement::Location * > &Server::getLocations() const
+const std::vector< const statement::Location * > &
+old_Server::getLocations() const
 {
 	return (_locations);
 }
 
-const Server *Server::getDefault() const
+const old_Server *old_Server::getDefault() const
 {
 	return (_default);
 }
 
-int Server::acceptRequest() const
+int old_Server::acceptRequest() const
 {
 	int val = 1;
 	int client_socket;
@@ -192,7 +196,7 @@ int Server::acceptRequest() const
 	return (client_socket);
 }
 
-Server::~Server()
+old_Server::~old_Server()
 {
 
 	std::vector< const statement::Location * >::const_iterator it =

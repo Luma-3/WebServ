@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/11 13:27:47 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/12 16:42:44 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <vector>
 
 #include "client/Parser.hpp"
-#include "server/Server.hpp"
+#include "server/VirtualServer.hpp"
 
 #define CHILD_BUFFER_SIZE 4096
 

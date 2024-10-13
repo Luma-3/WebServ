@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/11 14:30:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/12 18:02:02 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <string>
 #include <unistd.h>
 
-#include "server/Server.hpp"
+#include "server/VirtualServer.hpp"
 #include "template/StringUtils.tpp"
 
 #define F_ROOT		  0x1
@@ -65,8 +65,8 @@ typedef struct s_info_param {
 class Parser
 {
   private:
-	const Server *_server;
-	const Server *_default_server;
+	// const old_Server *_server;
+	// const old_Server *_default_server;
 
 	std::map< std::string, std::string > _headers;
 	std::vector< std::string >			 _methods;
@@ -86,10 +86,10 @@ class Parser
 		const std::string									&param,
 		std::vector< std::string (*)(const std::string &) > &functions);
 
-	const statement::Location *find_location(const Server *server);
-	void					   getParam(s_info_param &info, int param,
-										const statement::Location *location);
-	void getParam(s_info_param &info, int param, const Server *server);
+	// const statement::Location *find_location(const old_Server *server);
+	// void					   getParam(s_info_param &info, int param,
+	// 									const statement::Location *location);
+	// void getParam(s_info_param &info, int param, const old_Server *server);
 	bool find_param_location(s_info_param &info, int param, int annexes);
 	bool find_param_server(s_info_param &info, int param, int annexes);
 	bool find_param_location_default(s_info_param &info, int param,
@@ -102,7 +102,7 @@ class Parser
   public:
 	Parser();
 	Parser(const Parser &src);
-	Parser(const Server *server, const Server *default_server);
+	// Parser(const old_Server *server, const old_Server *default_server);
 	Parser &operator=(const Parser &src);
 	~Parser();
 
@@ -127,5 +127,6 @@ class Parser
 };
 
 } // namespace client
+std::string findHostName(const std::string &request);
 
 #endif

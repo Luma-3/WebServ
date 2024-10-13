@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/11 14:34:13 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/13 00:01:02 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,8 @@ void Builder::findErrorPath(Parser &parser)
 {
 	s_info_param info;
 
-	bool found_param = parser.getConfigParam(info, F_ERRORPAGE, F_ROOT);
+	// bool found_param = parser.getConfigParam(info, F_ERRORPAGE, F_ROOT);
+	bool found_param = false;
 	if (found_param && !info.error_page.empty()) {
 		std::cout << "J;ai trouve un error page a cette root : " << info.root
 				  << std::endl;

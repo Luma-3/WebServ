@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/11 12:59:56 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/13 12:59:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ using client::Client;
 
 Client::Client() : _server(NULL), _default_server(NULL), _client_socket(-1) {}
 
-Client::Client(const Server *server, const Server *default_s,
+Client::Client(const VirtualServer *server, const VirtualServer *default_s,
 			   int client_socket) :
 	_server(server),
 	_default_server(default_s),
@@ -40,14 +40,20 @@ Client &Client::operator=(const Client &src)
 	return *this;
 }
 
+bool Client::operator==(const Client &rhs) const
+{
+	return (_server == rhs._server && _default_server == rhs._default_server &&
+			_client_socket == rhs._client_socket);
+}
+
 int Client::getSocket() const
 {
 	return _client_socket;
 }
 
-const Server *Client::getServer() const
+const ServerHost *Client::getHost() const
 {
-	return _server;
+	return _host;
 }
 
 const std::string &Client::getRequest() const
@@ -58,38 +64,6 @@ const std::string &Client::getRequest() const
 const std::string &Client::getBody() const
 {
 	return _body;
-}
-
-void Client::receiveRequest()
-{
-	char   *buff = new char[MAX_REQ_SIZE];
-	ssize_t nb_bytes;
-
-	while (true) {
-		bzero(buff, MAX_REQ_SIZE);
-		nb_bytes = recv(_client_socket, buff, MAX_REQ_SIZE, 0);
-		if (nb_bytes == -1) {
-			break;
-		}
-		_request.append(buff, static_cast< size_t >(nb_bytes));
-		if (nb_bytes < MAX_REQ_SIZE) {
-			break;
-		}
-		else if (_request.find("\r\n\r\n") != std::string::npos) {
-			break;
-		}
-		nb_bytes = 0;
-	}
-	delete[] buff;
-}
-
-void Client::sendResponse()
-{
-	if (send(_client_socket, _response.c_str(), _response.size(), 0) == -1) {
-		//	TODO Throw
-		return;
-	}
-	_request.clear();
 }
 
 // void Client::sendResponseCGI()
@@ -114,12 +88,12 @@ void Client::sendResponse()
 
 void Client::handleRequest()
 {
-	Builder builder;
-	Parser	parser(_server, _default_server);
+	// Builder builder;
+	// // Parser	parser(_server, _default_server);
 
-	parser.parseRequest(_request);
-	builder.BuildResponse(parser);
-	_response = builder.getResponse();
+	// // parser.parseRequest(_request);
+	// // builder.BuildResponse(parser);
+	// _response = builder.getResponse();
 }
 
 Client::~Client() {}

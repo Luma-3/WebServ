@@ -6,12 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 12:29:23 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/13 12:38:22 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer/Lexer.hpp"
 
+#include <iostream>
 #include <sys/stat.h>
 
 #include "lexer/Token.hpp"
@@ -77,7 +78,7 @@ const std::ifstream &Lexer::getConfigFile() const
 bool Lexer::IsDelimiter(char c)
 {
 	return (c == ';' || c == '{' || c == '}' || c == ',' || c == '[' ||
-			c == ']' || c == '#');
+			c == ']' || c == '#' || c == ':');
 }
 
 void Lexer::SkipSpace(const string &line, size_t &it)
@@ -94,14 +95,15 @@ Token *Lexer::CreateToken(size_t frontIT, size_t backIT,
 	const size_t size = frontIT - backIT + 1;
 	const string value(line, backIT, size);
 
-	const Terminal_Type type = Token::IdentifyTerminal(value);
+	Terminal_Type term = Token::IdentifyTerminal(value);
+	// std::cout << "Value: " << value << " Term: " << term << std::endl;
 
 	if (value[0] == '\"' || value[0] == '\'') {
 		return (
-			new Token(value.substr(1, value.size() - 2), type, _line, _col));
+			new Token(value.substr(1, value.size() - 2), term, _line, _col));
 	}
 
-	Token *token = new Token(value, type, _line, _col);
+	Token *token = new Token(value, term, _line, _col);
 
 	return token;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/10 15:10:05 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/12 18:01:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,12 @@ Parser::Parser(const Parser &src)
 	_codeResponse = src._codeResponse;
 }
 
-Parser::Parser(const Server *server, const Server *default_server) :
-	_server(server),
-	_default_server(default_server),
-	_codeResponse("200")
-{
-}
+// Parser::Parser(const old_Server *server, const old_Server *default_server) :
+// 	_server(server),
+// 	_default_server(default_server),
+// 	_codeResponse("200")
+// {
+// }
 
 Parser &Parser::operator=(const Parser &src)
 {
@@ -187,3 +187,18 @@ void Parser::reset()
 }
 
 Parser::~Parser() {}
+
+// NEW
+
+std::string findHostName(const std::string &request)
+{
+	std::string host = "Host: ";
+	size_t		pos = request.find(host);
+
+	if (pos == std::string::npos) {
+		return "";
+	}
+	pos += host.size();
+	size_t end = request.find("\r\n", pos);
+	return request.substr(pos, end - pos);
+}

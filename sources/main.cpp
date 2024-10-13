@@ -6,20 +6,19 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/04 12:55:30 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/13 11:07:16 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cerrno>
 #include <cstdlib>
+#include <cstring>
 #include <exception>
 #include <iostream>
 
 #include "lexer/Lexer.hpp"
 #include "parser/Parser.hpp"
-#include "parser/statement/Server.hpp"
 #include "server/Handler.hpp"
-#include "server/Server.hpp"
 #include "server/Signal.hpp"
 
 Handler *init_server(const int ac, const char **av)
@@ -36,14 +35,13 @@ Handler *init_server(const int ac, const char **av)
 	parser::Parser parser(&Lexer);
 	parser.Parse();
 
-	std::vector< statement::Server * > servers;
-	std::stack< Token * >			  &stack = parser.getParseStack();
+	const std::vector< VirtualServer * > servers = parser.getServers();
 
-	while (!stack.empty()) {
-		statement::Server *server =
-			dynamic_cast< statement::Server * >(stack.top());
-		servers.push_back(server);
-		stack.pop();
+	std::vector< VirtualServer * >::const_iterator it = servers.begin();
+	while (it != servers.end()) {
+		std::cout << "Server: " << std::endl;
+		(*it)->print();
+		++it;
 	}
 
 	Handler *handler = new Handler(servers);
@@ -62,10 +60,10 @@ int main(const int ac, const char **av, const char **env)
 		handler = init_server(ac, av);
 		handler->runEventLoop();
 	} catch (const std::runtime_error &e) {
-		std::cerr << e.what() << '\n';
+		std::cerr << e.what() << " | errno: " << strerror(errno) << '\n';
 		return (1);
 	} catch (const std::exception &e) {
-		std::cerr << e.what() << '\n';
+		std::cerr << e.what() << " | errno: " << strerror(errno) << '\n';
 		delete handler;
 		return (1);
 	}

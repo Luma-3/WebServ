@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/11 10:09:38 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/13 12:42:26 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,25 @@
 #include "parser/Action.hpp"
 
 using parser::Action;
+using parser::ActionEntry;
 using parser::Parser;
 
 Parser::Parser() : _lexer(NULL), _status(0) {};
 
-Parser::Parser(const Parser &src) : _lexer(src._lexer), _status(src._status) {}
+Parser::Parser(const Parser &src) :
+	_lexer(src._lexer),
+	_status(src._status),
+	_actions(createActionMap())
+{
+}
 
-Parser::Parser(Lexer *lexer) : _lexer(lexer), _status(0) {}
+Parser::Parser(Lexer *lexer) :
+	_lexer(lexer),
+	_status(0),
+	_current(new VirtualServer),
+	_actions(createActionMap())
+{
+}
 
 Parser &Parser::operator=(const Parser &src)
 {
@@ -37,24 +49,81 @@ Parser &Parser::operator=(const Parser &src)
 	return *this;
 }
 
-void Parser::setState(int state)
+std::map< parser::ActionEntry, Action > Parser::createActionMap()
 {
-	_status = state;
-}
+	std::map< ActionEntry, Action > actions;
 
-std::stack< Token * > &Parser::getParseStack()
-{
-	return _parse_stack;
-}
+	actions[ActionEntry(0, T_Server)] = Action(SHIFT, 1);
+	actions[ActionEntry(1, T_OBracket)] = Action(SHIFT, 2);
+	actions[ActionEntry(2, T_Location)] = Action(SHIFT, 21);
+	actions[ActionEntry(2, T_CBracket)] = Action(REDUCE, 0, R1);
+	actions[ActionEntry(2, T_Listen)] = Action(SHIFT, 3);
+	actions[ActionEntry(2, T_Hostname)] = Action(SHIFT, 4);
+	actions[ActionEntry(2, T_BodySize)] = Action(SHIFT, 41);
+	actions[ActionEntry(2, T_ErrorPage)] = Action(SHIFT, 5);
+	actions[ActionEntry(2, T_Log)] = Action(SHIFT, 6);
+	actions[ActionEntry(2, T_Root)] = Action(SHIFT, 7);
+	actions[ActionEntry(2, T_Index)] = Action(SHIFT, 4);
+	actions[ActionEntry(2, T_Return)] = Action(SHIFT, 8);
+	actions[ActionEntry(2, T_AutoIndex)] = Action(SHIFT, 9);
+	actions[ActionEntry(2, T_DenyMethod)] = Action(SHIFT, 10);
+	actions[ActionEntry(3, T_Identifier)] = Action(SHIFT, 43);
+	actions[ActionEntry(4, T_Identifier)] = Action(SHIFT, 11);
+	actions[ActionEntry(5, T_OSquareBracket)] = Action(SHIFT, 12);
+	actions[ActionEntry(6, T_LogLevel)] = Action(SHIFT, 13);
+	actions[ActionEntry(7, T_Path)] = Action(SHIFT, 11);
+	actions[ActionEntry(8, T_Digits)] = Action(SHIFT, 14);
+	actions[ActionEntry(9, T_Bool)] = Action(SHIFT, 11);
+	actions[ActionEntry(10, T_OSquareBracket)] = Action(SHIFT, 15);
+	actions[ActionEntry(11, T_Semi_Colon)] = Action(REDUCE, 2, R2);
+	actions[ActionEntry(12, T_Digits)] = Action(SHIFT, 16);
+	actions[ActionEntry(13, T_Identifier)] = Action(SHIFT, 17);
+	actions[ActionEntry(14, T_Identifier)] = Action(SHIFT, 18);
+	actions[ActionEntry(15, T_Method)] = Action(SHIFT, 19);
+	actions[ActionEntry(16, T_CSquareBracket)] = Action(SHIFT, 39);
+	actions[ActionEntry(16, T_Comma)] = Action(SHIFT, 12);
+	actions[ActionEntry(17, T_Semi_Colon)] = Action(REDUCE, 2, R3);
+	actions[ActionEntry(18, T_CBracket)] = Action(SHIFT, 20);
+	actions[ActionEntry(18, T_Comma)] = Action(SHIFT, 15);
+	actions[ActionEntry(19, T_Semi_Colon)] = Action(REDUCE, 2, R4);
+	actions[ActionEntry(20, T_Semi_Colon)] = Action(REDUCE, 2, R5);
+	actions[ActionEntry(21, T_Path)] = Action(SHIFT, 22);
+	actions[ActionEntry(22, T_OBracket)] = Action(SHIFT, 23);
+	actions[ActionEntry(23, T_CBracket)] = Action(REDUCE, 2, R6);
+	actions[ActionEntry(23, T_BodySize)] = Action(SHIFT, 42);
+	actions[ActionEntry(23, T_ErrorPage)] = Action(SHIFT, 25);
+	actions[ActionEntry(23, T_Root)] = Action(SHIFT, 26);
+	actions[ActionEntry(23, T_Index)] = Action(SHIFT, 24);
+	actions[ActionEntry(23, T_Return)] = Action(SHIFT, 27);
+	actions[ActionEntry(23, T_AutoIndex)] = Action(SHIFT, 28);
+	actions[ActionEntry(23, T_DenyMethod)] = Action(SHIFT, 29);
+	actions[ActionEntry(24, T_Identifier)] = Action(SHIFT, 30);
+	actions[ActionEntry(25, T_OSquareBracket)] = Action(SHIFT, 31);
+	actions[ActionEntry(26, T_Path)] = Action(SHIFT, 30);
+	actions[ActionEntry(27, T_Digits)] = Action(SHIFT, 32);
+	actions[ActionEntry(28, T_Bool)] = Action(SHIFT, 30);
+	actions[ActionEntry(29, T_OSquareBracket)] = Action(SHIFT, 33);
+	actions[ActionEntry(30, T_Semi_Colon)] = Action(REDUCE, 23, R2);
+	actions[ActionEntry(31, T_Digits)] = Action(SHIFT, 34);
+	actions[ActionEntry(32, T_Identifier)] = Action(SHIFT, 35);
+	actions[ActionEntry(33, T_Method)] = Action(SHIFT, 36);
+	actions[ActionEntry(34, T_CSquareBracket)] = Action(SHIFT, 40);
+	actions[ActionEntry(34, T_Comma)] = Action(SHIFT, 31);
+	actions[ActionEntry(35, T_Semi_Colon)] = Action(REDUCE, 23, R3);
+	actions[ActionEntry(36, T_CSquareBracket)] = Action(SHIFT, 38);
+	actions[ActionEntry(36, T_Comma)] = Action(SHIFT, 33);
+	actions[ActionEntry(37, T_Semi_Colon)] = Action(REDUCE, 23, R4);
+	actions[ActionEntry(38, T_Semi_Colon)] = Action(REDUCE, 23, R5);
+	actions[ActionEntry(39, T_Identifier)] = Action(SHIFT, 19);
+	actions[ActionEntry(40, T_Identifier)] = Action(SHIFT, 37);
+	actions[ActionEntry(41, T_Identifier)] = Action(SHIFT, 11);
+	actions[ActionEntry(41, T_Digits)] = Action(SHIFT, 11);
+	actions[ActionEntry(42, T_Identifier)] = Action(SHIFT, 30);
+	actions[ActionEntry(42, T_Digits)] = Action(SHIFT, 30);
+	actions[ActionEntry(43, T_Colon)] = Action(SHIFT, 44);
+	actions[ActionEntry(44, T_Digits)] = Action(SHIFT, 17);
 
-const Lexer &Parser::getLexer() const
-{
-	return *_lexer;
-}
-
-const int &Parser::getState() const
-{
-	return _status;
+	return actions;
 }
 
 /**
@@ -62,30 +131,28 @@ const int &Parser::getState() const
  * is more appropriate to use a namespace than a static keyword in modern C++
  * (cpp98 is ok with this)
  */
-namespace {
 
-Action findAction(int state, Terminal_Type terminal)
+Action Parser::findAction(int state, Terminal_Type terminal)
 {
-	for (size_t i = 0; i < NB_ACTIONS; ++i) {
-		if (parser::g_action[i].state == state &&
-			parser::g_action[i].terminal == terminal) {
-			return parser::g_action[i].action;
-		}
+	ActionEntry entry(state, terminal);
+
+	// std::cout << "State: " << state << " Terminal: " << terminal <<
+	// std::endl;
+
+	if (_actions.find(entry) != _actions.end()) {
+		// std::cout << "Action found" << std::endl;
+		return _actions.at(entry);
 	}
-	return parser::g_action[NB_ACTIONS - 1].action;
+
+	return Action(ERROR, 0);
 }
 
-struct parser::ActionEntry findExpected(int state)
+ActionEntry Parser::findExpected(int state)
 {
-	for (size_t i = 0; i < NB_ACTIONS; ++i) {
-		if (parser::g_action[i].state == state) {
-			return (parser::g_action[i]);
-		}
-	}
-	return (parser::g_action[NB_ACTIONS - 1]);
+	// TODO :This is a placeholder, it should be replaced by a real
+	// implementation
+	return ActionEntry(state, T_None);
 }
-
-} // namespace
 
 void Parser::Parse()
 {
@@ -97,13 +164,11 @@ void Parser::Parse()
 
 		tokens.pop();
 		if (action.Execute(token, _parse_stack, *this) == ERROR) {
-			std::string value = token->getValue();
+			std::string value = token->getKey();
 			size_t		col = token->getCol();
 			size_t		line = token->getLine();
 			delete token;
-			throw InvalidTokenException(
-				col, line, value,
-				Token::TerminalTypeToString(findExpected(_status).terminal));
+			throw InvalidTokenException(col, line, value, "Expected value");
 		}
 	}
 }
@@ -114,4 +179,5 @@ Parser::~Parser()
 		delete _parse_stack.top();
 		_parse_stack.pop();
 	}
+	delete _current;
 }

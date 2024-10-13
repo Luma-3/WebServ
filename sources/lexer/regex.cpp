@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 10:44:30 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/13 11:43:11 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include <string>
 
 #include "lexer/Token.hpp"
+
+#define PORT_MAX 65535
 
 using std::string;
 
@@ -92,19 +94,46 @@ bool IsErrorCode(const string &value)
 	return (true);
 }
 
-bool IsPort(const string &value)
+bool IsIP(const string &value)
 {
-	if (value.size() > 5) {
-		return (false);
+	size_t pos = 0;
+	size_t count = 0;
+	size_t size = value.size();
+
+	while (pos < size) {
+		if (!isdigit(value[pos])) {
+			return (false);
+		}
+		int octet = atoi(value.substr(pos).c_str());
+		if (octet < 0 || octet > 255) {
+			return (false);
+		}
+		++count;
+		pos += value.find('.', pos);
+		if (pos == string::npos) {
+			break;
+		}
+		++pos;
 	}
-	int integer = atoi(value.c_str());
-	if (integer < 0 || integer > PORT_MAX) {
+	if (count != 4) {
 		return (false);
 	}
 	return (true);
 }
 
-bool IsHost(const string &value)
+bool IsPort(const string &value)
+{
+	if (!IsDigit(value) || value.size() > 5) {
+		return (false);
+	}
+	int port = atoi(value.c_str());
+	if (port < 0 || port > PORT_MAX) {
+		return (false);
+	}
+	return (true);
+}
+
+bool IsHostname(const string &value)
 {
 	if (value.size() > 255 || value.size() == 0) {
 		return (false);
