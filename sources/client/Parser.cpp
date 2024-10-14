@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/14 15:38:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 22:19:00 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,6 +172,7 @@ void Parser::parseRequest(const std::string &request)
 	string line;
 
 	_buffer = request;
+	std::cout << "Request : " << request << std::endl;
 	line_break_pos = _buffer.find("\r\n");
 	getHeaderFromRequest(line_break_pos);
 
