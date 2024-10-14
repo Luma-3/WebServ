@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/12 18:01:42 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 15:38:46 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,13 @@ Parser::Parser(const Parser &src)
 	_codeResponse = src._codeResponse;
 }
 
-// Parser::Parser(const old_Server *server, const old_Server *default_server) :
-// 	_server(server),
-// 	_default_server(default_server),
-// 	_codeResponse("200")
-// {
-// }
+Parser::Parser(const VirtualServer *server,
+			   const VirtualServer *default_server) :
+	_server(server),
+	_default_server(default_server),
+	_codeResponse("200")
+{
+}
 
 Parser &Parser::operator=(const Parser &src)
 {

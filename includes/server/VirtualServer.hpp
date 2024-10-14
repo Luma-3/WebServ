@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:55:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 00:32:16 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 13:30:14 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@
 
 #include "lexer/Token.hpp"
 #include "parser/Location.hpp"
-#include "template/vector_deep_copy.tpp"
+#include "template/VectorDeepCopy.tpp"
 
 class VirtualServer : public IConfig
 {
   private:
-	std::map< std::string, Param * > _config;
-	std::vector< Location * >		 _locations;
+	std::map< std::string, Param * >	_config;
+	std::map< std::string, Location * > _locations;
 
   public:
 	VirtualServer();
@@ -35,9 +35,14 @@ class VirtualServer : public IConfig
 
 	bool operator==(const VirtualServer &rhs) const;
 
-	void			addParam(const std::string &key, Param *param);
-	void			addLocation(Location *location);
-	const Param	   *getParam(const std::string &key) const;
+	void			  addParam(const std::string &key, Param *param);
+	void			  addLocation(const std::string &route, Location *location);
+	const Param		 *getParam(const std::string &key) const;
+	const std::string getParamValue(const std::string &key) const;
+	const std::pair< std::string, std::string >
+	getParamPair(const std::string &key) const;
+	const std::vector< std::string >
+					getParamList(const std::string &key) const;
 	const Location *getLocation(const std::string &path) const;
 
 	void print() const;

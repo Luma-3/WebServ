@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/13 00:01:02 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 16:08:12 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,12 @@ using client::Builder;
 using std::map;
 using std::string;
 
-Builder::Builder() {}
+Builder::Builder(const VirtualServer *server,
+				 const VirtualServer *default_server) :
+	_server(server),
+	_default_server(default_server)
+{
+}
 
 Builder::Builder(const Builder &src) :
 	_path(src._path),
@@ -54,87 +59,21 @@ void Builder::createErrorPage(const std::string	  &return_code,
 	error_page.replace(error_page.find("%@title@%"), 9, "Error " + return_code);
 	error_page.replace(error_page.find("%@message@%"), 11,
 					   findStatusMessage(return_code));
+	_content_type = "text/html";
 
 	body.assign(error_page.begin(), error_page.end());
 }
 
-std::vector< char > Builder::readDataRequest()
-{
-	std::ifstream file(_final_url.c_str(), std::ios::binary);
-	file.seekg(0, std::ios::end);
-
-	size_t size = file.tellg();
-
-	file.seekg(0, std::ios::beg);
-	std::vector< char > body;
-	body.resize(size);
-	file.read(&body[0], static_cast< std::streamsize >(size));
-	file.close();
-	return body;
-}
-
-void Builder::findDefaultErrorPath(Parser &parser)
-{
-	string error_page = DEFAULT_ERROR_PAGE;
-	std::cout << error_page << std::endl;
-	error_page.replace(error_page.find("%@title@%"), 9,
-					   "Error " + parser.getCodeResponse());
-	error_page.replace(error_page.find("%@title@%"), 9,
-					   "Error " + parser.getCodeResponse());
-	error_page.replace(error_page.find("%@message@%"), 11,
-					   findStatusMessage(parser.getCodeResponse()));
-}
-
-void Builder::findErrorPath(Parser &parser)
-{
-	s_info_param info;
-
-	// bool found_param = parser.getConfigParam(info, F_ERRORPAGE, F_ROOT);
-	bool found_param = false;
-	if (found_param && !info.error_page.empty()) {
-		std::cout << "J;ai trouve un error page a cette root : " << info.root
-				  << std::endl;
-		parser.setPathAndFilename(info.root, info.error_page);
-		_final_url = parser.getPath() + parser.getFilename();
-		if (access(_final_url.c_str(), F_OK | R_OK) == 0) {
-			return;
-		}
-	}
-	_final_url = "";
-}
-void Builder::accessRequestedFile(Parser &parser)
-{
-	if (parser.getCodeResponse() != "200") {
-		findErrorPath(parser);
-		return;
-	}
-	_final_url = parser.getPath() + parser.getFilename();
-	if (access(_final_url.c_str(), F_OK | R_OK) != 0) {
-		if (errno == ENOENT) {
-			std::cout << "code 404" << std::endl;
-			parser.setCodeResponse("404");
-			findErrorPath(parser);
-		}
-		else {
-			std::cout << "code 402" << std::endl;
-			parser.setCodeResponse("402");
-			findErrorPath(parser);
-		}
-	}
-}
-
-void Builder::buildHeader(const Parser &parser, std::vector< char > &body)
+void Builder::buildHeader(const Parser &parser, int body_size)
 {
 	std::map< string, string > headers = parser.getHeaders();
-	string					   code = parser.getCodeResponse();
-	string					   state = findStatusMessage(code);
-	string content_type = findContentType(parser.getFileExtension());
+	string					   code_message = findStatusMessage(_code);
 
-	_response = "HTTP/1.1 " + code + state + "\r\n";
+	_response = "HTTP/1.1 " + _code + code_message + "\r\n";
 
-	_response += "Content-Type: " + content_type + "\r\n";
+	_response += "Content-Type: " + _content_type + "\r\n";
 
-	_response += "Content-Length: " + ToString(body.size()) + "\r\n";
+	_response += "Content-Length: " + ToString(body_size) + "\r\n";
 
 	if (headers["Connection"] == "close") {
 		_response += "Connection: close\r\n\r\n";
@@ -144,23 +83,195 @@ void Builder::buildHeader(const Parser &parser, std::vector< char > &body)
 	}
 }
 
+int Builder::findErrorpageLocationServer(const VirtualServer *server,
+										 const std::string	 &code,
+										 std::vector< char > &body,
+										 const std::string	 &path)
+{
+	const Location *location;
+	std::string		error_page;
+	std::string		error_path;
+
+	location = server->getLocation(path);
+	if (location != NULL) {
+		error_page = location->getParamValue(code);
+		error_path = location->getParamValue("root");
+		if (!error_page.empty() &&
+			readDataRequest(body, error_path + error_page) == 0) {
+			return 0;
+		}
+	}
+	error_page = server->getParamValue(code);
+	if (error_page.empty()) {
+		return -1;
+	}
+	error_path = server->getParamValue("root");
+	if (readDataRequest(body, error_path + error_page) == 0) {
+		return 0;
+	}
+	return -1;
+}
+
+void Builder::findBodyErrorPage(const client::Parser &parser,
+								std::vector< char >	 &body)
+{
+
+	std::cout << "start find error page" << std::endl;
+
+	if (findErrorpageLocationServer(_server, _code, body,
+									parser.getRequestedPath()) == 0) {
+		std::cout << "J'ai trouver" << std::endl;
+		return;
+	}
+	std::cout << "start find error page 2" << std::endl;
+	if (findErrorpageLocationServer(_default_server, _code, body,
+									parser.getRequestedPath()) == 0) {
+		return;
+	}
+	std::cout << "done find error page" << std::endl;
+	createErrorPage(_code, body);
+}
+
+int Builder::readDataRequest(std::vector< char > &body,
+							 const std::string	 &filePath)
+
+{
+	std::cout << "Je teste de lire le fichier : " << filePath << std::endl;
+	if (access(filePath.c_str(), F_OK | R_OK) != 0) {
+		return errno;
+	}
+	size_t pos = filePath.find_last_of('.');
+	if (pos == std::string::npos) {
+		_content_type = "application/octet-stream";
+	}
+	else {
+		_content_type = findContentType(filePath.substr(pos + 1));
+	}
+
+	std::ifstream file(filePath.c_str(), std::ios::binary);
+	file.seekg(0, std::ios::end);
+
+	size_t size = file.tellg();
+
+	file.seekg(0, std::ios::beg);
+	body.resize(size);
+	file.read(&body[0], static_cast< std::streamsize >(size));
+	file.close();
+	return 0;
+}
+
+void Builder::findIndex(const client::Parser &parser, std::vector< char > &body)
+{
+	std::string		path = parser.getRequestedPath();
+	const Location *location = _server->getLocation(path);
+
+	std::string index;
+	std::string autoindex;
+	std::string root;
+
+	if (location != NULL) {
+		index = location->getParamValue("index");
+		root = location->getParamValue("root");
+		if (!index.empty()) {
+			int ret = readDataRequest(body, root + index);
+			if (ret != 0) {
+				_code = (ret == ENOENT) ? "404" : "403";
+				findBodyErrorPage(parser, body);
+				return;
+			}
+			return;
+		}
+		autoindex = location->getParamValue("autoindex");
+		if (!autoindex.empty()) {
+			// TODO autoindex
+			return;
+		}
+	}
+	index = _server->getParamValue("index");
+	root = _server->getParamValue("root");
+	if (!index.empty()) {
+		int ret = readDataRequest(body, root + index);
+		if (ret != 0) {
+			_code = (ret == ENOENT) ? "404" : "403";
+			findBodyErrorPage(parser, body);
+			return;
+		}
+		return;
+	}
+	autoindex = _server->getParamValue("autoindex");
+	if (!autoindex.empty()) {
+		// TODO autoindex
+		return;
+	}
+	_code = "403";
+	findBodyErrorPage(parser, body);
+}
+
+void Builder::findFile(const client::Parser &parser, std::vector< char > &body)
+{
+	std::string		path = parser.getRequestedPath();
+	const Location *location = _server->getLocation(path);
+	std::string		file = parser.getFilename();
+	std::cout << "Je cherche le fichier : " << file << std::endl;
+	int ret;
+
+	std::string root;
+
+	if (location != NULL) {
+		root = location->getParamValue("root");
+		if (root.empty()) {
+			ret = readDataRequest(body, path + file);
+			if (ret != 0) {
+				_code = (ret == ENOENT) ? "404" : "403";
+				findBodyErrorPage(parser, body);
+				return;
+			}
+			return;
+		}
+		ret = readDataRequest(body, root + file);
+		if (ret != 0) {
+			_code = (ret == ENOENT) ? "404" : "403";
+			findBodyErrorPage(parser, body);
+			return;
+		}
+	}
+	root = _server->getParamValue("root");
+	if (root.empty()) {
+		ret = readDataRequest(body, path + file);
+		if (ret != 0) {
+			_code = (ret == ENOENT) ? "404" : "403";
+			findBodyErrorPage(parser, body);
+			return;
+		}
+	}
+	ret = readDataRequest(body, root + file);
+	if (ret != 0) {
+		_code = (ret == ENOENT) ? "404" : "403";
+		findBodyErrorPage(parser, body);
+		return;
+	}
+}
+
 void Builder::BuildResponse(client::Parser &parser)
 {
+	std::cout << "Je contrsuit ma reponse" << std::endl;
 	std::vector< char > body;
+	_code = parser.getCodeResponse();
 
-	accessRequestedFile(parser);
-	if (_final_url.empty()) {
-		createErrorPage(parser.getCodeResponse(), body);
+	if (_code != "200") {
+		findBodyErrorPage(parser, body);
 	}
-	else
-		body = readDataRequest();
-	buildHeader(parser, body);
+	else if (parser.getFilename().empty()) {
+		findIndex(parser, body);
+	}
+	else {
+		findFile(parser, body);
+	}
 
-	if (parser.getHeaders().at("Method") == "GET" ||
-		parser.getCodeResponse() != "200") {
-		_response += std::string(body.begin(), body.end());
-	}
-	// TODO POST and DELETE
+	buildHeader(parser, body.size());
+	_response += std::string(body.begin(), body.end());
+
+	// // TODO POST and DELETE
 	reset();
 }
 

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:37:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 12:50:04 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 14:16:16 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ class ServerHost
 
 	void AddServer(std::string host_name, VirtualServer *server);
 
-	std::string recvRequest(int client_socket) const;
-	void sendResponse(int client_socket, const std::string &response) const;
-	int	 acceptClient() const;
+	static void sendResponse(int client_socket, const std::string &response);
+	static std::string recvRequest(int client_socket);
+	int				   acceptClient() const;
 };
 
 #endif // SERVERHOST_HPP

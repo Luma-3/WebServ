@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/12 16:42:44 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 15:38:19 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,25 +28,38 @@ namespace client {
 class Builder
 {
   private:
-	std::string _path;
+	const VirtualServer *_server;
+	const VirtualServer *_default_server;
 
+	std::string _path;
 	std::string _final_url;
+	std::string _code;
 	std::string _response;
 
-	std::vector< char > readDataRequest();
-	void				createErrorPage(const std::string	&return_code,
-										std::vector< char > &body);
+	// SUR
+	std::string _content_type;
 
-	void accessRequestedFile(Parser &parser);
-	void findDefaultErrorPath(Parser &parser);
-	void findErrorPath(Parser &parser);
+	void createErrorPage(const std::string	 &return_code,
+						 std::vector< char > &body);
 
-	void buildHeader(const Parser &parser, std::vector< char > &body);
+	void			   accessRequestedFile(Parser &parser);
+	void			   findErrorPath(Parser &parser);
+	void			   buildHeader(const Parser &parser, int body_size);
 	static std::string findContentType(const std::string &file_extension);
 	void			   reset();
 
+	void findBodyErrorPage(const Parser &parser, std::vector< char > &body);
+	int	 readDataRequest(std::vector< char > &body, const std::string &path);
+	int	 findErrorpageLocationServer(const VirtualServer *server,
+									 const std::string	 &code,
+									 std::vector< char > &body,
+									 const std::string	 &path);
+	void findFile(const client::Parser &parser, std::vector< char > &body);
+
+	void findIndex(const client::Parser &parser, std::vector< char > &body);
+
   public:
-	Builder();
+	Builder(const VirtualServer *server, const VirtualServer *default_server);
 	Builder(const Builder &src);
 	Builder &operator=(const Builder &src);
 	~Builder();

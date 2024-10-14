@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 10:16:16 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 14:17:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ class Client
 	const ServerHost  *getHost() const;
 	int				   getSocket() const;
 	const std::string &getRequest() const;
+	const std::string &getResponse() const { return _response; };
 	const std::string &getBody() const;
 
 	void setRequest(const std::string &request) { _request = request; };

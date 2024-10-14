@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 12:47:57 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 11:05:32 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ void Parser::R6_Location()
 	delete tokens.top();
 	tokens.pop();
 
-	Location *location = new Location(route);
+	Location *location = new Location();
 
 	while (!tokens.empty()) {
 		if (tokens.top()->getType() != TOKEN) {
@@ -230,5 +230,5 @@ void Parser::R6_Location()
 		}
 		tokens.pop();
 	}
-	_current->addLocation(location);
+	_current->addLocation(route, location);
 }

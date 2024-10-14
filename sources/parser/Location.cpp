@@ -6,25 +6,28 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 12:39:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 13:32:28 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/Location.hpp"
 
 #include "lexer/Token.hpp"
-#include "template/vector_deep_copy.tpp"
+#include "template/VectorDeepCopy.tpp"
 
-Location::Location(const std::string &route) : _route(route) {}
+Location::Location() {}
 
 // faire une copy profonde
 
-Location::Location(const Location &src) : _route(src._route) {}
+Location::Location(const Location &src)
+{
+	*this = src;
+}
 
 Location &Location::operator=(const Location &src)
 {
 	if (this != &src) {
-		_route = src._route;
+		return *this;
 	}
 	return *this;
 }
@@ -33,9 +36,6 @@ bool Location::operator==(const Location &rhs) const
 {
 	if (this == &rhs) {
 		return true;
-	}
-	if (_route != rhs._route) {
-		return false;
 	}
 	for (std::map< std::string, Param * >::const_iterator it = _params.begin();
 		 it != _params.end(); ++it) {
@@ -53,12 +53,44 @@ void Location::addParam(const std::string &key, Param *param)
 
 const Param *Location::getParam(const std::string &key) const
 {
-	return _params.at(key);
+	try {
+		return _params.at(key);
+	} catch (std::out_of_range &e) {
+		return NULL;
+	}
+}
+
+const std::string Location::getParamValue(const std::string &key) const
+{
+	const Param *param = getParam(key);
+	if (param == NULL) {
+		return "";
+	}
+	return param->getValue();
+}
+
+const std::pair< std::string, std::string >
+Location::getParamPair(const std::string &key) const
+{
+	const Param *param = getParam(key);
+	if (param == NULL) {
+		return std::pair< std::string, std::string >("", "");
+	}
+	return param->getPair();
+}
+
+const std::vector< std::string >
+Location::getParamList(const std::string &key) const
+{
+	const Param *param = getParam(key);
+	if (param == NULL) {
+		return std::vector< std::string >();
+	}
+	return param->getList();
 }
 
 void Location::print() const
 {
-	std::cout << "Location : " << _route << std::endl;
 	std::map< std::string, Param * >::const_iterator it = _params.begin();
 
 	while (it != _params.end()) {

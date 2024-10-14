@@ -6,24 +6,27 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:54:59 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 12:39:04 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 13:33:00 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server/VirtualServer.hpp"
 
+#include "template/MapDeepCopy.tpp"
+
 VirtualServer::VirtualServer() {}
 
 VirtualServer::VirtualServer(const VirtualServer &src) :
-	_config(src._config), // TODO: deep copy
-	_locations(vector_deep_copy(src._locations))
+	_config(mapDeepCopy(src._config)),
+	_locations(mapDeepCopy(src._locations))
 {
 }
 
 VirtualServer &VirtualServer::operator=(const VirtualServer &rhs)
 {
 	if (this == &rhs) return *this;
-	_config = rhs._config;
+	_config = mapDeepCopy(rhs._config);
+	_locations = mapDeepCopy(rhs._locations);
 	return *this;
 }
 
@@ -37,9 +40,9 @@ void VirtualServer::addParam(const std::string &key, Param *param)
 	_config[key] = param;
 }
 
-void VirtualServer::addLocation(Location *location)
+void VirtualServer::addLocation(const std::string &route, Location *location)
 {
-	_locations.push_back(location);
+	_locations[route] = location;
 }
 
 const Param *VirtualServer::getParam(const std::string &key) const
@@ -51,17 +54,42 @@ const Param *VirtualServer::getParam(const std::string &key) const
 	}
 }
 
+const std::string VirtualServer::getParamValue(const std::string &key) const
+{
+	const Param *param = getParam(key);
+	if (param == NULL) {
+		return "";
+	}
+	return param->getValue();
+}
+
+const std::pair< std::string, std::string >
+VirtualServer::getParamPair(const std::string &key) const
+{
+	const Param *param = getParam(key);
+	if (param == NULL) {
+		return std::pair< std::string, std::string >("", "");
+	}
+	return param->getPair();
+}
+
+const std::vector< std::string >
+VirtualServer::getParamList(const std::string &key) const
+{
+	const Param *param = getParam(key);
+	if (param == NULL) {
+		return std::vector< std::string >();
+	}
+	return param->getList();
+}
+
 const Location *VirtualServer::getLocation(const std::string &path) const
 {
-	std::vector< Location * >::const_iterator it = _locations.begin();
-
-	while (it != _locations.end()) {
-		if ((*it)->getRoute() == path) {
-			return *it;
-		}
-		++it;
+	try {
+		return _locations.at(path);
+	} catch (std::out_of_range &e) {
+		return NULL;
 	}
-	return NULL;
 }
 
 void VirtualServer::print() const
@@ -75,11 +103,13 @@ void VirtualServer::print() const
 		++it;
 	}
 
-	std::vector< Location * >::const_iterator it2 = _locations.begin();
+	std::map< std::string, Location * >::const_iterator it2 =
+		_locations.begin();
 
 	std::cout << "VirtualServer  Locations : " << std::endl;
 	while (it2 != _locations.end()) {
-		(*it2)->print();
+		std::cout << it2->first << " : ";
+		it2->second->print();
 		++it2;
 	}
 }
@@ -92,9 +122,11 @@ VirtualServer::~VirtualServer()
 		++it;
 	}
 
-	std::vector< Location * >::iterator it2 = _locations.begin();
+	std::map< std::string, Location * >::const_iterator it2 =
+		_locations.begin();
+	;
 	while (it2 != _locations.end()) {
-		delete *it2;
+		delete (*it2).second;
 		++it2;
 	}
 }

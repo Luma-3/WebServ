@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/13 12:56:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 15:55:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,11 @@ Handler::Handler(const std::vector< VirtualServer * > &servers) :
 void Handler::handleNewConnection(const ServerHost *server)
 {
 	int client_socket = server->acceptClient();
+	addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
 
-	string request = server->recvRequest(client_socket);
+	string request = ServerHost::recvRequest(client_socket);
 	string hostname = findHostName(request);
+	// TODO : if not hostname bad request
 
 	const VirtualServer *vhost = server->getVhost(hostname);
 	if (vhost == NULL) {
@@ -74,22 +76,22 @@ void Handler::handleNewConnection(const ServerHost *server)
 
 	client::Client *client =
 		new client::Client(vhost, server->getDefaultVhost(), client_socket);
-	client->setRequest(request);
-
-	addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
 	_clients[client_socket] = client;
+	client->setRequest(request);
+	client->handleRequest();
+	modifyEvent(client_socket, EPOLLOUT | EPOLLRDHUP);
 }
 
 void Handler::handleClientRequest(int event_fd)
 {
+	std::string request;
+
 	client::Client *client = _clients[event_fd];
 	if (client) {
-		if (client->getRequest().find("\r\n\r\n") != std::string::npos) {
-			client->handleRequest();
-			modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP);
-			std::cout << "Client request received" << client->getRequest()
-					  << std::endl;
-		}
+		request = ServerHost::recvRequest(event_fd);
+		client->setRequest(request);
+		client->handleRequest();
+		modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP);
 	}
 }
 
@@ -97,7 +99,7 @@ void Handler::handleClientResponse(int event_fd)
 {
 	client::Client *client = _clients[event_fd];
 	if (client) {
-
+		ServerHost::sendResponse(event_fd, client->getResponse());
 		modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP);
 	}
 }
@@ -133,8 +135,6 @@ void Handler::runEventLoop()
 {
 	struct epoll_event event[MAX_EVENTS];
 	int				   event_fd;
-
-	client::Builder builder;
 
 	while (!g_sig) {
 		std::cout << "Waiting for events" << std::endl;

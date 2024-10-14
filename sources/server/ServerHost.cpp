@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 12:41:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/14 14:16:46 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ int ServerHost::acceptClient() const
 	return client_socket;
 }
 
-std::string ServerHost::recvRequest(int client_socket) const
+std::string ServerHost::recvRequest(int client_socket)
 {
 	char	   *buff = new char[MAX_REQ_SIZE];
 	std::string request;
@@ -170,8 +170,7 @@ std::string ServerHost::recvRequest(int client_socket) const
 	return request;
 }
 
-void ServerHost::sendResponse(int				 client_socket,
-							  const std::string &response) const
+void ServerHost::sendResponse(int client_socket, const std::string &response)
 {
 	send(client_socket, response.c_str(), response.size(), 0);
 }
