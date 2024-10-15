@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:03:20 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/14 13:31:50 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/15 14:38:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,13 @@
 class Location : public IConfig
 {
   private:
+	std::string						 _route;
 	std::map< std::string, Param * > _params;
 
 	// void IdentifyParam(Token *token);
 
   public:
-	Location();
+	Location(const std::string &route);
 	Location(const Location &src);
 	Location &operator=(const Location &src);
 	~Location();
@@ -42,7 +43,9 @@ class Location : public IConfig
 	const std::pair< std::string, std::string >
 									 getParamPair(const std::string &key) const;
 	const std::vector< std::string > getParamList(const std::string &key) const;
-	void							 print() const;
+	std::string						 getRoot(const std::string &path) const;
+
+	void print() const;
 };
 
 #include "template/Cast.tpp"

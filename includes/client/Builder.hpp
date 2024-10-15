@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/14 21:41:56 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:11:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <sys/wait.h>
 #include <vector>
 
+#include "client/Client.hpp"
 #include "client/Parser.hpp"
 #include "server/VirtualServer.hpp"
 
@@ -25,11 +26,14 @@
 
 namespace client {
 
+class Client;
+
 class Builder
 {
   private:
-	const VirtualServer *_server;
-	const VirtualServer *_default_server;
+	const VirtualServer	 *_server;
+	const VirtualServer	 *_default_server;
+	const client::Client *_client;
 
 	std::string _path;
 	std::string _final_url;
@@ -64,7 +68,8 @@ class Builder
 	void buildReturnResponse(const client::Parser, std::vector< char > &body);
 
   public:
-	Builder(const VirtualServer *server, const VirtualServer *default_server);
+	Builder(const VirtualServer *server, const VirtualServer *default_server,
+			const client::Client *client);
 	Builder(const Builder &src);
 	Builder &operator=(const Builder &src);
 	~Builder();

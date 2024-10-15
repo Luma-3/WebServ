@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:54:59 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/14 13:33:00 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/15 15:14:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,32 @@ VirtualServer::getParamList(const std::string &key) const
 
 const Location *VirtualServer::getLocation(const std::string &path) const
 {
-	try {
-		return _locations.at(path);
-	} catch (std::out_of_range &e) {
-		return NULL;
+	std::string to_test = path;
+	size_t		pos;
+
+	while (to_test.empty() != true) {
+		try {
+			return _locations.at(to_test);
+		} catch (...) {
+		}
+		pos = to_test.find_last_of("/", to_test.length() - 2);
+		to_test = to_test.substr(0, pos + 1);
 	}
+	return (NULL);
+}
+
+std::string VirtualServer::getRoot(const std::string &path) const
+{
+	std::string root;
+	std::string final;
+
+	try {
+		root = _config.at("root")->getValue();
+	} catch (std::out_of_range &e) {
+		return "";
+	}
+	final = root + path;
+	return (final);
 }
 
 void VirtualServer::print() const

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:55:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/14 13:30:14 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/15 14:38:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,10 @@ class VirtualServer : public IConfig
 	const Param		 *getParam(const std::string &key) const;
 	const std::string getParamValue(const std::string &key) const;
 	const std::pair< std::string, std::string >
-	getParamPair(const std::string &key) const;
-	const std::vector< std::string >
-					getParamList(const std::string &key) const;
-	const Location *getLocation(const std::string &path) const;
+									 getParamPair(const std::string &key) const;
+	const std::vector< std::string > getParamList(const std::string &key) const;
+	const Location					*getLocation(const std::string &path) const;
+	std::string						 getRoot(const std::string &path) const;
 
 	void print() const;
 };

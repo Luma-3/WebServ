@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/14 22:29:28 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:50:16 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,18 @@
 
 #include <iostream>
 
+#include "cgi/CGI.hpp"
+
 using client::Builder;
 using std::map;
 using std::string;
 
-Builder::Builder(const VirtualServer *server,
-				 const VirtualServer *default_server) :
+Builder::Builder(const VirtualServer  *server,
+				 const VirtualServer  *default_server,
+				 const client::Client *client) :
 	_server(server),
-	_default_server(default_server)
+	_default_server(default_server),
+	_client(client)
 {
 }
 
@@ -121,7 +125,6 @@ int Builder::findErrorpageLocationServer(const VirtualServer *server,
 void Builder::findBodyErrorPage(const client::Parser &parser,
 								std::vector< char >	 &body)
 {
-
 
 	if (findErrorpageLocationServer(_server, _code, body,
 									parser.getRequestedPath()) == 0) {
@@ -257,8 +260,13 @@ void Builder::BuildResponse(client::Parser &parser)
 	std::vector< char > body;
 	_code = parser.getCodeResponse();
 
+	std::cout << "Extension : " << parser.getFileExtension() << std::endl;
+
 	if (_code != "200") {
 		findBodyErrorPage(parser, body);
+	}
+	else if (parser.getFileExtension() == "py") {
+		initCGI(parser, *_server, *_client, _response);
 	}
 	else if (returnParam(parser) == true) {
 		buildHeader(parser, parser.getPath(), 0);

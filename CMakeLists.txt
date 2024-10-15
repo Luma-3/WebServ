@@ -16,6 +16,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(WebServ 
 
 		sources/main.cpp
+		sources/cgi/init_cgi.cpp
 		sources/server/VirtualServer.cpp
 		sources/server/Handler.cpp
 		sources/server/Signal.cpp

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/14 16:20:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/15 12:33:46 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,13 @@ class Parser
 	std::map< std::string, std::string > _headers;
 	std::vector< std::string >			 _methods;
 
+	std::string _extension;
 	std::string _buffer;
 	std::string _requested_path;
 	std::string _path;
 	std::string _filename;
 	std::string _codeResponse;
+	std::string _path_info;
 
 	void getHeaderFromRequest(const size_t &line_break_pos);
 	void getBodyFromRequest(size_t &line_break_pos);
@@ -116,8 +118,9 @@ class Parser
 	const std::string						   &getRequestedPath() const;
 	const std::string						   &getPath() const;
 	const std::string						   &getFilename() const;
-	const std::string							getFileExtension() const;
 	const std::string						   &getCodeResponse() const;
+	const std::string  getFileExtension() const { return _extension; };
+	const std::string &getPathInfo() const { return _path_info; };
 	bool getConfigParam(s_info_param &info, int flags, int annexes,
 						int start = 0);
 };

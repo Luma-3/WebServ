@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/14 13:23:53 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/15 16:10:51 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ const std::string &Client::getBody() const
 
 void Client::handleRequest()
 {
-	Builder builder(_server, _default_server);
+	Builder builder(_server, _default_server, this);
 	Parser	parser(_server, _default_server);
 
 	parser.parseRequest(_request);

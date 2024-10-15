@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 17:24:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/13 00:00:42 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/15 12:52:38 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,25 +17,29 @@ using std::vector;
 
 void client::Parser::handleRequestedPath(string &requested_path)
 {
-	s_info_param info;
-	size_t		 last_slash = requested_path.find_last_of('/');
-	std::string	 file;
-	bool		 found_param = false;
+	size_t first_dot = requested_path.find_first_of('.');
+	size_t last_slash = requested_path.find_last_of('/');
+	size_t next_slash = (first_dot == string::npos)
+						  ? string::npos
+						  : requested_path.find_first_of('/', first_dot);
 
-	_requested_path = requested_path.substr(0, last_slash + 1);
-	_filename = requested_path.substr(last_slash + 1);
-
-	// found_param = getConfigParam(info, F_ROOT, F_INDEX);
-	if (found_param) {
-		_path = info.root;
-		std::cout << "path: " << _path << std::endl;
-		if (_filename.empty()) {
-			std::cout << "je sui la" << std::endl;
-			_filename = info.index;
-		}
-		std::cout << "filename: " << _filename << std::endl;
+	if (first_dot == string::npos || next_slash == string::npos) {
+		_requested_path = requested_path.substr(0, last_slash + 1);
+		_filename = requested_path.substr(last_slash + 1);
+		_extension = requested_path.substr(first_dot + 1);
 	}
 	else {
-		_path = "";
+		std::string tmp_requested_path = requested_path.substr(0, next_slash);
+
+		last_slash = tmp_requested_path.find_last_of('/');
+
+		_requested_path = tmp_requested_path.substr(0, last_slash + 1);
+		_filename = tmp_requested_path.substr(last_slash + 1);
+		_path_info = requested_path.substr(next_slash + 1);
+		_extension = _filename.substr(_filename.find_last_of('.') + 1);
 	}
+
+	std::cout << "Requested path: " << _requested_path << std::endl;
+	std::cout << "Filename: " << _filename << std::endl;
+	std::cout << "CGI path info: " << _path_info << std::endl;
 }

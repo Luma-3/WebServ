@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/14 22:19:00 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/15 12:33:58 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,11 +87,6 @@ void Parser::setPath(const string &path)
 void Parser::setCodeResponse(const string &code)
 {
 	_codeResponse = code;
-}
-
-const std::string Parser::getFileExtension() const
-{
-	return _filename.substr(_filename.find_last_of('.') + 1);
 }
 
 void Parser::setFilename(const string &url)
