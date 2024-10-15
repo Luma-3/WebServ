@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/15 15:24:55 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/15 18:51:02 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,9 @@ class Builder
 				  std::vector< char > &body);
 	bool returnParam(Parser &parser);
 	void returnAutoindexList(const client::Parser &parser,
-							 std::vector< char >  &body,
-							 const std::string	  &autoindex,
-							 const std::string	  &root);
+							 std::vector< char > &body, bool autoindex);
+
+	void tambouille(std::string &path);
 
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server);
@@ -75,8 +75,7 @@ class Builder
 	Builder &operator=(const Builder &src);
 	~Builder();
 
-	void BuildResponse(client::Parser	 &parser,
-					   const std::string &autoindex_path);
+	void BuildResponse(client::Parser &parser, bool autoindex_path);
 
 	const std::string &getResponse() const;
 	bool			   getAutoindex() const { return _autoindex; }

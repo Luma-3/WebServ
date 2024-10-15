@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/15 14:50:22 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/15 17:23:20 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,24 @@ Client::Client(const VirtualServer *server, const VirtualServer *default_s,
 			   int client_socket) :
 	_server(server),
 	_default_server(default_s),
-	_client_socket(client_socket)
+	_client_socket(client_socket),
+	_autoindex(false)
 {
 }
 
 Client::Client(const Client &src) :
 	_server(src._server),
 	_default_server(src._default_server),
-	_client_socket(src._client_socket)
+	_client_socket(src._client_socket),
+	_autoindex(src._autoindex)
 {
 }
 
 Client &Client::operator=(const Client &src)
 {
-	(void)src;
+	if (this != &src) {
+		_autoindex = src._autoindex;
+	}
 	return *this;
 }
 
@@ -91,17 +95,14 @@ void Client::handleRequest()
 	Builder builder(_server, _default_server);
 	Parser	parser(_server, _default_server);
 
+	std::cout << " Je passe dans le handler request" << std::endl;
 	parser.parseRequest(_request);
-	builder.BuildResponse(parser, _autoindex_path);
+	std::cout << "Valeur de autoindex : " << _autoindex << std::endl;
+	builder.BuildResponse(parser, getAutoindex());
 	_response = builder.getResponse();
 	if (builder.getAutoindex() == true) {
-		std::cout << "il y a eu un autoindex" << std::endl;
-		_autoindex = true;
-		_autoindex_path = builder.getAutoindexPath();
-	}
-	else {
-		_autoindex = false;
-		_autoindex_path.clear();
+		std::cout << "Je passe autoindex a true" << std::endl;
+		setAutoindex(true);
 	}
 }
 

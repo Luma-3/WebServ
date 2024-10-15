@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/15 15:55:50 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/15 19:01:51 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,8 @@ void Builder::findIndex(const client::Parser &parser, std::vector< char > &body)
 		}
 		autoindex = location->getParamValue("autoindex");
 		if (!autoindex.empty()) {
-			returnAutoindexList(parser, body, autoindex, root);
+			returnAutoindexList(parser, body,
+								(autoindex == "on" ? true : false));
 			return;
 		}
 	}
@@ -192,7 +193,7 @@ void Builder::findIndex(const client::Parser &parser, std::vector< char > &body)
 			root = parser.getRequestedPath();
 		}
 
-		returnAutoindexList(parser, body, autoindex, root);
+		returnAutoindexList(parser, body, autoindex == "on" ? true : false);
 		return;
 	}
 	_code = "403";
@@ -267,76 +268,88 @@ std::string getBeforeLastSlash(const std::string &path)
 	return path.substr(0, secondLastSlashPos);
 }
 
-void Builder::returnAutoindexList(const client::Parser &parser,
-								  std::vector< char >  &body,
-								  const std::string	   &autoindex,
-								  const std::string	   &root)
+void Builder::tambouille(std::string &path)
 {
-	std::cout << "root : " << root << std::endl;
-	std::cout << "Requested path : " << parser.getRequestedPath() << std::endl;
-	std::cout << "Filename : " << parser.getFilename() << std::endl;
-	std::cout << "autoindex path : " << _autoindex_path << std::endl;
+	size_t pos = path.find_first_of("/");
+	if (pos == std::string::npos || pos == path.size() - 1) {
+		return;
+	}
+	path = path.substr(pos + 1);
+}
 
-	if (autoindex == "off") {
+void Builder::returnAutoindexList(const client::Parser &parser,
+								  std::vector< char > &body, bool autoindex)
+{
+	if (autoindex == false) {
 		_code = "403";
 		findBodyErrorPage(parser, body);
 		return;
 	}
 
-	_autoindex_path = root;
-	if (_autoindex_path != "/" &&
-		root.find(parser.getRequestedPath() + parser.getFilename()) !=
-			std::string::npos) {
-		std::cout << "Je suis dans le if" << std::endl;
-		std::cout << "autoindex path before substr : " << _autoindex_path
-				  << std::endl;
+	std::string new_path;
+	std::string tmp;
 
-		_autoindex_path = root.substr(
-			0, root.find(parser.getRequestedPath() + parser.getFilename()) +
-				   parser.getRequestedPath().size() +
-				   parser.getFilename().size());
-		std::cout << "autoindex path after substr : " << _autoindex_path
-				  << std::endl;
-		if (_autoindex_path.empty()) {
-			_autoindex_path = "/";
+	const Location *location = _server->getLocation(parser.getRequestedPath());
+	if (location != NULL) {
+		new_path = location->getParamValue("root");
+		if (new_path.empty()) {
+			new_path = parser.getRequestedPath() + parser.getFilename();
+		}
+		else if (parser.getRequestedPath() != "/") {
+			new_path += parser.getRequestedPath() + parser.getFilename();
 		}
 	}
-	else if (!parser.getFilename().empty()) {
-		if (_autoindex_path[_autoindex_path.size() - 1] != '/') {
-			_autoindex_path += "/";
+	else {
+		new_path = _server->getParamValue("root");
+		if (new_path.empty()) {
+			new_path = parser.getRequestedPath() + parser.getFilename();
 		}
-		_autoindex_path += parser.getFilename();
+		else {
+			new_path += parser.getRequestedPath() + parser.getFilename();
+		}
+	}
+	if (new_path.length() != 1 && new_path[0] == '/') {
+		new_path = new_path.substr(1);
+	}
+	if (new_path[new_path.size() - 1] != '/') {
+		new_path += "/";
 	}
 
-	std::cout << "Autoindex path : avant Access" << _autoindex_path
-			  << std::endl;
-	int ret = access(_autoindex_path.c_str(), F_OK);
+	std::cout << "New path : " << new_path << std::endl;
+	int ret = access(new_path.c_str(), F_OK);
 	if (ret != 0) {
-		_code = (ret == ENOENT) ? "404" : "403";
+		_code = (errno == ENOENT) ? "404" : "403";
+		std::cout << "Le code est : " << _code << std::endl;
 		findBodyErrorPage(parser, body);
 		return;
 	}
-	DIR *dir = opendir(_autoindex_path.c_str());
+	DIR *dir = opendir(new_path.c_str());
 	if (dir == NULL) {
-		_code = "403";
+		if (errno == ENOENT) {
+			_code = "404";
+		}
+		else {
+			_code = "403";
+		}
 		findBodyErrorPage(parser, body);
 		return;
 	}
-	std::string head = DEFAULT_AUTOINDEX_PAGE_HEAD;
-	body.insert(body.end(), head.begin(), head.end());
 
-	std::string html_line_return = DEFAULT_AUTOINDEX_RETURN_BUTTON;
-	std::string back_path =
-		_autoindex_path.substr(0, _autoindex_path.find_last_of('/'));
-	if (back_path.empty()) {
+	tmp = DEFAULT_AUTOINDEX_PAGE_HEAD;
+	body.insert(body.end(), tmp.begin(), tmp.end());
+
+	tmp = DEFAULT_AUTOINDEX_RETURN_BUTTON;
+	std::string back_path = new_path.substr(0, new_path.find_last_of('/'));
+	if (back_path[back_path.size() - 1] != '/') {
+		back_path = back_path.substr(0, back_path.size() - 1);
+	}
+	back_path = back_path.substr(0, back_path.find_last_of('/'));
+	if (back_path[back_path.size() - 1] != '/') {
 		back_path = "/";
 	}
-	std::cout << "Back path : " << back_path << std::endl;
-	html_line_return.replace(html_line_return.find("%@return_path@%"), 15,
-							 back_path);
-	std::cout << "Je viens de set le bouton back sur le path : " << back_path
-			  << std::endl;
-	body.insert(body.end(), html_line_return.begin(), html_line_return.end());
+	std::cout << "Mon back path est : " << back_path << std::endl;
+	tmp.replace(tmp.find("%@return_path@%"), 15, back_path);
+	body.insert(body.end(), tmp.begin(), tmp.end());
 
 	struct dirent *entry;
 	while ((entry = readdir(dir)) != NULL) {
@@ -344,8 +357,15 @@ void Builder::returnAutoindexList(const client::Parser &parser,
 		if (entry->d_name[0] == '.') {
 			continue;
 		}
+		std::string relative_path = new_path;
+		if (relative_path[relative_path.size() - 1] != '/') {
+			relative_path += "/";
+		}
+		tambouille(relative_path);
+		relative_path += entry->d_name;
+		std::cout << "Relative path : " << relative_path << std::endl;
 		html_line_file.replace(html_line_file.find("%@file@%"), 8,
-							   _autoindex_path + entry->d_name);
+							   relative_path);
 		html_line_file.replace(html_line_file.find("%@file@%"), 8,
 							   entry->d_name);
 		body.insert(body.end(), html_line_file.begin(), html_line_file.end());
@@ -357,14 +377,13 @@ void Builder::returnAutoindexList(const client::Parser &parser,
 	_autoindex = true;
 }
 
-void Builder::BuildResponse(client::Parser	  &parser,
-							const std::string &autoindex_path)
+void Builder::BuildResponse(client::Parser &parser, bool autoindex)
 {
 	std::vector< char > body;
 	_code = parser.getCodeResponse();
 
-	if (!autoindex_path.empty()) {
-		returnAutoindexList(parser, body, "on", autoindex_path);
+	if (autoindex == true) {
+		returnAutoindexList(parser, body, autoindex);
 	}
 	else if (_code != "200") {
 		findBodyErrorPage(parser, body);
