@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client_Tables.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 10:39:08 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/14 22:07:06 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/15 09:06:56 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ string findStatusMessage(const std::string &code)
 	status_message["411"] = " Length Required";
 	status_message["412"] = " Precondition Failed";
 	status_message["413"] = " Request Entity Too Large";
+	status_message["418"] = " I'm a teapot";
 	status_message["500"] = " Internal Server Error";
 	status_message["501"] = " Not Implemented";
 	status_message["502"] = " Bad Gateway";

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 12:42:26 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/15 10:29:30 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,8 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(11, T_Semi_Colon)] = Action(REDUCE, 2, R2);
 	actions[ActionEntry(12, T_Digits)] = Action(SHIFT, 16);
 	actions[ActionEntry(13, T_Identifier)] = Action(SHIFT, 17);
-	actions[ActionEntry(14, T_Identifier)] = Action(SHIFT, 18);
+	actions[ActionEntry(14, T_Identifier)] = Action(SHIFT, 17);
+	actions[ActionEntry(14, T_Semi_Colon)] = Action(REDUCE, 2, R3);
 	actions[ActionEntry(15, T_Method)] = Action(SHIFT, 19);
 	actions[ActionEntry(16, T_CSquareBracket)] = Action(SHIFT, 39);
 	actions[ActionEntry(16, T_Comma)] = Action(SHIFT, 12);
@@ -106,6 +107,7 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(30, T_Semi_Colon)] = Action(REDUCE, 23, R2);
 	actions[ActionEntry(31, T_Digits)] = Action(SHIFT, 34);
 	actions[ActionEntry(32, T_Identifier)] = Action(SHIFT, 35);
+	actions[ActionEntry(32, T_Semi_Colon)] = Action(REDUCE, 23, R3);
 	actions[ActionEntry(33, T_Method)] = Action(SHIFT, 36);
 	actions[ActionEntry(34, T_CSquareBracket)] = Action(SHIFT, 40);
 	actions[ActionEntry(34, T_Comma)] = Action(SHIFT, 31);
@@ -167,6 +169,7 @@ void Parser::Parse()
 			std::string value = token->getKey();
 			size_t		col = token->getCol();
 			size_t		line = token->getLine();
+			std::cout << "state: " << _status << std::endl;
 			delete token;
 			throw InvalidTokenException(col, line, value, "Expected value");
 		}

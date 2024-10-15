@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/14 11:05:32 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/15 10:31:47 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ void Parser::R3_DoubleParam()
 			throw Token::InvalidTokenException();
 		}
 	}
-	else {
+	else if (tokens.size() > 1) {
 		value2 = tokens.top()->getKey();
 		delete tokens.top();
 		tokens.pop();
