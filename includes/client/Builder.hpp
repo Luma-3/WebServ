@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/14 21:41:56 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/15 15:24:55 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BUILDER_HPP
 #define BUILDER_HPP
 
+#include <cstring>
+#include <dirent.h>
 #include <fstream>
 #include <string>
 #include <sys/wait.h>
@@ -22,6 +24,7 @@
 #include "server/VirtualServer.hpp"
 
 #define CHILD_BUFFER_SIZE 4096
+#define CWD_BUFFER_SIZE	  1024
 
 namespace client {
 
@@ -35,6 +38,8 @@ class Builder
 	std::string _final_url;
 	std::string _code;
 	std::string _response;
+	bool		_autoindex;
+	std::string _autoindex_path;
 
 	// SUR
 	std::string _content_type;
@@ -42,8 +47,6 @@ class Builder
 	void createErrorPage(const std::string	 &return_code,
 						 std::vector< char > &body);
 
-	void accessRequestedFile(Parser &parser);
-	void findErrorPath(Parser &parser);
 	void buildHeader(const Parser &parser, const std::string &location_param,
 					 int body_size);
 	static std::string findContentType(const std::string &file_extension);
@@ -61,7 +64,10 @@ class Builder
 	void readFile(const client::Parser &parser, const std::string &path,
 				  std::vector< char > &body);
 	bool returnParam(Parser &parser);
-	void buildReturnResponse(const client::Parser, std::vector< char > &body);
+	void returnAutoindexList(const client::Parser &parser,
+							 std::vector< char >  &body,
+							 const std::string	  &autoindex,
+							 const std::string	  &root);
 
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server);
@@ -69,9 +75,12 @@ class Builder
 	Builder &operator=(const Builder &src);
 	~Builder();
 
-	void BuildResponse(client::Parser &parser);
+	void BuildResponse(client::Parser	 &parser,
+					   const std::string &autoindex_path);
 
 	const std::string &getResponse() const;
+	bool			   getAutoindex() const { return _autoindex; }
+	std::string		   getAutoindexPath() const { return _autoindex_path; }
 };
 
 } // namespace client
@@ -96,5 +105,32 @@ std::string findStatusMessage(const std::string &code); // namespace client
 	<div class=\"errorMessage\"><h3>%@message@%</h3></div>\
 </body>\
 </html>"
+
+#define DEFAULT_AUTOINDEX_PAGE_HEAD \
+	"<!DOCTYPE html> \
+	<html lang=\"en\">\
+<head>\
+	<style>\
+	.container {width: 80%;margin: auto;overflow: hidden;}\
+	.title {color: white;font-size: 2rem;text-align: center;justify-content: center;border: 4px solid black;padding: 1rem;border-radius: 10px;background-color: #EE92C2;margin-bottom: 20px;margin-top: 20px;}\
+	.errorMessage {width: 100%;height: 30%;padding: 0;margin: 0 auto 0 auto;position: center;display: flex;justify-content: center;background-color: #EE92C2;align-items: center;flex-wrap: wrap;}\
+	</style>\
+	<meta charset=\"UTF-8\">\
+	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\
+	<title>Autoindex</title>\
+</head>\
+<body>"
+
+#define DEFAULT_AUTOINDEX_RETURN_BUTTON                     \
+	"<div class=\"container\"><div class=\"title\"><li><a " \
+	"href=\"%@return_path@%\" style=\"color: "              \
+	"black;\">\"Back\"</a></li></div></div>"
+
+#define DEFAULT_AUTOINDEX_LIST                                                \
+	"<div class=\"container\"><div class=\"title\"><li><a href=\"%@file@%\" " \
+	"style=\"color: "                                                         \
+	"black;\">%@file@%</a></li></div></div>"
+
+#define DEFAULT_AUTOINDEX_PAGE_FOOT "</body></html>"
 
 #endif

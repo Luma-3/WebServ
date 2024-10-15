@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/14 13:23:53 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/15 14:50:22 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,17 @@ void Client::handleRequest()
 	Parser	parser(_server, _default_server);
 
 	parser.parseRequest(_request);
-	builder.BuildResponse(parser);
+	builder.BuildResponse(parser, _autoindex_path);
 	_response = builder.getResponse();
+	if (builder.getAutoindex() == true) {
+		std::cout << "il y a eu un autoindex" << std::endl;
+		_autoindex = true;
+		_autoindex_path = builder.getAutoindexPath();
+	}
+	else {
+		_autoindex = false;
+		_autoindex_path.clear();
+	}
 }
 
 Client::~Client() {}
