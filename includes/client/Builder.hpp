@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/15 16:11:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/16 11:00:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ class Builder
 	void findErrorPath(Parser &parser);
 	void buildHeader(const Parser &parser, const std::string &location_param,
 					 int body_size);
-	static std::string findContentType(const std::string &file_extension);
-	void			   reset();
+
+	void reset();
 
 	void findBodyErrorPage(const Parser &parser, std::vector< char > &body);
 	int	 readDataRequest(std::vector< char > &body, const std::string &path);
@@ -81,7 +81,8 @@ class Builder
 
 } // namespace client
 
-std::string findStatusMessage(const std::string &code); // namespace client
+std::string findStatusMessage(const std::string &code);
+std::string findContentType(const std::string &file_extension);
 
 #define DEFAULT_ERROR_PAGE \
 	"<!DOCTYPE html> \

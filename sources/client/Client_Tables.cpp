@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 10:39:08 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/15 09:06:56 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/16 11:00:51 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 using std::map;
 using std::string;
 
-string client::Builder::findContentType(const string &file_extension)
+string findContentType(const string &file_extension)
 {
 	static map< string, string > content_type_list;
 	content_type_list["html"] = "text/html";

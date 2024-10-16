@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/15 16:50:16 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/16 16:04:31 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,7 +266,18 @@ void Builder::BuildResponse(client::Parser &parser)
 		findBodyErrorPage(parser, body);
 	}
 	else if (parser.getFileExtension() == "py") {
-		initCGI(parser, *_server, *_client, _response);
+		exec_data *info;
+		exec_data  hints;
+
+		hints.client = _client;
+		hints.parser = &parser;
+		hints.server = _server;
+		hints.response = &_response;
+
+		initCGI(&info, &hints);
+		executeCGI(info);
+		reset();
+		return;
 	}
 	else if (returnParam(parser) == true) {
 		buildHeader(parser, parser.getPath(), 0);
