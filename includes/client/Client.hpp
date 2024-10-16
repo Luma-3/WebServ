@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/15 17:13:45 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/16 14:10:42 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ class Client
 	std::string _response;
 	std::string _header;
 	std::string _body;
-	bool		_autoindex;
 
   public:
 	Client();
@@ -55,9 +54,8 @@ class Client
 	const std::string &getResponse() const { return _response; };
 	const std::string &getBody() const;
 
-	bool getAutoindex() const { return _autoindex; };
-	void setAutoindex(bool autoindex) { _autoindex = autoindex; };
 	void setRequest(const std::string &request) { _request = request; };
+	void setResponse(const std::string &response) { _response = response; };
 
 	void handleRequest();
 };

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/15 18:51:02 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/16 14:22:45 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@ class Builder
 	std::string _final_url;
 	std::string _code;
 	std::string _response;
-	bool		_autoindex;
-	std::string _autoindex_path;
 
 	// SUR
 	std::string _content_type;
@@ -65,9 +63,16 @@ class Builder
 				  std::vector< char > &body);
 	bool returnParam(Parser &parser);
 	void returnAutoindexList(const client::Parser &parser,
-							 std::vector< char > &body, bool autoindex);
+							 std::vector< char >  &body);
+	bool isDirRequest(const std::string &path);
 
-	void tambouille(std::string &path);
+	void cutParentDirectoryInPath(std::string &path);
+	void verifServerAndGetNewPath(const client::Parser &parser,
+										   std::string			&new_path,
+										   std::vector< char >	&body);
+	bool verifLocationAndGetNewPath(const client::Parser &parser,
+											 std::string		  &new_path,
+											 std::vector< char >  &body);
 
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server);
@@ -75,11 +80,9 @@ class Builder
 	Builder &operator=(const Builder &src);
 	~Builder();
 
-	void BuildResponse(client::Parser &parser, bool autoindex_path);
+	void BuildResponse(client::Parser &parser);
 
 	const std::string &getResponse() const;
-	bool			   getAutoindex() const { return _autoindex; }
-	std::string		   getAutoindexPath() const { return _autoindex_path; }
 };
 
 } // namespace client

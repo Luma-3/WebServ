@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/15 17:23:20 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/16 14:14:02 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,24 +23,21 @@ Client::Client(const VirtualServer *server, const VirtualServer *default_s,
 			   int client_socket) :
 	_server(server),
 	_default_server(default_s),
-	_client_socket(client_socket),
-	_autoindex(false)
+	_client_socket(client_socket)
 {
+	std::cout << "Je suis dans le constructeur de Client" << std::endl;
 }
 
 Client::Client(const Client &src) :
 	_server(src._server),
 	_default_server(src._default_server),
-	_client_socket(src._client_socket),
-	_autoindex(src._autoindex)
+	_client_socket(src._client_socket)
 {
 }
 
 Client &Client::operator=(const Client &src)
 {
-	if (this != &src) {
-		_autoindex = src._autoindex;
-	}
+	if (this != &src) {}
 	return *this;
 }
 
@@ -95,15 +92,9 @@ void Client::handleRequest()
 	Builder builder(_server, _default_server);
 	Parser	parser(_server, _default_server);
 
-	std::cout << " Je passe dans le handler request" << std::endl;
 	parser.parseRequest(_request);
-	std::cout << "Valeur de autoindex : " << _autoindex << std::endl;
-	builder.BuildResponse(parser, getAutoindex());
+	builder.BuildResponse(parser);
 	_response = builder.getResponse();
-	if (builder.getAutoindex() == true) {
-		std::cout << "Je passe autoindex a true" << std::endl;
-		setAutoindex(true);
-	}
 }
 
 Client::~Client() {}

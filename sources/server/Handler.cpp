@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/15 17:45:12 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/16 14:11:23 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void Handler::handleNewConnection(const ServerHost *server)
 	int client_socket = server->acceptClient();
 	addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
 
+	std::cout << "I wait for the request" << std::endl;
 	string request = ServerHost::recvRequest(client_socket);
 	string hostname = findHostName(request);
 	// TODO : if not hostname bad request
@@ -147,6 +148,7 @@ void Handler::runEventLoop()
 			event_fd = event[i].data.fd;
 			ServerHost *server = _servers[event_fd];
 			if (server) {
+				std::cout << "New connection" << std::endl;
 				handleNewConnection(server);
 				continue;
 			}
@@ -163,10 +165,12 @@ void Handler::runEventLoop()
 				}
 			}
 			else if (event[i].events & EPOLLIN) {
+				std::cout << "EPOLLIN" << std::endl;
 				handleClientRequest(event_fd);
 				continue;
 			}
 			else if (event[i].events & EPOLLOUT) {
+				std::cout << "EPOLLOUT" << std::endl;
 				handleClientResponse(event_fd);
 				continue;
 			}
