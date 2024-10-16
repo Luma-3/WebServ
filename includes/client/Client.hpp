@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/16 14:10:42 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/16 17:05:51 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class Client
 	const VirtualServer *_default_server;
 	const ServerHost	*_host;
 	const int			 _client_socket;
+	bool				 _autoindex_parent_location;
 
 	std::string _request;
 	std::string _response;
@@ -53,9 +54,14 @@ class Client
 	const std::string &getRequest() const;
 	const std::string &getResponse() const { return _response; };
 	const std::string &getBody() const;
+	bool getAutoindexParentLocation() const { return _autoindex_parent_location; };
 
 	void setRequest(const std::string &request) { _request = request; };
 	void setResponse(const std::string &response) { _response = response; };
+	void setAutoindexParentLocation(bool autoindex_parent_location)
+	{
+		_autoindex_parent_location = autoindex_parent_location;
+	};
 
 	void handleRequest();
 };

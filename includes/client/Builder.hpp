@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/16 14:22:45 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/16 18:13:17 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,15 @@
 #include "server/VirtualServer.hpp"
 
 #define CHILD_BUFFER_SIZE 4096
-#define CWD_BUFFER_SIZE	  1024
+
+#define INDEX_FIND	  0
+#define AUTOINDEX_OFF 1
+#define AUTOINDEX_ON  2
+#define NONE		  -1
 
 namespace client {
+
+class Client;
 
 class Builder
 {
@@ -58,21 +64,28 @@ class Builder
 									 const std::string	 &path);
 	void findFile(const client::Parser &parser, std::vector< char > &body);
 
-	void findIndex(const client::Parser &parser, std::vector< char > &body);
+	void findIndex(const client::Parser &parser, std::vector< char > &body,
+				   client::Client *client);
 	void readFile(const client::Parser &parser, const std::string &path,
 				  std::vector< char > &body);
 	bool returnParam(Parser &parser);
 	void returnAutoindexList(const client::Parser &parser,
-							 std::vector< char >  &body);
+							 std::vector< char > &body, client::Client *client);
 	bool isDirRequest(const std::string &path);
 
 	void cutParentDirectoryInPath(std::string &path);
-	void verifServerAndGetNewPath(const client::Parser &parser,
+	bool verifServerAndGetNewPath(const client::Parser &parser,
+								  std::string		   &new_path,
+								  std::vector< char >  &body);
+	int	 verifLocationAndGetNewPath(const client::Parser &parser,
+									std::string			 &new_path,
+									std::vector< char >	 &body,
+									const std::string	 &server_root);
+	bool findAndGetIndexAndAutoindexConfig(const client::Parser &parser,
 										   std::string			&new_path,
-										   std::vector< char >	&body);
-	bool verifLocationAndGetNewPath(const client::Parser &parser,
-											 std::string		  &new_path,
-											 std::vector< char >  &body);
+										   std::vector< char >	&body,
+										   client::Client		*client);
+	void trimPath(std::string &path);
 
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server);
@@ -80,7 +93,7 @@ class Builder
 	Builder &operator=(const Builder &src);
 	~Builder();
 
-	void BuildResponse(client::Parser &parser);
+	void BuildResponse(client::Parser &parser, client::Client *client);
 
 	const std::string &getResponse() const;
 };

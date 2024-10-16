@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/16 14:57:29 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/16 17:16:52 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,8 @@ int Builder::readDataRequest(std::vector< char > &body,
 	return 0;
 }
 
-void Builder::findIndex(const client::Parser &parser, std::vector< char > &body)
+void Builder::findIndex(const client::Parser &parser, std::vector< char > &body,
+						client::Client *client)
 {
 	std::string		path = parser.getRequestedPath();
 	const Location *location = _server->getLocation(path);
@@ -177,7 +178,7 @@ void Builder::findIndex(const client::Parser &parser, std::vector< char > &body)
 		}
 		autoindex = location->getParamValue("autoindex");
 		if (!autoindex.empty()) {
-			returnAutoindexList(parser, body);
+			returnAutoindexList(parser, body, client);
 			return;
 		}
 	}
@@ -191,7 +192,7 @@ void Builder::findIndex(const client::Parser &parser, std::vector< char > &body)
 		if (root.empty()) {
 			root = parser.getRequestedPath();
 		}
-		returnAutoindexList(parser, body);
+		returnAutoindexList(parser, body, client);
 		return;
 	}
 	_code = "403";
@@ -261,7 +262,7 @@ bool Builder::returnParam(client::Parser &parser)
 	return true;
 }
 
-void Builder::BuildResponse(client::Parser &parser)
+void Builder::BuildResponse(client::Parser &parser, client::Client *client)
 {
 	std::vector< char > body;
 	_code = parser.getCodeResponse();
@@ -269,7 +270,7 @@ void Builder::BuildResponse(client::Parser &parser)
 	if (isDirRequest(parser.getRequestedPath() + parser.getFilename()) ==
 		true) {
 		std::cout << "C'est un dossier" << std::endl;
-		returnAutoindexList(parser, body);
+		returnAutoindexList(parser, body, client);
 	}
 	else if (_code != "200") {
 		std::cout << "Je suis dans le code : " << _code << std::endl;
@@ -283,7 +284,7 @@ void Builder::BuildResponse(client::Parser &parser)
 	}
 	else if (parser.getFilename().empty()) {
 		std::cout << "Je suis dans le index" << std::endl;
-		findIndex(parser, body);
+		findIndex(parser, body, client);
 	}
 	else {
 		std::cout << "Je suis dans le fichier" << std::endl;

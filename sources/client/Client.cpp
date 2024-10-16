@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/16 14:14:02 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/16 17:14:18 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ Client::Client(const VirtualServer *server, const VirtualServer *default_s,
 			   int client_socket) :
 	_server(server),
 	_default_server(default_s),
-	_client_socket(client_socket)
+	_client_socket(client_socket),
+	_autoindex_parent_location(false)
 {
 	std::cout << "Je suis dans le constructeur de Client" << std::endl;
 }
@@ -31,7 +32,8 @@ Client::Client(const VirtualServer *server, const VirtualServer *default_s,
 Client::Client(const Client &src) :
 	_server(src._server),
 	_default_server(src._default_server),
-	_client_socket(src._client_socket)
+	_client_socket(src._client_socket),
+	_autoindex_parent_location(src._autoindex_parent_location)
 {
 }
 
@@ -93,7 +95,7 @@ void Client::handleRequest()
 	Parser	parser(_server, _default_server);
 
 	parser.parseRequest(_request);
-	builder.BuildResponse(parser);
+	builder.BuildResponse(parser, this);
 	_response = builder.getResponse();
 }
 
