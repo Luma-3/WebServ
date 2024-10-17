@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/16 17:16:52 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/17 13:05:06 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,51 +160,11 @@ int Builder::readDataRequest(std::vector< char > &body,
 	return 0;
 }
 
-void Builder::findIndex(const client::Parser &parser, std::vector< char > &body,
-						client::Client *client)
-{
-	std::string		path = parser.getRequestedPath();
-	const Location *location = _server->getLocation(path);
-
-	std::string index;
-	std::string autoindex;
-	std::string root;
-
-	if (location != NULL) {
-		index = location->getParamValue("index");
-		root = location->getParamValue("root");
-		if (!index.empty()) {
-			return readFile(parser, root + index, body);
-		}
-		autoindex = location->getParamValue("autoindex");
-		if (!autoindex.empty()) {
-			returnAutoindexList(parser, body, client);
-			return;
-		}
-	}
-	index = _server->getParamValue("index");
-	root = _server->getParamValue("root");
-	if (!index.empty()) {
-		return readFile(parser, root + index, body);
-	}
-	autoindex = _server->getParamValue("autoindex");
-	if (!autoindex.empty()) {
-		if (root.empty()) {
-			root = parser.getRequestedPath();
-		}
-		returnAutoindexList(parser, body, client);
-		return;
-	}
-	_code = "403";
-	findBodyErrorPage(parser, body);
-}
-
 void Builder::readFile(const client::Parser &parser, const std::string &path,
 					   std::vector< char > &body)
 {
 	int ret;
 
-	std::cout << "Je lie le fichier : " << path << std::endl;
 	ret = readDataRequest(body, path);
 	if (ret != 0) {
 		_code = (ret == ENOENT) ? "404" : "403";
@@ -214,52 +174,35 @@ void Builder::readFile(const client::Parser &parser, const std::string &path,
 
 void Builder::findFile(const client::Parser &parser, std::vector< char > &body)
 {
-	std::string		path = parser.getRequestedPath();
-	const Location *location = _server->getLocation(path);
-	std::string		file = parser.getFilename();
-	std::cout << "Je cherche le fichier : " << file << std::endl;
-	std::cout << "Je suis dans le path : " << path << std::endl;
-
 	std::string root;
 
-	if (path[0] == '/') {
-		path = path.substr(1);
-	}
-	if (location != NULL) {
-		root = location->getParamValue("root");
-		if (root.empty()) {
-			return readFile(parser, path + file, body);
-		}
-		return readFile(parser, root + file, body);
-	}
-	root = _server->getParamValue("root");
-	if (path.find(root) != std::string::npos) {
-		root = path;
-	}
-	if (root.empty()) {
-		return readFile(parser, path + file, body);
-	}
+	std::string path = parser.getRequestedPath();
+	std::string file = parser.getFilename();
+
+	std::cout << "path : " << path << std::endl;
+	std::cout << "file : " << file << std::endl;
+	root = getConfigRoot(path);
 	readFile(parser, root + file, body);
 }
 
 bool Builder::returnParam(client::Parser &parser)
 {
-	std::string		path = parser.getRequestedPath();
+	std::string		path = parser.getRequestedPath() + parser.getFilename();
 	const Location *location = _server->getLocation(path);
 	if (location != NULL) {
-		if (location->getParamPair("return").first.empty()) {
-			return false;
+		if (location->getParamPair("return").first.empty() == false) {
+			_code = location->getParamPair("return").first;
+			parser.setPath(location->getParamPair("return").second);
+			return true;
 		}
-		_code = location->getParamPair("return").first;
-		parser.setPath(location->getParamPair("return").second);
-		return true;
-	}
-	else if (_server->getParamPair("return").first.empty()) {
 		return false;
 	}
-	_code = _server->getParamPair("return").first;
-	parser.setPath(_server->getParamPair("return").second);
-	return true;
+	else if (_server->getParamPair("return").first.empty() == false) {
+		_code = _server->getParamPair("return").first;
+		parser.setPath(_server->getParamPair("return").second);
+		return true;
+	}
+	return false;
 }
 
 void Builder::BuildResponse(client::Parser &parser, client::Client *client)
@@ -267,27 +210,19 @@ void Builder::BuildResponse(client::Parser &parser, client::Client *client)
 	std::vector< char > body;
 	_code = parser.getCodeResponse();
 
-	if (isDirRequest(parser.getRequestedPath() + parser.getFilename()) ==
-		true) {
-		std::cout << "C'est un dossier" << std::endl;
-		returnAutoindexList(parser, body, client);
-	}
-	else if (_code != "200") {
-		std::cout << "Je suis dans le code : " << _code << std::endl;
+	if (_code != "200") {
 		findBodyErrorPage(parser, body);
 	}
-	else if (returnParam(parser) == true) {
-		std::cout << "Je suis dans le return" << std::endl;
+	else if (returnParam(parser)) {
 		buildHeader(parser, parser.getPath(), 0);
 		reset();
 		return;
 	}
-	else if (parser.getFilename().empty()) {
-		std::cout << "Je suis dans le index" << std::endl;
-		findIndex(parser, body, client);
+	else if (isDirRequest(parser.getRequestedPath() + parser.getFilename())) {
+		std::cout << "C'est un dossier" << std::endl;
+		indexOrAutoindexList(parser, body, client);
 	}
 	else {
-		std::cout << "Je suis dans le fichier" << std::endl;
 		findFile(parser, body);
 	}
 	buildHeader(parser, "", body.size());
