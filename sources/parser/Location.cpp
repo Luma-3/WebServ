@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/14 13:32:28 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/17 18:12:04 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,27 @@ Location::getParamList(const std::string &key) const
 		return std::vector< std::string >();
 	}
 	return param->getList();
+}
+
+std::string Location::getRoot(const std::string &path) const
+{
+	std::string root;
+	std::string final;
+
+	try {
+		root = _params.at("root")->getValue();
+	} catch (std::out_of_range &e) {
+		return "";
+	}
+	final = path;
+	size_t patern_pos = final.find(_route);
+	if (patern_pos != std::string::npos) {
+		final.replace(patern_pos, _route.size(), root);
+	}
+	else {
+		final = root + final;
+	}
+	return (final);
 }
 
 void Location::print() const

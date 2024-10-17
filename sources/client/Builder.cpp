@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/17 13:05:06 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/17 17:57:31 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,13 +176,16 @@ void Builder::findFile(const client::Parser &parser, std::vector< char > &body)
 {
 	std::string root;
 
-	std::string path = parser.getRequestedPath();
-	std::string file = parser.getFilename();
+	std::string path = parser.getRequestedPath() + parser.getFilename();
 
-	std::cout << "path : " << path << std::endl;
-	std::cout << "file : " << file << std::endl;
-	root = getConfigRoot(path);
-	readFile(parser, root + file, body);
+	const Location *location = _server->getLocation(path);
+	if (location != NULL) {
+		root = location->getRoot(path);
+	}
+	else {
+		root = _server->getRoot(path);
+	}
+	readFile(parser, root, body);
 }
 
 bool Builder::returnParam(client::Parser &parser)
@@ -205,7 +208,7 @@ bool Builder::returnParam(client::Parser &parser)
 	return false;
 }
 
-void Builder::BuildResponse(client::Parser &parser, client::Client *client)
+void Builder::BuildResponse(client::Parser &parser)
 {
 	std::vector< char > body;
 	_code = parser.getCodeResponse();
@@ -219,8 +222,7 @@ void Builder::BuildResponse(client::Parser &parser, client::Client *client)
 		return;
 	}
 	else if (isDirRequest(parser.getRequestedPath() + parser.getFilename())) {
-		std::cout << "C'est un dossier" << std::endl;
-		indexOrAutoindexList(parser, body, client);
+		indexOrAutoindexList(parser, body);
 	}
 	else {
 		findFile(parser, body);

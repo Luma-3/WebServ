@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualServer.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:55:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/14 13:30:14 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/17 16:24:58 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,17 @@ class VirtualServer : public IConfig
 
 	bool operator==(const VirtualServer &rhs) const;
 
-	void			  addParam(const std::string &key, Param *param);
+	void addParam(const std::string &key, Param *param);
+	// const Location *getLocation(const std::string &path) const;
+
 	void			  addLocation(const std::string &route, Location *location);
 	const Param		 *getParam(const std::string &key) const;
 	const std::string getParamValue(const std::string &key) const;
 	const std::pair< std::string, std::string >
-	getParamPair(const std::string &key) const;
-	const std::vector< std::string >
-					getParamList(const std::string &key) const;
-	const Location *getLocation(const std::string &path) const;
+									 getParamPair(const std::string &key) const;
+	const std::vector< std::string > getParamList(const std::string &key) const;
+	const Location					*getLocation(const std::string &path) const;
+	std::string						 getRoot(const std::string &path) const;
 
 	void print() const;
 };

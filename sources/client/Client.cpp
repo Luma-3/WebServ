@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/16 17:14:18 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/17 17:53:43 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void Client::handleRequest()
 	Parser	parser(_server, _default_server);
 
 	parser.parseRequest(_request);
-	builder.BuildResponse(parser, this);
+	builder.BuildResponse(parser);
 	_response = builder.getResponse();
 }
 
