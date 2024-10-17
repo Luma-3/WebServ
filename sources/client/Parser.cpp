@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/15 12:33:58 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/17 16:07:22 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,6 @@ void Parser::parseRequest(const std::string &request)
 	string line;
 
 	_buffer = request;
-	std::cout << "Request : " << request << std::endl;
 	line_break_pos = _buffer.find("\r\n");
 	getHeaderFromRequest(line_break_pos);
 

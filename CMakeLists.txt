@@ -18,6 +18,7 @@ add_executable(WebServ
 		sources/main.cpp
 		sources/cgi/init_cgi.cpp
 		sources/cgi/executeCGI.cpp
+		sources/cgi/verifCGIResponse.cpp
 		sources/server/VirtualServer.cpp
 		sources/server/Handler.cpp
 		sources/server/Signal.cpp

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:37:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/14 14:16:16 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/17 10:56:54 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,13 @@
 
 #include <map>
 #include <string>
+#include <sys/socket.h>
 
 #include "VirtualServer.hpp"
 
 #define MAXREQUEST	 10
 #define MAX_REQ_SIZE 1024
+#define CHUNK_SIZE	 1024
 
 class ServerHost
 {
@@ -53,7 +55,7 @@ class ServerHost
 
 	static void sendResponse(int client_socket, const std::string &response);
 	static std::string recvRequest(int client_socket);
-	int				   acceptClient() const;
+	int				   acceptClient(sockaddr_storage *client_addr) const;
 };
 
 #endif // SERVERHOST_HPP

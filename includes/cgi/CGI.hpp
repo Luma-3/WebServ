@@ -6,19 +6,23 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/16 16:03:53 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/17 12:09:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CGI_HPP
 #define CGI_HPP
 
+#include <arpa/inet.h>
 #include <cerrno>
 #include <cstring>
 #include <map>
+#include <netinet/in.h>
 #include <string>
+#include <sys/socket.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <vector>
 
 #include "client/Client.hpp"
 #include "client/Parser.hpp"
@@ -27,9 +31,12 @@
 #define WRITE 1
 #define READ  0
 
+#define TIMEOUT 10
+
 class Client;
 
 struct exec_data {
+	pid_t				  pid;
 	int					  pipefd[2];
 	char				**argv;
 	char				**envp;
@@ -43,6 +50,10 @@ struct exec_data {
 void initCGI(exec_data **info, const exec_data *hints);
 
 int executeCGI(exec_data *info);
+
+void recvCGIResponse(int fd, std::string *response);
+
+void adjustHeader(std::string *response);
 
 // void executeCGI(char *cgi, char **argv, char **envp, std::string &response);
 // void initCGI(const client::Parser &parser, const VirtualServer &server,

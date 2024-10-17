@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/14 14:16:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/17 16:39:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <cstring>
 #include <fcntl.h>
 #include <netdb.h>
+#include <sstream>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -131,13 +132,10 @@ void ServerHost::AddServer(std::string host_name, VirtualServer *server)
 	_nbVhost++;
 }
 
-int ServerHost::acceptClient() const
+int ServerHost::acceptClient(sockaddr_storage *client_addr) const
 {
-	// struct sockaddr_storage client_addr; // Utile pour IPv4 et IPv6 permet de
-	// stocker les infos du client pourrais etre utile pour les logs / autre
-	// protocole / pour des stats / ou de la protection server socklen_t
-	// addr_size = sizeof(client_addr);
-	int client_socket = accept(_socket, NULL, NULL);
+	socklen_t len = sizeof(sockaddr_storage);
+	int		  client_socket = accept(_socket, (sockaddr *)client_addr, &len);
 	if (client_socket == -1) {
 		throw InternalServerException("accept failed: " +
 									  std::string(strerror(errno)));
@@ -170,9 +168,42 @@ std::string ServerHost::recvRequest(int client_socket)
 	return request;
 }
 
+void chunckResponse(int client_socket, const std::string &response)
+{
+	std::string header = response.substr(0, response.find("\r\n\r\n") + 4);
+
+	std::string body = response.substr(response.find("\r\n\r\n") + 4);
+	size_t		len = body.size();
+
+	std::cout << "Chunked Header: " << header << std::endl;
+
+	send(client_socket, header.c_str(), header.size(), 0);
+
+	size_t offset = 0;
+	while (len > 0) {
+		size_t			  chunk = len > CHUNK_SIZE ? CHUNK_SIZE : len;
+		std::stringstream ss;
+		ss << std::hex << chunk;
+		std::string chunk_size = ss.str() + "\r\n";
+		std::string chunked_response =
+			chunk_size + body.substr(offset, chunk) + "\r\n";
+		std::cout << "Chunked Response: " << chunked_response << std::endl;
+		send(client_socket, chunked_response.c_str(), chunked_response.size(),
+			 0);
+		len -= chunk;
+		offset += chunk;
+	}
+	send(client_socket, "0\r\n\r\n", 5, 0);
+}
+
 void ServerHost::sendResponse(int client_socket, const std::string &response)
 {
-	send(client_socket, response.c_str(), response.size(), 0);
+	if (response.find("Content-Length: ") == std::string::npos) {
+		chunckResponse(client_socket, response);
+	}
+	else {
+		send(client_socket, response.c_str(), response.size(), 0);
+	}
 }
 
 ServerHost::~ServerHost()

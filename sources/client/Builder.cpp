@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/16 16:04:31 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/17 16:07:11 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,6 @@ void Builder::findBodyErrorPage(const client::Parser &parser,
 
 	if (findErrorpageLocationServer(_server, _code, body,
 									parser.getRequestedPath()) == 0) {
-		std::cout << "J'ai trouver" << std::endl;
 		return;
 	}
 	if (findErrorpageLocationServer(_default_server, _code, body,
@@ -217,7 +216,6 @@ void Builder::findFile(const client::Parser &parser, std::vector< char > &body)
 	std::string		path = parser.getRequestedPath();
 	const Location *location = _server->getLocation(path);
 	std::string		file = parser.getFilename();
-	std::cout << "Je cherche le fichier : " << file << std::endl;
 
 	std::string root;
 
@@ -260,7 +258,6 @@ void Builder::BuildResponse(client::Parser &parser)
 	std::vector< char > body;
 	_code = parser.getCodeResponse();
 
-	std::cout << "Extension : " << parser.getFileExtension() << std::endl;
 
 	if (_code != "200") {
 		findBodyErrorPage(parser, body);

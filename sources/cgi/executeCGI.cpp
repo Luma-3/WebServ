@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/16 16:26:13 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/17 15:19:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ namespace {
 
 int childProcess(exec_data *info)
 {
+	alarm(TIMEOUT);
+
 	close(info->pipefd[READ]);
 	dup2(info->pipefd[WRITE], STDOUT_FILENO);
 	close(info->pipefd[WRITE]);
@@ -27,6 +29,26 @@ int childProcess(exec_data *info)
 	return 0;
 }
 
+int parentProcess(exec_data *info)
+{
+	int status;
+
+	close(info->pipefd[WRITE]);
+	dup2(info->pipefd[READ], STDIN_FILENO);
+	close(info->pipefd[READ]);
+	recvCGIResponse(STDIN_FILENO, info->response);
+	waitpid(info->pid, &status, 0);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGALRM) {
+		std::cerr << "CGI Timeout"
+				  << std::endl; // TODO: Log this and return 500
+	}
+	else if (WIFEXITED(status) && WEXITSTATUS(status) != 0) {
+		std::cerr << "CGI Error: " << WEXITSTATUS(status)
+				  << std::endl; // TODO: Log this and return 500
+	}
+	adjustHeader(info->response);
+	return 0;
+}
 } // namespace
 
 void recvCGIResponse(int fd, std::string *response)
@@ -41,25 +63,18 @@ void recvCGIResponse(int fd, std::string *response)
 
 int executeCGI(exec_data *info)
 {
-	pid_t pid;
-	int	  status;
-
 	if (pipe(info->pipefd) == -1) {
 		throw std::runtime_error("Pipe Error: " + string(strerror(errno)));
 	}
-	pid = fork();
-	if (pid < 0) {
+	info->pid = fork();
+	if (info->pid < 0) {
 		throw std::runtime_error("Fork Error: " + string(strerror(errno)));
 	}
-	else if (pid == 0) {
+	else if (info->pid == 0) {
 		childProcess(info);
 	}
 	else {
-		close(info->pipefd[WRITE]);
-		dup2(info->pipefd[READ], STDIN_FILENO);
-		close(info->pipefd[READ]);
-		recvCGIResponse(STDIN_FILENO, info->response);
-		waitpid(pid, &status, 0);
+		parentProcess(info);
 	}
 	return 0;
 }

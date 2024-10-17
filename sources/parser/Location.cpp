@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/15 15:17:08 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/17 15:37:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 #include "template/VectorDeepCopy.tpp"
 
 Location::Location(const std::string &route) : _route(route) {}
-
-// faire une copy profonde
 
 Location::Location(const Location &src)
 {

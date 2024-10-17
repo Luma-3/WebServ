@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/14 22:29:03 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/17 10:55:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <map>
+#include <sys/socket.h>
 
 #include "client/Builder.hpp"
 #include "client/Parser.hpp"
@@ -62,7 +63,8 @@ Handler::Handler(const std::vector< VirtualServer * > &servers) :
 
 void Handler::handleNewConnection(const ServerHost *server)
 {
-	int client_socket = server->acceptClient();
+	sockaddr_storage *client_addr = new sockaddr_storage;
+	int				  client_socket = server->acceptClient(client_addr);
 	addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
 
 	string request = ServerHost::recvRequest(client_socket);
@@ -74,8 +76,8 @@ void Handler::handleNewConnection(const ServerHost *server)
 		vhost = server->getDefaultVhost();
 	}
 
-	client::Client *client =
-		new client::Client(vhost, server->getDefaultVhost(), client_socket);
+	client::Client *client = new client::Client(
+		vhost, server->getDefaultVhost(), client_socket, client_addr);
 	_clients[client_socket] = client;
 	client->setRequest(request);
 	client->handleRequest();
