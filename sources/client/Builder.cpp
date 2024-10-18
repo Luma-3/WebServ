@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/17 17:57:31 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/18 11:42:50 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,12 +191,12 @@ void Builder::findFile(const client::Parser &parser, std::vector< char > &body)
 bool Builder::returnParam(client::Parser &parser)
 {
 	std::string		path = parser.getRequestedPath() + parser.getFilename();
+		parser.setPath(location->getParamPair("return").second);
 	const Location *location = _server->getLocation(path);
 	if (location != NULL) {
 		if (location->getParamPair("return").first.empty() == false) {
 			_code = location->getParamPair("return").first;
-			parser.setPath(location->getParamPair("return").second);
-			return true;
+				return true;
 		}
 		return false;
 	}

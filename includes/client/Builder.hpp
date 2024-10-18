@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/17 17:53:10 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/18 11:32:00 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,28 +69,17 @@ class Builder
 	void indexOrAutoindexList(const client::Parser &parser,
 							  std::vector< char >  &body);
 	bool isDirRequest(const std::string &path);
+	void trimPath(std::string &path);
 
-	std::string cutParentDirectoryInPath(const std::string &path);
-	int			verifLocationAndGetNewPath(const client::Parser &parser,
-										   const std::string	&search_location,
-										   std::string			&final_path,
-										   std::vector< char >	&body);
-	void		trimPath(std::string &path);
+	int	 verifLocationAndGetNewPath(const client::Parser &parser,
+									std::string			 &final_path,
+									std::vector< char >	 &body);
 	bool verifAccess(const client::Parser &parser, const std::string &new_path,
 					 std::vector< char > &body);
-	std::string getConfigRoot(const std::string &path);
-	std::string getConfigIndexOrFindAutoindex(const std::string	   &root,
-											  const client::Parser &parser,
-											  std::vector< char >  &body);
-	void		insertFileInHead(std::string &file, std::string &head,
-								 std::vector< char > &body);
-	void		insertFooterAndSetAttributes(std::vector< char > &body);
-
+	void insertFileInHead(std::string &file, std::string &head,
+						  std::vector< char > &body);
+	void insertFooterAndSetAttributes(std::vector< char > &body);
 	void findRootDirectory(const std::string &path, std::string &root);
-	int	 findIndexOrAutoindexConfig(const client::Parser &parser,
-									const std::string	 &all_path,
-									const std::string	 &final_path,
-									std::vector< char >	 &body);
 
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server);

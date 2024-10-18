@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/14 22:19:00 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/18 12:29:53 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,10 @@ void Parser::setPathAndFilename(const string &path, const string &filename)
 
 bool Parser::InvalidMethod()
 {
-	string method = _headers["Method"];
+	string			method = _headers["Method"];
+	string			tmp_path = _path;
+	const Location *location;
+
 	if (method != "GET" && method != "POST" && method != "DELETE") {
 		_codeResponse = "405";
 		return true;
