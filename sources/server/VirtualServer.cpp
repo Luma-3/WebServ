@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualServer.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:54:59 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/17 16:38:54 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/18 12:44:13 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,20 +86,6 @@ VirtualServer::getParamList(const std::string &key) const
 
 std::string VirtualServer::getRoot(const std::string &path) const
 {
-	std::string root;
-	std::string final;
-
-	try {
-		root = _config.at("root")->getValue();
-	} catch (std::out_of_range &e) {
-		return "";
-	}
-	final = root + path;
-	return (final);
-}
-
-const Location *VirtualServer::getLocation(const std::string &path) const
-{
 	std::string to_test = path;
 	size_t		pos;
 
@@ -112,6 +98,20 @@ const Location *VirtualServer::getLocation(const std::string &path) const
 		to_test = to_test.substr(0, pos + 1);
 	}
 	return (NULL);
+}
+
+std::string VirtualServer::getRoot(const std::string &path) const
+{
+	std::string root;
+	std::string final;
+
+	try {
+		root = _config.at("root")->getValue();
+	} catch (std::out_of_range &e) {
+		return "";
+	}
+	final = root + path;
+	return (final);
 }
 
 void VirtualServer::print() const

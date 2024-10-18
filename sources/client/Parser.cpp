@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/18 12:29:53 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/18 12:41:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,11 +87,6 @@ void Parser::setPath(const string &path)
 void Parser::setCodeResponse(const string &code)
 {
 	_codeResponse = code;
-}
-
-const std::string Parser::getFileExtension() const
-{
-	return _filename.substr(_filename.find_last_of('.') + 1);
 }
 
 void Parser::setFilename(const string &url)
@@ -175,7 +170,6 @@ void Parser::parseRequest(const std::string &request)
 	string line;
 
 	_buffer = request;
-	std::cout << "Request : " << request << std::endl;
 	line_break_pos = _buffer.find("\r\n");
 	getHeaderFromRequest(line_break_pos);
 

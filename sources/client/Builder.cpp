@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/18 11:42:50 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/18 12:41:34 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,18 @@
 
 #include <iostream>
 
+#include "cgi/CGI.hpp"
+
 using client::Builder;
 using std::map;
 using std::string;
 
-Builder::Builder(const VirtualServer *server,
-				 const VirtualServer *default_server) :
+Builder::Builder(const VirtualServer  *server,
+				 const VirtualServer  *default_server,
+				 const client::Client *client) :
 	_server(server),
-	_default_server(default_server)
+	_default_server(default_server),
+	_client(client)
 {
 }
 
@@ -218,6 +222,20 @@ void Builder::BuildResponse(client::Parser &parser)
 	}
 	else if (returnParam(parser)) {
 		buildHeader(parser, parser.getPath(), 0);
+		reset();
+		return;
+	}
+	else if (parser.getFileExtension() == "py") {
+		exec_data *info;
+		exec_data  hints;
+
+		hints.client = _client;
+		hints.parser = &parser;
+		hints.server = _server;
+		hints.response = &_response;
+
+		initCGI(&info, &hints);
+		executeCGI(info);
 		reset();
 		return;
 	}

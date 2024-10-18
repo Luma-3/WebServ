@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:54:01 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/18 11:32:00 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/18 12:38:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <sys/wait.h>
 #include <vector>
 
+#include "client/Client.hpp"
 #include "client/Parser.hpp"
 #include "server/VirtualServer.hpp"
 
@@ -37,8 +38,9 @@ class Client;
 class Builder
 {
   private:
-	const VirtualServer *_server;
-	const VirtualServer *_default_server;
+	const VirtualServer	 *_server;
+	const VirtualServer	 *_default_server;
+	const client::Client *_client;
 
 	std::string _path;
 	std::string _final_url;
@@ -53,8 +55,8 @@ class Builder
 
 	void buildHeader(const Parser &parser, const std::string &location_param,
 					 int body_size);
-	static std::string findContentType(const std::string &file_extension);
-	void			   reset();
+
+	void reset();
 
 	void findBodyErrorPage(const Parser &parser, std::vector< char > &body);
 	int	 readDataRequest(std::vector< char > &body, const std::string &path);
@@ -82,7 +84,8 @@ class Builder
 	void findRootDirectory(const std::string &path, std::string &root);
 
   public:
-	Builder(const VirtualServer *server, const VirtualServer *default_server);
+	Builder(const VirtualServer *server, const VirtualServer *default_server,
+			const client::Client *client);
 	Builder(const Builder &src);
 	Builder &operator=(const Builder &src);
 	~Builder();
@@ -94,7 +97,8 @@ class Builder
 
 } // namespace client
 
-std::string findStatusMessage(const std::string &code); // namespace client
+std::string findStatusMessage(const std::string &code);
+std::string findContentType(const std::string &file_extension);
 
 #define DEFAULT_ERROR_PAGE \
 	"<!DOCTYPE html> \

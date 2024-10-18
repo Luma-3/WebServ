@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:03:20 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/17 16:37:37 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/18 12:40:51 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 class Location : public IConfig
 {
   private:
+	std::string						 _route;
 	std::map< std::string, Param * > _params;
 	std::string						 _route;
 
@@ -31,7 +32,7 @@ class Location : public IConfig
 	// void IdentifyParam(Token *token);
 
   public:
-	Location();
+	Location(const std::string &route);
 	Location(const Location &src);
 	Location &operator=(const Location &src);
 	~Location();
@@ -45,8 +46,8 @@ class Location : public IConfig
 									 getParamPair(const std::string &key) const;
 	const std::vector< std::string > getParamList(const std::string &key) const;
 	std::string						 getRoot(const std::string &path) const;
-	void							 print() const;
-	void setRoute(const std::string &route) { _route = route; };
+
+	void print() const;
 };
 
 #include "template/Cast.tpp"

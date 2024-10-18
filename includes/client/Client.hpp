@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/16 17:05:51 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/18 12:39:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define CLIENT_HPP
 
 #include <string>
+#include <sys/socket.h>
 
 #include "client/Builder.hpp"
 #include "client/Parser.hpp"
@@ -32,7 +33,7 @@ class Client
 	const VirtualServer *_default_server;
 	const ServerHost	*_host;
 	const int			 _client_socket;
-	bool				 _autoindex_parent_location;
+	sockaddr_storage	*_addr;
 
 	std::string _request;
 	std::string _response;
@@ -42,19 +43,19 @@ class Client
   public:
 	Client();
 	Client(const VirtualServer *server, const VirtualServer *default_s,
-		   int client_socket);
+		   int client_socket, sockaddr_storage *client_addr);
 	Client(const Client &src);
 	Client &operator=(const Client &src);
 	~Client();
 
 	bool operator==(const Client &rhs) const;
 
-	const ServerHost  *getHost() const;
-	int				   getSocket() const;
-	const std::string &getRequest() const;
-	const std::string &getResponse() const { return _response; };
-	const std::string &getBody() const;
-	bool getAutoindexParentLocation() const { return _autoindex_parent_location; };
+	const ServerHost	   *getHost() const;
+	int						getSocket() const;
+	const std::string	   &getRequest() const;
+	const std::string	   &getResponse() const { return _response; };
+	const std::string	   &getBody() const;
+	const sockaddr_storage *getAddr() const { return _addr; };
 
 	void setRequest(const std::string &request) { _request = request; };
 	void setResponse(const std::string &response) { _response = response; };
