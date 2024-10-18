@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/17 12:09:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/18 11:44:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,31 @@ void adjustHeader(std::string *response);
 // void executeCGI(char *cgi, char **argv, char **envp, std::string &response);
 // void initCGI(const client::Parser &parser, const VirtualServer &server,
 // 			 const client::Client &client, std::string &response);
+
+class CGI
+{
+  private:
+	pid_t				  _pid;
+	int					  _pipefd[2];
+	char				**_argv;
+	char				**_envp;
+	char				 *_cgi;
+	const client::Client *_client;
+	client::Parser		 *_parser;
+	const VirtualServer	 *_server;
+	std::string			 *_response;
+
+	void createEnv();
+
+  public:
+	CGI();
+	CGI(const client::Client *client, client::Parser *parser,
+		const VirtualServer *server, std::string *response);
+	CGI(const CGI &src);
+	CGI &operator=(const CGI &src);
+	~CGI();
+
+	void execute();
+	void waitCGI();
+};
 #endif // CGI_HPP

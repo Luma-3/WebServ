@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/17 16:07:11 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/18 12:27:29 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,9 +258,13 @@ void Builder::BuildResponse(client::Parser &parser)
 	std::vector< char > body;
 	_code = parser.getCodeResponse();
 
-
 	if (_code != "200") {
 		findBodyErrorPage(parser, body);
+	}
+	else if (returnParam(parser) == true) {
+		buildHeader(parser, parser.getPath(), 0);
+		reset();
+		return;
 	}
 	else if (parser.getFileExtension() == "py") {
 		exec_data *info;
@@ -273,11 +277,6 @@ void Builder::BuildResponse(client::Parser &parser)
 
 		initCGI(&info, &hints);
 		executeCGI(info);
-		reset();
-		return;
-	}
-	else if (returnParam(parser) == true) {
-		buildHeader(parser, parser.getPath(), 0);
 		reset();
 		return;
 	}

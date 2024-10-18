@@ -6,7 +6,7 @@
 #    By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/20 13:05:14 by Monsieur_Ca       #+#    #+#              #
-#    Updated: 2024/10/17 16:43:59 by jbrousse         ###   ########.fr        #
+#    Updated: 2024/10/18 11:12:18 by jbrousse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,6 @@ server_protocol = os.environ["SERVER_PROTOCOL"]
 
 # time.sleep(11) #simulate a long task TimeOut
 
-print("Status: 200 OK\r\nContent-Type: text/html")
 print("<html>")
 print("<head>")
 print("<title>Test CGI</title>")
@@ -35,5 +34,3 @@ print("<p>SERVER_PORT: {}</p>".format(server_port))
 print("<p>SERVER_PROTOCOL: {}</p>".format(server_protocol))
 print("</body>")
 print("</html>")
-
-
