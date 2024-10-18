@@ -1,4 +1,5 @@
-/* ************************************************************************** */
+/* **************************************************************************
+ */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   Builder.hpp                                        :+:      :+:    :+:   */
@@ -40,25 +41,25 @@ class Builder
   private:
 	const VirtualServer	 *_server;
 	const VirtualServer	 *_default_server;
-	const client::Client *_client;
 
 	std::string _path;
-	std::string _final_url;
-	std::string _code;
-	std::string _response;
+	std::string _filename;
+
+	std::string			_final_url;
+	std::string			_code;
+	std::string			_response;
+	std::vector< char > _body;
 
 	// SUR
 	std::string _content_type;
 
-	void createErrorPage(const std::string	 &return_code,
-						 std::vector< char > &body);
+	void createErrorPage(const std::string &return_code);
 
 	void buildHeader(const Parser &parser, const std::string &location_param,
 					 int body_size);
 
 	void reset();
 
-	void findBodyErrorPage(const Parser &parser, std::vector< char > &body);
 	int	 readDataRequest(std::vector< char > &body, const std::string &path);
 	int	 findErrorpageLocationServer(const VirtualServer *server,
 									 const std::string	 &code,
@@ -67,7 +68,6 @@ class Builder
 	void findFile(const client::Parser &parser, std::vector< char > &body);
 	void readFile(const client::Parser &parser, const std::string &path,
 				  std::vector< char > &body);
-	bool returnParam(Parser &parser);
 	void indexOrAutoindexList(const client::Parser &parser,
 							  std::vector< char >  &body);
 	bool isDirRequest(const std::string &path);
@@ -85,12 +85,17 @@ class Builder
 
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server,
-			const client::Client *client);
+			const client::Parser &parser);
 	Builder(const Builder &src);
 	Builder &operator=(const Builder &src);
 	~Builder();
 
 	void BuildResponse(client::Parser &parser);
+	void findErrorPage(const Parser &parser);
+	bool returnParam(Parser &parser);
+
+	void setPath(const std::string &path) { _path = path; };
+	void setFilename(const std::string &filename) { _filename = filename; };
 
 	const std::string &getResponse() const;
 };

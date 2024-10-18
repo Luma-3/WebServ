@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/18 12:41:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/18 14:13:10 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,94 +16,11 @@ using client::Parser;
 using std::map;
 using std::string;
 
-Parser::Parser()
-{
-	_codeResponse = "200";
-}
-
-Parser::Parser(const Parser &src)
-{
-	if (this == &src) {
-		return;
-	}
-	_headers = src._headers;
-	_buffer = src._buffer;
-	_path = src._path;
-	_filename = src._filename;
-	_codeResponse = src._codeResponse;
-}
-
-Parser::Parser(const VirtualServer *server,
-			   const VirtualServer *default_server) :
-	_server(server),
-	_default_server(default_server),
-	_codeResponse("200")
-{
-}
-
-Parser &Parser::operator=(const Parser &src)
-{
-	if (this == &src) {
-		return *this;
-	}
-	_headers = src._headers;
-	_buffer = src._buffer;
-	_path = src._path;
-	_filename = src._filename;
-	_codeResponse = src._codeResponse;
-	return *this;
-}
-
-const map< string, string > &Parser::getHeaders() const
-{
-	return _headers;
-}
-
-const string &Parser::getCodeResponse() const
-{
-	return _codeResponse;
-}
-
-const string &Parser::getRequestedPath() const
-{
-	return _requested_path;
-}
-
-const string &Parser::getPath() const
-{
-	return _path;
-}
-
-const string &Parser::getFilename() const
-{
-	return _filename;
-}
-
-void Parser::setPath(const string &path)
-{
-	_path = path;
-}
-
-void Parser::setCodeResponse(const string &code)
-{
-	_codeResponse = code;
-}
-
-void Parser::setFilename(const string &url)
-{
-	_filename = url.substr(url.find_last_of('/') + 1);
-}
-
-void Parser::setPathAndFilename(const string &path, const string &filename)
-{
-	_path = path;
-	_filename = filename;
-}
+Parser::Parser() : _codeResponse("200") {}
 
 bool Parser::InvalidMethod()
 {
 	string			method = _headers["Method"];
-	string			tmp_path = _path;
 	const Location *location;
 
 	if (method != "GET" && method != "POST" && method != "DELETE") {
@@ -176,20 +93,7 @@ void Parser::parseRequest(const std::string &request)
 	getBodyFromRequest(line_break_pos);
 }
 
-void Parser::reset()
-{
-	_headers.clear();
-	_buffer.clear();
-	_path.clear();
-	_filename.clear();
-	_codeResponse = "200";
-}
-
-Parser::~Parser() {}
-
-// NEW
-
-std::string findHostName(const std::string &request)
+std::string Parser::findHostName(const std::string &request)
 {
 	std::string host = "Host: ";
 	size_t		pos = request.find(host);
@@ -201,3 +105,5 @@ std::string findHostName(const std::string &request)
 	size_t end = request.find("\r\n", pos);
 	return request.substr(pos, end - pos);
 }
+
+Parser::~Parser() {}

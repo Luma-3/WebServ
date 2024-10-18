@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/18 12:41:47 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/18 13:57:48 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,21 @@ const std::string &Client::getBody() const
 
 void Client::handleRequest()
 {
-	Builder builder(_server, _default_server, this);
 	Parser	parser(_server, _default_server);
-
 	parser.parseRequest(_request);
+	
+	Builder builder(_server, _default_server);
+
+	builder.setPath(parser.getRequestedPath());
+	builder.setFilename(parser.getFilename());
+
+	if (parser.getCodeResponse() != "200") {
+		builder.findErrorPage(parser);
+	}
+	else if (builder.returnParam(parser) == true) {
+		builder.findFile(parser, _body);
+	}
+
 	builder.BuildResponse(parser);
 	_response = builder.getResponse();
 }

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/18 12:40:18 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/18 14:12:56 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,16 +65,12 @@ typedef struct s_info_param {
 class Parser
 {
   private:
-	const VirtualServer *_server;
-	const VirtualServer *_default_server;
-
 	std::map< std::string, std::string > _headers;
-	std::vector< std::string >			 _methods;
 
+	std::string _method;
 	std::string _extension;
 	std::string _buffer;
 	std::string _requested_path;
-	std::string _path;
 	std::string _filename;
 	std::string _codeResponse;
 	std::string _path_info;
@@ -84,48 +80,29 @@ class Parser
 
 	void handleRequestedPath(std::string &url);
 
-	std::string getConfigParam(
-		const std::string									&param,
-		std::vector< std::string (*)(const std::string &) > &functions);
-
-	bool find_param_location(s_info_param &info, int param, int annexes);
-	bool find_param_server(s_info_param &info, int param, int annexes);
-	bool find_param_location_default(s_info_param &info, int param,
-									 int annexes);
-	bool find_param_server_default(s_info_param &info, int param, int annexes);
-
 	bool InvalidMethod();
 	bool InvalidHeader();
 
   public:
 	Parser();
-	Parser(const Parser &src);
-	Parser(const VirtualServer *server, const VirtualServer *default_server);
-	Parser &operator=(const Parser &src);
 	~Parser();
+
+	static std::string findHostName(const std::string &request);
 
 	void parseRequest(const std::string &request);
 
-	void reset();
+	const std::map< std::string, std::string > &getHeaders() const
+	{
+		return _headers;
+	};
 
-	void setPath(const std::string &path);
-	void setCodeResponse(const std::string &code);
-	void setFilename(const std::string &filename);
-	void setPathAndFilename(const std::string &path,
-							const std::string &filename);
-
-	const std::map< std::string, std::string > &getHeaders() const;
-	const std::string						   &getRequestedPath() const;
-	const std::string						   &getPath() const;
-	const std::string						   &getFilename() const;
-	const std::string						   &getCodeResponse() const;
-	const std::string  getFileExtension() const { return _extension; };
+	const std::string &getRequestedPath() const { return _requested_path; };
+	const std::string &getFilename() const { return _filename; };
+	const std::string &getCodeResponse() const { return _codeResponse; };
+	const std::string &getFileExtension() const { return _extension; };
 	const std::string &getPathInfo() const { return _path_info; };
-	bool getConfigParam(s_info_param &info, int flags, int annexes,
-						int start = 0);
 };
 
 } // namespace client
-std::string findHostName(const std::string &request);
 
 #endif

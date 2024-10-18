@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/18 12:41:34 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/18 13:58:51 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ using std::string;
 
 Builder::Builder(const VirtualServer  *server,
 				 const VirtualServer  *default_server,
-				 const client::Client *client) :
+				 const client::Parser &parser) :
 	_server(server),
 	_default_server(default_server),
-	_client(client)
+	
 {
 }
 
@@ -54,8 +54,7 @@ const string &Builder::getResponse() const
 	return _response;
 }
 
-void Builder::createErrorPage(const std::string	  &return_code,
-							  std::vector< char > &body)
+void Builder::createErrorPage(const std::string &return_code)
 {
 	string error_page = DEFAULT_ERROR_PAGE;
 
@@ -65,7 +64,7 @@ void Builder::createErrorPage(const std::string	  &return_code,
 					   findStatusMessage(return_code));
 	_content_type = "text/html";
 
-	body.assign(error_page.begin(), error_page.end());
+	_body.assign(error_page.begin(), error_page.end());
 }
 
 void Builder::buildHeader(const Parser		&parser,
@@ -122,19 +121,18 @@ int Builder::findErrorpageLocationServer(const VirtualServer *server,
 	return -1;
 }
 
-void Builder::findBodyErrorPage(const client::Parser &parser,
-								std::vector< char >	 &body)
+void Builder::findErrorPage(const client::Parser &parser)
 {
 
-	if (findErrorpageLocationServer(_server, _code, body,
+	if (findErrorpageLocationServer(_server, _code, _body,
 									parser.getRequestedPath()) == 0) {
 		return;
 	}
-	if (findErrorpageLocationServer(_default_server, _code, body,
+	if (findErrorpageLocationServer(_default_server, _code, _body,
 									parser.getRequestedPath()) == 0) {
 		return;
 	}
-	createErrorPage(_code, body);
+	createErrorPage(_code);
 }
 
 int Builder::readDataRequest(std::vector< char > &body,
@@ -172,7 +170,7 @@ void Builder::readFile(const client::Parser &parser, const std::string &path,
 	ret = readDataRequest(body, path);
 	if (ret != 0) {
 		_code = (ret == ENOENT) ? "404" : "403";
-		findBodyErrorPage(parser, body);
+		findErrorPage(parser, body);
 	}
 }
 
@@ -194,18 +192,19 @@ void Builder::findFile(const client::Parser &parser, std::vector< char > &body)
 
 bool Builder::returnParam(client::Parser &parser)
 {
-	std::string		path = parser.getRequestedPath() + parser.getFilename();
-		parser.setPath(location->getParamPair("return").second);
+	std::string		path = parser.getRequestedPath();
 	const Location *location = _server->getLocation(path);
 	if (location != NULL) {
 		if (location->getParamPair("return").first.empty() == false) {
 			_code = location->getParamPair("return").first;
-				return true;
+			parser.setPath(location->getRoot(path) +
+						   location->getParamPair("return").second);
+			return true;
 		}
 		return false;
 	}
 	else if (_server->getParamPair("return").first.empty() == false) {
-		_code = _server->getParamPair("return").first;
+		parser.setCodeResponse(_server->getParamPair("return").first);
 		parser.setPath(_server->getParamPair("return").second);
 		return true;
 	}
@@ -218,7 +217,7 @@ void Builder::BuildResponse(client::Parser &parser)
 	_code = parser.getCodeResponse();
 
 	if (_code != "200") {
-		findBodyErrorPage(parser, body);
+		findErrorPage(parser, body);
 	}
 	else if (returnParam(parser)) {
 		buildHeader(parser, parser.getPath(), 0);
