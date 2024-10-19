@@ -41,63 +41,42 @@ class Builder
   private:
 	const VirtualServer	 *_server;
 	const VirtualServer	 *_default_server;
+	const client::Parser &_parser;
 
-	std::string _path;
-	std::string _filename;
-
-	std::string			_final_url;
+	std::string			_request_path;
+	std::string			_path;
+	std::string			_filename;
+	std::string			_extension;
+	std::string			_location;
 	std::string			_code;
-	std::string			_response;
 	std::vector< char > _body;
 
-	// SUR
-	std::string _content_type;
+	void createErrorPage();
 
-	void createErrorPage(const std::string &return_code);
+	void		buildHeader();
+	int			readDataRequest();
+	static void trimPath(std::string &path);
 
-	void buildHeader(const Parser &parser, const std::string &location_param,
-					 int body_size);
-
-	void reset();
-
-	int	 readDataRequest(std::vector< char > &body, const std::string &path);
-	int	 findErrorpageLocationServer(const VirtualServer *server,
-									 const std::string	 &code,
-									 std::vector< char > &body,
-									 const std::string	 &path);
-	void findFile(const client::Parser &parser, std::vector< char > &body);
-	void readFile(const client::Parser &parser, const std::string &path,
-				  std::vector< char > &body);
-	void indexOrAutoindexList(const client::Parser &parser,
-							  std::vector< char >  &body);
-	bool isDirRequest(const std::string &path);
-	void trimPath(std::string &path);
-
-	int	 verifLocationAndGetNewPath(const client::Parser &parser,
-									std::string			 &final_path,
-									std::vector< char >	 &body);
-	bool verifAccess(const client::Parser &parser, const std::string &new_path,
-					 std::vector< char > &body);
-	void insertFileInHead(std::string &file, std::string &head,
-						  std::vector< char > &body);
+	int	 verifLocationAndGetNewPath();
+	bool verifAccess();
+	void insertFileInHead(std::string &file);
 	void insertFooterAndSetAttributes(std::vector< char > &body);
-	void findRootDirectory(const std::string &path, std::string &root);
 
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server,
 			const client::Parser &parser);
-	Builder(const Builder &src);
-	Builder &operator=(const Builder &src);
 	~Builder();
 
-	void BuildResponse(client::Parser &parser);
-	void findErrorPage(const Parser &parser);
-	bool returnParam(Parser &parser);
+	void BuildResponse(std::string &response);
+	void returnParam();
+	void findFile();
+	void readFile();
+	void findErrorpageLocationServer();
+	void setIndexOrReturnAutoindex();
 
-	void setPath(const std::string &path) { _path = path; };
-	void setFilename(const std::string &filename) { _filename = filename; };
-
-	const std::string &getResponse() const;
+	const std::string &getFileExtension() const { return _extension; };
+	const std::string &getFilename() const { return _filename; };
+	const std::string &getCode() const { return _code; };
 };
 
 } // namespace client

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:03:20 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/18 12:40:51 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/19 15:57:33 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ class Location : public IConfig
   private:
 	std::string						 _route;
 	std::map< std::string, Param * > _params;
-	std::string						 _route;
 
   public:
 	// void IdentifyParam(Token *token);

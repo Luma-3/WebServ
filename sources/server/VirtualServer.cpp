@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:54:59 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/18 12:44:13 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/19 17:48:33 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ void VirtualServer::addParam(const std::string &key, Param *param)
 void VirtualServer::addLocation(const std::string &route, Location *location)
 {
 	_locations[route] = location;
-	location->setRoute(route);
 }
 
 const Param *VirtualServer::getParam(const std::string &key) const
@@ -86,6 +85,25 @@ VirtualServer::getParamList(const std::string &key) const
 
 std::string VirtualServer::getRoot(const std::string &path) const
 {
+	std::string root;
+	std::string final;
+
+	try {
+		root = _config.at("root")->getValue();
+	} catch (std::out_of_range &e) {
+		return "";
+	}
+	if (path[0] != '/') {
+		final = root + path;
+	}
+	else {
+		final = root + path.substr(1);
+	}
+	return (final);
+}
+
+const Location *VirtualServer::getLocation(const std::string &path) const
+{
 	std::string to_test = path;
 	size_t		pos;
 
@@ -96,22 +114,11 @@ std::string VirtualServer::getRoot(const std::string &path) const
 		}
 		pos = to_test.find_last_of("/", to_test.length() - 2);
 		to_test = to_test.substr(0, pos + 1);
+		if (to_test == "/") {
+			break;
+		}
 	}
 	return (NULL);
-}
-
-std::string VirtualServer::getRoot(const std::string &path) const
-{
-	std::string root;
-	std::string final;
-
-	try {
-		root = _config.at("root")->getValue();
-	} catch (std::out_of_range &e) {
-		return "";
-	}
-	final = root + path;
-	return (final);
 }
 
 void VirtualServer::print() const

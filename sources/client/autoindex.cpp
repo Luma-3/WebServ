@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/18 11:31:07 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/19 17:52:55 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,6 @@
 
 using client::Builder;
 using std::string;
-
-bool Builder::isDirRequest(const string &path)
-{
-	if (path[path.size() - 1] == '/') {
-		return true;
-	}
-	return false;
-}
 
 void Builder::trimPath(string &path)
 {
@@ -34,140 +26,112 @@ void Builder::trimPath(string &path)
 	}
 }
 
-bool Builder::verifAccess(const client::Parser &parser, const string &new_path,
-						  std::vector< char > &body)
+bool Builder::verifAccess()
 {
 	int ret;
 
-	ret = access(new_path.c_str(), F_OK | R_OK);
+	ret = access(_path.c_str(), F_OK | R_OK);
 	if (ret != 0) {
 		_code = (errno == ENOENT) ? "404" : "403";
-		findBodyErrorPage(parser, body);
+		findErrorpageLocationServer();
 		return false;
 	}
 	return true;
 }
 
-void Builder::findRootDirectory(const string &path, string &root)
-{
-	const Location *location;
-	string			tmp = path;
-
-	while (tmp.size() != 0) {
-		std::cout << "JE cherche le root pour : " << tmp << std::endl;
-		location = _server->getLocation(tmp);
-		if (location != NULL) {
-			root = location->getRoot(path);
-			if (root.empty() == false) {
-				return;
-			}
-		}
-		if (tmp.size() == 1) {
-			break;
-		}
-		tmp = tmp.substr(tmp.rfind("/"));
-	}
-	root = _server->getParamValue("root");
-}
-
-int Builder::verifLocationAndGetNewPath(const client::Parser &parser,
-										string				 &final_path,
-										std::vector< char >	 &body)
+int Builder::verifLocationAndGetNewPath()
 {
 	string			root;
 	const Location *location;
 	string			autoindex;
-	string			all_path;
+	string			index;
 
-	all_path = parser.getRequestedPath() + parser.getFilename();
-	string search_location = all_path;
-	findRootDirectory(all_path, final_path);
-
-	while (search_location.size() != 0) {
-		location = _server->getLocation(search_location);
-		if (location != NULL) {
-			if (location->getParamValue("index").empty() == false) {
-				readFile(parser, final_path + location->getParamValue("index"),
-						 body);
-				return INDEX_FIND;
-			}
-			autoindex = location->getParamValue("autoindex");
-			if (autoindex.empty() == false) {
-				return (autoindex == "on") ? AUTOINDEX_ON : AUTOINDEX_OFF;
-			}
+	location = _server->getLocation(_request_path);
+	if (location != NULL) {
+		index = location->getParamValue("index");
+		if (!index.empty()) {
+			_path = root + index;
+			_filename = index;
+			_extension = Parser::findExtension(index);
+			return INDEX_FIND;
 		}
-		if (search_location.size() == 1) {
-			break;
+		autoindex = location->getParamValue("autoindex");
+		if (!autoindex.empty()) {
+			_path = location->getRoot(_request_path);
+			return (autoindex == "on") ? AUTOINDEX_ON : AUTOINDEX_OFF;
 		}
-		search_location = search_location.substr(0, search_location.rfind("/"));
+		return AUTOINDEX_OFF;
 	}
-	if (_server->getParamValue("index").empty() == false) {
-		readFile(parser, final_path + _server->getParamValue("index"), body);
+	index = _server->getParamValue("index");
+	root = _server->getRoot(_request_path);
+	if (!index.empty()) {
+		_path = root + index;
+		_filename = index;
+		_extension = Parser::findExtension(index);
+		std::cout << "Extension: " << _extension << std::endl;
 		return INDEX_FIND;
 	}
 	autoindex = _server->getParamValue("autoindex");
-	if (autoindex.empty() == false) {
-		return (autoindex == "on") ? AUTOINDEX_ON : AUTOINDEX_OFF;
-	}
-	return AUTOINDEX_OFF;
+	_path = _server->getRoot(_request_path);
+	return (autoindex == "on") ? AUTOINDEX_ON : AUTOINDEX_OFF;
 }
 
-void Builder::insertFileInHead(string &file, string &head,
-							   std::vector< char > &body)
+void Builder::insertFileInHead(string &file)
 {
+	string head = DEFAULT_AUTOINDEX_LIST;
 	head.replace(head.find("%@file@%"), 8, file);
 	head.replace(head.find("%@file@%"), 8, file);
-	body.insert(body.end(), head.begin(), head.end());
+	_body.insert(_body.end(), head.begin(), head.end());
 }
 
 void Builder::insertFooterAndSetAttributes(std::vector< char > &body)
 {
 	string foot = DEFAULT_AUTOINDEX_PAGE_FOOT;
 	body.insert(body.end(), foot.begin(), foot.end());
-	_content_type = "text/html";
+	_extension = "html";
 }
 
-void Builder::indexOrAutoindexList(const client::Parser &parser,
-								   std::vector< char >	&body)
+void Builder::setIndexOrReturnAutoindex()
 {
-	DIR			  *dir;
 	struct dirent *entry;
 	string		   file;
-	string		   final_path;
+	DIR			  *dir;
 
-	int ret = verifLocationAndGetNewPath(parser, final_path, body);
+	std::cout << "JE SUIS DANS SET INDEX OR RETURN AUTOINDEX" << std::endl;
+	if (!_filename.empty()) {
+		return;
+	}
+	int ret = verifLocationAndGetNewPath();
 	if (ret == INDEX_FIND) {
 		return;
 	}
 	else if (ret == AUTOINDEX_OFF) {
 		_code = "403";
-		findBodyErrorPage(parser, body);
+		findErrorpageLocationServer();
+		std::cout << "J'ai Trouve un autoindex sur off" << std::endl;
 		return;
 	}
-	trimPath(final_path);
-	if (verifAccess(parser, final_path, body) == false) {
+	trimPath(_path);
+	if (!verifAccess()) {
 		return;
 	}
 
 	string head = DEFAULT_AUTOINDEX_PAGE_HEAD;
-	body.insert(body.end(), head.begin(), head.end());
+	_body.insert(_body.end(), head.begin(), head.end());
 
-	dir = opendir(final_path.c_str());
+	dir = opendir(_path.c_str());
 	while ((entry = readdir(dir)) != NULL) {
 		if (entry->d_name[0] == '.') {
 			continue;
 		}
-		head = DEFAULT_AUTOINDEX_LIST;
-
 		if (entry->d_type == DT_DIR) {
 			file = entry->d_name + string("/");
 		}
 		else {
 			file = entry->d_name;
 		}
-		std::cout << "file : " << file << std::endl;
-		insertFileInHead(file, head, body);
+		insertFileInHead(file);
 	}
 	closedir(dir);
-	insertFooterAndSetAttributes(body);
+	insertFooterAndSetAttributes(_body);
 }

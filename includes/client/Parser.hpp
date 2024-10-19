@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/18 14:12:56 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/19 16:02:09 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,36 +31,6 @@
 #define F_DENYMETHOD  0x40
 
 namespace client {
-
-enum IdentifyParam {
-	P_INDEX,
-	P_ROOT,
-	P_AUTOINDEX,
-	P_RETURN,
-	P_ERRORPAGE,
-	P_DENYMETHOD,
-};
-
-typedef struct s_info_param {
-	std::string				   root;
-	std::string				   index;
-	std::string				   autoindex;
-	std::string				   return_code;
-	std::string				   return_value;
-	std::string				   error_page;
-	std::string				   max_body_size;
-	std::vector< std::string > deny_methods;
-
-	bool isEmpty() const
-	{
-		if (root.empty() && index.empty() && autoindex.empty() &&
-			return_code.empty() && return_value.empty() && error_page.empty() &&
-			max_body_size.empty() && deny_methods.empty()) {
-			return true;
-		}
-		return false;
-	};
-} t_info_param;
 
 class Parser
 {
@@ -91,16 +61,14 @@ class Parser
 
 	void parseRequest(const std::string &request);
 
-	const std::map< std::string, std::string > &getHeaders() const
-	{
-		return _headers;
-	};
-
 	const std::string &getRequestedPath() const { return _requested_path; };
 	const std::string &getFilename() const { return _filename; };
 	const std::string &getCodeResponse() const { return _codeResponse; };
 	const std::string &getFileExtension() const { return _extension; };
 	const std::string &getPathInfo() const { return _path_info; };
+	std::string		   getHeader(const std::string &key) const;
+
+	static std::string findExtension(const std::string &filename);
 };
 
 } // namespace client

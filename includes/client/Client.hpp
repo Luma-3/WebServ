@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/18 12:39:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/19 14:44:51 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,10 @@ class Client
 
 	void setRequest(const std::string &request) { _request = request; };
 	void setResponse(const std::string &response) { _response = response; };
-	void setAutoindexParentLocation(bool autoindex_parent_location)
-	{
-		_autoindex_parent_location = autoindex_parent_location;
-	};
+	// void setAutoindexParentLocation(bool autoindex_parent_location)
+	// {
+	// 	_autoindex_parent_location = autoindex_parent_location;
+	// };
 
 	void handleRequest();
 };

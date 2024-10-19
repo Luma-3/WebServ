@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/18 13:57:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/19 16:20:21 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,12 @@ Client::Client(const VirtualServer *server, const VirtualServer *default_s,
 	_client_socket(client_socket),
 	_addr(client_addr)
 {
-	std::cout << "Je suis dans le constructeur de Client" << std::endl;
 }
 
 Client::Client(const Client &src) :
 	_server(src._server),
 	_default_server(src._default_server),
-	_client_socket(src._client_socket),
-	_autoindex_parent_location(src._autoindex_parent_location)
+	_client_socket(src._client_socket)
 {
 }
 
@@ -71,23 +69,24 @@ const std::string &Client::getBody() const
 
 void Client::handleRequest()
 {
-	Parser	parser(_server, _default_server);
+	Parser parser;
 	parser.parseRequest(_request);
-	
-	Builder builder(_server, _default_server);
 
-	builder.setPath(parser.getRequestedPath());
-	builder.setFilename(parser.getFilename());
+	Builder builder(_server, _default_server, parser);
 
-	if (parser.getCodeResponse() != "200") {
-		builder.findErrorPage(parser);
+	if (builder.getCode() != "200") {
+		builder.findErrorpageLocationServer();
 	}
-	else if (builder.returnParam(parser) == true) {
-		builder.findFile(parser, _body);
-	}
+	builder.returnParam();
+	builder.setIndexOrReturnAutoindex();
+	if (!builder.getFilename().empty() && builder.getFileExtension() == ".py") {
 
-	builder.BuildResponse(parser);
-	_response = builder.getResponse();
+		return;
+	}
+	else if (!builder.getFilename().empty()) {
+		builder.findFile();
+	}
+	builder.BuildResponse(_response);
 }
 
 Client::~Client()

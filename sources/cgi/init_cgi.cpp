@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/17 11:35:20 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/19 15:58:16 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,7 @@ char **createEnv(const VirtualServer *server, const client::Parser *parser,
 		env_vec.push_back("PATH_TRANSLATED=" +
 						  getTranslatedPath(parser, server));
 		env_vec.push_back("QUERY_STRING=");
-		env_vec.push_back("REQUEST_METHOD=" +
-						  parser->getHeaders().at("Method"));
+		env_vec.push_back("REQUEST_METHOD=" + parser->getHeader("Method"));
 		env_vec.push_back("REQUEST_URI=" + parser->getRequestedPath());
 		env_vec.push_back("SCRIPT_NAME=" + parser->getRequestedPath());
 		env_vec.push_back("SERVER_NAME=" +
@@ -82,7 +81,7 @@ char **createEnv(const VirtualServer *server, const client::Parser *parser,
 		env_vec.push_back("SERVER_PORT=" +
 						  server->getParamPair("listen").second);
 		env_vec.push_back("SERVER_PROTOCOL=" +
-						  parser->getHeaders().at("httpVersion"));
+						  parser->getHeader("httpVersion"));
 		env_vec.push_back("SERVER_SOFTWARE=webserv/0.5");
 
 		getClientInfo(client, env_vec);

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/18 14:13:10 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/19 17:53:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ Parser::Parser() : _codeResponse("200") {}
 
 bool Parser::InvalidMethod()
 {
-	string			method = _headers["Method"];
-	const Location *location;
+	string method = _headers["Method"];
+	// const Location *location;
 
 	if (method != "GET" && method != "POST" && method != "DELETE") {
 		_codeResponse = "405";
@@ -105,5 +105,24 @@ std::string Parser::findHostName(const std::string &request)
 	size_t end = request.find("\r\n", pos);
 	return request.substr(pos, end - pos);
 }
+
+std::string Parser::findExtension(const std::string &filename)
+{
+	size_t pos = filename.rfind('.');
+
+	if (pos == std::string::npos) {
+		return "";
+	}
+	return filename.substr(pos + 1);
+}
+
+std::string Parser::getHeader(const std::string &key) const
+{
+	try {
+		return _headers.at(key);
+	} catch (const std::out_of_range &e) {
+		return "";
+	}
+};
 
 Parser::~Parser() {}

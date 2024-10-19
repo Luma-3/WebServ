@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 11:07:16 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/19 16:08:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,12 @@ Handler *init_server(const int ac, const char **av)
 
 	const std::vector< VirtualServer * > servers = parser.getServers();
 
-	std::vector< VirtualServer * >::const_iterator it = servers.begin();
-	while (it != servers.end()) {
-		std::cout << "Server: " << std::endl;
-		(*it)->print();
-		++it;
-	}
+	// std::vector< VirtualServer * >::const_iterator it = servers.begin();
+	// while (it != servers.end()) {
+	// 	std::cout << "Server: " << std::endl;
+	// 	(*it)->print();
+	// 	++it;
+	// }
 
 	Handler *handler = new Handler(servers);
 

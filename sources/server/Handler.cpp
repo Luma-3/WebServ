@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/18 12:43:12 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/19 16:00:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void Handler::handleNewConnection(const ServerHost *server)
 
 	std::cout << "I wait for the request" << std::endl;
 	string request = ServerHost::recvRequest(client_socket);
-	string hostname = findHostName(request);
+	string hostname = client::Parser::findHostName(request);
 	// TODO : if not hostname bad request
 
 	const VirtualServer *vhost = server->getVhost(hostname);

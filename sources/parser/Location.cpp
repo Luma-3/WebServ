@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/18 12:43:06 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/19 16:43:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,9 @@ std::string Location::getRoot(const std::string &path) const
 	}
 	final = path;
 	size_t patern_pos = final.find_first_of(_route);
+	std::cout << "Patern: " << _route << std::endl;
 	final.replace(patern_pos, _route.size(), root);
+	std::cout << "Root: " << final << std::endl;
 	return (final);
 }
 
