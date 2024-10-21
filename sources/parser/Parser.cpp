@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/15 10:29:30 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/21 14:34:56 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,11 +80,11 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(13, T_Identifier)] = Action(SHIFT, 17);
 	actions[ActionEntry(14, T_Identifier)] = Action(SHIFT, 17);
 	actions[ActionEntry(14, T_Semi_Colon)] = Action(REDUCE, 2, R3);
-	actions[ActionEntry(15, T_Method)] = Action(SHIFT, 19);
+	actions[ActionEntry(15, T_Method)] = Action(SHIFT, 18);
 	actions[ActionEntry(16, T_CSquareBracket)] = Action(SHIFT, 39);
 	actions[ActionEntry(16, T_Comma)] = Action(SHIFT, 12);
 	actions[ActionEntry(17, T_Semi_Colon)] = Action(REDUCE, 2, R3);
-	actions[ActionEntry(18, T_CBracket)] = Action(SHIFT, 20);
+	actions[ActionEntry(18, T_CSquareBracket)] = Action(SHIFT, 20);
 	actions[ActionEntry(18, T_Comma)] = Action(SHIFT, 15);
 	actions[ActionEntry(19, T_Semi_Colon)] = Action(REDUCE, 2, R4);
 	actions[ActionEntry(20, T_Semi_Colon)] = Action(REDUCE, 2, R5);

@@ -6,11 +6,11 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 16:26:37 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/17 16:46:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/21 15:11:58 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cgi/CGI.hpp"
+#include "cgi/CGIHandler.hpp"
 
 std::string findHeaderElement(const std::string &header, std::string element)
 {
@@ -97,28 +97,28 @@ std::string buildHeader(const std::string &cgiHeader)
 	return header;
 }
 
-void adjustHeader(std::string *response)
+void adjustHeader(std::string &response)
 {
-	size_t		pos = response->find("\r\n\r\n");
+	size_t		pos = response.find("\r\n\r\n");
 	std::string header;
 	std::string body;
 
 	if (pos != std::string::npos) {
 		std::cout << "Header found" << std::endl;
-		header = response->substr(0, pos + 2);
-		body = response->substr(pos + 4);
+		header = response.substr(0, pos + 2);
+		body = response.substr(pos + 4);
 		std::cout << "Header: %" << header << "%" << std::endl;
 		std::cout << "Body: %" << body << "%" << std::endl;
 	}
 	else {
 		std::cout << "Header not found" << std::endl;
 		header = "";
-		body = *response;
+		body = response;
 	}
 
 	std::string newHeader = buildHeader(header);
 
-	*response = newHeader + body;
+	response = newHeader + body;
 
-	std::cout << "New Response: " << *response << std::endl;
+	std::cout << "New Response: " << response << std::endl;
 }

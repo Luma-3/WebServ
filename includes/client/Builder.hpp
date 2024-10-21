@@ -27,11 +27,6 @@
 
 #define CHILD_BUFFER_SIZE 4096
 
-#define INDEX_FIND	  0
-#define AUTOINDEX_OFF 1
-#define AUTOINDEX_ON  2
-#define NONE		  -1
-
 namespace client {
 
 class Client;
@@ -54,7 +49,6 @@ class Builder
 	void createErrorPage();
 
 	void		buildHeader();
-	int			readDataRequest();
 	static void trimPath(std::string &path);
 
 	int	 verifLocationAndGetNewPath();
@@ -62,17 +56,25 @@ class Builder
 	void insertFileInHead(std::string &file);
 	void insertFooterAndSetAttributes(std::vector< char > &body);
 
+	bool findErrorPageLocation();
+	bool findErrorPageServer();
+	bool findErrorPageDefaultServer();
+
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server,
 			const client::Parser &parser);
 	~Builder();
 
 	void BuildResponse(std::string &response);
-	void returnParam();
+	void verifDenyMethod(int &state);
+	void returnParam(int &state);
 	void findFile();
 	void readFile();
-	void findErrorpageLocationServer();
-	void setIndexOrReturnAutoindex();
+	void findErrorPage();
+	void setIndexOrAutoindex(int &state);
+	void getAutoindex();
+	void isCGI(int &state);
+	int	 readDataRequest();
 
 	const std::string &getFileExtension() const { return _extension; };
 	const std::string &getFilename() const { return _filename; };

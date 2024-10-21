@@ -6,38 +6,38 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/18 11:22:38 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/21 15:04:14 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cgi/CGI.hpp"
+#include "cgi/CGIHandler.hpp"
 
 using std::string;
 
 namespace {
 
-int childProcess(exec_data *info)
+int CGIHandler::childProcess()
 {
 	alarm(TIMEOUT);
 
-	close(info->pipefd[READ]);
-	dup2(info->pipefd[WRITE], STDOUT_FILENO);
-	close(info->pipefd[WRITE]);
-	if (execve(info->cgi, info->argv, info->envp) == -1) {
+	close(_pipefd[READ]);
+	dup2(_pipefd[WRITE], STDOUT_FILENO);
+	close(_pipefd[WRITE]);
+	if (execve(_cgi, _argv, _envp) == -1) {
 		throw std::runtime_error("Execve Error: " + string(strerror(errno)));
 	}
 	return 0;
 }
 
-int parentProcess(exec_data *info)
+int CGIHandler::parentProcess()
 {
 	int status;
 
-	close(info->pipefd[WRITE]);
-	dup2(info->pipefd[READ], STDIN_FILENO);
-	close(info->pipefd[READ]);
-	recvCGIResponse(STDIN_FILENO, info->response);
-	waitpid(info->pid, &status, 0);
+	close(_pipefd[WRITE]);
+	dup2(_pipefd[READ], STDIN_FILENO);
+	close(_pipefd[READ]);
+	recvCGIResponse(STDIN_FILENO, _response);
+	waitpid(_pid, &status, 0);
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGALRM) {
 		std::cerr << "CGI Timeout"
 				  << std::endl; // TODO: Log this and return 500
@@ -46,7 +46,7 @@ int parentProcess(exec_data *info)
 		std::cerr << "CGI Error: " << WEXITSTATUS(status)
 				  << std::endl; // TODO: Log this and return 500
 	}
-	adjustHeader(info->response);
+	adjustHeader(_response);
 	return 0;
 }
 } // namespace
@@ -61,20 +61,19 @@ void recvCGIResponse(int fd, std::string *response)
 	}
 }
 
-int executeCGI(exec_data *info)
+void CGIHandler::execute()
 {
-	if (pipe(info->pipefd) == -1) {
+	if (pipe(_pipefd) == -1) {
 		throw std::runtime_error("Pipe Error: " + string(strerror(errno)));
 	}
-	info->pid = fork();
-	if (info->pid < 0) {
+	_pid = fork();
+	if (_pid < 0) {
 		throw std::runtime_error("Fork Error: " + string(strerror(errno)));
 	}
-	else if (info->pid == 0) {
-		childProcess(info);
+	else if (_pid == 0) {
+		childProcess();
 	}
 	else {
-		parentProcess(info);
+		parentProcess();
 	}
-	return 0;
 }

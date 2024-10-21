@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/19 16:20:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/21 15:17:22 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,22 +69,45 @@ const std::string &Client::getBody() const
 
 void Client::handleRequest()
 {
+	typedef void (Builder::*ptr)(int &);
+
 	Parser parser;
 	parser.parseRequest(_request);
 
 	Builder builder(_server, _default_server, parser);
 
-	if (builder.getCode() != "200") {
-		builder.findErrorpageLocationServer();
-	}
-	builder.returnParam();
-	builder.setIndexOrReturnAutoindex();
-	if (!builder.getFilename().empty() && builder.getFileExtension() == ".py") {
+	int state = DEFAULT;
+	ptr tab[] = {&Builder::returnParam, &Builder::verifDenyMethod,
+				 &Builder::setIndexOrAutoindex, &Builder::isCGI};
 
-		return;
+	if (builder.getCode() != "200") {
+		state = ERROR;
 	}
-	else if (!builder.getFilename().empty()) {
-		builder.findFile();
+
+	for (int i = 0; i < 4 && state == DEFAULT; ++i) {
+		(builder.*tab[i])(state);
+	}
+
+	switch (state) {
+		case ERROR: {
+			builder.findErrorPage();
+			break;
+		}
+		case AUTOINDEX: {
+			builder.getAutoindex();
+			break;
+		}
+		case INDEX: {
+			builder.readDataRequest();
+			break;
+		}
+		case CGI: {
+			// CGI
+			return;
+		}
+		default: {
+			builder.findFile();
+		}
 	}
 	builder.BuildResponse(_response);
 }

@@ -6,11 +6,11 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/19 15:58:16 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/21 14:56:26 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cgi/CGI.hpp"
+#include "cgi/CGIHandler.hpp"
 #include "client/Client.hpp"
 
 using std::map;
@@ -58,8 +58,9 @@ void getClientInfo(const client::Client *client, std::vector< string > &env_vec)
 	}
 }
 
-char **createEnv(const VirtualServer *server, const client::Parser *parser,
-				 const client::Client *client)
+char **CGIHandler::createEnv(const VirtualServer  *server,
+							 const client::Parser *parser,
+							 const client::Client *client)
 {
 	string path_translated;
 
@@ -96,30 +97,15 @@ char **createEnv(const VirtualServer *server, const client::Parser *parser,
 	return envp;
 }
 
-void initCGI(exec_data **info, const exec_data *hints)
+char **CGIHandler::createArgv(const client::Parser *parser,
+							  const VirtualServer  *server)
 {
-	(*info) = new exec_data;
-	(*info)->client = hints->client;
-	(*info)->parser = hints->parser;
-	(*info)->server = hints->server;
-	(*info)->response = hints->response;
-
 	char **argv = new char *[3];
-	string script = getTranslatedPath(hints->parser, hints->server) +
-					hints->parser->getFilename();
 
 	argv[0] = new char[strlen(CGI_PATH) + 1];
 	strcpy(argv[0], CGI_PATH);
-	argv[1] = new char[script.size() + 1];
-	strcpy(argv[1], script.c_str());
+	argv[1] = new char[getTranslatedPath(parser, server).size() + 1];
+	strcpy(argv[1], getTranslatedPath(parser, server).c_str());
 	argv[2] = NULL;
-
-	char **envp = createEnv(hints->server, hints->parser, hints->client);
-
-	char *cgi = new char[strlen(CGI_PATH) + 1];
-	strcpy(cgi, CGI_PATH);
-
-	(*info)->argv = argv;
-	(*info)->envp = envp;
-	(*info)->cgi = cgi;
+	return argv;
 }

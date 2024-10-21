@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/19 14:44:51 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/21 14:41:18 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,14 @@
 
 #define MAX_REQ_SIZE 1024
 #define PACKET_SIZE	 1024
+
+#define DEFAULT	  0
+#define INDEX	  1
+#define CGI		  2
+#define FILE	  3
+#define ERROR	  4
+#define AUTOINDEX 5
+#define REDIRECT  6
 
 namespace client {
 

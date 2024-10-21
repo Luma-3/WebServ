@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/19 17:42:42 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/21 14:37:19 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,20 @@ Builder::Builder(const VirtualServer  *server,
 	_parser(parser)
 {
 	_request_path = parser.getRequestedPath();
-	std::cout << "Request path: " << _request_path << std::endl;
 	_filename = parser.getFilename();
 	_code = parser.getCodeResponse();
 	_extension = parser.getFileExtension();
+}
+
+void Builder::isCGI(int &state)
+{
+	static string cgi_extension[] = {".php", ".py", ".js"};
+	for (size_t i = 0; i < 3; ++i) {
+		if (_extension == cgi_extension[i]) {
+			state = CGI;
+			return;
+		}
+	}
 }
 
 void Builder::createErrorPage()
@@ -72,45 +82,104 @@ void Builder::BuildResponse(string &response)
 	response += std::string(_body.begin(), _body.end());
 }
 
-void Builder::findErrorpageLocationServer()
+bool Builder::findErrorPageLocation()
 {
-	const Location *location;
-	std::string		error_page;
-	std::string		error_path;
+	std::string error_page;
+	std::string error_path;
 
-	location = _server->getLocation(_request_path);
+	const Location *location = _server->getLocation(_request_path);
+
 	if (location == NULL) {
-		error_page = _server->getParamValue(_code);
-		if (!error_page.empty()) {
-			error_path = _server->getRoot(_request_path);
-		}
-		else {
-			error_page = _default_server->getParamValue(_code);
-			error_path = _default_server->getRoot(_request_path);
-		}
-		_path = error_path + error_page;
-		_filename = error_page;
-		_extension = Parser::findExtension(error_page);
-		return;
+		return false;
 	}
-	else {
-		error_page = location->getParamValue(_code);
-		error_path = location->getRoot(_request_path);
-		_path = error_path + error_page;
-		_filename = error_page;
-		_extension = Parser::findExtension(error_page);
-		if (!error_page.empty()) {
+
+	error_page = location->getParamValue(_code);
+	error_path = location->getRoot(_request_path);
+
+	if (error_page.empty()) {
+		return false;
+	}
+
+	_path = error_path + error_page;
+	_filename = error_page;
+	_extension = Parser::findExtension(error_page);
+	return true;
+}
+
+bool Builder::findErrorPageServer()
+{
+	std::string error_page = _server->getParamValue(_code);
+	std::string error_path = _server->getRoot(_request_path);
+
+	if (error_page.empty()) {
+		return false;
+	}
+
+	_path = error_path + error_page;
+	_filename = error_page;
+	_extension = Parser::findExtension(error_page);
+	return true;
+}
+
+bool Builder::findErrorPageDefaultServer()
+{
+	std::string error_page = _default_server->getParamValue(_code);
+	std::string error_path = _default_server->getRoot(_request_path);
+
+	if (error_page.empty()) {
+		return false;
+	}
+
+	_path = error_path + error_page;
+	_filename = error_page;
+	_extension = Parser::findExtension(error_page);
+	return true;
+}
+
+void Builder::findErrorPage()
+{
+	typedef bool (Builder::*ptr)(void);
+
+	ptr tab[3] = {&Builder::findErrorPageLocation,
+				  &Builder::findErrorPageServer,
+				  &Builder::findErrorPageDefaultServer};
+
+	for (size_t i = 0; i < 3; ++i) {
+		if ((this->*tab[i])() && readDataRequest() == 0) {
 			return;
 		}
 	}
 	createErrorPage();
 }
 
+void Builder::verifDenyMethod(int &state)
+{
+	const Location			  *location = _server->getLocation(_request_path);
+	std::vector< std::string > deny_methods;
+	if (location != NULL) {
+		deny_methods = location->getParamList("deny_method");
+	}
+	else {
+		deny_methods = _server->getParamList("deny_method");
+	}
+	if (deny_methods.empty()) {
+		return;
+	}
+	for (size_t i = 0; i < deny_methods.size(); ++i) {
+		std::cout << deny_methods[i] << std::endl;
+		if (deny_methods[i] == _parser.getHeader("Method")) {
+			_code = "405";
+			state = ERROR;
+		}
+	}
+}
+
 int Builder::readDataRequest()
 {
-	std::cout << "Accessing: " << _path << std::endl;
 
 	if (access(_path.c_str(), F_OK | R_OK) != 0) {
+		std::cerr << "access error:" << std::string(strerror(errno))
+				  << std::endl; // TODO : log
 		return errno;
 	}
 
@@ -132,7 +201,7 @@ void Builder::readFile()
 
 	if (ret != 0) {
 		_code = (ret == ENOENT) ? "404" : "403";
-		findErrorpageLocationServer();
+		findErrorPage();
 	}
 }
 
@@ -140,22 +209,19 @@ void Builder::findFile()
 {
 	std::string root;
 	if (_code == "200") {
-		std::cout << "JE SUIS DANS FIND FILE" << std::endl;
 		const Location *location = _server->getLocation(_request_path);
 		std::cout << _request_path << std::endl;
 		if (location != NULL) {
 			_path = location->getRoot(_request_path) + _filename;
-			std::cout << "Path2: " << _path << std::endl;
 		}
 		else {
 			_path = _server->getRoot(_request_path) + _filename;
 		}
-		std::cout << "Path: " << _path << std::endl;
 	}
 	readFile();
 }
 
-void Builder::returnParam()
+void Builder::returnParam(int &state)
 {
 	const Location *location = _server->getLocation(_request_path);
 	if (location != NULL) {
@@ -168,6 +234,7 @@ void Builder::returnParam()
 		_code = _server->getParamPair("return").first;
 		_location = _server->getParamPair("return").second;
 	}
+	state = (_location.empty()) ? state : REDIRECT;
 }
 
 Builder::~Builder() {}
