@@ -46,3 +46,7 @@ target_include_directories(WebServ PRIVATE includes)
 
 # add_subdirectory(tests)
 
+#		sources/cgi/CGIHandler.cpp
+#		sources/cgi/executeCGI.cpp
+#		sources/cgi/init_cgi.cpp
+#		sources/cgi/verifCGIResponse.cpp

@@ -26,6 +26,8 @@
 #include "server/VirtualServer.hpp"
 
 #define CHILD_BUFFER_SIZE 4096
+#define IS_FILE			  0
+#define IS_DIR			  1
 
 namespace client {
 
@@ -53,7 +55,7 @@ class Builder
 
 	int	 verifLocationAndGetNewPath();
 	bool verifAccess();
-	void insertFileInHead(std::string &file);
+	void insertFileInHead(std::string &file, const int &id);
 	void insertFooterAndSetAttributes(std::vector< char > &body);
 
 	bool findErrorPageLocation();
@@ -107,29 +109,36 @@ std::string findContentType(const std::string &file_extension);
 
 #define DEFAULT_AUTOINDEX_PAGE_HEAD \
 	"<!DOCTYPE html> \
-	<html lang=\"en\">\
+    <html lang=\"en\">\
 <head>\
+    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css\">\
+	    <link href=\"https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap\" rel=\"stylesheet\">\
 	<style>\
-	.container {width: 80%;margin: auto;overflow: hidden;}\
-	.title {color: white;font-size: 2rem;text-align: center;justify-content: center;border: 4px solid black;padding: 1rem;border-radius: 10px;background-color: #EE92C2;margin-bottom: 20px;margin-top: 20px;}\
-	.errorMessage {width: 100%;height: 30%;padding: 0;margin: 0 auto 0 auto;position: center;display: flex;justify-content: center;background-color: #EE92C2;align-items: center;flex-wrap: wrap;}\
+    .parent-container {display: flex; flex-wrap: wrap; justify-content: space-between;}\
+    .container {width: 30%; margin: 10px; overflow: hidden; box-sizing: border-box;}\
+	.title:hover {background-color: #FFD700;}\
+    .title {color: white; font-size: 2rem; text-align: center; border: 4px solid black; padding: 1rem; border-radius: 10px; background-color: #EE92C2; margin-bottom: 20px; margin-top: 20px;}\
+    .icon-folder {color: blue; padding-right: 10px;}\
+    .file-text {color: black;}\
+	body {font-family: 'Roboto', sans-serif;}\
 	</style>\
-	<meta charset=\"UTF-8\">\
-	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\
-	<title>Autoindex</title>\
+    <meta charset=\"UTF-8\">\
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\
+    <title>Autoindex</title>\
 </head>\
-<body>"
+<body>\
+    <div class=\"parent-container\">"
 
-#define DEFAULT_AUTOINDEX_RETURN_BUTTON                     \
-	"<div class=\"container\"><div class=\"title\"><li><a " \
-	"href=\"%@return_path@%\" style=\"color: "              \
-	"black;\">\"Back\"</a></li></div></div>"
-
-#define DEFAULT_AUTOINDEX_LIST                                                \
+#define DEFAULT_AUTOINDEX_LIST_FILE                                           \
 	"<div class=\"container\"><div class=\"title\"><li><a href=\"%@file@%\" " \
 	"style=\"color: "                                                         \
 	"black;\">%@file@%</a></li></div></div>"
 
-#define DEFAULT_AUTOINDEX_PAGE_FOOT "</body></html>"
+#define DEFAULT_AUTOINDEX_LIST_DIR                                            \
+	"<div class=\"container\"><div class=\"title\"><li><a href=\"%@file@%\" " \
+	"style=\"color: blue;\"><i class=\"fas fa-folder icon-folder\"></i> "     \
+	"<span class=\"file-text\">%@file@%</span></a></li></div></div>"
+
+#define DEFAULT_AUTOINDEX_PAGE_FOOT "</div></body></html>"
 
 #endif

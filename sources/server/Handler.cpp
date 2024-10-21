@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/19 16:00:23 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:17:28 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,6 @@ void Handler::runEventLoop()
 			}
 			else if (event[i].events & EPOLLRDHUP) {
 				// TODO : handle client disconnection on a disociated
-				// Method
 				client::Client *client = _clients[event_fd];
 				std::cout << "Client disconnected" << std::endl;
 				if (client) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/21 14:28:49 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:36:41 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,15 @@ int Builder::verifLocationAndGetNewPath()
 	return (autoindex == "on") ? AUTOINDEX : ERROR;
 }
 
-void Builder::insertFileInHead(string &file)
+void Builder::insertFileInHead(string &file, const int &id)
 {
-	string head = DEFAULT_AUTOINDEX_LIST;
+	string head;
+	if (id == IS_FILE) {
+		head = DEFAULT_AUTOINDEX_LIST_FILE;
+	}
+	else {
+		head = DEFAULT_AUTOINDEX_LIST_DIR;
+	}
 	head.replace(head.find("%@file@%"), 8, file);
 	head.replace(head.find("%@file@%"), 8, file);
 	_body.insert(_body.end(), head.begin(), head.end());
@@ -97,22 +103,25 @@ void Builder::getAutoindex()
 	struct dirent *entry;
 	string		   file;
 	DIR			  *dir;
+	int			   id;
 
 	string head = DEFAULT_AUTOINDEX_PAGE_HEAD;
 	_body.insert(_body.end(), head.begin(), head.end());
 
 	dir = opendir(_path.c_str());
 	while ((entry = readdir(dir)) != NULL) {
+		id = IS_FILE;
 		if (entry->d_name[0] == '.') {
 			continue;
 		}
 		if (entry->d_type == DT_DIR) {
 			file = entry->d_name + string("/");
+			id = IS_DIR;
 		}
 		else {
 			file = entry->d_name;
 		}
-		insertFileInHead(file);
+		insertFileInHead(file, id);
 	}
 	closedir(dir);
 	insertFooterAndSetAttributes(_body);
