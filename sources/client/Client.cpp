@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/22 17:02:15 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/23 01:16:35 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void Client::handleRequest()
 
 	_builder = new Builder(_server, _default_server, parser);
 
+	std::cout << "REQUEST =" << _request << std::endl;
 	int state = DEFAULT;
 	ptr tab[] = {&Builder::returnParam, &Builder::verifDenyMethod,
 				 &Builder::setIndexOrAutoindex, &Builder::isCGI};

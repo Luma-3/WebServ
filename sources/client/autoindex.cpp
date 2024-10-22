@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/22 19:28:19 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/23 00:35:38 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,8 +107,7 @@ void Builder::insertFileInHead(string &file, const off_t &size,
 	head.replace(head.find("%@file@%"), 8, file);
 	head.replace(head.find("%@file@%"), 8, file);
 	head.replace(head.find("%@last_modif@%"), 14, date);
-	head.replace(head.find("%@size@%"), 9,
-				 ToString(formatSize(size)) + " bytes");
+	head.replace(head.find("%@size@%"), 9, ToString(formatSize(size)));
 	_body.insert(_body.end(), head.begin(), head.end());
 	(void)size;
 }
@@ -129,6 +128,7 @@ void Builder::getAutoindex()
 	int			   id;
 
 	string head = DEFAULT_AUTOINDEX_PAGE_HEAD;
+	head.replace(head.find("%@path@%"), 8, _path);
 	_body.insert(_body.end(), head.begin(), head.end());
 
 	dir = opendir(_path.c_str());

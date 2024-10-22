@@ -123,16 +123,18 @@ std::string findContentType(const std::string &file_extension);
     <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css\">\
     <link href=\"https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap\" rel=\"stylesheet\">\
     <style>\
-    .parent-container {display: flex; flex-wrap: wrap; justify-content: right; align-items: flex; padding: 20px;}\
-    .container {width: 30%; margin: 10px; overflow: hidden; box-sizing: border-box; transition: transform 0.3s, box-shadow 0.3s;}\
-    // .container:hover {transform: translateY(-10px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);}\
-    .title {color: white; font-size: 2rem; text-align: left; border: 4px solid black; padding: 1rem; border-radius: 10px; background-color: #EE92C2; margin-bottom: 20px; margin-top: 20px;}\
+    .parent-container {display: flex; flex-wrap: wrap; justify-content: left; align-items: flex; padding: 20px;}\
+    .container {width: 30%; margin: 10px; overflow: hidden; box-sizing: border-box; transition: transform 0.3s, box-shadow 0.3s; min-height:200px;}\
+    .title {color: white; font-size: 2rem; text-align: left; border: 4px solid black; padding: 1rem;\
+	border-radius: 10px; background-color: #EE92C2; margin-bottom: 15px; margin-top: 20px;word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;}\
     .title:hover {background-color: #add8e6;}\
     .icon-file {color: #add8e6; padding-right: 10px;}\
     .icon-folder {color: #add8e6; padding-right: 10px;}\
+	.title:hover .icon-file {color: #EE92C2;}\
+    .title:hover .icon-folder {color: #EE92C2;}\
     .file-text {color: black; font-size: 1.5rem;}\
-    .last-modification {font-size: 1rem; color: black;}\
-	.size {font-size: 1rem; color: black;}\
+    .last-modification {font-size: 1rem; color: black; border-radius: 10px; background-color: #add8e6; padding: 5px; margin-top: 10px;}\
+	.size {font-size: 1rem; color: black; border-radius: 10px; background-color: #add8e6; padding: 5px; margin-top: 5px;}\
 	a {text-decoration: none; color: black;}\
     body {font-family: 'Roboto', sans-serif; background-color: #f0f0f0; margin: 0; padding: 0;}\
     </style>\
@@ -141,7 +143,8 @@ std::string findContentType(const std::string &file_extension);
     <title>Autoindex</title>\
 </head>\
 <body>\
-    <div class=\"parent-container\">"
+    <div class=\"parent-container\">\
+	<div class=\"container\"><div class=\"title\"><h3>Index of %@path@%</h3><br></div></div>"
 
 #define DEFAULT_AUTOINDEX_LIST_FILE                                           \
 	"<div class=\"container\"><a href=\"%@file@%\" style=\"text-decoration: " \
@@ -149,7 +152,7 @@ std::string findContentType(const std::string &file_extension);
 	"icon-file\"></i> "                                                       \
 	"<span class=\"file-text\">%@file@%</span></div></a><span "               \
 	"class=\"last-modification\">Last "                                       \
-	"Modification : %@last_modif@%</span><br><span class=\"size\">"           \
+	"Modification : %@last_modif@%</span><br><br><span class=\"size\">"       \
 	"%@size@%\"</span></div>"
 
 #define DEFAULT_AUTOINDEX_LIST_DIR                                            \
@@ -158,7 +161,7 @@ std::string findContentType(const std::string &file_extension);
 	"icon-folder\"></i> "                                                     \
 	"<span class=\"file-text\">%@file@%</span></div></a><span "               \
 	"class=\"last-modification\">Last "                                       \
-	"Modification : %@last_modif@%</span><br><span class=\"size\">"           \
+	"Modification : %@last_modif@%</span><br><br><span class=\"size\">"       \
 	"%@size@%\"</span></div>"
 
 #define DEFAULT_AUTOINDEX_PAGE_FOOT "</div></body></html>"
