@@ -17,7 +17,9 @@
 #include <cstring>
 #include <dirent.h>
 #include <fstream>
+#include <iomanip>
 #include <string>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <vector>
 
@@ -56,7 +58,8 @@ class Builder
 
 	int	 verifLocationAndGetNewPath();
 	bool verifAccess();
-	void insertFileInHead(std::string &file, const int &id);
+	void insertFileInHead(std::string &file, const off_t &size,
+						  const std::string &date, const int &id);
 	void insertFooterAndSetAttributes(std::vector< char > &body);
 
 	bool findErrorPageLocation();
@@ -118,16 +121,21 @@ std::string findContentType(const std::string &file_extension);
     <html lang=\"en\">\
 <head>\
     <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css\">\
-	    <link href=\"https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap\" rel=\"stylesheet\">\
-	<style>\
-    .parent-container {display: flex; flex-wrap: wrap; justify-content: space-between;}\
-    .container {width: 30%; margin: 10px; overflow: hidden; box-sizing: border-box;}\
-	.title:hover {background-color: #FFD700;}\
-    .title {color: white; font-size: 2rem; text-align: center; border: 4px solid black; padding: 1rem; border-radius: 10px; background-color: #EE92C2; margin-bottom: 20px; margin-top: 20px;}\
-    .icon-folder {color: blue; padding-right: 10px;}\
-    .file-text {color: black;}\
-	body {font-family: 'Roboto', sans-serif;}\
-	</style>\
+    <link href=\"https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap\" rel=\"stylesheet\">\
+    <style>\
+    .parent-container {display: flex; flex-wrap: wrap; justify-content: right; align-items: flex; padding: 20px;}\
+    .container {width: 30%; margin: 10px; overflow: hidden; box-sizing: border-box; transition: transform 0.3s, box-shadow 0.3s;}\
+    // .container:hover {transform: translateY(-10px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);}\
+    .title {color: white; font-size: 2rem; text-align: left; border: 4px solid black; padding: 1rem; border-radius: 10px; background-color: #EE92C2; margin-bottom: 20px; margin-top: 20px;}\
+    .title:hover {background-color: #add8e6;}\
+    .icon-file {color: #add8e6; padding-right: 10px;}\
+    .icon-folder {color: #add8e6; padding-right: 10px;}\
+    .file-text {color: black; font-size: 1.5rem;}\
+    .last-modification {font-size: 1rem; color: black;}\
+	.size {font-size: 1rem; color: black;}\
+	a {text-decoration: none; color: black;}\
+    body {font-family: 'Roboto', sans-serif; background-color: #f0f0f0; margin: 0; padding: 0;}\
+    </style>\
     <meta charset=\"UTF-8\">\
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\
     <title>Autoindex</title>\
@@ -136,14 +144,22 @@ std::string findContentType(const std::string &file_extension);
     <div class=\"parent-container\">"
 
 #define DEFAULT_AUTOINDEX_LIST_FILE                                           \
-	"<div class=\"container\"><div class=\"title\"><li><a href=\"%@file@%\" " \
-	"style=\"color: "                                                         \
-	"black;\">%@file@%</a></li></div></div>"
+	"<div class=\"container\"><a href=\"%@file@%\" style=\"text-decoration: " \
+	"none; color: inherit;\"><div class=\"title\"><i class=\"fas fa-file "    \
+	"icon-file\"></i> "                                                       \
+	"<span class=\"file-text\">%@file@%</span></div></a><span "               \
+	"class=\"last-modification\">Last "                                       \
+	"Modification : %@last_modif@%</span><br><span class=\"size\">"           \
+	"%@size@%\"</span></div>"
 
 #define DEFAULT_AUTOINDEX_LIST_DIR                                            \
-	"<div class=\"container\"><div class=\"title\"><li><a href=\"%@file@%\" " \
-	"style=\"color: blue;\"><i class=\"fas fa-folder icon-folder\"></i> "     \
-	"<span class=\"file-text\">%@file@%</span></a></li></div></div>"
+	"<div class=\"container\"><a href=\"%@file@%\" style=\"text-decoration: " \
+	"none; color: inherit;\"><div class=\"title\"><i class=\"fas fa-folder "  \
+	"icon-folder\"></i> "                                                     \
+	"<span class=\"file-text\">%@file@%</span></div></a><span "               \
+	"class=\"last-modification\">Last "                                       \
+	"Modification : %@last_modif@%</span><br><span class=\"size\">"           \
+	"%@size@%\"</span></div>"
 
 #define DEFAULT_AUTOINDEX_PAGE_FOOT "</div></body></html>"
 

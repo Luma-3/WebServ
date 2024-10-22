@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/21 18:36:41 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/22 19:28:19 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int Builder::verifLocationAndGetNewPath()
 		return (autoindex == "on") ? AUTOINDEX : ERROR;
 	}
 	index = _server->getParamValue("index");
-	root = _server->getParamValue("root");
+	root = _server->getRoot(_request_path);
 	if (!index.empty()) {
 		_path = root + index;
 		_filename = index;
@@ -77,7 +77,25 @@ int Builder::verifLocationAndGetNewPath()
 	return (autoindex == "on") ? AUTOINDEX : ERROR;
 }
 
-void Builder::insertFileInHead(string &file, const int &id)
+std::string formatSize(off_t size)
+{
+	const char *sizes[] = {"B", "KB", "MB", "GB"};
+	int			order = 0;
+	double		formattedSize = static_cast< double >(size);
+
+	while (formattedSize >= 1024 && order < 3) {
+		order++;
+		formattedSize /= 1024;
+	}
+
+	std::ostringstream out;
+	out << std::fixed << std::setprecision(2) << formattedSize << " "
+		<< sizes[order];
+	return out.str();
+}
+
+void Builder::insertFileInHead(string &file, const off_t &size,
+							   const string &date, const int &id)
 {
 	string head;
 	if (id == IS_FILE) {
@@ -88,7 +106,11 @@ void Builder::insertFileInHead(string &file, const int &id)
 	}
 	head.replace(head.find("%@file@%"), 8, file);
 	head.replace(head.find("%@file@%"), 8, file);
+	head.replace(head.find("%@last_modif@%"), 14, date);
+	head.replace(head.find("%@size@%"), 9,
+				 ToString(formatSize(size)) + " bytes");
 	_body.insert(_body.end(), head.begin(), head.end());
+	(void)size;
 }
 
 void Builder::insertFooterAndSetAttributes(std::vector< char > &body)
@@ -101,6 +123,7 @@ void Builder::insertFooterAndSetAttributes(std::vector< char > &body)
 void Builder::getAutoindex()
 {
 	struct dirent *entry;
+	struct stat	   info;
 	string		   file;
 	DIR			  *dir;
 	int			   id;
@@ -114,6 +137,16 @@ void Builder::getAutoindex()
 		if (entry->d_name[0] == '.') {
 			continue;
 		}
+		string full_path = _path + entry->d_name;
+		if (stat(full_path.c_str(), &info) == -1) {
+			continue;
+		}
+		off_t	   size = info.st_size;
+		time_t	   last_modif = info.st_mtime;
+		struct tm *time = gmtime(&last_modif);
+		char	   date[100];
+		strftime(date, 100, "%d-%m-%Y %H:%M", time);
+
 		if (entry->d_type == DT_DIR) {
 			file = entry->d_name + string("/");
 			id = IS_DIR;
@@ -121,7 +154,7 @@ void Builder::getAutoindex()
 		else {
 			file = entry->d_name;
 		}
-		insertFileInHead(file, id);
+		insertFileInHead(file, size, date, id);
 	}
 	closedir(dir);
 	insertFooterAndSetAttributes(_body);

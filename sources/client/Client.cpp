@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/22 13:46:14 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/22 17:02:15 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,15 +111,26 @@ void Client::handleRequest()
 
 	switch (state) {
 		case ERROR: {
+			std::cout << "ERROR" << std::endl;
 			_builder->findErrorPage();
 			break;
 		}
+		case REDIRECT: {
+			std::cout << "REDIRECT" << std::endl;
+			break;
+		}
 		case AUTOINDEX: {
+			std::cout << "AUTOINDEX" << std::endl;
 			_builder->getAutoindex();
 			break;
 		}
 		case INDEX: {
-			_builder->readDataRequest();
+			std::cout << "INDEX" << std::endl;
+			int ret = _builder->readDataRequest();
+			if (ret != 0) {
+				_builder->setCode((ret == ENOENT) ? "404" : "403");
+				_builder->findErrorPage();
+			}
 			break;
 		}
 		case CGI: {
@@ -129,6 +140,7 @@ void Client::handleRequest()
 			break;
 		}
 		default: {
+			std::cout << "default" << std::endl;
 			_builder->findFile();
 		}
 	}
