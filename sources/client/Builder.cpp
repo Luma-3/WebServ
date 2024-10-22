@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/21 18:17:24 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/22 13:32:17 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,39 @@ Builder::Builder(const VirtualServer  *server,
 	_filename = parser.getFilename();
 	_code = parser.getCodeResponse();
 	_extension = parser.getFileExtension();
+	_connection_status = parser.getHeader("Connection");
+}
+
+void Builder::verifCGI(int &state)
+{
+	const Location *location = _server->getLocation(_request_path);
+	std::string		root;
+
+	if (location != NULL) {
+		root = location->getRoot(_request_path);
+		_path = root + _filename;
+		if (access(_path.c_str(), F_OK | R_OK | X_OK) != 0) {
+			state = ERROR;
+			_code = (errno == ENOENT) ? "404" : "403";
+		}
+		return;
+	}
+	root = _server->getRoot(_request_path);
+	_path = root + _filename;
+	std::cout << _path << std::endl;
+	if (access(_path.c_str(), F_OK | R_OK | X_OK) != 0) {
+		state = ERROR;
+		_code = (errno == ENOENT) ? "404" : "403";
+	}
 }
 
 void Builder::isCGI(int &state)
 {
-	static string cgi_extension[] = {".php", ".py", ".js"};
+	static string cgi_extension[] = {"php", "py", "js"};
 	for (size_t i = 0; i < 3; ++i) {
 		if (_extension == cgi_extension[i]) {
 			state = CGI;
+			verifCGI(state);
 			return;
 		}
 	}
@@ -72,7 +97,7 @@ void Builder::BuildResponse(string &response)
 	}
 	response += "Content-Length: " + ToString(_body.size()) + "\r\n";
 
-	if (_parser.getHeader("Connection") == "close") {
+	if (_connection_status == "close") {
 		response += "Connection: close\r\n\r\n";
 	}
 	else {

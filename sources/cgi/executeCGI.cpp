@@ -6,15 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/21 15:04:14 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/22 13:39:19 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cgi/CGIHandler.hpp"
 
 using std::string;
-
-namespace {
 
 int CGIHandler::childProcess()
 {
@@ -31,33 +29,46 @@ int CGIHandler::childProcess()
 
 int CGIHandler::parentProcess()
 {
-	int status;
-
 	close(_pipefd[WRITE]);
-	dup2(_pipefd[READ], STDIN_FILENO);
-	close(_pipefd[READ]);
-	recvCGIResponse(STDIN_FILENO, _response);
-	waitpid(_pid, &status, 0);
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGALRM) {
-		std::cerr << "CGI Timeout"
-				  << std::endl; // TODO: Log this and return 500
-	}
-	else if (WIFEXITED(status) && WEXITSTATUS(status) != 0) {
-		std::cerr << "CGI Error: " << WEXITSTATUS(status)
-				  << std::endl; // TODO: Log this and return 500
-	}
-	adjustHeader(_response);
 	return 0;
 }
-} // namespace
 
-void recvCGIResponse(int fd, std::string *response)
+void CGIHandler::recvCGIResponse()
 {
-	char buffer[1024];
-	int	 ret;
+	char	buffer[1024];
+	ssize_t nb_byte = 1;
 
-	while ((ret = read(fd, buffer, 1024)) > 0) {
-		response->append(buffer, ret);
+	while (nb_byte > 0) {
+		memset(buffer, 0, 1024);
+		nb_byte = read(_pipefd[READ], buffer, 1024);
+		std::cout << "Buffer: " << buffer << std::endl;
+		if (nb_byte == -1) {
+			throw std::runtime_error("Read Error: " + string(strerror(errno)));
+		}
+		if (nb_byte == 0) {
+			break;
+		}
+		_response.append(buffer, nb_byte);
+	}
+	std::cout << "RECIEVED: " << _response << std::endl;
+}
+
+int CGIHandler::waitCGI()
+{
+	pid_t ret = 0;
+	ret = waitpid(_pid, &_status, WNOHANG);
+	if (ret < 0) {
+		throw std::runtime_error("Waitpid Error: " + string(strerror(errno)));
+	}
+	else if (ret == 0) {
+		return 0;
+	}
+	else {
+		if (WIFEXITED(_status) && WEXITSTATUS(_status) != 0) {
+			std::cerr << "CGI Error: " << WEXITSTATUS(_status)
+					  << std::endl; // TODO: Log this and return 500
+		}
+		return 1;
 	}
 }
 

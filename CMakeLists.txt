@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 project(WebServ CXX)
 
-add_subdirectory(externals/googletest)
+# add_subdirectory(externals/googletest)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wextra -Wall -Werror -Wunused -Wshadow -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wextra -Wall -Werror -Wunused -Wshadow  -std=c++98")
+
+#-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer
 
 include_directories(includes)
 
@@ -39,14 +41,13 @@ add_executable(WebServ
 		sources/parser/Location.cpp
 		sources/parser/ReduceRule.cpp
 		sources/parser/Param.cpp
+		sources/cgi/CGIHandler.cpp
+		sources/cgi/executeCGI.cpp
+		sources/cgi/init_cgi.cpp
+		sources/cgi/verifCGIResponse.cpp
 		)
 
 
 target_include_directories(WebServ PRIVATE includes)
 
 # add_subdirectory(tests)
-
-#		sources/cgi/CGIHandler.cpp
-#		sources/cgi/executeCGI.cpp
-#		sources/cgi/init_cgi.cpp
-#		sources/cgi/verifCGIResponse.cpp

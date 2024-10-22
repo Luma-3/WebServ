@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 16:26:37 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/21 15:11:58 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/22 13:43:32 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,13 @@ std::string findHeaderElement(const std::string &header, std::string element)
 	std::string found;
 
 	if (pos == std::string::npos) {
+		std::cout << "Element not found" << std::endl;
 		return "";
 	}
 	pos += element.size();
 	size_t end = header.find("\r\n", pos);
 	if (end == std::string::npos) {
+		std::cout << "End of line not found" << std::endl;
 		return "";
 	}
 	found = header.substr(pos, end - pos);
@@ -97,28 +99,32 @@ std::string buildHeader(const std::string &cgiHeader)
 	return header;
 }
 
-void adjustHeader(std::string &response)
+int CGIHandler::adjustHeader(std::string &client_response)
 {
-	size_t		pos = response.find("\r\n\r\n");
+	size_t		pos = _response.find("\r\n\r\n");
 	std::string header;
+	std::string newHeader;
 	std::string body;
-
+	if (WIFSIGNALED(_status)) {
+		return (FAILURE);
+	}
 	if (pos != std::string::npos) {
 		std::cout << "Header found" << std::endl;
-		header = response.substr(0, pos + 2);
-		body = response.substr(pos + 4);
+		header = _response.substr(0, pos + 2);
+		body = _response.substr(pos + 4);
 		std::cout << "Header: %" << header << "%" << std::endl;
 		std::cout << "Body: %" << body << "%" << std::endl;
 	}
 	else {
 		std::cout << "Header not found" << std::endl;
 		header = "";
-		body = response;
+		body = _response;
 	}
 
-	std::string newHeader = buildHeader(header);
+	newHeader = buildHeader(header);
 
-	response = newHeader + body;
+	client_response = newHeader + body;
 
-	std::cout << "New Response: " << response << std::endl;
+	std::cout << "New Response: " << client_response << std::endl;
+	return (SUCCESS);
 }

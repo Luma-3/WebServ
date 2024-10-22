@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/21 14:41:18 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/22 12:44:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <string>
 #include <sys/socket.h>
 
+#include "cgi/CGIHandler.hpp"
 #include "client/Builder.hpp"
 #include "client/Parser.hpp"
 #include "server/ServerHost.hpp"
@@ -32,6 +33,11 @@
 #define AUTOINDEX 5
 #define REDIRECT  6
 
+#define FINISH	 1
+#define CONTINUE 0
+
+class CGIHandler;
+
 namespace client {
 
 class Client
@@ -42,6 +48,8 @@ class Client
 	const ServerHost	*_host;
 	const int			 _client_socket;
 	sockaddr_storage	*_addr;
+	CGIHandler			*_cgi_handler;
+	Builder				*_builder;
 
 	std::string _request;
 	std::string _response;
@@ -67,12 +75,9 @@ class Client
 
 	void setRequest(const std::string &request) { _request = request; };
 	void setResponse(const std::string &response) { _response = response; };
-	// void setAutoindexParentLocation(bool autoindex_parent_location)
-	// {
-	// 	_autoindex_parent_location = autoindex_parent_location;
-	// };
 
 	void handleRequest();
+	int	 handleResponse();
 };
 
 } // namespace client

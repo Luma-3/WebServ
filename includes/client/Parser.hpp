@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/19 16:02:09 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/22 14:44:57 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class Parser
 	std::string _filename;
 	std::string _codeResponse;
 	std::string _path_info;
+	std::string _query;
 
 	void getHeaderFromRequest(const size_t &line_break_pos);
 	void getBodyFromRequest(size_t &line_break_pos);
@@ -67,6 +68,7 @@ class Parser
 	const std::string &getFileExtension() const { return _extension; };
 	const std::string &getPathInfo() const { return _path_info; };
 	std::string		   getHeader(const std::string &key) const;
+	const std::string &getQuery() const { return _query; };
 
 	static std::string findExtension(const std::string &filename);
 };

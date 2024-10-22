@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/19 17:53:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/22 13:56:35 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ Parser::Parser() : _codeResponse("200") {}
 bool Parser::InvalidMethod()
 {
 	string method = _headers["Method"];
-	// const Location *location;
 
 	if (method != "GET" && method != "POST" && method != "DELETE") {
 		_codeResponse = "405";
@@ -32,9 +31,13 @@ bool Parser::InvalidMethod()
 
 bool Parser::InvalidHeader()
 {
-	if (_headers["Method"].empty() || _headers["httpVersion"].empty() ||
-		_headers["Url"].empty() || _headers["httpVersion"] != "HTTP/1.1") {
+	if (_headers["Method"].empty() || _headers["Url"].empty()) {
 		_codeResponse = "400";
+		return true;
+	}
+	else if (_headers["httpVersion"] != "HTTP/1.1" ||
+			 _headers["httpVersion"].empty()) {
+		_codeResponse = "505";
 		return true;
 	}
 	return false;

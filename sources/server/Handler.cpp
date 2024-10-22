@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/21 18:17:28 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/22 13:07:31 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ Handler::Handler(const std::vector< VirtualServer * > &servers) :
 		throw InternalServerException("Error on epoll_create");
 	}
 
-	std::cout << "Handler created" << std::endl;
-
 	std::vector< VirtualServer * >::const_iterator it = servers.begin();
 
 	while (it != servers.end()) {
@@ -42,10 +40,8 @@ Handler::Handler(const std::vector< VirtualServer * > &servers) :
 
 		std::string hostkey =
 			listen->getPair().first + ":" + listen->getPair().second;
-		std::cout << "HostKey: " << hostkey << std::endl;
 
 		if (_hostptofd.find(hostkey) == _hostptofd.end()) {
-			std::cout << "ServerHost not found, creating one" << std::endl;
 
 			ServerHost *host = new ServerHost(listen->getPair().first,
 											  listen->getPair().second);
@@ -55,7 +51,6 @@ Handler::Handler(const std::vector< VirtualServer * > &servers) :
 			_nbServ++;
 		}
 		int fd = _hostptofd[hostkey];
-		std::cout << "Adding server to ServerHost" << std::endl;
 		_servers[fd]->AddServer((*it)->getParam("hostname")->getValue(), *it);
 		++it;
 	}
@@ -67,7 +62,6 @@ void Handler::handleNewConnection(const ServerHost *server)
 	int				  client_socket = server->acceptClient(client_addr);
 	addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
 
-	std::cout << "I wait for the request" << std::endl;
 	string request = ServerHost::recvRequest(client_socket);
 	string hostname = client::Parser::findHostName(request);
 	// TODO : if not hostname bad request
@@ -102,8 +96,10 @@ void Handler::handleClientResponse(int event_fd)
 {
 	client::Client *client = _clients[event_fd];
 	if (client) {
-		ServerHost::sendResponse(event_fd, client->getResponse());
-		modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP);
+		if (client->handleResponse() == FINISH) {
+			ServerHost::sendResponse(event_fd, client->getResponse());
+			modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP);
+		}
 	}
 }
 
@@ -140,9 +136,8 @@ void Handler::runEventLoop()
 	int				   event_fd;
 
 	while (!g_sig) {
-		std::cout << "Waiting for events" << std::endl;
 		int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
-		std::cout << "Events received" << std::endl;
+		std::cout << "Epoll wait" << std::endl;
 		if (nfds == -1 && !g_sig) {
 			throw InternalServerException("Error on epoll_wait");
 		}
@@ -150,7 +145,6 @@ void Handler::runEventLoop()
 			event_fd = event[i].data.fd;
 			ServerHost *server = _servers[event_fd];
 			if (server) {
-				std::cout << "New connection" << std::endl;
 				handleNewConnection(server);
 				continue;
 			}
@@ -166,12 +160,12 @@ void Handler::runEventLoop()
 				}
 			}
 			else if (event[i].events & EPOLLIN) {
-				std::cout << "EPOLLIN" << std::endl;
+				std::cout << "Client request" << std::endl;
 				handleClientRequest(event_fd);
 				continue;
 			}
 			else if (event[i].events & EPOLLOUT) {
-				std::cout << "EPOLLOUT" << std::endl;
+				std::cout << "Client response" << std::endl;
 				handleClientResponse(event_fd);
 				continue;
 			}

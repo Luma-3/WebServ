@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/21 15:17:22 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/22 13:46:14 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ Client::Client(const VirtualServer *server, const VirtualServer *default_s,
 	_server(server),
 	_default_server(default_s),
 	_client_socket(client_socket),
-	_addr(client_addr)
+	_addr(client_addr),
+	_cgi_handler(NULL)
 {
 }
 
@@ -67,6 +68,26 @@ const std::string &Client::getBody() const
 	return _body;
 }
 
+int Client::handleResponse()
+{
+	if (_cgi_handler != NULL) {
+		if (_cgi_handler->waitCGI() == CGI_DONE) {
+			_cgi_handler->recvCGIResponse();
+			if (_cgi_handler->adjustHeader(_response) == FAILURE) {
+				_builder->setCode("500");
+				_builder->findErrorPage();
+				_builder->BuildResponse(_response);
+			}
+			delete _cgi_handler;
+			_cgi_handler = NULL;
+			return FINISH;
+		}
+		return CONTINUE;
+	}
+	_builder->BuildResponse(_response);
+	return FINISH;
+}
+
 void Client::handleRequest()
 {
 	typedef void (Builder::*ptr)(int &);
@@ -74,42 +95,43 @@ void Client::handleRequest()
 	Parser parser;
 	parser.parseRequest(_request);
 
-	Builder builder(_server, _default_server, parser);
+	_builder = new Builder(_server, _default_server, parser);
 
 	int state = DEFAULT;
 	ptr tab[] = {&Builder::returnParam, &Builder::verifDenyMethod,
 				 &Builder::setIndexOrAutoindex, &Builder::isCGI};
 
-	if (builder.getCode() != "200") {
+	if (_builder->getCode() != "200") {
 		state = ERROR;
 	}
 
 	for (int i = 0; i < 4 && state == DEFAULT; ++i) {
-		(builder.*tab[i])(state);
+		(_builder->*tab[i])(state);
 	}
 
 	switch (state) {
 		case ERROR: {
-			builder.findErrorPage();
+			_builder->findErrorPage();
 			break;
 		}
 		case AUTOINDEX: {
-			builder.getAutoindex();
+			_builder->getAutoindex();
 			break;
 		}
 		case INDEX: {
-			builder.readDataRequest();
+			_builder->readDataRequest();
 			break;
 		}
 		case CGI: {
-			// CGI
-			return;
+			std::cout << "CGI" << std::endl;
+			_cgi_handler = new CGIHandler(this, &parser, _server, _builder);
+			_cgi_handler->execute();
+			break;
 		}
 		default: {
-			builder.findFile();
+			_builder->findFile();
 		}
 	}
-	builder.BuildResponse(_response);
 }
 
 Client::~Client()

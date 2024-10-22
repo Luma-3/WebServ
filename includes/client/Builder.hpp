@@ -45,6 +45,7 @@ class Builder
 	std::string			_filename;
 	std::string			_extension;
 	std::string			_location;
+	std::string			_connection_status;
 	std::string			_code;
 	std::vector< char > _body;
 
@@ -61,6 +62,8 @@ class Builder
 	bool findErrorPageLocation();
 	bool findErrorPageServer();
 	bool findErrorPageDefaultServer();
+
+	void verifCGI(int &state);
 
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server,
@@ -81,6 +84,9 @@ class Builder
 	const std::string &getFileExtension() const { return _extension; };
 	const std::string &getFilename() const { return _filename; };
 	const std::string &getCode() const { return _code; };
+	const std::string &getPath() const { return _path; };
+
+	void setCode(const std::string &code) { _code = code; };
 };
 
 } // namespace client

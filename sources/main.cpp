@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/19 16:08:36 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/22 10:52:20 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,12 @@ int main(const int ac, const char **av, const char **env)
 	} catch (const std::runtime_error &e) {
 		std::cerr << e.what() << " | errno: " << strerror(errno) << '\n';
 		return (1);
-	} catch (const std::exception &e) {
-		std::cerr << e.what() << " | errno: " << strerror(errno) << '\n';
-		delete handler;
-		return (1);
 	}
+	// } catch (const std::exception &e) {
+	// 	std::cerr << e.what() << " | errno: " << strerror(errno) << '\n';
+	// 	delete handler;
+	// 	return (1);
+	// }
 
 	delete handler;
 

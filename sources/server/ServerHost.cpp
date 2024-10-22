@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/17 16:39:36 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/22 10:58:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,9 +170,11 @@ std::string ServerHost::recvRequest(int client_socket)
 
 void chunckResponse(int client_socket, const std::string &response)
 {
-	std::string header = response.substr(0, response.find("\r\n\r\n") + 4);
+	std::cout << "Response: " << response << std::endl;
+	size_t pos = response.find("\r\n\r\n") + 4;
 
-	std::string body = response.substr(response.find("\r\n\r\n") + 4);
+	std::string header = response.substr(0, pos);
+	std::string body = response.substr(pos);
 	size_t		len = body.size();
 
 	std::cout << "Chunked Header: " << header << std::endl;
@@ -198,6 +200,10 @@ void chunckResponse(int client_socket, const std::string &response)
 
 void ServerHost::sendResponse(int client_socket, const std::string &response)
 {
+	if (response.empty()) {
+		return;
+	}
+
 	if (response.find("Content-Length: ") == std::string::npos) {
 		chunckResponse(client_socket, response);
 	}

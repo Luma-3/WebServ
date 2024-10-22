@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/21 14:56:26 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/22 14:45:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ char **CGIHandler::createEnv(const VirtualServer  *server,
 		env_vec.push_back("PATH_INFO=" + parser->getPathInfo());
 		env_vec.push_back("PATH_TRANSLATED=" +
 						  getTranslatedPath(parser, server));
-		env_vec.push_back("QUERY_STRING=");
+		env_vec.push_back("QUERY_STRING=" + parser->getQuery());
 		env_vec.push_back("REQUEST_METHOD=" + parser->getHeader("Method"));
 		env_vec.push_back("REQUEST_URI=" + parser->getRequestedPath());
 		env_vec.push_back("SCRIPT_NAME=" + parser->getRequestedPath());
@@ -97,15 +97,14 @@ char **CGIHandler::createEnv(const VirtualServer  *server,
 	return envp;
 }
 
-char **CGIHandler::createArgv(const client::Parser *parser,
-							  const VirtualServer  *server)
+char **CGIHandler::createArgv(const client::Builder *builder)
 {
 	char **argv = new char *[3];
 
 	argv[0] = new char[strlen(CGI_PATH) + 1];
 	strcpy(argv[0], CGI_PATH);
-	argv[1] = new char[getTranslatedPath(parser, server).size() + 1];
-	strcpy(argv[1], getTranslatedPath(parser, server).c_str());
+	argv[1] = new char[builder->getPath().size() + 1];
+	strcpy(argv[1], builder->getPath().c_str());
 	argv[2] = NULL;
 	return argv;
 }
