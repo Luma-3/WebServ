@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/22 13:43:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/23 11:15:09 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,14 @@ class CGIHandler
 {
   private:
 	pid_t		_pid;
-	int			_pipefd[2];
+	int			_pipeOut[2];
+	int			_pipeIn[2];
 	char	  **_argv;
 	char	  **_envp;
 	char	   *_cgi;
 	std::string _response;
 	int			_status;
+	std::string _body;
 
 	static char **createEnv(const VirtualServer	 *server,
 							const client::Parser *parser,

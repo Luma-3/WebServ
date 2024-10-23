@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/22 14:45:23 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/23 12:20:04 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,9 @@ char **CGIHandler::createEnv(const VirtualServer  *server,
 	std::vector< string > env_vec;
 	{
 		env_vec.push_back("AUTH_TYPE=");
-		env_vec.push_back("CONTENT_LENGTH=");
-		env_vec.push_back("CONTENT_TYPE=");
+		env_vec.push_back("CONTENT_LENGTH=" +
+						  ToString(parser->getHeader("body").size()));
+		env_vec.push_back("CONTENT_TYPE=" + parser->getHeader("Content-Type"));
 		env_vec.push_back("GATEWAY_INTERFACE=CGI/1.1");
 		env_vec.push_back("PATH_INFO=" + parser->getPathInfo());
 		env_vec.push_back("PATH_TRANSLATED=" +

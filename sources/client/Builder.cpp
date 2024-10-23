@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/22 17:01:59 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/23 11:22:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ void Builder::verifCGI(int &state)
 	if (location != NULL) {
 		root = location->getRoot(_request_path);
 		_path = root + _filename;
-		if (access(_path.c_str(), F_OK | R_OK | X_OK) != 0) {
+		if (access(_path.c_str(), F_OK | R_OK) != 0) {
+
 			state = ERROR;
 			_code = (errno == ENOENT) ? "404" : "403";
 		}
@@ -51,7 +52,7 @@ void Builder::verifCGI(int &state)
 	root = _server->getRoot(_request_path);
 	_path = root + _filename;
 	std::cout << _path << std::endl;
-	if (access(_path.c_str(), F_OK | R_OK | X_OK) != 0) {
+	if (access(_path.c_str(), F_OK | R_OK) != 0) {
 		state = ERROR;
 		_code = (errno == ENOENT) ? "404" : "403";
 	}

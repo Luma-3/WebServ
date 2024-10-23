@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/23 01:41:29 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/23 11:14:25 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,9 @@ void Parser::getBodyFromRequest(size_t &line_break_pos)
 	if (_buffer.empty()) {
 		return;
 	}
-	_headers["body"] = _buffer;
+	if (!_buffer.empty()) {
+		_headers["body"] = _buffer;
+	}
 }
 
 void Parser::getHeaderFromRequest(const size_t &line_break_pos)

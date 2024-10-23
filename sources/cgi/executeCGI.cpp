@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executeCGI.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/23 01:43:56 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/23 12:01:53 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,15 @@ using std::string;
 
 int CGIHandler::childProcess()
 {
-	alarm(TIMEOUT);
+	alarm(TIMEOUT); // ch
 
-	close(_pipefd[READ]);
-	dup2(_pipefd[WRITE], STDOUT_FILENO);
-	close(_pipefd[WRITE]);
+	// TODO : proctect close and dup2
+
+	close(_pipeOut[READ]);
+	dup2(_pipeOut[WRITE], STDOUT_FILENO);
+	close(_pipeOut[WRITE]);
+	close(_pipeIn[WRITE]);
+	dup2(_pipeIn[READ], STDIN_FILENO);
 	if (execve(_cgi, _argv, _envp) == -1) {
 		throw std::runtime_error("Execve Error: " + string(strerror(errno)));
 	}
@@ -29,7 +33,12 @@ int CGIHandler::childProcess()
 
 int CGIHandler::parentProcess()
 {
-	close(_pipefd[WRITE]);
+	// TODO : proctect close and dup2
+
+	close(_pipeOut[WRITE]);
+	close(_pipeIn[READ]);
+	write(_pipeIn[WRITE], _body.c_str(), _body.size());
+	close(_pipeIn[WRITE]);
 	return 0;
 }
 
@@ -40,7 +49,7 @@ void CGIHandler::recvCGIResponse()
 
 	while (nb_byte > 0) {
 		memset(buffer, 0, 1024);
-		nb_byte = read(_pipefd[READ], buffer, 1024);
+		nb_byte = read(_pipeOut[READ], buffer, 1024);
 		std::cout << "Buffer: " << buffer << std::endl;
 		if (nb_byte == -1) {
 			throw std::runtime_error("Read Error: " + string(strerror(errno)));
@@ -63,18 +72,20 @@ int CGIHandler::waitCGI()
 	else if (ret == 0) {
 		return 0;
 	}
-	else {
-		if (WIFEXITED(_status) && WEXITSTATUS(_status) != 0) {
-			std::cerr << "CGI Error: " << WEXITSTATUS(_status)
-					  << std::endl; // TODO: Log this and return 500
-		}
-		return 1;
-	}
+	// else {
+	// 	if (WIFEXITED(_status) && WEXITSTATUS(_status) != 0) {
+	// 		std::cerr << "CGI Error: " << WEXITSTATUS(_status) << " : "
+	// 				  << strerror(WEXITSTATUS(_status))
+	// 				  << std::endl; // TODO: Log this and return 500
+	// 	}
+	// 	return 1;
+	// }
+	return 1;
 }
 
 void CGIHandler::execute()
 {
-	if (pipe(_pipefd) == -1) {
+	if (pipe(_pipeIn) == -1 || pipe(_pipeOut) == -1) {
 		throw std::runtime_error("Pipe Error: " + string(strerror(errno)));
 	}
 	_pid = fork();

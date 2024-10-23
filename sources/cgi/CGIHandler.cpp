@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/22 11:19:05 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/23 11:15:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,13 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 	_envp(NULL),
 	_cgi(NULL)
 {
-	_pipefd[0] = -1;
-	_pipefd[1] = -1;
+	_pipeIn[0] = -1;
+	_pipeIn[1] = -1;
+	_pipeOut[0] = -1;
+	_pipeOut[1] = -1;
 	_argv = createArgv(builder);
 	_envp = createEnv(server, parser, client);
+	_body = parser->getHeader("body");
 	_cgi = new char[strlen(CGI_PYTHON) + 1]; // TODO : check extension
 	strcpy(_cgi, CGI_PYTHON);
 }
