@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/23 11:18:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/23 15:27:11 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ void Client::handleRequest()
 
 	Parser parser;
 	parser.parseRequest(_request);
+	std::cout << "body request = " << parser.getHeader("body") << std::endl;
 
 	_builder = new Builder(_server, _default_server, parser);
 

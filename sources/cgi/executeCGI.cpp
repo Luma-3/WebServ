@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executeCGI.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/23 12:01:53 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/23 15:25:48 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ void CGIHandler::recvCGIResponse()
 		}
 		_response.append(buffer, nb_byte);
 	}
-	std::cout << "RECIEVED: " << _response << std::endl;
 }
 
 int CGIHandler::waitCGI()
