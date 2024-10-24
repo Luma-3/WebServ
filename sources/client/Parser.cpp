@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/23 11:14:25 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 08:43:08 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void Parser::getBodyFromRequest(size_t &line_break_pos)
 	if (_buffer.empty()) {
 		return;
 	}
-	if (!_buffer.empty()) {
+	if (!_buffer.empty() && _headers["Method"] == "POST") {
 		_headers["body"] = _buffer;
 	}
 }

@@ -29,11 +29,12 @@ print("<!DOCTYPE html> <html lang=\"en\"><head> \
 	<div class=\"navbar\">\
         <li><a href=\"/html/register.html\">Retry register</a></li>\
 			<li><a href=\"/html/index.html\">Home</a></li></div>\
+            <div class=\"title\">\
 ")
 
 
 if password != confirm_password or not username or not password:
-    print("<li><h1>Passwords do not match!</h1></li>")
+    print("<h1>Passwords do not match!</h1></li>")
 else:
     hashed_password = generate_password_hash(password)
     
@@ -43,13 +44,13 @@ else:
         c.execute("CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT)")
         c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
         conn.commit()
-        print("<div class=\"title\"><br>🥳Account created successfully!🥳")
-        print("<br><h1> Welcome " + username + "<br><br>🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥</h1></div>")
+        print("<br>🥳Account created successfully!🥳")
+        print("<br><h1> Welcome " + username + "<br><br>🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥</h1>")
     except sqlite3.IntegrityError:
-        print("<ul><li><h1>Username already exists!</h1></li></ul>")
+        print("<br><h1>Username already exists!</h1>")
     except Exception as e:
-        print("<li><h1>Something went wrong!</h1></li>")
+        print("<br><h1>Something went wrong!</h1>")
         print(e)
     finally:
-        print("</body></html>")
+        print("</div></body></html>")
         conn.close()

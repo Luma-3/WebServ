@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/23 15:27:11 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/24 10:38:43 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,11 @@ void Client::handleRequest()
 	std::cout << "body request = " << parser.getHeader("body") << std::endl;
 
 	_builder = new Builder(_server, _default_server, parser);
+
+	if (parser.getHeader("Method") == "DELETE") {
+		handleDeleteRequest(parser);
+		return;
+	}
 
 	// std::cout << "REQUEST =" << _request << std::endl;
 	int state = DEFAULT;

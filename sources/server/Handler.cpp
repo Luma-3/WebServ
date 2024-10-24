@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/22 13:07:31 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 08:11:39 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ void Handler::runEventLoop()
 
 	while (!g_sig) {
 		int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
-		std::cout << "Epoll wait" << std::endl;
+		// std::cout << "Epoll wait" << std::endl;
 		if (nfds == -1 && !g_sig) {
 			throw InternalServerException("Error on epoll_wait");
 		}
@@ -160,12 +160,12 @@ void Handler::runEventLoop()
 				}
 			}
 			else if (event[i].events & EPOLLIN) {
-				std::cout << "Client request" << std::endl;
+				// std::cout << "Client request" << std::endl;
 				handleClientRequest(event_fd);
 				continue;
 			}
 			else if (event[i].events & EPOLLOUT) {
-				std::cout << "Client response" << std::endl;
+				// std::cout << "Client response" << std::endl;
 				handleClientResponse(event_fd);
 				continue;
 			}

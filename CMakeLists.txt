@@ -24,6 +24,7 @@ add_executable(WebServ
 		sources/server/ServerHost.cpp
 		sources/server/ServerException.cpp
 		sources/client/Client.cpp
+		sources/client/Delete_request.cpp
 		sources/client/Client_Tables.cpp
 		sources/client/Parser.cpp
 		sources/client/Parser_url.cpp

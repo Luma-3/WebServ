@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/22 12:44:43 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 09:33:29 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,11 @@ class Client
 	std::string _response;
 	std::string _header;
 	std::string _body;
+
+	void handleDeleteRequest(const Parser &parser);
+	void removeFile(const std::string &full_path);
+	void removeDirectory(const std::string &full_path);
+	bool verifAccessInsideDirectory(const std::string &full_path);
 
   public:
 	Client();
