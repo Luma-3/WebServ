@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Lexer.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 12:38:22 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 11:16:13 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,6 @@ using std::string;
 using std::vector;
 
 // Constructors
-
-Lexer::Lexer() : _line(0), _col(0) {}
-
-Lexer::Lexer(const Lexer &other) : _line(other._line), _col(other._col) {}
 
 Lexer::Lexer(const char *file_path) : _line(0), _col(0)
 {
@@ -46,31 +42,6 @@ Lexer::Lexer(const char *file_path) : _line(0), _col(0)
 		(stat(file_path, &buffer) == 0 && buffer.st_mode & S_IFDIR)) {
 		throw FileNotOpenException(file_path);
 	}
-}
-
-// Operators
-
-Lexer &Lexer::operator=(const Lexer &other)
-{
-	if (this != &other) {}
-	return *this;
-}
-
-// Getters
-
-queue< Token * > &Lexer::getTokens()
-{
-	return _tokens;
-}
-
-const queue< Token * > &Lexer::getTokens() const
-{
-	return _tokens;
-}
-
-const std::ifstream &Lexer::getConfigFile() const
-{
-	return _config_file;
 }
 
 // Static Private Methods
@@ -96,7 +67,6 @@ Token *Lexer::CreateToken(size_t frontIT, size_t backIT,
 	const string value(line, backIT, size);
 
 	Terminal_Type term = Token::IdentifyTerminal(value);
-	// std::cout << "Value: " << value << " Term: " << term << std::endl;
 
 	if (value[0] == '\"' || value[0] == '\'') {
 		return (
@@ -148,6 +118,7 @@ void Lexer::TokenizeLine(const string &line, queue< Token * > &tokens)
 
 void Lexer::Tokenize()
 {
+
 	for (string line; std::getline(_config_file, line);) {
 		_line++;
 		TokenizeLine(line, _tokens);
@@ -156,7 +127,6 @@ void Lexer::Tokenize()
 
 Lexer::~Lexer()
 {
-	std::cout << "Token size: " << _tokens.size() << std::endl;
 	while (!_tokens.empty()) {
 		delete _tokens.front();
 		_tokens.pop();

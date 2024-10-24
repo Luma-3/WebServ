@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/24 08:11:39 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/24 15:27:33 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ Handler::Handler(const std::vector< VirtualServer * > &servers) :
 	_nbServ(0)
 {
 	if (_epfd == -1) {
-		throw InternalServerException("Error on epoll_create");
+		throw InternalServerException("epoll_create", __LINE__, __FILE__,
+									  std::string(strerror(errno)));
 	}
 
 	std::vector< VirtualServer * >::const_iterator it = servers.begin();
@@ -47,7 +48,10 @@ Handler::Handler(const std::vector< VirtualServer * > &servers) :
 											  listen->getPair().second);
 			_hostptofd[hostkey] = host->getSocket();
 			_servers[host->getSocket()] = host;
-			addEvent(host->getSocket(), EPOLLIN | EPOLLRDHUP);
+			if (addEvent(host->getSocket(), EPOLLIN | EPOLLRDHUP) != 0) {
+				throw InternalServerException("addEvent", __LINE__, __FILE__,
+											  std::string(strerror(errno)));
+			}
 			_nbServ++;
 		}
 		int fd = _hostptofd[hostkey];
@@ -103,31 +107,25 @@ void Handler::handleClientResponse(int event_fd)
 	}
 }
 
-void Handler::addEvent(int fd, uint32_t events) const
+int Handler::addEvent(int fd, uint32_t events) const
 {
 	struct epoll_event event;
 	event.events = events;
 	event.data.fd = fd;
-	if (epoll_ctl(_epfd, EPOLL_CTL_ADD, fd, &event) == -1) {
-		throw InternalServerException("Error on epoll_ctl");
-	}
+	return epoll_ctl(_epfd, EPOLL_CTL_ADD, fd, &event);
 }
 
-void Handler::removeEvent(int fd) const
+int Handler::removeEvent(int fd) const
 {
-	if (epoll_ctl(_epfd, EPOLL_CTL_DEL, fd, NULL) == -1) {
-		throw InternalServerException("Error on epoll_ctl Remove");
-	}
+	return epoll_ctl(_epfd, EPOLL_CTL_DEL, fd, NULL);
 }
 
-void Handler::modifyEvent(int fd, uint32_t events) const
+int Handler::modifyEvent(int fd, uint32_t events) const
 {
 	struct epoll_event event;
 	event.events = events;
 	event.data.fd = fd;
-	if (epoll_ctl(_epfd, EPOLL_CTL_MOD, fd, &event) == -1) {
-		throw InternalServerException("Error on epoll_ctl");
-	}
+	return epoll_ctl(_epfd, EPOLL_CTL_MOD, fd, &event);
 }
 
 void Handler::runEventLoop()
@@ -139,7 +137,8 @@ void Handler::runEventLoop()
 		int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
 		// std::cout << "Epoll wait" << std::endl;
 		if (nfds == -1 && !g_sig) {
-			throw InternalServerException("Error on epoll_wait");
+			// throw InternalServerException("Error on epoll_wait",
+			// 							  strerror(errno));
 		}
 		for (int i = 0; i < nfds; ++i) {
 			event_fd = event[i].data.fd;

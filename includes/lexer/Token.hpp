@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Token.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:34:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 12:16:30 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:18:21 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ class Token : public IParserToken
   public:
 	Token();
 	Token(const std::string &key, Terminal_Type term, int line, int col);
+	Token(const Terminal_Type term);
 	Token(const Token &src);
 	Token &operator=(const Token &rhs);
 	~Token();
@@ -52,6 +53,7 @@ class Token : public IParserToken
 	Terminal_Type	   getTerminal() const { return _terminal; };
 	int				   getLine() const { return _line; };
 	int				   getCol() const { return _col; };
+	static std::string TerminalToString(Terminal_Type terminal);
 
 	static bool			 IsKey(const IParserToken &token);
 	static Terminal_Type IdentifyTerminal(const std::string &value);
@@ -60,8 +62,14 @@ class Token : public IParserToken
 
 	class InvalidTokenException : public std::exception
 	{
+	  private:
+		std::string _msg;
+
 	  public:
 		InvalidTokenException();
+		InvalidTokenException(const std::string &error,
+							  const std::string &expected,
+							  const std::string &value, int col, int line);
 		InvalidTokenException(const InvalidTokenException &src);
 		virtual ~InvalidTokenException() throw();
 		InvalidTokenException &operator=(const InvalidTokenException &src);

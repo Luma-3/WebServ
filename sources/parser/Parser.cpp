@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/21 14:34:56 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:52:54 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,29 +24,12 @@ using parser::Action;
 using parser::ActionEntry;
 using parser::Parser;
 
-Parser::Parser() : _lexer(NULL), _status(0) {};
-
-Parser::Parser(const Parser &src) :
-	_lexer(src._lexer),
-	_status(src._status),
-	_actions(createActionMap())
-{
-}
-
 Parser::Parser(Lexer *lexer) :
 	_lexer(lexer),
 	_status(0),
 	_current(new VirtualServer),
 	_actions(createActionMap())
 {
-}
-
-Parser &Parser::operator=(const Parser &src)
-{
-	if (this != &src) {
-		_parse_stack = src._parse_stack;
-	}
-	return *this;
 }
 
 std::map< parser::ActionEntry, Action > Parser::createActionMap()
@@ -128,32 +111,40 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	return actions;
 }
 
-/**
- * This namespace is used to hide the findAction and findExpected functions
- * is more appropriate to use a namespace than a static keyword in modern C++
- * (cpp98 is ok with this)
- */
-
 Action Parser::findAction(int state, Terminal_Type terminal)
 {
 	ActionEntry entry(state, terminal);
 
-	// std::cout << "State: " << state << " Terminal: " << terminal <<
-	// std::endl;
-
 	if (_actions.find(entry) != _actions.end()) {
-		// std::cout << "Action found" << std::endl;
 		return _actions.at(entry);
 	}
-
 	return Action(ERROR, 0);
 }
 
-ActionEntry Parser::findExpected(int state)
+std::string Parser::findExpected(int state)
 {
-	// TODO :This is a placeholder, it should be replaced by a real
-	// implementation
-	return ActionEntry(state, T_None);
+	std::set< Terminal_Type > expected;
+
+	for (std::map< ActionEntry, Action >::const_iterator it = _actions.begin();
+		 it != _actions.end(); ++it) {
+		if (it->first._state == state) {
+			expected.insert(it->first._terminal);
+		}
+	}
+	std::string expected_values;
+	for (std::set< Terminal_Type >::const_iterator it = expected.begin();
+		 it != expected.end(); ++it) {
+		if (Token::IsKey(Token(*it))) {
+			expected_values +=
+				"Valid key such as <index, root, listen, etc...>";
+			break;
+		}
+		else {
+			expected_values += "`" + Token::TerminalToString(*it) + "` ";
+		}
+	}
+
+	return expected_values;
 }
 
 void Parser::Parse()
@@ -169,9 +160,9 @@ void Parser::Parse()
 			std::string value = token->getKey();
 			size_t		col = token->getCol();
 			size_t		line = token->getLine();
-			std::cout << "state: " << _status << std::endl;
 			delete token;
-			throw InvalidTokenException(col, line, value, "Expected value");
+			throw UnexpectedTokenException(col, line, value,
+										   findExpected(_status));
 		}
 	}
 }

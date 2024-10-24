@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Lexer.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:32:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/02 09:43:07 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 11:15:57 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,15 +37,12 @@ class Lexer
 					   const std::string &line) const;
 
   public:
-	Lexer();
 	~Lexer();
-	Lexer(const Lexer &other);
 	Lexer(const char *file_path);
-	Lexer &operator=(const Lexer &other);
 
-	std::queue< Token * >		&getTokens();
-	const std::queue< Token * > &getTokens() const;
-	const std::ifstream			&getConfigFile() const;
+	std::queue< Token * >		&getTokens() { return _tokens; }
+	const std::queue< Token * > &getTokens() const { return _tokens; };
+	const std::ifstream			&getConfigFile() const { return _config_file; };
 
 	void Tokenize();
 

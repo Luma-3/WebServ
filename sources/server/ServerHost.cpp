@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHost.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/22 10:58:36 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 15:03:10 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ ServerHost::ServerHost(const std::string &host, const std::string &port) :
 	_nbVhost(0),
 	_socket(-1)
 {
-	std::cout << "ServerHost created" << std::endl;
 
 	struct addrinfo	 hints = {};
 	struct addrinfo *info;
@@ -73,24 +72,24 @@ struct addrinfo *ServerHost::setupSocket(const std::string &host,
 	struct addrinfo *info;
 	int status = getaddrinfo(host.c_str(), port.c_str(), hints, &info);
 	if (status != 0) {
-		throw InternalServerException("getaddrinfo failed on" + host + ": " +
-									  gai_strerror(status));
+		// throw InternalServerException("getaddrinfo failed on" + host + ": " +
+		// 							  gai_strerror(status));
 	}
 	_socket = socket(info->ai_family, info->ai_socktype, info->ai_protocol);
 	if (_socket == -1) {
-		throw InternalServerException("socket failed on " + host + ": " +
-									  strerror(errno));
+		// throw InternalServerException("socket failed on " + host + ": " +
+		// 							  strerror(errno));
 	}
 	int val = 1;
 	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(int)) ==
 		-1) {
-		throw InternalServerException(
-			"error on setting the port on reusable on " + host + ": " +
-			strerror(errno));
+		// throw InternalServerException(
+		// 	"error on setting the port on reusable on " + host + ": " +
+		// 	strerror(errno));
 	}
 	if (fcntl(_socket, F_SETFL, O_NONBLOCK) == -1) {
-		throw InternalServerException("Error on set nonblocking on " + host +
-									  ": " + strerror(errno));
+		// throw InternalServerException("Error on set nonblocking on " + host +
+		// 							  ": " + strerror(errno));
 	}
 
 	return info;
@@ -99,13 +98,13 @@ struct addrinfo *ServerHost::setupSocket(const std::string &host,
 void ServerHost::bindAndListenSocket(struct addrinfo *info)
 {
 	if (bind(_socket, info->ai_addr, info->ai_addrlen) == -1) {
-		throw InternalServerException("bind failed on " +
-									  std::string(strerror(errno)));
+		// throw InternalServerException("bind failed on " +
+		// 							  std::string(strerror(errno)));
 	}
 	freeaddrinfo(info);
 	if (listen(_socket, MAXREQUEST) == -1) {
-		throw InternalServerException("listen failed: " +
-									  std::string(strerror(errno)));
+		// throw InternalServerException("listen failed: " +
+		// 							  std::string(strerror(errno)));
 	}
 }
 
@@ -137,8 +136,8 @@ int ServerHost::acceptClient(sockaddr_storage *client_addr) const
 	socklen_t len = sizeof(sockaddr_storage);
 	int		  client_socket = accept(_socket, (sockaddr *)client_addr, &len);
 	if (client_socket == -1) {
-		throw InternalServerException("accept failed: " +
-									  std::string(strerror(errno)));
+		// throw InternalServerException("accept failed: " +
+		// 							  std::string(strerror(errno)));
 	}
 	return client_socket;
 }

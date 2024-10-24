@@ -3,18 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Action.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 00:20:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:54:04 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/Action.hpp"
 
 using parser::Action;
-
-// TODO : clean useless includes
 
 Action::Action() : _type(ERROR), _next_state(-1), _rule(NONE) {}
 

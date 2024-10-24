@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IParserToken.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 18:53:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 11:35:53 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:24:27 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

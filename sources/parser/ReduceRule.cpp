@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ReduceRule.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/15 14:25:18 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:48:47 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,20 @@ void TakeTo(std::stack< IParserToken * > &dst,
 		stack.pop();
 	}
 	dst.push(stack.top());
+	stack.pop();
+}
+
+void TakeTo(std::stack< Token * > &dst, std::stack< IParserToken * > &stack,
+			bool (*breaker)(const IParserToken &))
+{
+	while (!stack.empty()) {
+		if (breaker(*stack.top())) {
+			break;
+		}
+		dst.push(static_cast< Token * >(stack.top()));
+		stack.pop();
+	}
+	dst.push(static_cast< Token * >(stack.top()));
 	stack.pop();
 }
 
@@ -59,7 +73,7 @@ void Parser::R1_Server()
 		tokens.pop();
 	}
 	if (_current->getParam("listen") == NULL) {
-		throw Token::MissingParamException("listen");
+		throw Parser::MissingParamException("listen");
 	}
 	if (_current->getParam("hostname") == NULL) {
 		Param *param = new Param(
@@ -74,10 +88,10 @@ void Parser::R1_Server()
 
 void Parser::R2_Param()
 {
-	std::vector< IParserToken * > tokens;
+	std::vector< Token * > tokens;
 
 	for (size_t i = 0; i < 3; ++i) {
-		tokens.push_back(_parse_stack.top());
+		tokens.push_back(static_cast< Token * >(_parse_stack.top()));
 		_parse_stack.pop();
 	}
 
@@ -86,12 +100,19 @@ void Parser::R2_Param()
 
 	if (term_type == T_Hostname) {
 		if (!IsHostname(value)) {
-			throw Token::InvalidTokenException();
+			throw Token::InvalidTokenException(
+				"hostname not correctly formatted",
+				LIME "\nExemple:" RESET " example.com", value,
+				tokens[1]->getCol(), tokens[1]->getLine());
 		}
 	}
 	else if (term_type == T_BodySize) {
 		if (!IsBodySize(value)) {
-			throw Token::InvalidTokenException();
+			throw Token::InvalidTokenException(
+				"body_size not correctly formatted",
+				LIME "\nSize must be:" RESET
+					 " a number and follow by 'k/K' or 'm/M' or 'g/G'",
+				value, tokens[1]->getCol(), tokens[1]->getLine());
 		}
 	}
 
@@ -105,7 +126,7 @@ void Parser::R2_Param()
 
 void Parser::R3_DoubleParam()
 {
-	std::stack< IParserToken * > tokens;
+	std::stack< Token * > tokens;
 
 	TakeTo(tokens, _parse_stack, Token::IsKey);
 
@@ -116,6 +137,8 @@ void Parser::R3_DoubleParam()
 	tokens.pop();
 
 	std::string value1 = tokens.top()->getKey();
+	int			tmp_line = tokens.top()->getLine();
+	int			tmp_col = tokens.top()->getCol();
 	delete tokens.top();
 	tokens.pop();
 
@@ -123,17 +146,25 @@ void Parser::R3_DoubleParam()
 
 	if (term_type == T_Listen) {
 		if (!IsHostname(value1) && !IsIP(value1)) {
-			throw Token::InvalidTokenException();
+			throw Token::InvalidTokenException(
+				"hostname or IP address not correctly formatted",
+				LIME "\nExemple:" RESET " example.com / 127.0.0.1 ", value1,
+				tmp_col, tmp_line);
 		}
 		delete tokens.top();
 		tokens.pop();
 
 		value2 = tokens.top()->getKey();
+		tmp_col = tokens.top()->getCol();
+		tmp_line = tokens.top()->getLine();
 		delete tokens.top();
 		tokens.pop();
 
 		if (!IsPort(value2)) {
-			throw Token::InvalidTokenException();
+			throw Token::InvalidTokenException("port not correctly formatted",
+											   LIME "\nExemple:" RESET
+													" 0 to 65535",
+											   value2, tmp_col, tmp_line);
 		}
 	}
 	else if (tokens.size() > 1) {
@@ -146,10 +177,13 @@ void Parser::R3_DoubleParam()
 
 	if (term_type == T_Return) {
 		if (!IsErrorCode(value1)) {
-			throw Token::InvalidTokenException();
+			throw Token::InvalidTokenException(
+				"return not correctly formatted",
+				LIME "\nExemple:" RESET
+					 "1xx, 2xx, 3xx, 4xx, 5xx (x is a digit)",
+				value1, tmp_col, tmp_line);
 		}
 	}
-
 	Param *param = new Param(key, value1, value2);
 
 	_parse_stack.push(param);
@@ -157,7 +191,7 @@ void Parser::R3_DoubleParam()
 
 void Parser::R4_ErrorPage()
 {
-	std::stack< IParserToken * > tokens;
+	std::stack< Token * > tokens;
 
 	TakeTo(tokens, _parse_stack, Token::IsKey);
 
@@ -167,7 +201,12 @@ void Parser::R4_ErrorPage()
 	while (!tokens.empty()) {
 		if (tokens.top()->getTerminal() == T_Digits) {
 			if (!IsErrorCode(tokens.top()->getKey())) {
-				throw Token::InvalidTokenException();
+				throw Token::InvalidTokenException(
+					"error code not correctly formatted",
+					LIME "\nExemple:" RESET
+						 " 1xx, 2xx, 3xx, 4xx, 5xx (x is a digit)",
+					tokens.top()->getKey(), tokens.top()->getCol(),
+					tokens.top()->getLine());
 			}
 			errorCode.push_back(tokens.top()->getKey());
 		}

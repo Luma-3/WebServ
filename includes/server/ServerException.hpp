@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerException.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 13:21:26 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/24 13:22:01 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 14:53:26 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ class InternalServerException : public std::exception
 
   public:
 	InternalServerException();
-	InternalServerException(const std::string &msg);
+	InternalServerException(const std::string &function, int line,
+							const std::string &file, const std::string &error);
 	InternalServerException(const InternalServerException &src);
 	InternalServerException &operator=(const InternalServerException &src);
 	virtual ~InternalServerException() throw();

@@ -3,40 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   ParserException.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 16:19:55 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/08 11:52:44 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:52:45 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "color.hpp"
 #include "parser/Parser.hpp"
-
-#
 
 using parser::Parser;
 
-Parser::InvalidTokenException::InvalidTokenException(
+Parser::UnexpectedTokenException::UnexpectedTokenException(
 	size_t _col, size_t _line, const std::string &value,
 	const std::string &expected) :
-	_msg("Error: unexpected token: " + value + " at line: " + ToString(_line) +
-		 " | col: " + ToString(_col) + " expected: " + expected)
+	_msg(PASTEL_RED "Error:" ORANGE " unexpected token: \n" RESET "line: " +
+		 ToString(_line) + " | col: " + ToString(_col) + " >>> " + value +
+		 LIME "\nExpected: " RESET + expected + RESET)
 {
 }
 
-const char *Parser::InvalidTokenException::what() const throw()
+const char *Parser::UnexpectedTokenException::what() const throw()
 {
 	return _msg.c_str();
 }
 
-Parser::InvalidTokenException::InvalidTokenException(
-	const InvalidTokenException &src) :
+Parser::UnexpectedTokenException::UnexpectedTokenException(
+	const UnexpectedTokenException &src) :
 	_msg(src._msg)
 {
 }
 
-Parser::InvalidTokenException &
-Parser::InvalidTokenException::operator=(const InvalidTokenException &src)
+Parser::UnexpectedTokenException &
+Parser::UnexpectedTokenException::operator=(const UnexpectedTokenException &src)
 {
 	if (this != &src) {
 		_msg = src._msg;
@@ -44,10 +44,11 @@ Parser::InvalidTokenException::operator=(const InvalidTokenException &src)
 	return *this;
 }
 
-Parser::InvalidTokenException::~InvalidTokenException() throw() {}
+Parser::UnexpectedTokenException::~UnexpectedTokenException() throw() {}
 
 Parser::MissingParamException::MissingParamException(const std::string &value) :
-	_msg("Error: missing parameter: " + value)
+	_msg(PASTEL_RED "Error:" ORANGE " missing parameter: " RESET "`" + value +
+		 "`")
 {
 }
 

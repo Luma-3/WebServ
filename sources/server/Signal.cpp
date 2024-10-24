@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Signal.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 21:27:56 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/01 13:20:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/24 11:02:41 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,12 @@ void handler(int signum)
 	}
 }
 
-void initSignal()
+int initSignal()
 {
-	signal(SIGPIPE, SIG_IGN);
-	signal(SIGINT, handler);
+	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR ||
+		signal(SIGINT, handler) == SIG_ERR) {
+		std::cerr << "Error: signal" << std::endl;
+		return FAILURE;
+	}
+	return SUCCESS;
 }
