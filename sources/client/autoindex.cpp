@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/23 00:35:38 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/28 11:26:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int Builder::verifLocationAndGetNewPath()
 			_path = location->getRoot(_request_path);
 		}
 		_code = (autoindex == "on") ? _code : "403";
-		return (autoindex == "on") ? AUTOINDEX : ERROR;
+		return (autoindex == "on") ? AUTOINDEX : B_ERROR;
 	}
 	index = _server->getParamValue("index");
 	root = _server->getRoot(_request_path);
@@ -74,7 +74,7 @@ int Builder::verifLocationAndGetNewPath()
 	autoindex = _server->getParamValue("autoindex");
 	_path = _server->getRoot(_request_path);
 	_code = (autoindex == "on") ? _code : "403";
-	return (autoindex == "on") ? AUTOINDEX : ERROR;
+	return (autoindex == "on") ? AUTOINDEX : B_ERROR;
 }
 
 std::string formatSize(off_t size)
@@ -171,7 +171,7 @@ void Builder::setIndexOrAutoindex(int &state)
 	}
 	trimPath(_path);
 	if (access(_path.c_str(), F_OK | R_OK) != 0) {
-		state = ERROR;
+		state = B_ERROR;
 		return;
 	}
 }

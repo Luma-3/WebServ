@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/24 15:27:33 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/28 14:19:30 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,7 @@ Handler::Handler(const std::vector< VirtualServer * > &servers) :
 											  listen->getPair().second);
 			_hostptofd[hostkey] = host->getSocket();
 			_servers[host->getSocket()] = host;
-			if (addEvent(host->getSocket(), EPOLLIN | EPOLLRDHUP) != 0) {
-				throw InternalServerException("addEvent", __LINE__, __FILE__,
-											  std::string(strerror(errno)));
-			}
+			addEvent(host->getSocket(), EPOLLIN);
 			_nbServ++;
 		}
 		int fd = _hostptofd[hostkey];
@@ -62,6 +59,7 @@ Handler::Handler(const std::vector< VirtualServer * > &servers) :
 
 void Handler::handleNewConnection(const ServerHost *server)
 {
+	// TODO: Delete test RAII
 	sockaddr_storage *client_addr = new sockaddr_storage;
 	int				  client_socket = server->acceptClient(client_addr);
 	addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
@@ -74,6 +72,7 @@ void Handler::handleNewConnection(const ServerHost *server)
 	if (vhost == NULL) {
 		vhost = server->getDefaultVhost();
 	}
+	_CSERVER = vhost;
 
 	client::Client *client = new client::Client(
 		vhost, server->getDefaultVhost(), client_socket, client_addr);
@@ -89,43 +88,83 @@ void Handler::handleClientRequest(int event_fd)
 
 	client::Client *client = _clients[event_fd];
 	if (client) {
-		request = ServerHost::recvRequest(event_fd);
-		client->setRequest(request);
-		client->handleRequest();
-		modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP);
+		_CSERVER = client->getServer();
+		try {
+			request = ServerHost::recvRequest(event_fd);
+			client->setRequest(request);
+			client->handleRequest();
+		} catch (const std::exception &e) {
+			LOG_ERROR(e.what(), _CSERVER);
+			client->setResponse(e.what());
+		}
+		try {
+			modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP);
+		} catch (const std::exception &e) {
+			LOG_ERROR(e.what(), _CSERVER);
+			handleClientDisconnection(event_fd);
+		}
 	}
 }
 
 void Handler::handleClientResponse(int event_fd)
 {
 	client::Client *client = _clients[event_fd];
-	if (client) {
-		if (client->handleResponse() == FINISH) {
+	if (client && client->handleResponse() == FINISH) {
+		try {
+			_CSERVER = client->getServer();
 			ServerHost::sendResponse(event_fd, client->getResponse());
 			modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP);
+		} catch (const std::exception &e) {
+			LOG_ERROR(e.what(), _CSERVER);
+			handleClientDisconnection(event_fd);
 		}
 	}
 }
 
-int Handler::addEvent(int fd, uint32_t events) const
+void Handler::handleClientDisconnection(int event_fd)
+{
+	client::Client *client = _clients[event_fd];
+	if (client) {
+		_CSERVER = client->getServer();
+		_clients.erase(event_fd);
+		try {
+			removeEvent(event_fd);
+		} catch (const std::exception &e) {
+			LOG_ERROR(e.what(), _CSERVER);
+		}
+		close(event_fd);
+		delete client;
+	}
+}
+
+void Handler::addEvent(int fd, uint32_t events) const
 {
 	struct epoll_event event;
 	event.events = events;
 	event.data.fd = fd;
-	return epoll_ctl(_epfd, EPOLL_CTL_ADD, fd, &event);
+	if (epoll_ctl(_epfd, EPOLL_CTL_ADD, fd, &event) == -1) {
+		throw InternalServerException("epoll_ctl", __LINE__, __FILE__,
+									  std::string(strerror(errno)));
+	}
 }
 
-int Handler::removeEvent(int fd) const
+void Handler::removeEvent(int fd) const
 {
-	return epoll_ctl(_epfd, EPOLL_CTL_DEL, fd, NULL);
+	if (epoll_ctl(_epfd, EPOLL_CTL_DEL, fd, NULL) == -1) {
+		throw InternalServerException("epoll_ctl", __LINE__, __FILE__,
+									  std::string(strerror(errno)));
+	}
 }
 
-int Handler::modifyEvent(int fd, uint32_t events) const
+void Handler::modifyEvent(int fd, uint32_t events) const
 {
 	struct epoll_event event;
 	event.events = events;
 	event.data.fd = fd;
-	return epoll_ctl(_epfd, EPOLL_CTL_MOD, fd, &event);
+	if (epoll_ctl(_epfd, EPOLL_CTL_MOD, fd, &event) == -1) {
+		throw InternalServerException("epoll_ctl", __LINE__, __FILE__,
+									  std::string(strerror(errno)));
+	}
 }
 
 void Handler::runEventLoop()
@@ -133,40 +172,32 @@ void Handler::runEventLoop()
 	struct epoll_event event[MAX_EVENTS];
 	int				   event_fd;
 
+	LOG_DEBUG("Starting event loop", NULL);
 	while (!g_sig) {
 		int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
-		// std::cout << "Epoll wait" << std::endl;
 		if (nfds == -1 && !g_sig) {
-			// throw InternalServerException("Error on epoll_wait",
-			// 							  strerror(errno));
+			throw InternalServerException("epoll_wait", __LINE__, __FILE__,
+										  std::string(strerror(errno)));
 		}
 		for (int i = 0; i < nfds; ++i) {
+			_CSERVER = NULL;
 			event_fd = event[i].data.fd;
 			ServerHost *server = _servers[event_fd];
 			if (server) {
-				handleNewConnection(server);
-				continue;
-			}
-			else if (event[i].events & EPOLLRDHUP) {
-				// TODO : handle client disconnection on a disociated
-				client::Client *client = _clients[event_fd];
-				std::cout << "Client disconnected" << std::endl;
-				if (client) {
-					_clients.erase(event_fd);
-					removeEvent(event_fd);
-					close(event_fd);
-					delete client;
+				try {
+					handleNewConnection(server);
+				} catch (const std::exception &e) {
+					LOG_ERROR(e.what(), _CSERVER);
 				}
 			}
+			else if (event[i].events & EPOLLRDHUP) {
+				handleClientDisconnection(event_fd);
+			}
 			else if (event[i].events & EPOLLIN) {
-				// std::cout << "Client request" << std::endl;
 				handleClientRequest(event_fd);
-				continue;
 			}
 			else if (event[i].events & EPOLLOUT) {
-				// std::cout << "Client response" << std::endl;
 				handleClientResponse(event_fd);
-				continue;
 			}
 		}
 	}

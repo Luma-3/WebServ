@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/24 08:37:52 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/28 11:26:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void Builder::verifCGI(int &state)
 		_path = root + _filename;
 		if (access(_path.c_str(), F_OK | R_OK) != 0) {
 
-			state = ERROR;
+			state = B_ERROR;
 			_code = (errno == ENOENT) ? "404" : "403";
 		}
 		return;
@@ -53,7 +53,7 @@ void Builder::verifCGI(int &state)
 	_path = root + _filename;
 	std::cout << _path << std::endl;
 	if (access(_path.c_str(), F_OK | R_OK) != 0) {
-		state = ERROR;
+		state = B_ERROR;
 		_code = (errno == ENOENT) ? "404" : "403";
 	}
 }
@@ -195,7 +195,7 @@ void Builder::verifDenyMethod(int &state)
 		std::cout << deny_methods[i] << std::endl;
 		if (deny_methods[i] == _parser.getHeader("Method")) {
 			_code = "405";
-			state = ERROR;
+			state = B_ERROR;
 		}
 	}
 }

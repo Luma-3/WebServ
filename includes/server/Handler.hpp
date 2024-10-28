@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:46:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 14:58:11 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/28 13:04:09 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 
 #include "client/Client.hpp"
 #include "lexer/Token.hpp"
+#include "Logger.hpp"
 #include "VirtualServer.hpp"
 
 class Handler
@@ -37,10 +38,11 @@ class Handler
 	void handleNewConnection(const ServerHost *server);
 	void handleClientRequest(int event_fd);
 	void handleClientResponse(int event_fd);
+	void handleClientDisconnection(int event_fd);
 
-	int addEvent(int fd, uint32_t events) const;
-	int removeEvent(int fd) const;
-	int modifyEvent(int fd, uint32_t events) const;
+	void addEvent(int fd, uint32_t events) const;
+	void removeEvent(int fd) const;
+	void modifyEvent(int fd, uint32_t events) const;
 
   public:
 	Handler(const std::vector< VirtualServer * > &servers);

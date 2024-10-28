@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 09:33:29 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/28 14:45:07 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 #define INDEX	  1
 #define CGI		  2
 #define FILE	  3
-#define ERROR	  4
+#define B_ERROR	  4
 #define AUTOINDEX 5
 #define REDIRECT  6
 
@@ -60,6 +60,7 @@ class Client
 	void removeFile(const std::string &full_path);
 	void removeDirectory(const std::string &full_path);
 	bool verifAccessInsideDirectory(const std::string &full_path);
+	int	 CGIResponse();
 
   public:
 	Client();
@@ -77,6 +78,8 @@ class Client
 	const std::string	   &getResponse() const { return _response; };
 	const std::string	   &getBody() const;
 	const sockaddr_storage *getAddr() const { return _addr; };
+	const VirtualServer	   *getServer() const { return _server; };
+	const VirtualServer *getDefaultServer() const { return _default_server; };
 
 	void setRequest(const std::string &request) { _request = request; };
 	void setResponse(const std::string &response) { _response = response; };

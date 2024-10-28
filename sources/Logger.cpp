@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:59:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/07 19:02:40 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 14:41:07 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,55 @@
 
 #include <cerrno>
 #include <cstring>
+#include <ctime>
 
-Logger::Logger() : _buffer_size(0), _logLevel(DEBUG) {}
+#include "server/VirtualServer.hpp"
+
+Logger *Logger::Instance = NULL;
 
 Logger::Logger(const std::string &filename, int logLevel) :
-	_file(filename.c_str(), std::ios::app),
 	_buffer_size(0),
 	_logLevel(logLevel)
 {
-	std::cout << "Opening file: " << filename << std::endl;
+	if (Instance) {
+		throw std::runtime_error("Logger instance already exists");
+	}
+	Instance = this;
+
+	std::string new_filename = formatFile(filename);
+
+	_file.open(new_filename.c_str(), std::ios::app);
+	std::cout << "Opening file: " << new_filename << std::endl;
 	if (!_file.is_open()) {
 		std::cerr << "Error: could not open file: " << strerror(errno) << " "
-				  << filename << std::endl;
+				  << new_filename << std::endl;
 	}
 }
 
-Logger::Logger(const Logger &src) :
-	_buffer_size(src._buffer_size),
-	_logLevel(src._logLevel)
+std::string Logger::formatFile(const std::string &filename)
 {
-	if (!_file.is_open()) {
-		std::cerr << "Error: could not open file " << src._file << std::endl;
-	}
-	std::memcpy(_buffer, src._buffer, BUFFER_SIZE);
+	size_t last_dot = filename.find_last_of('.');
+	size_t last_slash = filename.find_last_of('/');
+
+	std::string extension =
+		last_dot == std::string::npos ? "" : filename.substr(last_dot);
+
+	extension = extension.empty() ? ".log" : extension;
+
+	last_slash = last_slash == std::string::npos ? 0 : last_slash + 1;
+	std::string path = filename.substr(0, last_slash);
+	std::string file_without_extension = filename.substr(last_slash, last_dot);
+
+	std::string new_filename =
+		path + "[" + formatTime() + "]" + file_without_extension + extension;
+
+	return new_filename;
+}
+
+void Logger::resetBuffer()
+{
+	_buffer_size = 0;
+	memset(_buffer, 0, BUFFER_SIZE);
 }
 
 Logger::~Logger()
@@ -60,8 +86,35 @@ Logger &Logger::operator=(const Logger &rhs)
 	return *this;
 }
 
-void Logger::log(LogLevel level, const std::string &message)
+std::string Logger::formatTime()
 {
+	std::time_t time = std::time(0);
+	std::tm	   *ltm = std::localtime(&time);
+	char		time_str[100];
+	strftime(time_str, 100, "%d-%m-%Y_%H:%M:%S", ltm);
+	return std::string(time_str);
+}
+
+std::string Logger::formatServer(const VirtualServer *server)
+{
+	if (server) {
+		std::string hostname = server->getParamValue("hostname");
+		if (hostname.empty()) {
+			std::string ip = server->getParamValue("listen");
+			std::string port = server->getParamValue("port");
+			return ip + ":" + port;
+		}
+		return hostname;
+	}
+	return "Main Server";
+}
+
+// [INFO] 127.0.0.1:8080 -> meassge : 04-10-2024 14:33:51
+
+void Logger::log(LogLevel level, const std::string &message,
+				 const VirtualServer *server)
+{
+
 	if (level >= _logLevel) {
 		std::string level_str;
 		switch (level) {
@@ -81,8 +134,11 @@ void Logger::log(LogLevel level, const std::string &message)
 				level_str = "UNKNOWN";
 				break;
 		}
-		std::string log_message = "[" + level_str + "] " + message + "\n";
-		size_t		message_size = log_message.size();
+		std::string log_message = "[" + level_str + "] " +
+								  formatServer(server) + " -> " + message +
+								  " : " + formatTime() + "\n";
+		size_t message_size = log_message.size();
+		std::cout << "message size = " << message_size << std::endl;
 		if (_buffer_size + message_size >= BUFFER_SIZE) {
 			flush();
 		}
@@ -116,5 +172,6 @@ void Logger::flush()
 		_file.write(_buffer, _buffer_size);
 		_file.flush();
 		_buffer_size = 0;
+		memset(_buffer, 0, BUFFER_SIZE);
 	}
 }

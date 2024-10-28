@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/23 11:15:09 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 14:42:46 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,15 @@
 
 #include "client/Client.hpp"
 #include "client/Parser.hpp"
+#include "Logger.hpp"
 #include "server/VirtualServer.hpp"
 
 #define WRITE 1
 #define READ  0
 
 #define CGI_DONE 1
+#define CGI_WAIT 0
+#define CGI_FAIL -1
 
 #define TIMEOUT	   10
 #define CGI_PYTHON "/usr/bin/python3"
@@ -40,6 +43,10 @@
 
 #define FAILURE 1
 #define SUCCESS 0
+
+static const VirtualServer *current = NULL;
+#define _CSERVER current
+
 namespace client {
 class Client;
 class Builder;
@@ -73,12 +80,12 @@ class CGIHandler
 			   const VirtualServer *server, client::Builder *builder);
 	~CGIHandler();
 
-	void execute();
-	int	 waitCGI();
-	void recvCGIResponse();
-	int	 adjustHeader(std::string &client_response);
-};
+	int getStatus() const { return _status; }
 
-void adjustHeader(std::string &response);
+	int	 execute();
+	int	 waitCGI();
+	int	 recvCGIResponse();
+	void adjustHeader(std::string &client_response);
+};
 
 #endif // CGI_HPP

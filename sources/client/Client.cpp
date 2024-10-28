@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 10:38:43 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/28 14:59:34 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,21 +68,66 @@ const std::string &Client::getBody() const
 	return _body;
 }
 
+namespace {
+void setErrorCodeAndBuild(const std::string &code, client::Builder *builder,
+						  std::string &response)
+{
+	builder->setCode(code);
+	builder->findErrorPage();
+	builder->BuildResponse(response);
+}
+} // namespace
+
+int Client::CGIResponse()
+{
+	// TODO : verif body to send correct error
+
+	int wait_ret = _cgi_handler->waitCGI();
+	if (wait_ret == CGI_WAIT) {
+		return CONTINUE;
+	}
+	else if (wait_ret == CGI_DONE) {
+		int ret = 0;
+		if ((ret = _cgi_handler->getStatus()) != 0) {
+			if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0) {
+				LOG_WARNING("CGI return with exit status: " +
+								ToString(WEXITSTATUS(ret)),
+							_CSERVER);
+			}
+			else {
+				LOG_WARNING("CGI interrupt by SIG : " + ToString(WTERMSIG(ret)),
+							_CSERVER);
+			}
+		}
+		else if ((ret = _cgi_handler->recvCGIResponse()) != SUCCESS) {
+			LOG_WARNING("CGI recv failed: " + std::string(strerror(errno)),
+						_CSERVER);
+		}
+		if (ret == 0) {
+			try {
+				_cgi_handler->adjustHeader(_response);
+			} catch (const std::exception &e) {
+				LOG_ERROR(e.what(), _CSERVER);
+				setErrorCodeAndBuild("500", _builder, _response);
+			}
+		}
+		else {
+			setErrorCodeAndBuild("500", _builder, _response);
+		}
+	}
+	else {
+		setErrorCodeAndBuild("500", _builder, _response);
+	}
+	delete _cgi_handler;
+	_cgi_handler = NULL;
+	return FINISH;
+}
+
 int Client::handleResponse()
 {
+	int wait_ret = 0;
 	if (_cgi_handler != NULL) {
-		if (_cgi_handler->waitCGI() == CGI_DONE) {
-			_cgi_handler->recvCGIResponse();
-			if (_cgi_handler->adjustHeader(_response) == FAILURE) {
-				_builder->setCode("500");
-				_builder->findErrorPage();
-				_builder->BuildResponse(_response);
-			}
-			delete _cgi_handler;
-			_cgi_handler = NULL;
-			return FINISH;
-		}
-		return CONTINUE;
+		return CGIResponse();
 	}
 	_builder->BuildResponse(_response);
 	return FINISH;
@@ -109,7 +154,7 @@ void Client::handleRequest()
 				 &Builder::setIndexOrAutoindex, &Builder::isCGI};
 
 	if (_builder->getCode() != "200") {
-		state = ERROR;
+		state = B_ERROR;
 	}
 
 	for (int i = 0; i < 4 && state == DEFAULT; ++i) {
@@ -117,7 +162,7 @@ void Client::handleRequest()
 	}
 
 	switch (state) {
-		case ERROR: {
+		case B_ERROR: {
 			std::cout << "ERROR" << std::endl;
 			_builder->findErrorPage();
 			break;
@@ -141,9 +186,14 @@ void Client::handleRequest()
 			break;
 		}
 		case CGI: {
-			std::cout << "CGI" << std::endl;
-			_cgi_handler = new CGIHandler(this, &parser, _server, _builder);
-			_cgi_handler->execute();
+			try {
+				_cgi_handler = new CGIHandler(this, &parser, _server, _builder);
+				_cgi_handler->execute();
+			} catch (const std::exception &e) {
+				LOG_ERROR(e.what(), _server);
+				_builder->setCode("500");
+				_builder->findErrorPage();
+			}
 			break;
 		}
 		default: {

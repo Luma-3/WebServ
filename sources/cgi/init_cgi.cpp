@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/23 12:20:04 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 13:27:08 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void getClientInfo(const client::Client *client, std::vector< string > &env_vec)
 
 	if (addr->ss_family == AF_INET) {
 		const sockaddr_in *addr_in =
-			reinterpret_cast< const sockaddr_in * >(addr);
+			reinterpret_cast< const sockaddr_in * >(addr); // TODO go to cast template
 		char ip[INET_ADDRSTRLEN];
 		inet_ntop(AF_INET, &(addr_in->sin_addr), ip, INET_ADDRSTRLEN);
 		env_vec.push_back("REMOTE_ADDR=" + string(ip));
@@ -49,7 +49,7 @@ void getClientInfo(const client::Client *client, std::vector< string > &env_vec)
 	}
 	else if (addr->ss_family == AF_INET6) {
 		const sockaddr_in6 *addr_in6 =
-			reinterpret_cast< const sockaddr_in6 * >(addr);
+			reinterpret_cast< const sockaddr_in6 * >(addr); // TODO go to cast template
 		char ip[INET6_ADDRSTRLEN];
 		inet_ntop(AF_INET6, &(addr_in6->sin6_addr), ip, INET6_ADDRSTRLEN);
 		env_vec.push_back("REMOTE_ADDR=" + string(ip));

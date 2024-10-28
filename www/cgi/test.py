@@ -6,7 +6,7 @@
 #    By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/20 13:05:14 by Monsieur_Ca       #+#    #+#              #
-#    Updated: 2024/10/22 14:45:56 by jbrousse         ###   ########.fr        #
+#    Updated: 2024/10/28 14:27:46 by jbrousse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ server_port = os.environ["SERVER_PORT"]
 server_protocol = os.environ["SERVER_PROTOCOL"]
 query_string = os.environ["QUERY_STRING"]
 
-#time.sleep(11) #simulate a long task TimeOut
+# time.sleep(11) #simulate a long task TimeOut
 
 print("Content-Type: text/html\r\n\r\n")
 print("<html>")

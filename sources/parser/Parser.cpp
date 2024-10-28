@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 13:52:54 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/28 11:07:19 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	std::map< ActionEntry, Action > actions;
 
 	actions[ActionEntry(0, T_Server)] = Action(SHIFT, 1);
+	actions[ActionEntry(0, T_Log)] = Action(SHIFT, 6);
+
 	actions[ActionEntry(1, T_OBracket)] = Action(SHIFT, 2);
 	actions[ActionEntry(2, T_Location)] = Action(SHIFT, 21);
 	actions[ActionEntry(2, T_CBracket)] = Action(REDUCE, 0, R1);
@@ -44,7 +46,7 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(2, T_Hostname)] = Action(SHIFT, 4);
 	actions[ActionEntry(2, T_BodySize)] = Action(SHIFT, 41);
 	actions[ActionEntry(2, T_ErrorPage)] = Action(SHIFT, 5);
-	actions[ActionEntry(2, T_Log)] = Action(SHIFT, 6);
+
 	actions[ActionEntry(2, T_Root)] = Action(SHIFT, 7);
 	actions[ActionEntry(2, T_Index)] = Action(SHIFT, 4);
 	actions[ActionEntry(2, T_Return)] = Action(SHIFT, 8);
@@ -53,14 +55,18 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(3, T_Identifier)] = Action(SHIFT, 43);
 	actions[ActionEntry(4, T_Identifier)] = Action(SHIFT, 11);
 	actions[ActionEntry(5, T_OSquareBracket)] = Action(SHIFT, 12);
+
 	actions[ActionEntry(6, T_LogLevel)] = Action(SHIFT, 13);
+
 	actions[ActionEntry(7, T_Path)] = Action(SHIFT, 11);
 	actions[ActionEntry(8, T_Digits)] = Action(SHIFT, 14);
 	actions[ActionEntry(9, T_Bool)] = Action(SHIFT, 11);
 	actions[ActionEntry(10, T_OSquareBracket)] = Action(SHIFT, 15);
 	actions[ActionEntry(11, T_Semi_Colon)] = Action(REDUCE, 2, R2);
 	actions[ActionEntry(12, T_Digits)] = Action(SHIFT, 16);
-	actions[ActionEntry(13, T_Identifier)] = Action(SHIFT, 17);
+
+	actions[ActionEntry(13, T_Identifier)] = Action(SHIFT, 45);
+
 	actions[ActionEntry(14, T_Identifier)] = Action(SHIFT, 17);
 	actions[ActionEntry(14, T_Semi_Colon)] = Action(REDUCE, 2, R3);
 	actions[ActionEntry(15, T_Method)] = Action(SHIFT, 18);
@@ -107,6 +113,7 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(42, T_Digits)] = Action(SHIFT, 30);
 	actions[ActionEntry(43, T_Colon)] = Action(SHIFT, 44);
 	actions[ActionEntry(44, T_Digits)] = Action(SHIFT, 17);
+	actions[ActionEntry(45, T_Semi_Colon)] = Action(REDUCE, 0, R3);
 
 	return actions;
 }

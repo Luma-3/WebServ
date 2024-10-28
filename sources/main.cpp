@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 14:15:53 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/28 10:59:48 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <iostream>
 
 #include "lexer/Lexer.hpp"
+#include "Logger.hpp"
 #include "parser/Parser.hpp"
 #include "server/Handler.hpp"
 #include "server/Signal.hpp"
@@ -31,6 +32,11 @@ Handler *init_server(const char **av)
 	parser.Parse();
 
 	const std::vector< VirtualServer * > servers = parser.getServers();
+	if (parser.getParseStack().size() != 0) {
+		Param *token = static_cast< Param * >(parser.getParseStack().top());
+		new Logger(token->getPair().second,
+				   Logger::StringToLogLevel(token->getPair().first));
+	}
 
 	Handler *handler = new Handler(servers);
 
@@ -62,6 +68,10 @@ int main(const int ac, const char **av)
 	// }
 
 	delete handler;
+
+	if (Logger::Instance) {
+		delete Logger::Instance;
+	}
 
 	return 0;
 }
