@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 14:59:34 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 18:24:04 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,6 @@ int Client::CGIResponse()
 
 int Client::handleResponse()
 {
-	int wait_ret = 0;
 	if (_cgi_handler != NULL) {
 		return CGIResponse();
 	}
@@ -139,18 +138,11 @@ void Client::handleRequest()
 
 	Parser parser;
 	parser.parseRequest(_request);
-	std::cout << "body request = " << parser.getHeader("body") << std::endl;
 
 	_builder = new Builder(_server, _default_server, parser);
 
-	if (parser.getHeader("Method") == "DELETE") {
-		handleDeleteRequest(parser);
-		return;
-	}
-
-	// std::cout << "REQUEST =" << _request << std::endl;
 	int state = DEFAULT;
-	ptr tab[] = {&Builder::returnParam, &Builder::verifDenyMethod,
+	ptr tab[] = {&Builder::returnParam, &Builder::verifMethod,
 				 &Builder::setIndexOrAutoindex, &Builder::isCGI};
 
 	if (_builder->getCode() != "200") {
@@ -165,6 +157,10 @@ void Client::handleRequest()
 		case B_ERROR: {
 			std::cout << "ERROR" << std::endl;
 			_builder->findErrorPage();
+			break;
+		}
+		case DELETE: {
+			handleDeleteRequest(parser);
 			break;
 		}
 		case REDIRECT: {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHost.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:37:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/17 10:56:54 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 16:36:59 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <string>
 #include <sys/socket.h>
 
+#include "server/ServerException.hpp"
 #include "VirtualServer.hpp"
 
 #define MAXREQUEST	 10

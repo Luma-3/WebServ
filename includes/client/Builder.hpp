@@ -74,7 +74,7 @@ class Builder
 	~Builder();
 
 	void BuildResponse(std::string &response);
-	void verifDenyMethod(int &state);
+	void verifMethod(int &state);
 	void returnParam(int &state);
 	void findFile();
 	void readFile();

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 10:59:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 18:11:53 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ int main(const int ac, const char **av)
 	Handler *handler = NULL;
 
 	if (ac != 2) {
-		throw std::runtime_error("Wrong Number of Argument");
+		std::cerr << "Usage: ./webserv <config_file>" << std::endl;
+		return FAILURE;
 	}
 	else if (initSignal() == FAILURE) {
 		return (EPERM);
@@ -56,11 +57,11 @@ int main(const int ac, const char **av)
 
 	try {
 		handler = init_server(av);
+		handler->runEventLoop();
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
-		return (1);
+		return FAILURE;
 	}
-	handler->runEventLoop();
 	// } catch (const std::exception &e) {
 	// 	std::cerr << e.what() << " | errno: " << strerror(errno) << '\n';
 	// 	delete handler;

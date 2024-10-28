@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/28 11:26:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 18:40:45 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ void Builder::isCGI(int &state)
 			return;
 		}
 	}
+	LOG_WARNING("Cgi extension " + _extension + " can't be use in WebServ",
+				_server);
 }
 
 void Builder::createErrorPage()
@@ -175,13 +177,20 @@ void Builder::findErrorPage()
 			return;
 		}
 	}
+	LOG_INFO("No Error page found in config file: no file or permission",
+			 _server);
 	createErrorPage();
 }
 
-void Builder::verifDenyMethod(int &state)
+void Builder::verifMethod(int &state)
 {
-	const Location			  *location = _server->getLocation(_request_path);
+	if (_parser.getHeader("Method") == "DELETE") {
+		state = DELETE;
+		return;
+	}
+
 	std::vector< std::string > deny_methods;
+	const Location			  *location = _server->getLocation(_request_path);
 	if (location != NULL) {
 		deny_methods = location->getParamList("deny_method");
 	}
@@ -192,7 +201,6 @@ void Builder::verifDenyMethod(int &state)
 		return;
 	}
 	for (size_t i = 0; i < deny_methods.size(); ++i) {
-		std::cout << deny_methods[i] << std::endl;
 		if (deny_methods[i] == _parser.getHeader("Method")) {
 			_code = "405";
 			state = B_ERROR;
@@ -202,10 +210,7 @@ void Builder::verifDenyMethod(int &state)
 
 int Builder::readDataRequest()
 {
-
 	if (access(_path.c_str(), F_OK | R_OK) != 0) {
-		std::cerr << "access error:" << std::string(strerror(errno))
-				  << std::endl; // TODO : log
 		return errno;
 	}
 
@@ -226,6 +231,7 @@ void Builder::readFile()
 	int ret = readDataRequest();
 
 	if (ret != 0) {
+		LOG_WARNING("Error Accessing path: " + _path, _server);
 		_code = (ret == ENOENT) ? "404" : "403";
 		findErrorPage();
 	}
@@ -236,7 +242,7 @@ void Builder::findFile()
 	std::string root;
 	if (_code == "200") {
 		const Location *location = _server->getLocation(_request_path);
-		std::cout << _request_path << std::endl;
+
 		if (location != NULL) {
 			_path = location->getRoot(_request_path) + _filename;
 		}

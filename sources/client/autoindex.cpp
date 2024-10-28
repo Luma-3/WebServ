@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/28 11:26:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 17:58:58 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,16 +79,16 @@ int Builder::verifLocationAndGetNewPath()
 
 std::string formatSize(off_t size)
 {
-	const char *sizes[] = {"B", "KB", "MB", "GB"};
-	int			order = 0;
-	double		formattedSize = static_cast< double >(size);
+	const char		  *sizes[] = {"B", "KB", "MB", "GB"};
+	int				   order = 0;
+	double			   formattedSize = static_cast< double >(size);
+	std::ostringstream out;
 
 	while (formattedSize >= 1024 && order < 3) {
 		order++;
 		formattedSize /= 1024;
 	}
 
-	std::ostringstream out;
 	out << std::fixed << std::setprecision(2) << formattedSize << " "
 		<< sizes[order];
 	return out.str();
@@ -109,7 +109,6 @@ void Builder::insertFileInHead(string &file, const off_t &size,
 	head.replace(head.find("%@last_modif@%"), 14, date);
 	head.replace(head.find("%@size@%"), 9, ToString(formatSize(size)));
 	_body.insert(_body.end(), head.begin(), head.end());
-	(void)size;
 }
 
 void Builder::insertFooterAndSetAttributes(std::vector< char > &body)
@@ -139,6 +138,7 @@ void Builder::getAutoindex()
 		}
 		string full_path = _path + entry->d_name;
 		if (stat(full_path.c_str(), &info) == -1) {
+			LOG_INFO("Impossible to get file info from " + full_path, _server);
 			continue;
 		}
 		off_t	   size = info.st_size;
@@ -171,6 +171,8 @@ void Builder::setIndexOrAutoindex(int &state)
 	}
 	trimPath(_path);
 	if (access(_path.c_str(), F_OK | R_OK) != 0) {
+		_code = (errno == ENOENT) ? "404" : "403";
+		LOG_WARNING("accessing file " + _path + " failed", current);
 		state = B_ERROR;
 		return;
 	}

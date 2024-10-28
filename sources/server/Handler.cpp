@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/28 14:19:30 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 18:33:34 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,10 @@ void Handler::handleNewConnection(const ServerHost *server)
 	// TODO: Delete test RAII
 	sockaddr_storage *client_addr = new sockaddr_storage;
 	int				  client_socket = server->acceptClient(client_addr);
-	addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
 
+	addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
 	string request = ServerHost::recvRequest(client_socket);
+
 	string hostname = client::Parser::findHostName(request);
 	// TODO : if not hostname bad request
 

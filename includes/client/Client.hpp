@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 14:45:07 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 18:33:40 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 #define B_ERROR	  4
 #define AUTOINDEX 5
 #define REDIRECT  6
+#define DELETE	  7
 
 #define FINISH	 1
 #define CONTINUE 0

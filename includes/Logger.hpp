@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:44:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 14:40:43 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 18:16:51 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@
 #include <iostream>
 
 class VirtualServer;
+
+static const VirtualServer *current __attribute__((unused));
+#define _CSERVER current
 
 #define BUFFER_SIZE 1024
 

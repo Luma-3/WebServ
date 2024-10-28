@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIHandler.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 14:42:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/28 18:16:41 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,6 @@
 
 #define FAILURE 1
 #define SUCCESS 0
-
-static const VirtualServer *current = NULL;
-#define _CSERVER current
 
 namespace client {
 class Client;

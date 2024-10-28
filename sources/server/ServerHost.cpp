@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHost.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 15:03:10 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/28 18:33:20 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "server/ServerException.hpp"
+#include "Logger.hpp"
+#include "template/StringUtils.tpp"
 
 ServerHost::ServerHost() : _default_vhost(NULL), _nbVhost(0), _socket(-1) {}
 
@@ -72,24 +73,24 @@ struct addrinfo *ServerHost::setupSocket(const std::string &host,
 	struct addrinfo *info;
 	int status = getaddrinfo(host.c_str(), port.c_str(), hints, &info);
 	if (status != 0) {
-		// throw InternalServerException("getaddrinfo failed on" + host + ": " +
-		// 							  gai_strerror(status));
+		throw InternalServerException("getaddrinfo failed on " + host + ": ",
+									  __LINE__, __FILE__,
+									  std::string(gai_strerror(status)));
 	}
 	_socket = socket(info->ai_family, info->ai_socktype, info->ai_protocol);
 	if (_socket == -1) {
-		// throw InternalServerException("socket failed on " + host + ": " +
-		// 							  strerror(errno));
+		throw InternalServerException("socket failed: ", __LINE__, __FILE__,
+									  std::string(strerror(errno)));
 	}
 	int val = 1;
 	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(int)) ==
 		-1) {
-		// throw InternalServerException(
-		// 	"error on setting the port on reusable on " + host + ": " +
-		// 	strerror(errno));
+		throw InternalServerException("setsockopt failed: ", __LINE__, __FILE__,
+									  std::string(strerror(errno)));
 	}
 	if (fcntl(_socket, F_SETFL, O_NONBLOCK) == -1) {
-		// throw InternalServerException("Error on set nonblocking on " + host +
-		// 							  ": " + strerror(errno));
+		throw InternalServerException("fcntl failed: ", __LINE__, __FILE__,
+									  std::string(strerror(errno)));
 	}
 
 	return info;
@@ -98,13 +99,13 @@ struct addrinfo *ServerHost::setupSocket(const std::string &host,
 void ServerHost::bindAndListenSocket(struct addrinfo *info)
 {
 	if (bind(_socket, info->ai_addr, info->ai_addrlen) == -1) {
-		// throw InternalServerException("bind failed on " +
-		// 							  std::string(strerror(errno)));
+		throw InternalServerException("bind failed: ", __LINE__, __FILE__,
+									  std::string(strerror(errno)));
 	}
 	freeaddrinfo(info);
 	if (listen(_socket, MAXREQUEST) == -1) {
-		// throw InternalServerException("listen failed: " +
-		// 							  std::string(strerror(errno)));
+		throw InternalServerException("listen failed: ", __LINE__, __FILE__,
+									  std::string(strerror(errno)));
 	}
 }
 
@@ -134,11 +135,13 @@ void ServerHost::AddServer(std::string host_name, VirtualServer *server)
 int ServerHost::acceptClient(sockaddr_storage *client_addr) const
 {
 	socklen_t len = sizeof(sockaddr_storage);
-	int		  client_socket = accept(_socket, (sockaddr *)client_addr, &len);
+
+	int client_socket = accept(_socket, (sockaddr *)client_addr, &len);
 	if (client_socket == -1) {
-		// throw InternalServerException("accept failed: " +
-		// 							  std::string(strerror(errno)));
+		throw InternalServerException("accept failed: ", __LINE__, __FILE__,
+									  std::string(strerror(errno)));
 	}
+
 	return client_socket;
 }
 
@@ -152,6 +155,8 @@ std::string ServerHost::recvRequest(int client_socket)
 		bzero(buff, MAX_REQ_SIZE);
 		nb_bytes = recv(client_socket, buff, MAX_REQ_SIZE, 0);
 		if (nb_bytes == -1) {
+			throw InternalServerException("recv failed: ", __LINE__, __FILE__,
+										  std::string(strerror(errno)));
 			break;
 		}
 		request.append(buff, static_cast< size_t >(nb_bytes));
@@ -189,8 +194,11 @@ void chunckResponse(int client_socket, const std::string &response)
 		std::string chunked_response =
 			chunk_size + body.substr(offset, chunk) + "\r\n";
 		std::cout << "Chunked Response: " << chunked_response << std::endl;
-		send(client_socket, chunked_response.c_str(), chunked_response.size(),
-			 0);
+		if (send(client_socket, chunked_response.c_str(),
+				 chunked_response.size(), 0) == -1) {
+			throw InternalServerException("send failed: ", __LINE__, __FILE__,
+										  std::string(strerror(errno)));
+		}
 		len -= chunk;
 		offset += chunk;
 	}
