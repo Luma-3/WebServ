@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 13:09:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 14:54:40 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/29 10:15:10 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,39 @@ InternalServerException::operator=(const InternalServerException &src)
 InternalServerException::~InternalServerException() throw() {}
 
 const char *InternalServerException::what() const throw()
+{
+	return _msg.c_str();
+}
+
+RecvException::RecvException() : _msg("Recv Error") {}
+
+RecvException::RecvException(const std::string &function, int line,
+							 const std::string &file, const std::string &error)
+{
+	std::string new_file(file);
+	size_t		pos = new_file.find_last_of("/");
+	if (pos != std::string::npos) {
+		new_file = new_file.substr(pos + 1);
+	}
+
+	_msg = PASTEL_RED "Error: " ORANGE "Recv Exception\n" RESET + function +
+		   " at " + new_file + " | Line: " + ToString(line) + ": " + error;
+}
+
+RecvException::RecvException(const RecvException &src) : _msg(src._msg) {}
+
+RecvException &RecvException::operator=(const RecvException &src)
+{
+	if (this == &src) {
+		return (*this);
+	}
+	_msg = src._msg;
+	return (*this);
+}
+
+RecvException::~RecvException() throw() {}
+
+const char *RecvException::what() const throw()
 {
 	return _msg.c_str();
 }

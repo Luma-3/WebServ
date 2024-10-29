@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/28 18:40:45 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/29 10:45:55 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,6 @@ void Builder::isCGI(int &state)
 			return;
 		}
 	}
-	LOG_WARNING("Cgi extension " + _extension + " can't be use in WebServ",
-				_server);
 }
 
 void Builder::createErrorPage()
@@ -177,7 +175,8 @@ void Builder::findErrorPage()
 			return;
 		}
 	}
-	LOG_INFO("No Error page found in config file: no file or permission",
+	LOG_INFO("No Error page for code " + _code +
+				 " in config file: no file or permission",
 			 _server);
 	createErrorPage();
 }
@@ -231,7 +230,7 @@ void Builder::readFile()
 	int ret = readDataRequest();
 
 	if (ret != 0) {
-		LOG_WARNING("Error Accessing path: " + _path, _server);
+		LOG_WARNING("Error Accessing file path: " + _path, _server);
 		_code = (ret == ENOENT) ? "404" : "403";
 		findErrorPage();
 	}

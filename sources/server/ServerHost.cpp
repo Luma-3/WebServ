@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHost.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 18:33:20 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/29 10:15:43 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,8 +155,8 @@ std::string ServerHost::recvRequest(int client_socket)
 		bzero(buff, MAX_REQ_SIZE);
 		nb_bytes = recv(client_socket, buff, MAX_REQ_SIZE, 0);
 		if (nb_bytes == -1) {
-			throw InternalServerException("recv failed: ", __LINE__, __FILE__,
-										  std::string(strerror(errno)));
+			throw RecvException("recv failed: ", __LINE__, __FILE__,
+								std::string(strerror(errno)));
 			break;
 		}
 		request.append(buff, static_cast< size_t >(nb_bytes));

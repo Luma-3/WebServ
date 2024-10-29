@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 18:24:04 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/29 11:02:11 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,14 +148,12 @@ void Client::handleRequest()
 	if (_builder->getCode() != "200") {
 		state = B_ERROR;
 	}
-
 	for (int i = 0; i < 4 && state == DEFAULT; ++i) {
 		(_builder->*tab[i])(state);
 	}
 
 	switch (state) {
 		case B_ERROR: {
-			std::cout << "ERROR" << std::endl;
 			_builder->findErrorPage();
 			break;
 		}
@@ -164,18 +162,18 @@ void Client::handleRequest()
 			break;
 		}
 		case REDIRECT: {
-			std::cout << "REDIRECT" << std::endl;
 			break;
 		}
 		case AUTOINDEX: {
-			std::cout << "AUTOINDEX" << std::endl;
 			_builder->getAutoindex();
 			break;
 		}
 		case INDEX: {
-			std::cout << "INDEX" << std::endl;
 			int ret = _builder->readDataRequest();
 			if (ret != 0) {
+				LOG_WARNING("Error Accessing index file from : " +
+								_builder->getPath(),
+							_server);
 				_builder->setCode((ret == ENOENT) ? "404" : "403");
 				_builder->findErrorPage();
 			}
@@ -193,7 +191,6 @@ void Client::handleRequest()
 			break;
 		}
 		default: {
-			std::cout << "default" << std::endl;
 			_builder->findFile();
 		}
 	}

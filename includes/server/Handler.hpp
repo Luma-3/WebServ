@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:46:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 13:04:09 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:18:25 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,12 @@ class Handler
 	std::map< int, client::Client * > _clients;
 
 	void handleNewConnection(const ServerHost *server);
-	void handleClientRequest(int event_fd);
+	void handleClientRequest(int event_fd, const std::string &request = "");
 	void handleClientResponse(int event_fd);
 	void handleClientDisconnection(int event_fd);
+	void handleNewClient(const ServerHost *server, int client_socket,
+						 sockaddr_storage  *client_addr,
+						 const std::string &request);
 
 	void addEvent(int fd, uint32_t events) const;
 	void removeEvent(int fd) const;

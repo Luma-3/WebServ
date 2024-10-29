@@ -1,0 +1,4 @@
+[DEBUG] Main Server -> Starting event loop : 29-10-2024_10:27:16
+[WARNING] localhost:8080 -> Cgi extension css can't be use in WebServ : 29-10-2024_10:27:34
+[WARNING] localhost:8080 -> Cgi extension ico can't be use in WebServ : 29-10-2024_10:27:34
+[WARNING] localhost:8080 -> Cgi extension jpg can't be use in WebServ : 29-10-2024_10:27:34
