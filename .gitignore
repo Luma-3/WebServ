@@ -30,8 +30,6 @@
 *.exe
 *.out
 *.app
+*.log
 build/
 externals/
-
-#Others
-test.cpp
