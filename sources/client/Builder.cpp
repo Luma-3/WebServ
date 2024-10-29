@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/29 10:45:55 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/29 16:32:36 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,8 @@ void Builder::BuildResponse(string &response)
 	}
 
 	response += std::string(_body.begin(), _body.end());
+
+	std::cout << "response : " << response << std::endl;
 }
 
 bool Builder::findErrorPageLocation()
@@ -183,8 +185,13 @@ void Builder::findErrorPage()
 
 void Builder::verifMethod(int &state)
 {
+	std::cout << "method : " << _parser.getHeader("Method") << std::endl;
 	if (_parser.getHeader("Method") == "DELETE") {
 		state = DELETE;
+		return;
+	}
+	else if (_parser.getHeader("Method") == "POST") {
+		state = POST;
 		return;
 	}
 

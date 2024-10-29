@@ -1,0 +1,3 @@
+[DEBUG] Main Server -> Starting event loop : 29-10-2024_16:08:12
+[INFO] localhost:8080 -> No Error page for code 413 in config file: no file or permission : 29-10-2024_16:09:57
+[INFO] localhost:8080 -> No Error page for code 405 in config file: no file or permission : 29-10-2024_16:09:57

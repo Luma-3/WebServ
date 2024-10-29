@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client_Tables.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 10:39:08 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/21 13:38:01 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/29 16:02:30 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ string findStatusMessage(const std::string &code)
 	status_message["411"] = " Length Required";
 	status_message["412"] = " Precondition Failed";
 	status_message["413"] = " Request Entity Too Large";
+	status_message["414"] = " Request-URI Too Long";
+	status_message["415"] = " Unsupported Media Type";
 	status_message["418"] = " I'm a teapot";
 	status_message["500"] = " Internal Server Error";
 	status_message["501"] = " Not Implemented";

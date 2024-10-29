@@ -1,0 +1,4 @@
+[DEBUG] Main Server -> Starting event loop : 29-10-2024_16:10:26
+[INFO] localhost:8080 -> No Error page for code 405 in config file: no file or permission : 29-10-2024_16:11:43
+[WARNING] Main Server -> CGI interrupt by SIG : 14 : 29-10-2024_16:11:53
+[INFO] localhost:8080 -> No Error page for code 500 in config file: no file or permission : 29-10-2024_16:11:53

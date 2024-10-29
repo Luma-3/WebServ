@@ -32,7 +32,7 @@ autoindexParam	= 'autoindex' bool ';'
 
 ReturnParam		= 'return' digits identifier ';'
 
-MaxBodySizeParam	= 'client_max_body_size' identifier ';'
+MaxBodySizeParam	= 'max_body_size' identifier ';'
 
 
 identifier	= [a-zA-Z0-9_-.]+

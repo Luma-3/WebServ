@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executeCGI.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 14:41:43 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/29 16:45:28 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ using std::string;
 int CGIHandler::childProcess()
 {
 	alarm(TIMEOUT);
-
 	if (Logger::Instance) {
 		Logger::Instance->resetBuffer();
 	}
@@ -41,6 +40,7 @@ int CGIHandler::childProcess()
 	if (Logger::Instance) {
 		delete Logger::Instance;
 	}
+	std::cerr << "JE suis dans le child" << std::endl;
 
 	if (execve(_cgi, _argv, _envp) == -1) {
 		exit(errno);
@@ -82,6 +82,7 @@ int CGIHandler::recvCGIResponse()
 		}
 		_response.append(buffer, nb_byte);
 	}
+	std::cout << "CGI REponse : " << _response << std::endl;
 	return SUCCESS;
 }
 

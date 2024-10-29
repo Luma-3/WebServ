@@ -1,0 +1,5 @@
+[DEBUG] Main Server -> Starting event loop : 29-10-2024_16:30:42
+[INFO] localhost:8080 -> No Error page for code 200 in config file: no file or permission : 29-10-2024_16:30:46
+[INFO] localhost:8080 -> No Error page for code 200 in config file: no file or permission : 29-10-2024_16:31:51
+[ERROR] localhost:8080 -> [91mError: [33mInternal Server Exception
+[0mepoll_ctl at Handler.cpp | Line: 191: No such file or directory : 29-10-2024_16:31:58

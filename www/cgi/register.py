@@ -14,6 +14,7 @@ password = form.getvalue("password")
 confirm_password = form.getvalue("confirm_password")
 
 
+
 print("Content-Type: text/html\r\n\r\n")
 print("<!DOCTYPE html> <html lang=\"en\"><head> \
 	<meta charset=\"UTF-8\"> \
@@ -32,6 +33,9 @@ print("<!DOCTYPE html> <html lang=\"en\"><head> \
             <div class=\"title\">\
 ")
 
+print(username)
+print(password)
+print(confirm_password)
 
 if password != confirm_password or not username or not password:
     print("<h1>Passwords do not match!</h1></li>")
