@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ReduceRule.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 13:48:47 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/30 10:03:58 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,6 +224,31 @@ void Parser::R4_ErrorPage()
 		_parse_stack.push(param);
 		++it;
 	}
+}
+
+void Parser::R7_CGI()
+{
+	std::stack< Token * > tokens;
+
+	std::string cgi_path;
+	std::string cgi_extension;
+
+	TakeTo(tokens, _parse_stack, Token::IsKey);
+
+	while (!tokens.empty()) {
+		if (tokens.top()->getTerminal() == T_Identifier) {
+			cgi_path = tokens.top()->getKey();
+		}
+		else if (tokens.top()->getTerminal() == T_CGIExtension) {
+			cgi_extension = tokens.top()->getKey();
+		}
+		delete tokens.top();
+		tokens.pop();
+	}
+
+	Param *cgi = new Param(cgi_extension, cgi_path);
+
+	_parse_stack.push(cgi);
 }
 
 void Parser::R5_DenyMethod()

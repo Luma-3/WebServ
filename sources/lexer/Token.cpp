@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Token.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:37:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 13:42:58 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/30 10:40:57 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ bool Token::IsKey(const IParserToken &token)
 {
 	const Terminal_Type type = token.getTerminal();
 
-	if (type <= T_BodySize && type >= T_Server) {
+	if (type <= T_UploadDir && type >= T_Server) {
 		return (true);
 	}
 	return (false);
@@ -60,7 +60,7 @@ void Token::print() const
 
 std::string Token::TerminalToString(Terminal_Type terminal)
 {
-	static const int				  size = 25;
+	static const int				  size = 27;
 	static const IdentifyTypeTerminal key[size] = {
 		{T_Server,		   "server"						   },
 		{T_Location,		 "location"					   },
@@ -86,7 +86,9 @@ std::string Token::TerminalToString(Terminal_Type terminal)
 		{T_OBracket,		 "{"							 },
 		{T_CBracket,		 "}"							 },
 		{T_OSquareBracket, "["							  },
-		{T_CSquareBracket, "]"							  }
+		{T_CSquareBracket, "]"							  },
+		{T_CGI,			"cgi"						   },
+		{T_UploadDir,	  "upload_dir"					  }
 	   };
 
 	for (size_t i = 0; i < size; ++i) {
@@ -99,7 +101,7 @@ std::string Token::TerminalToString(Terminal_Type terminal)
 
 Terminal_Type Token::IdentifyTerminal(const std::string &value)
 {
-	static const int		 size_key = 12;
+	static const int		 size_key = 15;
 	static const IdentifyKey key[size_key] = {
 		{T_Server,	   "server"	   },
 		{T_Location,	 "location"	   },
@@ -112,8 +114,10 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 		{T_AutoIndex,  "autoindex"	 },
 		{T_Root,		 "root"		   },
 		{T_Log,		"log"			 },
-		{T_BodySize,	 "max_body_size"}
-	 };
+		{T_BodySize,	 "max_body_size"},
+		{T_CGI,		"cgi"			 },
+		{T_UploadDir,  "upload_dir"	  }
+	   };
 
 	for (size_t i = 0; i < size_key; ++i) {
 		if (value == key[i].key) {
@@ -121,14 +125,15 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 		}
 	}
 
-	static const int		   size_regexs = 5;
+	static const int		   size_regexs = 6;
 	static const IdentifyRegex regexs[size_regexs] = {
-		{T_Bool,	 IsBool	   },
-		  {T_Method,	 IsMethod	 },
-		{T_LogLevel, IsLogLevel},
-		{T_Path,	 IsPath	   },
-		  {T_Digits,	 IsDigit	},
-	};
+		{T_Bool,		 IsBool		   },
+		  {T_Method,		 IsMethod		 },
+		{T_LogLevel,	 IsLogLevel	   },
+		  {T_Path,		   IsPath		 },
+		{T_Digits,	   IsDigit		  },
+		  {T_CGIExtension, IsCGIExtension}
+	  };
 
 	for (size_t i = 0; i < size_regexs; ++i) {
 		if (regexs[i].func(value)) {

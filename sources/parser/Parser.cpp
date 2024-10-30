@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 11:07:19 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/30 10:18:57 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,35 +38,33 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 
 	actions[ActionEntry(0, T_Server)] = Action(SHIFT, 1);
 	actions[ActionEntry(0, T_Log)] = Action(SHIFT, 6);
-
 	actions[ActionEntry(1, T_OBracket)] = Action(SHIFT, 2);
+
 	actions[ActionEntry(2, T_Location)] = Action(SHIFT, 21);
 	actions[ActionEntry(2, T_CBracket)] = Action(REDUCE, 0, R1);
 	actions[ActionEntry(2, T_Listen)] = Action(SHIFT, 3);
 	actions[ActionEntry(2, T_Hostname)] = Action(SHIFT, 4);
 	actions[ActionEntry(2, T_BodySize)] = Action(SHIFT, 41);
 	actions[ActionEntry(2, T_ErrorPage)] = Action(SHIFT, 5);
-
 	actions[ActionEntry(2, T_Root)] = Action(SHIFT, 7);
 	actions[ActionEntry(2, T_Index)] = Action(SHIFT, 4);
 	actions[ActionEntry(2, T_Return)] = Action(SHIFT, 8);
 	actions[ActionEntry(2, T_AutoIndex)] = Action(SHIFT, 9);
 	actions[ActionEntry(2, T_DenyMethod)] = Action(SHIFT, 10);
+	actions[ActionEntry(2, T_CGI)] = Action(SHIFT, 46);
+	actions[ActionEntry(2, T_UploadDir)] = Action(SHIFT, 7);
+
 	actions[ActionEntry(3, T_Identifier)] = Action(SHIFT, 43);
 	actions[ActionEntry(4, T_Identifier)] = Action(SHIFT, 11);
 	actions[ActionEntry(5, T_OSquareBracket)] = Action(SHIFT, 12);
-
 	actions[ActionEntry(6, T_LogLevel)] = Action(SHIFT, 13);
-
 	actions[ActionEntry(7, T_Path)] = Action(SHIFT, 11);
 	actions[ActionEntry(8, T_Digits)] = Action(SHIFT, 14);
 	actions[ActionEntry(9, T_Bool)] = Action(SHIFT, 11);
 	actions[ActionEntry(10, T_OSquareBracket)] = Action(SHIFT, 15);
 	actions[ActionEntry(11, T_Semi_Colon)] = Action(REDUCE, 2, R2);
 	actions[ActionEntry(12, T_Digits)] = Action(SHIFT, 16);
-
 	actions[ActionEntry(13, T_Identifier)] = Action(SHIFT, 45);
-
 	actions[ActionEntry(14, T_Identifier)] = Action(SHIFT, 17);
 	actions[ActionEntry(14, T_Semi_Colon)] = Action(REDUCE, 2, R3);
 	actions[ActionEntry(15, T_Method)] = Action(SHIFT, 18);
@@ -80,6 +78,7 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(21, T_Path)] = Action(SHIFT, 22);
 	actions[ActionEntry(22, T_OBracket)] = Action(SHIFT, 23);
 	actions[ActionEntry(23, T_CBracket)] = Action(REDUCE, 2, R6);
+
 	actions[ActionEntry(23, T_BodySize)] = Action(SHIFT, 42);
 	actions[ActionEntry(23, T_ErrorPage)] = Action(SHIFT, 25);
 	actions[ActionEntry(23, T_Root)] = Action(SHIFT, 26);
@@ -87,6 +86,9 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(23, T_Return)] = Action(SHIFT, 27);
 	actions[ActionEntry(23, T_AutoIndex)] = Action(SHIFT, 28);
 	actions[ActionEntry(23, T_DenyMethod)] = Action(SHIFT, 29);
+	actions[ActionEntry(23, T_CGI)] = Action(SHIFT, 49);
+	actions[ActionEntry(23, T_UploadDir)] = Action(SHIFT, 26);
+
 	actions[ActionEntry(24, T_Identifier)] = Action(SHIFT, 30);
 	actions[ActionEntry(25, T_OSquareBracket)] = Action(SHIFT, 31);
 	actions[ActionEntry(26, T_Path)] = Action(SHIFT, 30);
@@ -114,6 +116,12 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(43, T_Colon)] = Action(SHIFT, 44);
 	actions[ActionEntry(44, T_Digits)] = Action(SHIFT, 17);
 	actions[ActionEntry(45, T_Semi_Colon)] = Action(REDUCE, 0, R3);
+	actions[ActionEntry(46, T_CGIExtension)] = Action(SHIFT, 47);
+	actions[ActionEntry(47, T_Identifier)] = Action(SHIFT, 48);
+	actions[ActionEntry(48, T_Semi_Colon)] = Action(REDUCE, 2, R7);
+	actions[ActionEntry(49, T_CGIExtension)] = Action(SHIFT, 50);
+	actions[ActionEntry(50, T_Identifier)] = Action(SHIFT, 51);
+	actions[ActionEntry(51, T_Semi_Colon)] = Action(REDUCE, 23, R7);
 
 	return actions;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:59:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 18:10:06 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/30 11:25:17 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ Logger::Logger(const std::string &filename, int logLevel) :
 	std::string new_filename = formatFile(filename);
 
 	_file.open(new_filename.c_str(), std::ios::app);
-	std::cout << "Opening file: " << new_filename << std::endl;
 	if (!_file.is_open()) {
 		std::cerr << "Error: could not open file: " << strerror(errno) << " "
 				  << new_filename << std::endl;
@@ -138,7 +137,6 @@ void Logger::log(LogLevel level, const std::string &message,
 								  formatServer(server) + " -> " + message +
 								  " : " + formatTime() + "\n";
 		size_t message_size = log_message.size();
-		std::cout << "message size = " << message_size << std::endl;
 		if (_buffer_size + message_size >= BUFFER_SIZE) {
 			flush();
 		}

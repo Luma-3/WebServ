@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHost.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/29 10:15:43 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/30 13:45:35 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,14 +174,11 @@ std::string ServerHost::recvRequest(int client_socket)
 
 void chunckResponse(int client_socket, const std::string &response)
 {
-	std::cout << "Response: " << response << std::endl;
 	size_t pos = response.find("\r\n\r\n") + 4;
 
 	std::string header = response.substr(0, pos);
 	std::string body = response.substr(pos);
 	size_t		len = body.size();
-
-	std::cout << "Chunked Header: " << header << std::endl;
 
 	send(client_socket, header.c_str(), header.size(), 0);
 
@@ -193,7 +190,6 @@ void chunckResponse(int client_socket, const std::string &response)
 		std::string chunk_size = ss.str() + "\r\n";
 		std::string chunked_response =
 			chunk_size + body.substr(offset, chunk) + "\r\n";
-		std::cout << "Chunked Response: " << chunked_response << std::endl;
 		if (send(client_socket, chunked_response.c_str(),
 				 chunked_response.size(), 0) == -1) {
 			throw InternalServerException("send failed: ", __LINE__, __FILE__,
@@ -211,7 +207,7 @@ void ServerHost::sendResponse(int client_socket, const std::string &response)
 		return;
 	}
 
-	if (response.find("Content-Length: ") == std::string::npos) {
+	if (response.find("Transfer-Encoding: chunked") != std::string::npos) {
 		chunckResponse(client_socket, response);
 	}
 	else {

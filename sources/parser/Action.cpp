@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Action.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 13:54:04 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/30 10:15:33 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,9 @@ void Action::Reduce(Token *token, std::stack< IParserToken * > &stack,
 			break;
 		case R6:
 			parser.R6_Location();
+			break;
+		case R7:
+			parser.R7_CGI();
 			break;
 		default:
 			break;

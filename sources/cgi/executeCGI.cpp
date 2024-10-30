@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 14:41:43 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/30 10:53:38 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,9 @@ int CGIHandler::recvCGIResponse()
 int CGIHandler::waitCGI()
 {
 	pid_t ret = 0;
+	if (_status == CGI_FAIL) {
+		return CGI_FAIL;
+	}
 	ret = waitpid(_pid, &_status, WNOHANG);
 	if (ret < 0) {
 		LOG_WARNING("Waitpid Error: " + string(strerror(errno)), _CSERVER);

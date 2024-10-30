@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser_url.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 17:24:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/22 16:52:50 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/30 11:25:55 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,4 @@ void client::Parser::handleRequestedPath(string &requested_path)
 		_extension = _filename.substr(_filename.find_last_of('.') + 1);
 	}
 
-	std::cout << "Requested path: " << _requested_path << std::endl;
-	std::cout << "Filename: " << _filename << std::endl;
-	std::cout << "CGI path info: " << _path_info << std::endl;
-	std::cout << "Query: " << _query << std::endl;
 }

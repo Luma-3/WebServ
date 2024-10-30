@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/28 17:58:58 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/30 11:24:02 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int Builder::verifLocationAndGetNewPath()
 		return (autoindex == "on") ? AUTOINDEX : B_ERROR;
 	}
 	index = _server->getParamValue("index");
-	root = _server->getRoot(_request_path);
+	root = _server->getParamValue("root");
 	if (!index.empty()) {
 		_path = root + index;
 		_filename = index;

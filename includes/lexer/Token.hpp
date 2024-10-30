@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Token.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:34:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 13:18:21 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/30 10:08:20 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,5 +110,7 @@ bool IsBodySize(const std::string &value);
 bool IsIP(const std::string &value);
 
 bool IsPort(const std::string &value);
+
+bool IsCGIExtension(const std::string &value);
 
 #endif // TOKEN_HPP

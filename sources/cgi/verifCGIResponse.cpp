@@ -6,103 +6,39 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 16:26:37 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 14:59:04 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/30 13:49:09 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cgi/CGIHandler.hpp"
 
-std::string findHeaderElement(const std::string &header, std::string element)
+namespace {
+void buildHeader(std::string &cgiHeader)
 {
-	size_t		pos = header.find(element);
-	std::string found;
-
-	if (pos == std::string::npos) {
-		return "";
+	if (cgiHeader.find("Content-Type:") == std::string::npos) {
+		throw InternalServerException("CGI: ", __LINE__, __FILE__,
+									  "No Content-Type found");
 	}
-	pos += element.size();
-	size_t end = header.find("\r\n", pos);
-	if (end == std::string::npos) {
-		return "";
-	}
-	found = header.substr(pos, end - pos);
-	return found;
-}
-
-std::map< std::string, std::string > parseHeader(const std::string &header)
-{
-	std::map< std::string, std::string > headers;
-
-	if (header.empty()) {
-		return headers;
-	}
-
-	std::string status_code = findHeaderElement(header, "Status:");
-	std::string content_type = findHeaderElement(header, "Content-Type:");
-	std::string content_length = findHeaderElement(header, "Content-Length:");
-	std::string location = findHeaderElement(header, "Location:");
-	// TODO : Add Cookie
-
-	if (!status_code.empty()) {
-		headers["Status"] = status_code;
+	size_t pos = cgiHeader.find("Status:");
+	if (pos != std::string::npos) {
+		cgiHeader.replace(pos, 8, "HTTP/1.1 ");
 	}
 	else {
-		headers["Status"] = "200 OK";
+		cgiHeader.insert(0, "HTTP/1.1 200 OK\r\n");
 	}
-	if (!content_type.empty()) {
-		headers["Content-Type"] = content_type;
+	if (cgiHeader.find("Content-Length:") == std::string::npos &&
+		cgiHeader.find("Transfer-Encoding:") == std::string::npos) {
+		cgiHeader += "Transfer-Encoding: chunked\r\n";
 	}
-	else {
-		headers["Content-Type"] = "application/octet-stream";
-	}
-	if (!content_length.empty()) {
-		headers["Content-Length"] = content_length;
-	}
-	if (!location.empty()) {
-		headers["Location"] = location;
-	}
-	return headers;
+	cgiHeader += "\r\n";
 }
 
-std::string buildHeader(const std::string &cgiHeader)
-{
-	if (cgiHeader.empty()) {
-		return "HTTP/1.1 200 OK\r\nContent-Type: "
-			   "application/octet-stream\r\nTransfer-Encoding: chunked\r\n\r\n";
-	}
-
-	std::map< std::string, std::string > headers = parseHeader(cgiHeader);
-
-	std::string header = "HTTP/1.1 ";
-
-	header += headers["Status"];
-	header += "\r\n";
-	header += "Content-Type:" + headers["Content-Type"];
-	header += "\r\n";
-	if (headers.find("Content-Length") != headers.end()) {
-		header += "Content-Length:" + headers["Content-Length"];
-		header += "\r\n";
-	}
-	else {
-		header += "Transfer-Encoding: chunked";
-		header += "\r\n";
-	}
-	if (headers.find("Location") != headers.end()) {
-		header += "Location:" + headers["Location"];
-		header += "\r\n";
-	}
-	header += "\r\n";
-	return header;
-}
+} // namespace
 
 void CGIHandler::adjustHeader(std::string &client_response)
 {
-	// TODO : Add cookie
-	// TODO : rework header and error handling
-
 	size_t		pos = _response.find("\r\n\r\n");
 	std::string header;
-	std::string newHeader;
 	std::string body;
 
 	if (pos != std::string::npos) {
@@ -110,11 +46,11 @@ void CGIHandler::adjustHeader(std::string &client_response)
 		body = _response.substr(pos + 4);
 	}
 	else {
-		header = "";
-		body = _response;
+		throw InternalServerException("CGI: ", __LINE__, __FILE__,
+									  "No header found");
 	}
 
-	newHeader = buildHeader(header);
-
-	client_response = newHeader + body;
+	buildHeader(header);
+	std::cout << "Header : " << header << std::endl;
+	client_response = header + body;
 }

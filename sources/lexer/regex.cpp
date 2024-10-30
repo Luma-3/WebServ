@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 11:43:11 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/30 10:07:51 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,4 +163,18 @@ bool IsBodySize(const string &value)
 		return (false);
 	}
 	return (true);
+}
+
+bool IsCGIExtension(const string &value)
+{
+	static const int	size_key = 2;
+	static const string key[size_key] = {"php", "py"};
+
+	for (size_t i = 0; i < size_key; ++i) {
+		if (value == key[i]) {
+			return (true);
+		}
+	}
+
+	return (false);
 }

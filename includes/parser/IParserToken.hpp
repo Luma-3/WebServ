@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IParserToken.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 18:53:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 13:24:27 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/30 10:13:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ enum Terminal_Type {
 	T_Root,
 	T_Log,
 	T_BodySize,
+	T_CGI,
+	T_UploadDir,
 
 	T_Comma,
 	T_Colon,
@@ -50,6 +52,7 @@ enum Terminal_Type {
 	T_Digits,
 	T_Method,
 	T_Path,
+	T_CGIExtension,
 	T_Bool,
 	T_LogLevel
 };

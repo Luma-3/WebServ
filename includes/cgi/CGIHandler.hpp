@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIHandler.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 18:16:41 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/30 10:44:56 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,8 @@ class CGIHandler
 							const client::Parser *parser,
 							const client::Client *client);
 
-	static char **createArgv(const client::Builder *builder);
+	static char **createArgv(const client::Builder *builder,
+							 const char			   *cgi_path);
 
 	int childProcess();
 	int parentProcess();

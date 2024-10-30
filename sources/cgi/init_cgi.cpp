@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 13:27:08 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/30 12:59:46 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,16 @@ void getClientInfo(const client::Client *client, std::vector< string > &env_vec)
 	const sockaddr_storage *addr = client->getAddr();
 
 	if (addr->ss_family == AF_INET) {
-		const sockaddr_in *addr_in =
-			reinterpret_cast< const sockaddr_in * >(addr); // TODO go to cast template
+		const sockaddr_in *addr_in = reinterpret_cast< const sockaddr_in * >(
+			addr); // TODO go to cast template
 		char ip[INET_ADDRSTRLEN];
 		inet_ntop(AF_INET, &(addr_in->sin_addr), ip, INET_ADDRSTRLEN);
 		env_vec.push_back("REMOTE_ADDR=" + string(ip));
 		env_vec.push_back("REMOTE_PORT=" + ToString(ntohs(addr_in->sin_port)));
 	}
 	else if (addr->ss_family == AF_INET6) {
-		const sockaddr_in6 *addr_in6 =
-			reinterpret_cast< const sockaddr_in6 * >(addr); // TODO go to cast template
+		const sockaddr_in6 *addr_in6 = reinterpret_cast< const sockaddr_in6 * >(
+			addr); // TODO go to cast template
 		char ip[INET6_ADDRSTRLEN];
 		inet_ntop(AF_INET6, &(addr_in6->sin6_addr), ip, INET6_ADDRSTRLEN);
 		env_vec.push_back("REMOTE_ADDR=" + string(ip));
@@ -84,6 +84,8 @@ char **CGIHandler::createEnv(const VirtualServer  *server,
 						  server->getParamPair("listen").second);
 		env_vec.push_back("SERVER_PROTOCOL=" +
 						  parser->getHeader("httpVersion"));
+		std::cout << "cookie : " << parser->getHeader("Cookie") << std::endl;
+		env_vec.push_back("HTTP_COOKIE=" + parser->getHeader("Cookie"));
 		env_vec.push_back("SERVER_SOFTWARE=webserv/0.5");
 
 		getClientInfo(client, env_vec);
@@ -98,12 +100,13 @@ char **CGIHandler::createEnv(const VirtualServer  *server,
 	return envp;
 }
 
-char **CGIHandler::createArgv(const client::Builder *builder)
+char **CGIHandler::createArgv(const client::Builder *builder,
+							  const char			*cgi_path)
 {
 	char **argv = new char *[3];
 
-	argv[0] = new char[strlen(CGI_PATH) + 1];
-	strcpy(argv[0], CGI_PATH);
+	argv[0] = new char[strlen(cgi_path) + 1];
+	strcpy(argv[0], cgi_path);
 	argv[1] = new char[builder->getPath().size() + 1];
 	strcpy(argv[1], builder->getPath().c_str());
 	argv[2] = NULL;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/29 10:45:55 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/30 11:25:25 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ void Builder::verifCGI(int &state)
 	}
 	root = _server->getRoot(_request_path);
 	_path = root + _filename;
-	std::cout << _path << std::endl;
 	if (access(_path.c_str(), F_OK | R_OK) != 0) {
 		state = B_ERROR;
 		_code = (errno == ENOENT) ? "404" : "403";
@@ -135,8 +134,7 @@ bool Builder::findErrorPageLocation()
 bool Builder::findErrorPageServer()
 {
 	std::string error_page = _server->getParamValue(_code);
-	std::string error_path = _server->getRoot(_request_path);
-
+	std::string error_path = _server->getParamValue("root");
 	if (error_page.empty()) {
 		return false;
 	}
@@ -150,7 +148,7 @@ bool Builder::findErrorPageServer()
 bool Builder::findErrorPageDefaultServer()
 {
 	std::string error_page = _default_server->getParamValue(_code);
-	std::string error_path = _default_server->getRoot(_request_path);
+	std::string error_path = _default_server->getParamValue("root");
 
 	if (error_page.empty()) {
 		return false;
@@ -175,9 +173,9 @@ void Builder::findErrorPage()
 			return;
 		}
 	}
-	LOG_INFO("No Error page for code " + _code +
-				 " in config file: no file or permission",
-			 _server);
+	std::string error =
+		(errno != 0) ? strerror(errno) : "No file found in config file";
+	LOG_INFO("No Error page for code " + _code + ": " + error, _CSERVER);
 	createErrorPage();
 }
 

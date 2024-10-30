@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/29 11:02:11 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/30 13:17:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ int Client::CGIResponse()
 				_cgi_handler->adjustHeader(_response);
 			} catch (const std::exception &e) {
 				LOG_ERROR(e.what(), _CSERVER);
-				setErrorCodeAndBuild("500", _builder, _response);
+				setErrorCodeAndBuild("502", _builder, _response);
 			}
 		}
 		else {
@@ -182,7 +182,9 @@ void Client::handleRequest()
 		case CGI: {
 			try {
 				_cgi_handler = new CGIHandler(this, &parser, _server, _builder);
-				_cgi_handler->execute();
+				if (_cgi_handler->getStatus() != CGI_FAIL) {
+					_cgi_handler->execute();
+				}
 			} catch (const std::exception &e) {
 				LOG_ERROR(e.what(), _server);
 				_builder->setCode("500");

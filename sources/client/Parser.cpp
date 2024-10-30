@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/24 08:43:08 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/30 11:39:31 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void Parser::getBodyFromRequest(size_t &line_break_pos)
 		value = line;
 
 		_headers[key] = value;
+		std::cout << key << " : " << value << std::endl;
 		_buffer = _buffer.substr(line_break_pos + 2);
 	}
 	if (_buffer.empty()) {

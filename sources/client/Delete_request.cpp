@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:15:23 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/28 15:07:25 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/30 11:25:29 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,6 @@ void Client::removeDirectory(const std::string &full_path)
 
 void Client::removeFile(const std::string &full_path)
 {
-	std::cout << "Removing file " << full_path << std::endl;
 	if (unlink(full_path.c_str()) == -1) {
 		_builder->setCode("500");
 		return;

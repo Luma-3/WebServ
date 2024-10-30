@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 13:53:40 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/30 10:04:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ class Parser
 	void R4_ErrorPage();
 	void R5_DenyMethod();
 	void R6_Location();
+	void R7_CGI();
 
 	// EXCEPTIONS
 

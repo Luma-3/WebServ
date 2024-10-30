@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/13 10:46:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/30 10:20:19 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ enum ReduceRuleID {
 	R3,
 	R4,
 	R5,
-	R6
+	R6,
+	R7
 };
 
 class Action
@@ -90,15 +91,14 @@ struct ActionEntry {
 	}
 };
 
-// void R1_Server(std::stack< IParserToken * > &stack);
+
+} // namespace parser
+
+#include "template/StringUtils.tpp"// void R1_Server(std::stack< IParserToken * > &stack);
 // void R2_Param(std::stack< IParserToken * > &stack);
 // void R3_DoubleParam(std::stack< IParserToken * > &stack);
 // void R4_ErrorPage(std::stack< IParserToken * > &stack);
 // void R5_DenyMethod(std::stack< IParserToken * > &stack);
 // void R6_Location(std::stack< IParserToken * > &stack);
-
-} // namespace parser
-
-#include "template/StringUtils.tpp"
 
 #endif // ACTION_HPP
