@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 16:26:37 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 13:49:09 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/30 16:16:15 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void buildHeader(std::string &cgiHeader)
 	if (pos != std::string::npos) {
 		cgiHeader.replace(pos, 8, "HTTP/1.1 ");
 	}
-	else {
+	else if (cgiHeader.find("HTTP/1.1") == std::string::npos) {
 		cgiHeader.insert(0, "HTTP/1.1 200 OK\r\n");
 	}
 	if (cgiHeader.find("Content-Length:") == std::string::npos &&
