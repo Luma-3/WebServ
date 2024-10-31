@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/31 14:05:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/31 15:51:26 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,10 @@ using std::string;
 
 int CGIHandler::childProcess()
 {
-	std::cerr << "childProcess" << std::endl;
 	alarm(TIMEOUT);
 
 	if (Logger::Instance) {
 		Logger::Instance->resetBuffer();
-	}
-	if (Logger::Instance) {
-		delete Logger::Instance;
 	}
 
 	if (close(_pipeOut[READ]) != 0 || close(_pipeIn[WRITE]) != 0) {
@@ -33,34 +29,24 @@ int CGIHandler::childProcess()
 		exit(FAILURE);
 	}
 
-	std::cerr << "child 2" << std::endl;
-
 	if (dup2(_pipeOut[WRITE], STDOUT_FILENO) == -1 ||
 		dup2(_pipeIn[READ], STDIN_FILENO) == -1) {
 		LOG_WARNING("Dup2 Error: " + string(strerror(errno)), NULL);
 		exit(FAILURE);
 	}
-	std::cerr << "child 3" << std::endl;
 
 	if (close(_pipeOut[WRITE]) != 0 || close(_pipeIn[READ]) != 0) {
 		LOG_WARNING("Close Error: " + string(strerror(errno)), NULL);
 		exit(FAILURE);
 	}
-	std::cerr << "child 4" << std::endl;
 
-	for (int i = 0; _envp[i] != NULL; ++i) {
-		std::cerr << _envp[i] << std::endl;
+	if (Logger::Instance) {
+		delete Logger::Instance;
 	}
-	for (int i = 0; _argv[i] != NULL; ++i) {
-		std::cerr << _argv[i] << std::endl;
-	}
-	std::cerr << _cgi << std::endl;
 
 	if (execve(_cgi, _argv, _envp) != 0) {
-		std::cerr << "execve Error: " << strerror(errno) << std::endl;
 		exit(errno);
 	}
-	std::cerr << "execve Error: " << strerror(errno) << std::endl;
 
 	exit(EXIT_FAILURE);
 }
