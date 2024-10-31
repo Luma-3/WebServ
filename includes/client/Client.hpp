@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 18:33:40 by anthony          ###   ########.fr       */
+/*   Updated: 2024/10/31 01:17:06 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 #define AUTOINDEX 5
 #define REDIRECT  6
 #define DELETE	  7
+#define POST	  8
 
 #define FINISH	 1
 #define CONTINUE 0
@@ -56,6 +57,8 @@ class Client
 	std::string _response;
 	std::string _header;
 	std::string _body;
+
+	void handlePostRequest(const Parser &parser);
 
 	void handleDeleteRequest(const Parser &parser);
 	void removeFile(const std::string &full_path);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 13:17:39 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/31 02:32:36 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,11 @@ int Client::handleResponse()
 	return FINISH;
 }
 
+void Client::handlePostRequest(const Parser &parser) 
+{
+	(void)parser;
+}
+
 void Client::handleRequest()
 {
 	typedef void (Builder::*ptr)(int &);
@@ -192,6 +197,10 @@ void Client::handleRequest()
 			}
 			break;
 		}
+		// case POST: {
+		// 	handlePostRequest(parser);
+		// 	break;
+		// }
 		default: {
 			_builder->findFile();
 		}

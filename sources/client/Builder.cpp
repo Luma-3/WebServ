@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdufour <jdufour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/30 11:25:25 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/31 02:32:43 by jdufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,10 @@ void Builder::verifMethod(int &state)
 		state = DELETE;
 		return;
 	}
-
+	// else if (_parser.getHeader("Method") == "POST") {
+	// 	state = POST;
+	// 	return;
+	// }
 	std::vector< std::string > deny_methods;
 	const Location			  *location = _server->getLocation(_request_path);
 	if (location != NULL) {
