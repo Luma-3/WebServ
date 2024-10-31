@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   color.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:53:35 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/24 11:59:27 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/31 10:01:00 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

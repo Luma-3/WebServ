@@ -6,7 +6,7 @@
 #    By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/20 13:05:14 by Monsieur_Ca       #+#    #+#              #
-#    Updated: 2024/10/30 16:33:58 by jbrousse         ###   ########.fr        #
+#    Updated: 2024/10/31 11:08:37 by jbrousse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -151,7 +151,7 @@ class Body:
 	def to_http(self):
 		return "<body>" + self.content + "</body>"
 
-class Http:
+class HttpResponse:
 	header: Header;
 	head: Head;
 	body: Body;
@@ -174,37 +174,49 @@ class Http:
 	def set_header(self, header: Header):
 		self.header = header
 	def add_header(self, header: str):
-		self.header.add_header(header)\
+		self.header.add_header(header)
+		return self
 	
 	def set_status_code(self, status_code: int):
 		self.header.set_status_code(status_code)
+		return self
 	
 	def set_status_message(self, status_message: str):
 		self.header.set_status_message(status_message)
+		return self
 	
 	def set_content_type(self, content_type: str):
 		self.header.set_content_type(content_type)
+		return self
 	
 	def set_content_length(self, content_length: int):
 		self.header.set_content_length(content_length)
+		return self
 	def set_cookies(self, name: str, value: str, expires: str = None, path: str = None, domain: str = None, secure: bool = False, httponly: bool = False):
 		self.header.set_cookies(name, value, expires, path, domain, secure, httponly)
+		return self
 	def add_cookie(self, cookie: Cookie):
 		self.header.add_cookie(cookie)
+		return self
 	def get_head(self):
 		return self.head
 	def set_head(self, head: Head):
 		self.head = head
+		return self
 	def add_head(self, head: str):
 		self.head.add_content(head)
+		return self
 	def add_style(self, content: str):
 		self.head.add_style(content)
+		return self
 	def get_body(self):
 		return self.body
 	def set_body(self, body: Body):
 		self.body = body
+		return self
 	def add_body(self, body: str):
 		self.body.add_content(body)
+		return self
 	def to_http(self):
 		content = self.header.to_http()
 		content += "<html>"
@@ -216,46 +228,30 @@ class Http:
 		print(self.to_http())
 
 
-remote_addr = os.environ["REMOTE_ADDR"]
-server_name = os.environ["SERVER_NAME"]
-server_port = os.environ["SERVER_PORT"]
-server_protocol = os.environ["SERVER_PROTOCOL"]
-query_string = os.environ["QUERY_STRING"]
-cookie = os.environ["HTTP_COOKIE"]
+remote_addr = os.environ.get("REMOTE_ADDR", None)
+server_name = os.environ.get("SERVER_NAME", None)
+server_port = os.environ.get("SERVER_PORT", None)
+server_protocol = os.environ.get("SERVER_PROTOCOL", None)
+query_string = os.environ.get("QUERY_STRING", None)
+cookie = os.environ.get("HTTP_COOKIE", None)
 
-http  = Http()
 # time.sleep(11) #simulate a long task TimeOut
 
-# print("Set-Cookie: jesuisuncookie=42;")
-# print("Content-Type: text/html\r\n\r\n")
-# print("<html>")
-# print("<head>")
-# print("<title>Test CGI</title>")
-# print("</head>")
-# print("<body>")
-# print("<h1>Test CGI</h1>")
-# print("<p>REMOTE_ADDR: {}</p>".format(remote_addr))
-# print("<p>SERVER_NAME: {}</p>".format(server_name))
-# print("<p>SERVER_PORT: {}</p>".format(server_port))
-# print("<p>SERVER_PROTOCOL: {}</p>".format(server_protocol))
-# print("<p>QUERY_STRING: {}</p>".format(query_string))
-# print("<p>HTTP_COOKIE: {}</p>".format(cookie))
-# print("<p>TIME: {}</p>".format(time.strftime("%Y-%m-%d %H:%M:%S")))
-# print("</body>")
-# print("</html>")
-http.set_cookies("jesuisuncookie", "42")
-http.set_cookies("jesuisuncookies", "42d")
-http.set_status_code(404)
-http.set_status_message("OKY")
-http.set_content_type("text/html")
-http.add_head("<title>Test CGI</title>")
-http.add_style("body {background-color: powderblue;}")
-http.add_body("<h1>Test CGI</h1>")
-http.add_body("<p>REMOTE_ADDR: {}</p>".format(remote_addr))
-http.add_body("<p>SERVER_NAME: {}</p>".format(server_name))
-http.add_body("<p>SERVER_PORT: {}</p>".format(server_port))
-http.add_body("<p>SERVER_PROTOCOL: {}</p>".format(server_protocol))
-http.add_body("<p>QUERY_STRING: {}</p>".format(query_string))
-http.add_body("<p>HTTP_COOKIE: {}</p>".format(cookie))
-http.add_body("<p>TIME: {}</p>".format(time.strftime("%Y-%m-%d %H:%M:%S")))
-http.print()
+((HttpResponse())
+.set_cookies("jesuisuncookie", "42")
+.set_cookies("jesuisuncookies", "42d")
+.set_status_code(404)
+.set_status_message("OKY")
+.add_body("<p>REMOTE_ADDR: {}</p>".format(remote_addr))
+.add_body("<p>SERVER_NAME: {}</p>".format(server_name))
+.add_body("<p>SERVER_PORT: {}</p>".format(server_port))
+.add_body("<p>SERVER_PROTOCOL: {}</p>".format(server_protocol))
+.add_body("<p>QUERY_STRING: {}</p>".format(query_string))
+.add_body("<p>HTTP_COOKIE: {}</p>".format(cookie))
+.set_content_type("text/html")
+.add_head("<title>Test CGI</title>")
+.add_style("body {background-color: powderblue;}")
+.add_body("<h1>Test CGI</h1>")
+.add_body("<p>TIME: {}</p>".format(time.strftime("%Y-%m-%d %H:%M:%S")))\
+.print())
+

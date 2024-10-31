@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 16:26:37 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 16:16:15 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/31 11:15:01 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,5 @@ void CGIHandler::adjustHeader(std::string &client_response)
 	}
 
 	buildHeader(header);
-	std::cout << "Header : " << header << std::endl;
 	client_response = header + body;
 }

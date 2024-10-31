@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:59:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 11:25:17 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/31 13:42:19 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,12 @@ Logger::~Logger()
 {
 	flush();
 	_file.close();
+	Instance = NULL;
 }
 
 Logger &Logger::operator=(const Logger &rhs)
 {
 	if (this != &rhs) {
-		// _file = rhs._file;
 		_buffer_size = rhs._buffer_size;
 		_logLevel = rhs._logLevel;
 		if (!_file.is_open()) {
@@ -143,6 +143,19 @@ void Logger::log(LogLevel level, const std::string &message,
 		std::memcpy(_buffer + _buffer_size, log_message.c_str(), message_size);
 		_buffer_size += message_size;
 	}
+}
+
+std::string Logger::removeColor(const std::string &str)
+{
+	std::string new_str = str;
+	size_t		pos = 0;
+	while ((pos = new_str.find("\033[")) != std::string::npos) {
+		size_t end = new_str.find("m", pos);
+		if (end != std::string::npos) {
+			new_str.erase(pos, end - pos + 1);
+		}
+	}
+	return new_str;
 }
 
 LogLevel Logger::StringToLogLevel(const std::string &str)

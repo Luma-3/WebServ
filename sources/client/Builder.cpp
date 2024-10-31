@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/30 11:25:25 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/31 13:17:30 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void Builder::verifCGI(int &state)
 
 void Builder::isCGI(int &state)
 {
-	static string cgi_extension[] = {"php", "py", "js"};
+	static string cgi_extension[] = {"php", "py"};
 	for (size_t i = 0; i < 3; ++i) {
 		if (_extension == cgi_extension[i]) {
 			state = CGI;
@@ -266,4 +266,5 @@ void Builder::returnParam(int &state)
 	state = (_location.empty()) ? state : REDIRECT;
 }
 
-Builder::~Builder() {}
+Builder::~Builder() {
+}

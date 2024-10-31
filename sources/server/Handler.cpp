@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/30 14:32:11 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/31 11:26:34 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ Handler::Handler(const std::vector< VirtualServer * > &servers) :
 											  listen->getPair().second);
 			_hostptofd[hostkey] = host->getSocket();
 			_servers[host->getSocket()] = host;
-			addEvent(host->getSocket(), EPOLLIN);
+			addEvent(host->getSocket(),
+					 EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
 			_nbServ++;
 		}
 		int fd = _hostptofd[hostkey];
@@ -86,7 +87,7 @@ void Handler::handleNewConnection(const ServerHost *server)
 	try {
 		client_addr = new sockaddr_storage;
 		client_socket = server->acceptClient(client_addr);
-		addEvent(client_socket, EPOLLIN | EPOLLRDHUP);
+		addEvent(client_socket, EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
 		request = ServerHost::recvRequest(client_socket);
 	} catch (RecvException &e) {
 		removeEvent(client_socket);
@@ -133,7 +134,7 @@ void Handler::handleClientRequest(int event_fd, const std::string &request)
 			client->setResponse(e.what());
 		}
 		try {
-			modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP);
+			modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
 		} catch (const std::exception &e) {
 			LOG_ERROR(e.what(), _CSERVER);
 			handleClientDisconnection(
@@ -149,7 +150,7 @@ void Handler::handleClientResponse(int event_fd)
 		try {
 			_CSERVER = client->getServer();
 			ServerHost::sendResponse(event_fd, client->getResponse());
-			modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP);
+			modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
 		} catch (const std::exception &e) {
 			LOG_ERROR(e.what(), _CSERVER);
 			handleClientDisconnection(
@@ -227,7 +228,8 @@ void Handler::runEventLoop()
 					LOG_ERROR(e.what(), _CSERVER);
 				}
 			}
-			else if (event[i].events & EPOLLRDHUP) {
+			else if (event[i].events & EPOLLRDHUP ||
+					 event[i].events & EPOLLERR || event[i].events & EPOLLHUP) {
 				handleClientDisconnection(event_fd);
 			}
 			else if (event[i].events & EPOLLIN) {
@@ -235,7 +237,7 @@ void Handler::runEventLoop()
 			}
 			else if (event[i].events & EPOLLOUT) {
 				handleClientResponse(event_fd);
-			} // TODO : method for error disconnection
+			}
 		}
 		Logger::Instance->flush();
 	}
@@ -247,6 +249,11 @@ Handler::~Handler()
 	while (it != _servers.end()) {
 		delete it->second;
 		++it;
+	}
+	std::map< int, client::Client * >::iterator it2 = _clients.begin();
+	while (it2 != _clients.end()) {
+		delete it2->second;
+		++it2;
 	}
 	close(_epfd);
 }

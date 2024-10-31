@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 12:59:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/31 15:19:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 
 using std::map;
 using std::string;
-
-#define CGI_PATH "/usr/bin/python3"
 
 string getTranslatedPath(const client::Parser *parser,
 						 const VirtualServer  *server)
@@ -77,16 +75,23 @@ char **CGIHandler::createEnv(const VirtualServer  *server,
 		env_vec.push_back("QUERY_STRING=" + parser->getQuery());
 		env_vec.push_back("REQUEST_METHOD=" + parser->getHeader("Method"));
 		env_vec.push_back("REQUEST_URI=" + parser->getRequestedPath());
-		env_vec.push_back("SCRIPT_NAME=" + parser->getRequestedPath());
 		env_vec.push_back("SERVER_NAME=" +
 						  server->getParamValue("server_name"));
 		env_vec.push_back("SERVER_PORT=" +
 						  server->getParamPair("listen").second);
 		env_vec.push_back("SERVER_PROTOCOL=" +
 						  parser->getHeader("httpVersion"));
-		std::cout << "cookie : " << parser->getHeader("Cookie") << std::endl;
+		env_vec.push_back("REDIRECT_STATUS=" + ToString(0));
 		env_vec.push_back("HTTP_COOKIE=" + parser->getHeader("Cookie"));
 		env_vec.push_back("SERVER_SOFTWARE=webserv/0.5");
+
+		// TODO : check if it's a good idea to hardcode this
+		env_vec.push_back("PHP_SELF=/register.php");
+		env_vec.push_back("SCRIPT_NAME=/register.php");
+		env_vec.push_back("SCRIPT_FILENAME=/home/jbrousse/Documents/GitHub/"
+						  "WebServ/www/cgi/register.php");
+		env_vec.push_back("DOCUMENT_ROOT=/home/jbrousse/Documents/GitHub/"
+						  "WebServ/www/cgi");
 
 		getClientInfo(client, env_vec);
 	}
@@ -101,14 +106,28 @@ char **CGIHandler::createEnv(const VirtualServer  *server,
 }
 
 char **CGIHandler::createArgv(const client::Builder *builder,
-							  const char			*cgi_path)
+							  const char			*cgi_path,
+							  const string			&file_extension)
 {
-	char **argv = new char *[3];
+	char **argv;
+	if (file_extension == "php") {
+		argv = new char *[4];
 
-	argv[0] = new char[strlen(cgi_path) + 1];
-	strcpy(argv[0], cgi_path);
-	argv[1] = new char[builder->getPath().size() + 1];
-	strcpy(argv[1], builder->getPath().c_str());
-	argv[2] = NULL;
+		argv[0] = new char[strlen(cgi_path) + 1];
+		strcpy(argv[0], cgi_path);
+		argv[1] = new char[25];
+		strcpy(argv[1], "-d cgi.force_redirect=0");
+		argv[2] = new char[builder->getPath().size() + 1];
+		strcpy(argv[2], builder->getPath().c_str());
+		argv[3] = NULL;
+	}
+	else {
+		argv = new char *[3];
+		argv[0] = new char[strlen(cgi_path) + 1];
+		strcpy(argv[0], cgi_path);
+		argv[1] = new char[builder->getPath().size() + 1];
+		strcpy(argv[1], builder->getPath().c_str());
+		argv[2] = NULL;
+	}
 	return argv;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerException.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 13:09:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/29 10:15:10 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/31 11:04:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 InternalServerException::InternalServerException() :
 	_msg("Internal Server Error")
+
 {
 }
 
@@ -59,6 +60,8 @@ const char *InternalServerException::what() const throw()
 	return _msg.c_str();
 }
 
+
+
 RecvException::RecvException() : _msg("Recv Error") {}
 
 RecvException::RecvException(const std::string &function, int line,
@@ -72,9 +75,13 @@ RecvException::RecvException(const std::string &function, int line,
 
 	_msg = PASTEL_RED "Error: " ORANGE "Recv Exception\n" RESET + function +
 		   " at " + new_file + " | Line: " + ToString(line) + ": " + error;
+
 }
 
-RecvException::RecvException(const RecvException &src) : _msg(src._msg) {}
+RecvException::RecvException(const RecvException &src) :
+	_msg(src._msg)
+{
+}
 
 RecvException &RecvException::operator=(const RecvException &src)
 {
@@ -91,3 +98,4 @@ const char *RecvException::what() const throw()
 {
 	return _msg.c_str();
 }
+

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 13:17:39 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/31 14:20:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ Client::Client(const VirtualServer *server, const VirtualServer *default_s,
 	_default_server(default_s),
 	_client_socket(client_socket),
 	_addr(client_addr),
-	_cgi_handler(NULL)
+	_cgi_handler(NULL),
+	_builder(NULL)
 {
 }
 
@@ -99,27 +100,32 @@ int Client::CGIResponse()
 							_CSERVER);
 			}
 		}
-		else if ((ret = _cgi_handler->recvCGIResponse()) != SUCCESS) {
+		if ((ret = _cgi_handler->recvCGIResponse()) != SUCCESS) {
 			LOG_WARNING("CGI recv failed: " + std::string(strerror(errno)),
 						_CSERVER);
 		}
-		if (ret == 0) {
-			try {
-				_cgi_handler->adjustHeader(_response);
-			} catch (const std::exception &e) {
-				LOG_ERROR(e.what(), _CSERVER);
-				setErrorCodeAndBuild("502", _builder, _response);
-			}
+		std::cerr << "CGI return with status: " << WEXITSTATUS(ret)
+				  << std::endl;
+		/* 		if (ret == 0) {
+		 */
+		try {
+			_cgi_handler->adjustHeader(_response);
+		} catch (const std::exception &e) {
+			LOG_ERROR(e.what(), _CSERVER);
+			setErrorCodeAndBuild("502", _builder, _response);
 		}
-		else {
-			setErrorCodeAndBuild("500", _builder, _response);
-		}
+		/* 		}
+				else {
+					setErrorCodeAndBuild("500", _builder, _response);
+				} */
 	}
 	else {
 		setErrorCodeAndBuild("500", _builder, _response);
 	}
 	delete _cgi_handler;
 	_cgi_handler = NULL;
+	delete _builder;
+	_builder = NULL;
 	return FINISH;
 }
 
@@ -129,6 +135,8 @@ int Client::handleResponse()
 		return CGIResponse();
 	}
 	_builder->BuildResponse(_response);
+	delete _builder;
+	_builder = NULL;
 	return FINISH;
 }
 
@@ -201,4 +209,10 @@ void Client::handleRequest()
 Client::~Client()
 {
 	delete _addr;
+	if (_cgi_handler != NULL) {
+		delete _cgi_handler;
+	}
+	if (_builder != NULL) {
+		delete _builder;
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 10:44:56 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/31 14:27:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,8 @@ class CGIHandler
 							const client::Client *client);
 
 	static char **createArgv(const client::Builder *builder,
-							 const char			   *cgi_path);
+							 const char			   *cgi_path,
+							 const std::string	   &file_extension);
 
 	int childProcess();
 	int parentProcess();

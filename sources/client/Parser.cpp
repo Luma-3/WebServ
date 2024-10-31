@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/30 11:39:31 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/10/31 11:15:07 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ void Parser::getBodyFromRequest(size_t &line_break_pos)
 		value = line;
 
 		_headers[key] = value;
-		std::cout << key << " : " << value << std::endl;
 		_buffer = _buffer.substr(line_break_pos + 2);
 	}
 	if (_buffer.empty()) {

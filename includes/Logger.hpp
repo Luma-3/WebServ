@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:44:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/29 10:26:30 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/31 11:04:19 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+
+#include "color.hpp"
 
 class VirtualServer;
 
@@ -35,40 +37,40 @@ enum LogLevel {
 #define ERROR ERROR
 };
 
-#define LOG_DEBUG(message, server)                      \
-	if (Logger::Instance) {                             \
-		Logger::Instance->log(DEBUG, message, server);  \
-	}                                                   \
-	else {                                              \
-		std::cerr << "No logger instance" << std::endl; \
-		std::cerr << message << std::endl;              \
+#define LOG_DEBUG(message, server)                                          \
+	if (Logger::Instance) {                                                 \
+		Logger::Instance->log(DEBUG, Logger::removeColor(message), server); \
+	}                                                                       \
+	else {                                                                  \
+		std::cerr << PASTEL_RED "No logger instance" << std::endl;          \
+		std::cerr << message << std::endl;                                  \
 	}
 
-#define LOG_INFO(message, server)                       \
-	if (Logger::Instance) {                             \
-		Logger::Instance->log(INFO, message, server);   \
-	}                                                   \
-	else {                                              \
-		std::cerr << "No logger instance" << std::endl; \
-		std::cerr << message << std::endl;              \
+#define LOG_INFO(message, server)                                          \
+	if (Logger::Instance) {                                                \
+		Logger::Instance->log(INFO, Logger::removeColor(message), server); \
+	}                                                                      \
+	else {                                                                 \
+		std::cerr << PASTEL_RED "No logger instance" << std::endl;         \
+		std::cerr << message << std::endl;                                 \
 	}
 
-#define LOG_WARNING(message, server)                     \
-	if (Logger::Instance) {                              \
-		Logger::Instance->log(WARNING, message, server); \
-	}                                                    \
-	else {                                               \
-		std::cerr << "No logger instance" << std::endl;  \
-		std::cerr << message << std::endl;               \
+#define LOG_WARNING(message, server)                                          \
+	if (Logger::Instance) {                                                   \
+		Logger::Instance->log(WARNING, Logger::removeColor(message), server); \
+	}                                                                         \
+	else {                                                                    \
+		std::cerr << PASTEL_RED "No logger instance" << std::endl;            \
+		std::cerr << message << std::endl;                                    \
 	}
 
-#define LOG_ERROR(message, server)                      \
-	if (Logger::Instance) {                             \
-		Logger::Instance->log(ERROR, message, server);  \
-	}                                                   \
-	else {                                              \
-		std::cerr << "No logger instance" << std::endl; \
-		std::cerr << message << std::endl;              \
+#define LOG_ERROR(message, server)                                          \
+	if (Logger::Instance) {                                                 \
+		Logger::Instance->log(ERROR, Logger::removeColor(message), server); \
+	}                                                                       \
+	else {                                                                  \
+		std::cerr << PASTEL_RED "No logger instance" << std::endl;          \
+		std::cerr << message << std::endl;                                  \
 	}
 
 class Logger
@@ -97,6 +99,8 @@ class Logger
 	static LogLevel StringToLogLevel(const std::string &str);
 
 	void resetBuffer();
+
+	static std::string removeColor(const std::string &str);
 
 	void flush();
 };

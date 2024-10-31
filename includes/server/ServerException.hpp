@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerException.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 13:21:26 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/29 10:26:59 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/10/31 10:57:02 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ class InternalServerException : public std::exception
 	virtual ~InternalServerException() throw();
 
 	virtual const char *what() const throw();
-	// TODO : add logger
 };
 
 class RecvException : public std::exception
