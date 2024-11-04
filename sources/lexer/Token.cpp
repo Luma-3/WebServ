@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:37:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 10:40:57 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:59:14 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@
 #include "color.hpp"
 #include "template/StringUtils.tpp"
 
-Token::Token() : _type(TOKEN), _key("") {}
+Token::Token() : _type(TOKEN), _terminal(T_None), _line(0), _col(0) {}
 
-Token::Token(const Terminal_Type term) : _type(TOKEN), _key(""), _terminal(term)
+Token::Token(const Terminal_Type term) : _type(TOKEN), _terminal(term), _line(0), _col(0)
 {
 }
-Token::Token(const std::string &key, Terminal_Type term, int line, int col) :
+Token::Token(const std::string &key, Terminal_Type term, size_t line, size_t col) :
 	_type(TOKEN),
 	_key(key),
 	_terminal(term),
@@ -31,11 +31,13 @@ Token::Token(const std::string &key, Terminal_Type term, int line, int col) :
 {
 }
 
-Token::Token(const Token &src) : _type(src._type), _key(src._key) {}
+Token::Token(const Token &src) : _type(src._type), _key(src._key), _terminal(src._terminal), _line(0), _col(0) {}
 
 Token &Token::operator=(const Token &rhs)
 {
-	if (this == &rhs) return *this;
+	if (this == &rhs) {
+		return *this;
+	}
 	_type = rhs._type;
 	_key = rhs._key;
 	return *this;
@@ -170,7 +172,7 @@ Token::InvalidTokenException::InvalidTokenException() {}
 Token::InvalidTokenException::InvalidTokenException(const std::string &error,
 													const std::string &expected,
 													const std::string &value,
-													int col, int line)
+													size_t col, size_t line)
 {
 	_msg = PASTEL_RED "Error: " ORANGE "Invalid Token: " RESET + error +
 		   "\nline: " + ToString(line) + " | col: " + ToString(col) + " >>> " +

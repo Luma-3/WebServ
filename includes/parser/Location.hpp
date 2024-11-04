@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:03:20 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/19 15:57:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:37:08 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,10 @@ class Location : public IConfig
 
 	void			  addParam(const std::string &key, Param *param);
 	const Param		 *getParam(const std::string &key) const;
-	const std::string getParamValue(const std::string &key) const;
-	const std::pair< std::string, std::string >
+	std::string getParamValue(const std::string &key) const;
+	std::pair< std::string, std::string >
 									 getParamPair(const std::string &key) const;
-	const std::vector< std::string > getParamList(const std::string &key) const;
+	std::vector< std::string > getParamList(const std::string &key) const;
 	std::string						 getRoot(const std::string &path) const;
 
 	void print() const;

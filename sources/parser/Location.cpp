@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 11:26:04 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:36:47 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ const Param *Location::getParam(const std::string &key) const
 	}
 }
 
-const std::string Location::getParamValue(const std::string &key) const
+std::string Location::getParamValue(const std::string &key) const
 {
 	const Param *param = getParam(key);
 	if (param == NULL) {
@@ -67,7 +67,7 @@ const std::string Location::getParamValue(const std::string &key) const
 	return param->getValue();
 }
 
-const std::pair< std::string, std::string >
+std::pair< std::string, std::string >
 Location::getParamPair(const std::string &key) const
 {
 	const Param *param = getParam(key);
@@ -77,7 +77,7 @@ Location::getParamPair(const std::string &key) const
 	return param->getPair();
 }
 
-const std::vector< std::string >
+std::vector< std::string >
 Location::getParamList(const std::string &key) const
 {
 	const Param *param = getParam(key);

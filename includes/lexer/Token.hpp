@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:34:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 10:08:20 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:58:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,12 @@ class Token : public IParserToken
 	std::string		   _key;
 	enum Terminal_Type _terminal;
 
-	int _line;
-	int _col;
+	size_t _line;
+	size_t _col;
 
   public:
 	Token();
-	Token(const std::string &key, Terminal_Type term, int line, int col);
+	Token(const std::string &key, Terminal_Type term, size_t line, size_t col);
 	Token(const Terminal_Type term);
 	Token(const Token &src);
 	Token &operator=(const Token &rhs);
@@ -51,8 +51,8 @@ class Token : public IParserToken
 	TokenType		   getType() const { return _type; };
 	const std::string &getKey() const { return _key; };
 	Terminal_Type	   getTerminal() const { return _terminal; };
-	int				   getLine() const { return _line; };
-	int				   getCol() const { return _col; };
+	size_t				   getLine() const { return _line; };
+	size_t				   getCol() const { return _col; };
 	static std::string TerminalToString(Terminal_Type terminal);
 
 	static bool			 IsKey(const IParserToken &token);
@@ -69,7 +69,7 @@ class Token : public IParserToken
 		InvalidTokenException();
 		InvalidTokenException(const std::string &error,
 							  const std::string &expected,
-							  const std::string &value, int col, int line);
+							  const std::string &value, size_t col, size_t line);
 		InvalidTokenException(const InvalidTokenException &src);
 		virtual ~InvalidTokenException() throw();
 		InvalidTokenException &operator=(const InvalidTokenException &src);

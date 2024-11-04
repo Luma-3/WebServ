@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:00:44 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/15 13:52:20 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:36:21 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,9 @@ Param::Param(const Param &src) :
 
 Param &Param::operator=(const Param &rhs)
 {
-	if (this == &rhs) return *this;
+	if (this == &rhs) {
+		return *this;
+	}
 	_type = rhs._type;
 	_key = rhs._key;
 	_value = rhs._value;
@@ -83,16 +85,21 @@ bool Param::operator==(const Param &rhs) const
 
 void Param::print() const
 {
-	if (_type == SIMPLE)
+	if (_type == SIMPLE) {
 		std::cout << "Simple Param: " << _key << " = " << _value << std::endl;
-	else if (_type == PAIR)
+	}
+	else if (_type == PAIR) {
 		std::cout << "Pair Param: " << _key << " = " << _pair.first << " "
 				  << _pair.second << std::endl;
+	}
 	else if (_type == LIST) {
 		std::cout << "List Param: " << _key << " = ";
 		for (std::vector< std::string >::const_iterator it = _list.begin();
 			 it != _list.end(); ++it)
+
+		{
 			std::cout << *it << " ";
+		}
 		std::cout << std::endl;
 	}
 }

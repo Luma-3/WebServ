@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 10:03:58 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 16:01:49 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,10 @@ void TakeTo(std::stack< Token * > &dst, std::stack< IParserToken * > &stack,
 		if (breaker(*stack.top())) {
 			break;
 		}
-		dst.push(static_cast< Token * >(stack.top()));
+		dst.push(dynamic_cast< Token * >(stack.top()));
 		stack.pop();
 	}
-	dst.push(static_cast< Token * >(stack.top()));
+	dst.push(dynamic_cast< Token * >(stack.top()));
 	stack.pop();
 }
 
@@ -83,7 +83,7 @@ void Parser::R1_Server()
 	}
 
 	_servers.push_back(_current);
-	_current = new VirtualServer;
+	_current = new VirtualServer();
 }
 
 void Parser::R2_Param()
@@ -91,7 +91,7 @@ void Parser::R2_Param()
 	std::vector< Token * > tokens;
 
 	for (size_t i = 0; i < 3; ++i) {
-		tokens.push_back(static_cast< Token * >(_parse_stack.top()));
+		tokens.push_back(dynamic_cast< Token * >(_parse_stack.top()));
 		_parse_stack.pop();
 	}
 
@@ -137,8 +137,8 @@ void Parser::R3_DoubleParam()
 	tokens.pop();
 
 	std::string value1 = tokens.top()->getKey();
-	int			tmp_line = tokens.top()->getLine();
-	int			tmp_col = tokens.top()->getCol();
+	size_t			tmp_line = tokens.top()->getLine();
+	size_t			tmp_col = tokens.top()->getCol();
 	delete tokens.top();
 	tokens.pop();
 

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/30 11:24:02 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 16:11:58 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void Builder::trimPath(string &path)
 
 bool Builder::verifAccess()
 {
-	int ret;
+	int ret = 0;
 
 	ret = access(_path.c_str(), F_OK | R_OK);
 	if (ret != 0) {
@@ -42,7 +42,7 @@ bool Builder::verifAccess()
 int Builder::verifLocationAndGetNewPath()
 {
 	string			root;
-	const Location *location;
+	const Location *location = NULL;
 	string			autoindex;
 	string			index;
 
@@ -83,10 +83,11 @@ std::string formatSize(off_t size)
 	int				   order = 0;
 	double			   formattedSize = static_cast< double >(size);
 	std::ostringstream out;
+	int				   packet_size = 1024;
 
-	while (formattedSize >= 1024 && order < 3) {
+	while (formattedSize >= packet_size && order < 3) {
 		order++;
-		formattedSize /= 1024;
+		formattedSize /= packet_size;
 	}
 
 	out << std::fixed << std::setprecision(2) << formattedSize << " "
@@ -98,16 +99,21 @@ void Builder::insertFileInHead(string &file, const off_t &size,
 							   const string &date, const int &id)
 {
 	string head;
+	string fileStr = "%@file@%";
+	string last_modif = "%@last_modif@%";
+	string sizeStr = "%@size@%";
+
 	if (id == IS_FILE) {
 		head = DEFAULT_AUTOINDEX_LIST_FILE;
 	}
 	else {
 		head = DEFAULT_AUTOINDEX_LIST_DIR;
 	}
-	head.replace(head.find("%@file@%"), 8, file);
-	head.replace(head.find("%@file@%"), 8, file);
-	head.replace(head.find("%@last_modif@%"), 14, date);
-	head.replace(head.find("%@size@%"), 9, ToString(formatSize(size)));
+	head.replace(head.find(fileStr), fileStr.size(), file);
+	head.replace(head.find(fileStr), fileStr.size(), file);
+	head.replace(head.find(last_modif), last_modif.size(), date);
+	head.replace(head.find(sizeStr), sizeStr.size(),
+				 ToString(formatSize(size)));
 	_body.insert(_body.end(), head.begin(), head.end());
 }
 
@@ -120,14 +126,15 @@ void Builder::insertFooterAndSetAttributes(std::vector< char > &body)
 
 void Builder::getAutoindex()
 {
-	struct dirent *entry;
-	struct stat	   info;
+	struct dirent *entry = NULL;
+	struct stat	   info = {};
 	string		   file;
-	DIR			  *dir;
-	int			   id;
+	DIR			  *dir = NULL;
+	int			   id = 0;
+	string		   path = "%@path@%";
 
 	string head = DEFAULT_AUTOINDEX_PAGE_HEAD;
-	head.replace(head.find("%@path@%"), 8, _path);
+	head.replace(head.find(path), path.size(), _path);
 	_body.insert(_body.end(), head.begin(), head.end());
 
 	dir = opendir(_path.c_str());
@@ -144,8 +151,8 @@ void Builder::getAutoindex()
 		off_t	   size = info.st_size;
 		time_t	   last_modif = info.st_mtime;
 		struct tm *time = gmtime(&last_modif);
-		char	   date[100];
-		strftime(date, 100, "%d-%m-%Y %H:%M", time);
+		char	   date[MAXBUFFERSIZE];
+		strftime(date, MAXBUFFERSIZE, "%d-%m-%Y %H:%M", time);
 
 		if (entry->d_type == DT_DIR) {
 			file = entry->d_name + string("/");

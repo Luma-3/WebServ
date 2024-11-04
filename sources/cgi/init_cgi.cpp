@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/31 15:19:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 10:47:17 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,9 @@ void getClientInfo(const client::Client *client, std::vector< string > &env_vec)
 	}
 }
 
-char **CGIHandler::createEnv(const VirtualServer  *server,
-							 const client::Parser *parser,
-							 const client::Client *client)
+void CGIHandler::createEnv(const VirtualServer	*server,
+						   const client::Parser *parser,
+						   const client::Client *client)
 {
 	string path_translated;
 
@@ -86,48 +86,36 @@ char **CGIHandler::createEnv(const VirtualServer  *server,
 		env_vec.push_back("SERVER_SOFTWARE=webserv/0.5");
 
 		// TODO : check if it's a good idea to hardcode this
-		env_vec.push_back("PHP_SELF=/register.php");
-		env_vec.push_back("SCRIPT_NAME=/register.php");
-		env_vec.push_back("SCRIPT_FILENAME=/home/jbrousse/Documents/GitHub/"
-						  "WebServ/www/cgi/register.php");
-		env_vec.push_back("DOCUMENT_ROOT=/home/jbrousse/Documents/GitHub/"
-						  "WebServ/www/cgi");
+		env_vec.push_back("PHP_SELF=/" + parser->getFilename());
+		env_vec.push_back("SCRIPT_NAME=/" + parser->getFilename());
+		env_vec.push_back("SCRIPT_FILENAME=" + client->getValueEnv("PWD") +
+						  '/' + getTranslatedPath(parser, server) +
+						  parser->getFilename());
+		env_vec.push_back("DOCUMENT_ROOT=" + client->getValueEnv("PWD") +
+						  parser->getRequestedPath());
+
+		std::cerr << "DOCUMENT_ROOT=" + client->getValueEnv("PWD") +
+						 parser->getRequestedPath()
+				  << std::endl;
+		std::cerr << "SCRIPT_FILENAME=" + client->getValueEnv("PWD") + '/' +
+						 getTranslatedPath(parser, server) +
+						 parser->getFilename()
+				  << std::endl;
+		std::cerr << "SCRIPT_NAME=/" + parser->getFilename() << std::endl;
 
 		getClientInfo(client, env_vec);
 	}
 
-	char **envp = new char *[env_vec.size() + 1];
-	for (size_t i = 0; i < env_vec.size(); ++i) {
-		envp[i] = new char[env_vec[i].size() + 1];
-		strcpy(envp[i], env_vec[i].c_str());
+	for (std::vector< string >::iterator it = env_vec.begin();
+		 it != env_vec.end(); ++it) {
+		_envp.push_back(ft_strdup(it->c_str()));
 	}
-	envp[env_vec.size()] = NULL;
-	return envp;
+	_envp.push_back(NULL);
 }
 
-char **CGIHandler::createArgv(const client::Builder *builder,
-							  const char			*cgi_path,
-							  const string			&file_extension)
+void CGIHandler::createArgv(const client::Builder *builder)
 {
-	char **argv;
-	if (file_extension == "php") {
-		argv = new char *[4];
-
-		argv[0] = new char[strlen(cgi_path) + 1];
-		strcpy(argv[0], cgi_path);
-		argv[1] = new char[25];
-		strcpy(argv[1], "-d cgi.force_redirect=0");
-		argv[2] = new char[builder->getPath().size() + 1];
-		strcpy(argv[2], builder->getPath().c_str());
-		argv[3] = NULL;
-	}
-	else {
-		argv = new char *[3];
-		argv[0] = new char[strlen(cgi_path) + 1];
-		strcpy(argv[0], cgi_path);
-		argv[1] = new char[builder->getPath().size() + 1];
-		strcpy(argv[1], builder->getPath().c_str());
-		argv[2] = NULL;
-	}
-	return argv;
+	_argv.push_back(ft_strdup(_cgi));
+	_argv.push_back(ft_strdup(builder->getPath().c_str()));
+	_argv.push_back(NULL);
 }

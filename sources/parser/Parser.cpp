@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 10:18:57 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:54:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 {
 	std::map< ActionEntry, Action > actions;
 
+	// NOLINTBEGIN(*-magic-numbers) - Magic numbers are used to define the
+	// state and terminal
 	actions[ActionEntry(0, T_Server)] = Action(SHIFT, 1);
 	actions[ActionEntry(0, T_Log)] = Action(SHIFT, 6);
 	actions[ActionEntry(1, T_OBracket)] = Action(SHIFT, 2);
@@ -122,6 +124,7 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(49, T_CGIExtension)] = Action(SHIFT, 50);
 	actions[ActionEntry(50, T_Identifier)] = Action(SHIFT, 51);
 	actions[ActionEntry(51, T_Semi_Colon)] = Action(REDUCE, 23, R7);
+	// NOLINTEND(*-magic-numbers)
 
 	return actions;
 }
@@ -154,9 +157,7 @@ std::string Parser::findExpected(int state)
 				"Valid key such as <index, root, listen, etc...>";
 			break;
 		}
-		else {
-			expected_values += "`" + Token::TerminalToString(*it) + "` ";
-		}
+		expected_values += "`" + Token::TerminalToString(*it) + "` ";
 	}
 
 	return expected_values;

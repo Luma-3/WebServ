@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/31 13:17:30 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 16:24:44 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 // #include "cgi/CGI.hpp"
 
 using client::Builder;
-using std::map;
 using std::string;
 
 Builder::Builder(const VirtualServer  *server,
@@ -72,11 +71,13 @@ void Builder::isCGI(int &state)
 void Builder::createErrorPage()
 {
 	string error_page = DEFAULT_ERROR_PAGE;
+	string title = "%@title@%";
+	string message = "%@message@%";
 
 	_extension = "html";
-	error_page.replace(error_page.find("%@title@%"), 9, "Error " + _code);
-	error_page.replace(error_page.find("%@title@%"), 9, "Error " + _code);
-	error_page.replace(error_page.find("%@message@%"), 11,
+	error_page.replace(error_page.find(title), title.size(), "Error " + _code);
+	error_page.replace(error_page.find(title), title.size(), "Error " + _code);
+	error_page.replace(error_page.find(message), message.size(),
 					   findStatusMessage(_code));
 
 	_body.assign(error_page.begin(), error_page.end());
@@ -254,17 +255,16 @@ void Builder::returnParam(int &state)
 {
 	const Location *location = _server->getLocation(_request_path);
 	if (location != NULL) {
-		if (location->getParamPair("return").first.empty() == false) {
+		if (!location->getParamPair("return").first.empty()) {
 			_code = location->getParamPair("return").first;
 			_location = location->getParamPair("return").second;
 		}
 	}
-	else if (_server->getParamPair("return").first.empty() == false) {
+	else if (!_server->getParamPair("return").first.empty()) {
 		_code = _server->getParamPair("return").first;
 		_location = _server->getParamPair("return").second;
 	}
 	state = (_location.empty()) ? state : REDIRECT;
 }
 
-Builder::~Builder() {
-}
+Builder::~Builder() {}

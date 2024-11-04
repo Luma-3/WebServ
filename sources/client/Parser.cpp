@@ -6,14 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/31 11:15:07 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 16:12:48 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client/Parser.hpp"
 
 using client::Parser;
-using std::map;
 using std::string;
 
 Parser::Parser() : _codeResponse("200") {}
@@ -35,8 +34,8 @@ bool Parser::InvalidHeader()
 		_codeResponse = "400";
 		return true;
 	}
-	else if (_headers["httpVersion"] != "HTTP/1.1" ||
-			 _headers["httpVersion"].empty()) {
+	if (_headers["httpVersion"] != "HTTP/1.1" ||
+		_headers["httpVersion"].empty()) {
 		_codeResponse = "505";
 		return true;
 	}
@@ -66,8 +65,13 @@ void Parser::getBodyFromRequest(size_t &line_break_pos)
 	if (_buffer.empty()) {
 		return;
 	}
+
 	if (!_buffer.empty() && _headers["Method"] == "POST") {
+		if (_buffer[0] == '\r' && _buffer[1] == '\n') {
+			_buffer.erase(0, 2);
+		}
 		_headers["body"] = _buffer;
+		std::cerr << "BODY: " << _headers["body"] << std::endl;
 	}
 }
 

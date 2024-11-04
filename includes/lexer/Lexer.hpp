@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Lexer.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:32:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 11:15:57 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/04 16:04:50 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@
 #include <vector>
 
 #include "Token.hpp"
+
+#define MAXHOSTNAMESIZE 255
+#define MAXPORTSIZE 5
+#define MAXUCHAR 255
 
 class Lexer
 {

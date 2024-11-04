@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 10:04:36 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:54:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ class Parser
 
 	const std::map< ActionEntry, Action > _actions;
 
-	std::map< ActionEntry, Action > createActionMap();
+	static std::map< ActionEntry, Action > createActionMap();
 
   public:
 	Parser();

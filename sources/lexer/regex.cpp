@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 10:07:51 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 16:04:46 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <string>
 
 #include "lexer/Token.hpp"
+#include "lexer/Lexer.hpp"
 
 #define PORT_MAX 65535
 
@@ -105,7 +106,7 @@ bool IsIP(const string &value)
 			return (false);
 		}
 		int octet = atoi(value.substr(pos).c_str());
-		if (octet < 0 || octet > 255) {
+		if (octet < 0 || octet > MAXUCHAR) {
 			return (false);
 		}
 		++count;
@@ -122,8 +123,8 @@ bool IsIP(const string &value)
 }
 
 bool IsPort(const string &value)
-{
-	if (!IsDigit(value) || value.size() > 5) {
+{	
+	if (!IsDigit(value) || value.size() > MAXPORTSIZE) {
 		return (false);
 	}
 	int port = atoi(value.c_str());
@@ -135,7 +136,7 @@ bool IsPort(const string &value)
 
 bool IsHostname(const string &value)
 {
-	if (value.size() > 255 || value.size() == 0) {
+	if (value.size() > MAXHOSTNAMESIZE || value.empty()) {
 		return (false);
 	}
 	for (size_t i = 0; i < value.size(); ++i) {
@@ -158,7 +159,7 @@ bool IsBodySize(const string &value)
 	if (isdigit(last)) {
 		return (true);
 	}
-	last = toupper(last);
+	last = static_cast<char>(toupper(last));
 	if (last != 'K' && last != 'M' && last != 'G') {
 		return (false);
 	}

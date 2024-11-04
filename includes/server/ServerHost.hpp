@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHost.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:37:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/28 16:36:59 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/04 15:31:25 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class ServerHost
 	struct addrinfo *setupSocket(const std::string &host,
 								 const std::string &port,
 								 struct addrinfo   *hints);
-	void			 bindAndListenSocket(struct addrinfo *info);
+	void			 bindAndListenSocket(struct addrinfo *info) const;
 
   public:
 	ServerHost();
@@ -52,7 +52,7 @@ class ServerHost
 	const VirtualServer *getVhost(const std::string &host_name) const;
 	const VirtualServer *getDefaultVhost() const;
 
-	void AddServer(std::string host_name, VirtualServer *server);
+	void AddServer(const std::string &host_name, VirtualServer *server);
 
 	static void sendResponse(int client_socket, const std::string &response);
 	static std::string recvRequest(int client_socket);

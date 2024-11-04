@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/31 14:20:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 16:27:18 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,12 @@ using client::Client;
 Client::Client() : _server(NULL), _default_server(NULL), _client_socket(-1) {}
 
 Client::Client(const VirtualServer *server, const VirtualServer *default_s,
-			   int client_socket, sockaddr_storage *client_addr) :
+			   int client_socket, sockaddr_storage *client_addr,
+			   const char **envp) :
+	_envp(envp),
 	_server(server),
 	_default_server(default_s),
+	_host(NULL),
 	_client_socket(client_socket),
 	_addr(client_addr),
 	_cgi_handler(NULL),
@@ -31,9 +34,14 @@ Client::Client(const VirtualServer *server, const VirtualServer *default_s,
 }
 
 Client::Client(const Client &src) :
+	_envp(src._envp),
 	_server(src._server),
 	_default_server(src._default_server),
-	_client_socket(src._client_socket)
+	_host(src._host),
+	_client_socket(src._client_socket),
+	_addr(src._addr),
+	_cgi_handler(src._cgi_handler),
+	_builder(src._builder)
 {
 }
 
@@ -87,7 +95,7 @@ int Client::CGIResponse()
 	if (wait_ret == CGI_WAIT) {
 		return CONTINUE;
 	}
-	else if (wait_ret == CGI_DONE) {
+	if (wait_ret == CGI_DONE) {
 		int ret = 0;
 		if ((ret = _cgi_handler->getStatus()) != 0) {
 			if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0) {
@@ -206,13 +214,24 @@ void Client::handleRequest()
 	}
 }
 
+std::string Client::getValueEnv(const std::string &key) const
+{
+	for (int i = 0; _envp[i] != NULL; i++) {
+		std::string envp_str(_envp[i]);
+		if (envp_str.find(key) != std::string::npos) {
+			return envp_str.substr(key.size() + 1);
+		}
+	}
+	return "";
+}
+
 Client::~Client()
 {
 	delete _addr;
-	if (_cgi_handler != NULL) {
-		delete _cgi_handler;
-	}
-	if (_builder != NULL) {
-		delete _builder;
-	}
+	// if (_builder != NULL) {
+	// 	delete _builder;
+	// }
+	// if (_cgi_handler != NULL) {
+	// 	delete _cgi_handler;
+	// }
 }

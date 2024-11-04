@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 13:45:35 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:53:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ ServerHost::ServerHost(const std::string &host, const std::string &port) :
 {
 
 	struct addrinfo	 hints = {};
-	struct addrinfo *info;
+	struct addrinfo *info = NULL;
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
@@ -70,7 +70,7 @@ struct addrinfo *ServerHost::setupSocket(const std::string &host,
 										 const std::string &port,
 										 struct addrinfo   *hints)
 {
-	struct addrinfo *info;
+	struct addrinfo *info = NULL;
 	int status = getaddrinfo(host.c_str(), port.c_str(), hints, &info);
 	if (status != 0) {
 		throw InternalServerException("getaddrinfo failed on " + host + ": ",
@@ -96,7 +96,7 @@ struct addrinfo *ServerHost::setupSocket(const std::string &host,
 	return info;
 }
 
-void ServerHost::bindAndListenSocket(struct addrinfo *info)
+void ServerHost::bindAndListenSocket(struct addrinfo *info) const
 {
 	if (bind(_socket, info->ai_addr, info->ai_addrlen) == -1) {
 		throw InternalServerException("bind failed: ", __LINE__, __FILE__,
@@ -123,7 +123,7 @@ const VirtualServer *ServerHost::getDefaultVhost() const
 	return _default_vhost;
 }
 
-void ServerHost::AddServer(std::string host_name, VirtualServer *server)
+void ServerHost::AddServer(const std::string &host_name, VirtualServer *server)
 {
 	if (_nbVhost == 0) {
 		_default_vhost = server;
@@ -136,7 +136,8 @@ int ServerHost::acceptClient(sockaddr_storage *client_addr) const
 {
 	socklen_t len = sizeof(sockaddr_storage);
 
-	int client_socket = accept(_socket, (sockaddr *)client_addr, &len);
+	int client_socket =
+		accept(_socket, (sockaddr*)&client_addr, &len);
 	if (client_socket == -1) {
 		throw InternalServerException("accept failed: ", __LINE__, __FILE__,
 									  std::string(strerror(errno)));
@@ -149,10 +150,10 @@ std::string ServerHost::recvRequest(int client_socket)
 {
 	char	   *buff = new char[MAX_REQ_SIZE];
 	std::string request;
-	ssize_t		nb_bytes;
+	ssize_t		nb_bytes = 0;
 
 	while (true) {
-		bzero(buff, MAX_REQ_SIZE);
+		memset(buff, 0, MAX_REQ_SIZE);
 		nb_bytes = recv(client_socket, buff, MAX_REQ_SIZE, 0);
 		if (nb_bytes == -1) {
 			throw RecvException("recv failed: ", __LINE__, __FILE__,
@@ -163,10 +164,9 @@ std::string ServerHost::recvRequest(int client_socket)
 		if (nb_bytes < MAX_REQ_SIZE) {
 			break;
 		}
-		else if (request.find("\r\n\r\n") != std::string::npos) {
+		if (request.find("\r\n\r\n") != std::string::npos) {
 			break;
 		}
-		nb_bytes = 0;
 	}
 	delete[] buff;
 	return request;
@@ -198,7 +198,8 @@ void chunckResponse(int client_socket, const std::string &response)
 		len -= chunk;
 		offset += chunk;
 	}
-	send(client_socket, "0\r\n\r\n", 5, 0);
+	std::string end = "0\r\n\r\n";
+	send(client_socket, end.c_str(), end.size(), 0);
 }
 
 void ServerHost::sendResponse(int client_socket, const std::string &response)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/29 09:47:56 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/04 15:39:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include "server/Handler.hpp"
 #include "server/Signal.hpp"
 
-Handler *init_server(const char **av)
+Handler *init_server(const char **av, const char **envp)
 {
 
 	Lexer Lexer(av[1]);
@@ -32,18 +32,18 @@ Handler *init_server(const char **av)
 	parser.Parse();
 
 	const std::vector< VirtualServer * > servers = parser.getServers();
-	if (parser.getParseStack().size() != 0) {
-		Param *token = static_cast< Param * >(parser.getParseStack().top());
+	if (!parser.getParseStack().empty()) {
+		Param *token = dynamic_cast< Param * >(parser.getParseStack().top());
 		new Logger(token->getPair().second,
 				   Logger::StringToLogLevel(token->getPair().first));
 	}
 
-	Handler *handler = new Handler(servers);
+	Handler *handler = new Handler(servers, envp);
 
 	return (handler);
 }
 
-int main(const int ac, const char **av)
+int main(const int ac, const char **av, const char **env)
 {
 	Handler *handler = NULL;
 
@@ -51,12 +51,12 @@ int main(const int ac, const char **av)
 		std::cerr << "Usage: ./webserv <config_file>" << std::endl;
 		return FAILURE;
 	}
-	else if (initSignal() == FAILURE) {
+	if (initSignal() == FAILURE) {
 		return (EPERM);
 	}
 
 	try {
-		handler = init_server(av);
+		handler = init_server(av, env);
 		handler->runEventLoop();
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
@@ -70,9 +70,9 @@ int main(const int ac, const char **av)
 
 	delete handler;
 
-	if (Logger::Instance) {
-		delete Logger::Instance;
-	}
+	// if (Logger::Instance) {
+	// 	delete Logger::Instance;
+	// }
 
 	return 0;
 }

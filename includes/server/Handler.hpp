@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 09:46:21 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/29 10:18:25 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/04 10:18:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 class Handler
 {
   private:
+	const char						**_envp;
 	const int						  _epfd;
 	int								  _nbServ;
 	std::map< std::string, int >	  _hostptofd;
@@ -48,7 +49,7 @@ class Handler
 	void modifyEvent(int fd, uint32_t events) const;
 
   public:
-	Handler(const std::vector< VirtualServer * > &servers);
+	Handler(const std::vector< VirtualServer * > &servers, const char **envp);
 
 	void runEventLoop();
 

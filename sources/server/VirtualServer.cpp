@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:54:59 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/19 17:48:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:13:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@ VirtualServer::VirtualServer(const VirtualServer &src) :
 
 VirtualServer &VirtualServer::operator=(const VirtualServer &rhs)
 {
-	if (this == &rhs) return *this;
+	if (this == &rhs) {
+		return *this;
+	}
 	_config = mapDeepCopy(rhs._config);
 	_locations = mapDeepCopy(rhs._locations);
 	return *this;
@@ -54,7 +56,7 @@ const Param *VirtualServer::getParam(const std::string &key) const
 	}
 }
 
-const std::string VirtualServer::getParamValue(const std::string &key) const
+std::string VirtualServer::getParamValue(const std::string &key) const
 {
 	const Param *param = getParam(key);
 	if (param == NULL) {
@@ -63,7 +65,7 @@ const std::string VirtualServer::getParamValue(const std::string &key) const
 	return param->getValue();
 }
 
-const std::pair< std::string, std::string >
+std::pair< std::string, std::string >
 VirtualServer::getParamPair(const std::string &key) const
 {
 	const Param *param = getParam(key);
@@ -73,7 +75,7 @@ VirtualServer::getParamPair(const std::string &key) const
 	return param->getPair();
 }
 
-const std::vector< std::string >
+std::vector< std::string >
 VirtualServer::getParamList(const std::string &key) const
 {
 	const Param *param = getParam(key);
@@ -105,14 +107,14 @@ std::string VirtualServer::getRoot(const std::string &path) const
 const Location *VirtualServer::getLocation(const std::string &path) const
 {
 	std::string to_test = path;
-	size_t		pos;
+	size_t		pos = 0;
 
-	while (to_test.empty() != true) {
+	while (!to_test.empty()) {
 		try {
 			return _locations.at(to_test);
 		} catch (...) {
 		}
-		pos = to_test.find_last_of("/", to_test.length() - 2);
+		pos = to_test.find_last_of('/', to_test.length() - 2);
 		to_test = to_test.substr(0, pos + 1);
 		if (to_test == "/") {
 			break;

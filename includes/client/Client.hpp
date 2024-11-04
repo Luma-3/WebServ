@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/31 11:43:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 16:03:12 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@
 #define FINISH	 1
 #define CONTINUE 0
 
+#define MAXBUFFERSIZE 100
+
 class CGIHandler;
 
 namespace client {
@@ -44,6 +46,7 @@ namespace client {
 class Client
 {
   private:
+	const char		   **_envp;
 	const VirtualServer *_server;
 	const VirtualServer *_default_server;
 	const ServerHost	*_host;
@@ -66,7 +69,7 @@ class Client
   public:
 	Client();
 	Client(const VirtualServer *server, const VirtualServer *default_s,
-		   int client_socket, sockaddr_storage *client_addr);
+		   int client_socket, sockaddr_storage *client_addr, const char **envp);
 	Client(const Client &src);
 	Client &operator=(const Client &src);
 	~Client();
@@ -81,8 +84,10 @@ class Client
 	const sockaddr_storage *getAddr() const { return _addr; };
 	const VirtualServer	   *getServer() const { return _server; };
 	const VirtualServer *getDefaultServer() const { return _default_server; };
+	const char		   **getEnv() const { return _envp; };
 
-	void setRequest(const std::string &request) { _request = request; };
+	std::string getValueEnv(const std::string &key) const;
+	void		setRequest(const std::string &request) { _request = request; };
 	void setResponse(const std::string &response) { _response = response; };
 
 	void handleRequest();

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/31 15:51:26 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 09:45:11 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int CGIHandler::childProcess()
 		delete Logger::Instance;
 	}
 
-	if (execve(_cgi, _argv, _envp) != 0) {
+	if (execve(_cgi, _argv.data(), _envp.data()) != 0) {
 		exit(errno);
 	}
 
@@ -85,7 +85,6 @@ int CGIHandler::recvCGIResponse()
 		}
 		_response.append(buffer, nb_byte);
 	}
-	std::cerr << "Response: " << _response << std::endl;
 	return SUCCESS;
 }
 

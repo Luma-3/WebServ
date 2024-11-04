@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:15:23 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/31 11:43:36 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 16:18:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ using client::Client;
 
 bool Client::verifAccessInsideDirectory(const std::string &full_path)
 {
-	DIR			  *dir;
-	struct dirent *entry;
+	DIR			  *dir = NULL;
+	struct dirent *entry = NULL;;
 
 	dir = opendir(full_path.c_str());
 	if (dir == NULL) {
@@ -33,7 +33,7 @@ bool Client::verifAccessInsideDirectory(const std::string &full_path)
 			strcmp(entry->d_name, "..") == 0) {
 			continue;
 		}
-		struct stat infos;
+		struct stat infos = {};
 
 		if (access(path_to_file.c_str(), F_OK | W_OK) == -1) {
 			LOG_INFO("Accessing to" + path_to_file +
@@ -50,7 +50,7 @@ bool Client::verifAccessInsideDirectory(const std::string &full_path)
 			return false;
 		}
 		if (S_ISDIR(infos.st_mode)) {
-			if (verifAccessInsideDirectory(path_to_file) == false) {
+			if (!verifAccessInsideDirectory(path_to_file)) {
 				closedir(dir);
 				_builder->setCode("403");
 				return false;
@@ -63,8 +63,8 @@ bool Client::verifAccessInsideDirectory(const std::string &full_path)
 
 void Client::removeDirectory(const std::string &full_path)
 {
-	DIR			  *dir;
-	struct dirent *entry;
+	DIR			  *dir = NULL;
+	struct dirent *entry = NULL;
 
 	dir = opendir(full_path.c_str());
 	if (dir == NULL) {
@@ -78,7 +78,7 @@ void Client::removeDirectory(const std::string &full_path)
 			strcmp(entry->d_name, "..") == 0) {
 			continue;
 		}
-		struct stat infos;
+		struct stat infos = {};
 		if (stat(path_to_file.c_str(), &infos) == -1) {
 			_builder->setCode("500");
 			closedir(dir);
@@ -106,11 +106,13 @@ void Client::removeFile(const std::string &full_path)
 	}
 }
 
+// TODO : check conditionnal logic
+
 void Client::handleDeleteRequest(const Parser &parser)
 {
-	std::string path = parser.getRequestedPath();
+	const std::string &path = parser.getRequestedPath();
 	std::string root = _server->getRoot(path);
-	std::string filename = parser.getFilename();
+	const std::string &filename = parser.getFilename();
 	std::string full_path = root + filename;
 
 	if (full_path[full_path.size() - 1] == '/') {
@@ -124,22 +126,18 @@ void Client::handleDeleteRequest(const Parser &parser)
 		(errno == EACCES) ? _builder->setCode("403") : _builder->setCode("404");
 		return;
 	}
-	struct stat infos;
+	struct stat infos = {};
 	if (stat(full_path.c_str(), &infos) == -1) {
 		LOG_WARNING("Stat error: " + std::string(strerror(errno)), _CSERVER);
 		_builder->setCode("500");
 		return;
 	}
 	if (S_ISDIR(infos.st_mode)) {
-		if (verifAccessInsideDirectory(full_path) == false) {
+		if (!verifAccessInsideDirectory(full_path)) {
 			return;
 		}
 		removeDirectory(full_path);
 		return;
 	}
-	else {
-		removeFile(full_path);
-		return;
-	}
-	_builder->setCode("204");
+	removeFile(full_path);
 }

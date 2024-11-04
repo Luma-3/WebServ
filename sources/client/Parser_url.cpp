@@ -6,14 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 17:24:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/10/30 11:25:55 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 16:12:29 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client/Parser.hpp"
 
 using std::string;
-using std::vector;
 
 void client::Parser::handleRequestedPath(string &requested_path)
 {

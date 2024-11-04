@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:55:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/18 12:40:56 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:13:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,18 +32,17 @@ class VirtualServer : public IConfig
 	VirtualServer(const VirtualServer &src);
 	VirtualServer &operator=(const VirtualServer &rhs);
 	~VirtualServer();
-
 	bool operator==(const VirtualServer &rhs) const;
 
 	void addParam(const std::string &key, Param *param);
 	// const Location *getLocation(const std::string &path) const;
 
-	void			  addLocation(const std::string &route, Location *location);
-	const Param		 *getParam(const std::string &key) const;
-	const std::string getParamValue(const std::string &key) const;
-	const std::pair< std::string, std::string >
+	void		 addLocation(const std::string &route, Location *location);
+	const Param *getParam(const std::string &key) const;
+	std::string	 getParamValue(const std::string &key) const;
+	std::pair< std::string, std::string >
 									 getParamPair(const std::string &key) const;
-	const std::vector< std::string > getParamList(const std::string &key) const;
+	std::vector< std::string > getParamList(const std::string &key) const;
 	const Location					*getLocation(const std::string &path) const;
 	std::string						 getRoot(const std::string &path) const;
 

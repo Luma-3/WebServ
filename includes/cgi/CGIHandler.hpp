@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/31 14:27:05 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 10:24:29 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <arpa/inet.h>
 #include <cerrno>
+#include <cstdlib>
 #include <cstring>
 #include <map>
 #include <netinet/in.h>
@@ -53,23 +54,21 @@ class Builder;
 class CGIHandler
 {
   private:
-	pid_t		_pid;
-	int			_pipeOut[2];
-	int			_pipeIn[2];
-	char	  **_argv;
-	char	  **_envp;
-	char	   *_cgi;
-	std::string _response;
-	int			_status;
-	std::string _body;
+	const char			**_env;
+	pid_t				  _pid;
+	int					  _pipeOut[2];
+	int					  _pipeIn[2];
+	std::vector< char * > _envp;
+	std::vector< char * > _argv;
+	char				 *_cgi;
+	std::string			  _response;
+	int					  _status;
+	std::string			  _body;
 
-	static char **createEnv(const VirtualServer	 *server,
-							const client::Parser *parser,
-							const client::Client *client);
+	void createEnv(const VirtualServer *server, const client::Parser *parser,
+				   const client::Client *client);
 
-	static char **createArgv(const client::Builder *builder,
-							 const char			   *cgi_path,
-							 const std::string	   &file_extension);
+	void createArgv(const client::Builder *builder);
 
 	int childProcess();
 	int parentProcess();
@@ -86,5 +85,7 @@ class CGIHandler
 	int	 recvCGIResponse();
 	void adjustHeader(std::string &client_response);
 };
+
+char *ft_strdup(const char *s);
 
 #endif // CGI_HPP

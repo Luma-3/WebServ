@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/10/31 11:26:34 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:33:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ using std::string;
 
 volatile int g_sig = 0;
 
-Handler::Handler(const std::vector< VirtualServer * > &servers) :
+Handler::Handler(const std::vector< VirtualServer * > &servers,
+				 const char							 **envp) :
+	_envp(envp),
 	_epfd(epoll_create1(0)),
 	_nbServ(0)
 {
@@ -71,7 +73,7 @@ void Handler::handleNewClient(const ServerHost *server, int client_socket,
 	_CSERVER = vhost;
 
 	client::Client *client = new client::Client(
-		vhost, server->getDefaultVhost(), client_socket, client_addr);
+		vhost, server->getDefaultVhost(), client_socket, client_addr, _envp);
 	_clients[client_socket] = client;
 
 	client->setRequest(request);
@@ -92,17 +94,17 @@ void Handler::handleNewConnection(const ServerHost *server)
 	} catch (RecvException &e) {
 		removeEvent(client_socket);
 		LOG_ERROR(e.what(), _CSERVER);
-		if (client_addr) {
-			delete client_addr;
-		}
+		// if (client_addr) {
+		// 	delete client_addr;
+		// }
 		if (client_socket != -1) {
 			close(client_socket);
 		}
 	} catch (const std::exception &e) {
 		LOG_ERROR(e.what(), _CSERVER);
-		if (client_addr) {
-			delete client_addr;
-		}
+		// if (client_addr) {
+		// 	delete client_addr;
+		// }
 		if (client_socket != -1) {
 			close(client_socket);
 		}
@@ -177,7 +179,7 @@ void Handler::handleClientDisconnection(int event_fd)
 
 void Handler::addEvent(int fd, uint32_t events) const
 {
-	struct epoll_event event;
+	struct epoll_event event = {};
 	event.events = events;
 	event.data.fd = fd;
 	if (epoll_ctl(_epfd, EPOLL_CTL_ADD, fd, &event) == -1) {
@@ -196,7 +198,7 @@ void Handler::removeEvent(int fd) const
 
 void Handler::modifyEvent(int fd, uint32_t events) const
 {
-	struct epoll_event event;
+	struct epoll_event event = {};
 	event.events = events;
 	event.data.fd = fd;
 	if (epoll_ctl(_epfd, EPOLL_CTL_MOD, fd, &event) == -1) {
@@ -208,7 +210,7 @@ void Handler::modifyEvent(int fd, uint32_t events) const
 void Handler::runEventLoop()
 {
 	struct epoll_event event[MAX_EVENTS];
-	int				   event_fd;
+	int				   event_fd = 0;
 
 	LOG_DEBUG("Starting event loop", NULL);
 	while (!g_sig) {
