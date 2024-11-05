@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="../css/sign-in.css">
 	<link rel="stylesheet" href="../css/style.css">
-	<title>Welcome</title>
+	<title>Login</title>
 </head>
 
 <svg preserveAspectRatio="xMidYMid slice" viewBox="10 10 80 80">
@@ -52,40 +52,22 @@
 	<path fill="#7A4500" class="in-bottom"
 		d="M102,67.1c-9.6-6.1-22-3.1-29.5,2-15.4,10.7-19.6,37.5-7.6,47.8s35.9,3.9,44.5-12.5C115.5,92.6,113.9,74.6,102,67.1Z" />
 </svg>
+<script>
+	// Redirige vers la page d'accueil après 3 secondes
+	setTimeout(function () {
+		window.location.href = '/cgi/index.php';
+	}, 3000);
+</script>
+</head>
 
 <body>
-	<div class="cont">
-
-		<div class="title_sign_in">
-			<img src="../icons/logo_webserv_no_arrow.png">
-			<h1>Welcome in WebServ</h1>
-			<button class="button">See Documentation</button>
-		</div>
-
-		<div class="form_sign_in">
-			<form action="/cgi/sign_in.php" method="post">
-
-				<div class="sign_in">
-
-					<div class="sign_in_container">
-						<div class="sign_in_input">
-							<img src="../icons/user_simple.png">
-							<input type="text" name="username" id="username" placeholder="Username" required>
-						</div>
-						<div class="sign_in_input">
-							<img src="../icons/key.png">
-							<input type="password" name="password" id="password" placeholder="Password" required>
-						</div>
-						<div class="sign_in_input">
-							<img src="../icons/check-circle.png">
-							<input type="password" name="confirm_password" id="confirm_password"
-								placeholder="Confirm Password" required>
-						</div>
-						<button class="button" type="submit">Sign In</button>
-						<a href="/html/login.html">Already have an account ?</a>
-					</div>
-				</div>
-			</form>
+	<div class="title">
+		<img src="../icons/logo_webserv_no_arrow.png">
+		<h1>User Created Successfully!</h1>
+		<p>You will be redirected to the home page shortly.</p>
+	</div>
 </body>
+
+</html>
 
 </html>
