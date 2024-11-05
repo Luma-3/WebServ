@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/documentation.css">
+	<title>Documentation</title>
+</head>
+
+<body>
+
+	<svg preserveAspectRatio="xMidYMid slice" viewBox="10 10 80 80">
+		<defs>
+			<style>
+				@keyframes rotate {
+					0% {
+						transform: rotate(0deg);
+					}
+
+					100% {
+						transform: rotate(360deg);
+					}
+				}
+
+				.out-top {
+					animation: rotate 20s linear infinite;
+					transform-origin: 13px 25px;
+				}
+
+				.in-top {
+					animation: rotate 10s linear infinite;
+					transform-origin: 13px 25px;
+				}
+
+				.out-bottom {
+					animation: rotate 25s linear infinite;
+					transform-origin: 84px 93px;
+				}
+
+				.in-bottom {
+					animation: rotate 15s linear infinite;
+					transform-origin: 84px 93px;
+				}
+			</style>
+		</defs>
+		<path fill="#00bbf9" class="out-top"
+			d="M37-5C25.1-14.7,5.7-19.1-9.2-10-28.5,1.8-32.7,31.1-19.8,49c15.5,21.5,52.6,22,67.2,2.3C59.4,35,53.7,8.5,37-5Z" />
+		<path fill="#EAF0CE" class="in-top"
+			d="M20.6,4.1C11.6,1.5-1.9,2.5-8,11.2-16.3,23.1-8.2,45.6,7.4,50S42.1,38.9,41,24.5C40.2,14.1,29.4,6.6,20.6,4.1Z" />
+		<path fill="#00bbf9" class="out-bottom"
+			d="M105.9,48.6c-12.4-8.2-29.3-4.8-39.4.8-23.4,12.8-37.7,51.9-19.1,74.1s63.9,15.3,76-5.6c7.6-13.3,1.8-31.1-2.3-43.8C117.6,63.3,114.7,54.3,105.9,48.6Z" />
+		<path fill="#7A4500" class="in-bottom"
+			d="M102,67.1c-9.6-6.1-22-3.1-29.5,2-15.4,10.7-19.6,37.5-7.6,47.8s35.9,3.9,44.5-12.5C115.5,92.6,113.9,74.6,102,67.1Z" />
+	</svg>
+
+		<div class="doc_header">
+			<a href="/html/login.html"> <img src="../icons/logo_webserv_brown.png"></a>
+			<h1>Documentation</h1>
+		</div>
+		<div class="title_text">
+			<h1>Specification</h1>
+		</div>
+
+		<p> This HTTP 1.1 server, developed in C++98, is designed to handle HTTP requests and responses
+			in compliance with protocol standards. It supports essential HTTP methods (GET, POST, and DELETE)
+			and allows the configuration of multiple virtual servers through a configuration file. <br><br>
+			
+			The server operates in a non-blocking mode, utilizing epoll() to efficiently
+			manage multiple connections. It supports static file serving, file uploads, and can execute CGI
+			for specific extensions (.php / .py), providing compatibility with dynamic content types like PHP or Python.
+			Default error pages are included to enhance HTTP error handling.<br><br>
+			
+			The server is robust and built for high availability, resilient to load testing,
+			and capable of handling multiple ports simultaneously.
+		</p>
+
+		<div class="title_text">
+			<h1>How to configure?</h1>
+		</div>
+
+		<p> The configuration file for the Webserv is structured in a Custom Format (.conf).
+			The configuration file specifies important settings to ensure your website works properly.
+			Below, you can see an example of default configuration for a random website.
+				<pre>
+					log Info log/website.conf;
+
+					server {
+						listen localhost:8080;
+						root www/;
+						index index.html
+						
+						location /css/ {
+							root www/data/css/
+						}
+
+						location /img/ {
+							root www/data/img/
+						}
+					}
+				</pre>
+			</p>
+		<div class="title_text">
+			<h1>Autoindex</h1>
+		</div>
+
+		<p> The server supports the autoindex feature, which allows you to list the contents of a directory
+			when no index file is found. This feature is useful for browsing directories and files on the server.
+			You can enable autoindex in the configuration file, if you specify a location and don't set the autoindex
+			we consider that the autoindex is disable.<br><br>
+
+			<div class="title_text">
+				<h2>Autoindex disable (no index file)</h2>
+			</div>
+			<pre>
+					server {
+
+						listen localhost:8080;
+						root www/;
+					
+						location /css/ {
+							root www/data/css/
+						}
+						
+						location /img/ {
+							root www/data/img/
+						}
+					}
+		</pre>
+
+		<div class="title_text">
+			<h2>Autoindex enable for everywhere (no index file)</h2>
+		</div>
+		<pre>
+					server {
+
+						listen localhost:8080;
+						root www/;
+						autoindex on;
+				
+						location /css/ {
+							autoindex on;
+							root www/data/css/
+						}
+					
+						location /img/ {
+							autoindex on;
+							root www/data/img/
+						}
+					}
+		</pre>
+		</p>
+
+
+		<div class="title_text">
+			<h1>Log file</h1>
+		</div>
+
+		<p> The server logs all events in a log file. <br><br>
+			The log file is specified in the configuration file.
+			You can specify the log level (Info, Warning, Error) and the log file path.
+			<br><br>If you don't specify a log setting, the server will log to the standard output.
+			But if you specify a log setting without a file, the server will automatically create 
+			a log file with the date and time of the server start.
+		</p>
+	<footer>
+		<div class="footer">
+			<div>
+				<ul>
+					<li><a href="/html/login.html">Login</a></li>
+					<li><a href="https://github.com/Luma-3/WebServ">Project-Github</a></li>
+					<li><a href="https://github.com/Luma-3">Jbrousse-Github</a></li>
+					<li><a href="https://github.com/monsieurCanard">Antgabri-Github</a></li>
+					<li><a href="https://github.com/rmnina">Rmnina-Github</a></li>
+					<li>
+						<p><img src="../icons/logo_webserv_no_arrow.png" height="58px" width="px"></p>
+					</li>
+				</ul>
+			</div </div>
+	</footer>
+</body>
+
+
+<!-- TODO: footer-->
+
+</html>
