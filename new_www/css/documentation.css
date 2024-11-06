@@ -1,3 +1,9 @@
+body {
+	font-family: Chillax-Regular;
+	color: #E5E5E5;
+}
+
+
 .doc_header {
 	padding: 10px 0;
 	/* margin-bottom: 20px; */
@@ -13,51 +19,112 @@
 }
 
 .title_text {
-    padding: 1rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    width: 90%; /* Utilisez un pourcentage pour que le paragraphe s'adapte à la taille de l'écran */
-    max-width: 1200px; /* Optionnel : Limitez la largeur maximale pour une meilleure lisibilité */
-    margin-left: auto;
-    margin-right: auto;
+	padding: 1rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	width: 90%;
+	/* Utilisez un pourcentage pour que le paragraphe s'adapte à la taille de l'écran */
+	max-width: 1200px;
+	/* Optionnel : Limitez la largeur maximale pour une meilleure lisibilité */
+	margin-left: auto;
+	margin-right: auto;
 	color: #7A4500;
 	font-weight: 400;
 }
 
 h1 {
-	margin:0;
+	margin: 0;
 }
 
 p {
 	margin: 1rem;
 	margin-top: 0;
-    padding: 1rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    width: 90%; /* Utilisez un pourcentage pour que le paragraphe s'adapte à la taille de l'écran */
-    max-width: 1200px; /* Optionnel : Limitez la largeur maximale pour une meilleure lisibilité */
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #283F3B;
-	color:white;
-    border-radius: 0.5rem;
-    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+	padding: 1rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	width: 90%;
+	/* Utilisez un pourcentage pour que le paragraphe s'adapte à la taille de l'écran */
+	max-width: 1200px;
+	/* Optionnel : Limitez la largeur maximale pour une meilleure lisibilité */
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #283F3B;
+	color: white;
+	border-radius: 0.5rem;
+	/* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
 }
 
 pre {
-	font-family: Chillax-Light;
 	/* text-align: center; */
 	/* justify-content: center; */
 	margin: 1rem;
 	padding: 1rem;
 	font-size: 1rem;
 	line-height: 1.5;
-	width: 90%; /* Utilisez un pourcentage pour que le paragraphe s'adapte à la taille de l'écran */
-	max-width: 1200px; /* Optionnel : Limitez la largeur maximale pour une meilleure lisibilité */
+	width: 90%;
+	/* Utilisez un pourcentage pour que le paragraphe s'adapte à la taille de l'écran */
+	max-width: 1200px;
+	/* Optionnel : Limitez la largeur maximale pour une meilleure lisibilité */
 	margin-left: auto;
 	margin-right: auto;
 	background-color: #283F3B;
-	color:white;
+	color: white;
 	border-radius: 0.5rem;
 	/* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+}
+
+code {
+	font-family: Chillax-Regular;
+}
+
+ul {
+	margin: 1rem;
+	padding: 1rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	width: 90%;
+	/* Utilisez un pourcentage pour que le paragraphe s'adapte à la taille de l'écran */
+	max-width: 1200px;
+	/* Optionnel : Limitez la largeur maximale pour une meilleure lisibilité */
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #283F3B;
+	color: white;
+	border-radius: 0.5rem;
+	/* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+}
+
+li {
+	margin: 1.5rem;
+}
+
+.param_name {
+	color: #cdd6f4;
+	text-decoration: underline;
+	font-weight: bold;
+	background-color: #313244;
+	border-radius: 0.5rem;
+	padding: 0.3rem;
+}
+
+
+
+.hljs-comment {
+	color: #7f849c;
+}
+
+.hljs-keyword {
+	color: #89b4fa;
+}
+
+.hljs-string {
+	color: #a6e3a1;
+}
+
+.hljs-literal {
+	color: #f78c6c;
+}
+
+.hljs-number {
+	color: #f78c6c;
 }

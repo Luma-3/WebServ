@@ -6,6 +6,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="../css/style.css">
 	<link rel="stylesheet" href="../css/documentation.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+	<script src="../js/ConfigLang.js"></script>
+	<script>
+		hljs.initHighlightingOnLoad();
+	</script>
 	<title>Documentation</title>
 </head>
 
@@ -18,108 +23,222 @@
 			<h1>Specification</h1>
 		</div>
 
-		<p> This HTTP 1.1 server, developed in C++98, is designed to handle HTTP requests and responses
-			in compliance with protocol standards. It supports essential HTTP methods (GET, POST, and DELETE)
-			and allows the configuration of multiple virtual servers through a configuration file. <br><br>
-			
-			The server operates in a non-blocking mode, utilizing epoll() to efficiently
-			manage multiple connections. It supports static file serving, file uploads, and can execute CGI
-			for specific extensions (.php / .py), providing compatibility with dynamic content types like PHP or Python.
-			Default error pages are included to enhance HTTP error handling.<br><br>
-			
-			The server is robust and built for high availability, resilient to load testing,
-			and capable of handling multiple ports simultaneously.
-		</p>
+	<p> This HTTP 1.1 server, developed in C++98, is designed to handle HTTP requests and responses
+		in compliance with protocol standards. It supports essential HTTP methods (GET, POST, and DELETE)
+		and allows the configuration of multiple virtual servers through a configuration file. <br><br>
 
-		<div class="title_text">
-			<h1>How to configure?</h1>
-		</div>
+		The server operates in a non-blocking mode, utilizing <b>epoll()</b> to efficiently
+		manage multiple connections. It supports static file serving, file uploads, and can execute CGI
+		for specific extensions (.php / .py), providing compatibility with dynamic content types like PHP or Python.
+		Default error pages are included to enhance HTTP error handling.<br><br>
 
-		<p> The configuration file for the Webserv is structured in a Custom Format (.conf).
-			The configuration file specifies important settings to ensure your website works properly.
-			Below, you can see an example of default configuration for a random website.
-				<pre>
-					log Info log/website.conf;
+		The server is robust and built for high availability, resilient to load testing,
+		and capable of handling multiple ports simultaneously.
+	</p>
 
-					server {
-						listen localhost:8080;
-						root www/;
-						index index.html
-						
-						location /css/ {
-							root www/data/css/
-						}
+	<div class="title_text">
+		<h1>How to configure?</h1>
+	</div>
 
-						location /img/ {
-							root www/data/img/
-						}
-					}
-				</pre>
-			</p>
-		<div class="title_text">
-			<h1>Autoindex</h1>
-		</div>
+	<p> The configuration file for the Webserv is structured in a Custom Format (.conf).
+		The configuration file specifies important settings to ensure your website works properly.
+		Below, you can see an example of default configuration for a random website. <br><br>
 
-		<p> The server supports the autoindex feature, which allows you to list the contents of a directory
-			when no index file is found. This feature is useful for browsing directories and files on the server.
-			You can enable autoindex in the configuration file, if you specify a location and don't set the autoindex
-			we consider that the autoindex is disable.
+		<b>Important</b> : The Last parameter with the same name will be the one that will be used.
+	</p>
 
-			<div class="title_text">
-				<h2>Autoindex disable (no index file)</h2>
-			</div>
-			<pre>
-					server {
+	<pre><code class="language-ConfigLang">
+	log Info log/website.conf;
 
-						listen localhost:8080;
-						root www/;
-					
-						location /css/ {
-							root www/data/css/
-						}
-						
-						location /img/ {
-							root www/data/img/
-						}
-					}
-		</pre>
+	server {
+		listen localhost:8080;
+		root www/;
+		index home.html
+		
+		location /css/ {
+			root www/data/css/
+		}
 
-		<div class="title_text">
-			<h2>Autoindex enable for everywhere (no index file)</h2>
-		</div>
-		<pre>
-					server {
-
-						listen localhost:8080;
-						root www/;
-						autoindex on;
-				
-						location /css/ {
-							autoindex on;
-							root www/data/css/
-						}
-					
-						location /img/ {
-							autoindex on;
-							root www/data/img/
-						}
-					}
-		</pre>
-		</p>
+		location /img/ {
+			root www/data/img/
+		}
+	}
+	</code></pre>
 
 
-		<div class="title_text">
-			<h1>Log file</h1>
-		</div>
+	<div class="title_text">
+		<h1>Server Block</h1>
+	</div>
 
-		<p> The server logs all events in a log file. <br><br>
-			The log file is specified in the configuration file.
-			You can specify the log level (Info, Warning, Error) and the log file path.
-			<br><br>If you don't specify a log setting, the server will log to the standard output.
-			But if you specify a log setting without a file, the server will automatically create 
-			a log file with the date and time of the server start.
-		</p>
-	</body>
+	<p> The server block is the main block of the configuration file. It contains the settings for a virtual server. In
+		this block, you must specify the listen parameter.
+		You can also specify other parameters to adjust the server's behavior to your preferences.
+	</p>
+	<div class="title_text">
+		<h2>All Parameters and their fonction</h2>
+	</div>
+	<pre><code class="language-ConfigLang">
+	server {
+		listen <b>ip:port</b>;
+		hostname <b>name</b>;
+		root <b>path</b>;
+		index <b>file</b>;
+		autoindex <b>on/off</b>;
+		cgi <b>php/py</b> <b>path</b>;
+		error_page [<b>code</b>, ...] <b>path</b>;
+		deny_method [<b>method</b>, ...];
+		max_body_size <b>size</b>;
+
+		location <b>path</b> {
+			# Some parameters
+		}
+	}
+	</code></pre>
+
+	<ul>
+		<li><span class="param_name">Literal</span> : The listen parameter specifies the IP address and port number on
+			which the server listens
+			for connections</li>
+
+		<li><span class="param_name">hostname</span> : The hostname parameter specifies the name of the server. This
+			name is
+			used for
+			differantiat the server on same ip:port
+			exemple: my_website.com (if you have a default rooter table you can use your hostname in listen param) </li>
+
+		<li><span class="param_name">root</span> : The root parameter specifies the root directory of the server. This
+			directory is the base
+			directory for all files served by the server.</li>
+
+		<li><span class="param_name">index</span> : The index parameter specifies the index file for the server. This
+			file is
+			served when a
+			client
+			requests a directory without specifying a file.</li>
+
+		<li><span class="param_name">autoindex</span> : The autoindex parameter specifies whether the server should
+			automatically list the
+			contents
+			of a directory when no index file is found.</li>
+
+		<li><span class="param_name">cgi</span> : The cgi parameter specifies the path to the CGI script for a specific
+			extension. The server
+			will
+			execute the CGI script when a client requests a file with the specified extension.</li>
+
+		<li><span class="param_name">error_page</span> : The error_page parameter specifies the path to the error page
+			for a specific error code.
+			The server will serve the error page when a client encounters the specified error code.</li>
+
+		<li><span class="param_name">deny_methods</span> : The deny_methods parameter specifies the HTTP methods that
+			the server should deny.
+			The server will return a 405 Method Not Allowed response when a client uses one of the specified methods.
+		</li>
+
+		<li><span class="param_name">max_body_size</span> : The max_body_size parameter specifies the maximum size of
+			the request body that the
+			server
+			will accept. The server will return a 413 Request Entity Too Large response when a client sends a request
+			body
+			larger than the specified size. The size can be specified in bytes, kilobytes(k), megabytes(m), or
+			gigabytes(g).</li>
+		</li>
+	</ul>
+
+	<div class="title_text">
+		<h1>Location Block</h1>
+	</div>
+
+	<p> The location block is a sub-block of the server block. It specifies the settings for a specific location on the
+		server. In this block, you can specify the root directory for the location, the index file, and other settings.
+
+	<pre><code class="language-ConfigLang">
+	location <b>path</b> {
+		root <b>path</b>;
+		index <b>file</b>;
+		autoindex <b>on/off</b>;
+		cgi <b>php/py</b> <b>path</b>;
+		error_page [<b>code</b>, ...] <b>path</b>;
+		deny_method [<b>method</b>, ...];
+		max_body_size <b>size</b>;
+	}
+	</code></pre>
+
+	<p>
+		The Location block take most of the same parameters as the server block. The root, index, autoindex, cgi, etc...
+		In exemple above you can see all the parameters that you can use in a location block. <br><br>
+		<span class="param_name">path</span> : The path parameter is a virtual construct that specifies the location on
+		the server but not the real path. Exemple: In URL '/css/style.css' the path is '/css/' and the real path
+		must be specified in the root parameter.
+	</p>
+
+
+	<div class="title_text">
+		<h1>Autoindex</h1>
+	</div>
+
+	<p> The server supports the autoindex feature, which allows you to list the contents of a directory
+		when no index file is found. This feature is useful for browsing directories and files on the server.
+		You can enable autoindex in the configuration file, if you specify a location and don't set the autoindex
+		we consider that the autoindex is disable.
+
+	<div class="title_text">
+		<h2>Autoindex disable (no index file)</h2>
+	</div>
+	<pre><code class="language-ConfigLang">
+	server {
+
+		listen localhost:8080;
+		root www/;
+	
+		location /css/ {
+			root www/data/css/
+		}
+		
+		location /img/ {
+			root www/data/img/
+		}
+	}
+	</code></pre>
+
+	<div class="title_text">
+		<h2>Autoindex enable for everywhere (no index file)</h2>
+	</div>
+	<pre><code class="language-ConfigLang">
+	server {
+
+		listen localhost:8080;
+		root www/;
+		autoindex on;
+
+		location /css/ {
+			autoindex on;
+			root www/data/css/
+		}
+	
+		location /img/ {
+			autoindex on;
+			root www/data/img/
+		}
+	}
+		</code></pre>
+
+	<div class="title_text">
+		<h1>Log file</h1>
+	</div>
+
+	<p> The server logs all events in a log file. <br><br>
+		The log file is specified in the configuration file.
+		You can specify the log level (Error, Warning, Info or Debug) and the log file path.
+		<br><br>If you don't specify a log setting, the server will log to the standard output.
+		But if you specify a log setting without a file, the server will automatically create
+		a log file with the date and time of the server start. <br><br>
+
+		The log file is structured as follows: [LOG_LEVEL] hostname -> meassge : 04-10-2024 14:33:51 <br><br>
+
+		The Log parameter is specified outside the server block.
+
+	</p>
 	<footer>
 		<div class="footer">
 			<div>

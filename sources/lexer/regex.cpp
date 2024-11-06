@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 16:04:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/06 11:20:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ bool IsBodySize(const string &value)
 	if (isdigit(last)) {
 		return (true);
 	}
-	last = static_cast<char>(toupper(last));
+	last = static_cast<char>(toupper(last)); // TODO : handle bytes !
 	if (last != 'K' && last != 'M' && last != 'G') {
 		return (false);
 	}

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 10:39:08 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/21 13:38:01 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/06 11:37:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ string findContentType(const string &file_extension)
 	static map< string, string > content_type_list;
 	content_type_list["html"] = "text/html";
 	content_type_list["css"] = "text/css";
-	content_type_list["js"] = "text/javascript";
+	content_type_list["js"] = "application/javascript";
 	content_type_list["jpg"] = "image/jpeg";
 	content_type_list["jpeg"] = "image/jpeg";
 	content_type_list["png"] = "image/png";
