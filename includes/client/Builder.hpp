@@ -111,7 +111,7 @@ std::string findContentType(const std::string &file_extension);
 	<title>%@title@%</title>\
 </head>\
 <body>\
-	<div class=\"container\"><div class=\"title\"><h2>%@title@%</h2><br></div></div>\
+	< div class	=\"container\"><div class=\"title\"><h2>%@title@%</h2><br></div></div>\
 	<div class=\"errorMessage\"><h3>%@message@%</h3></div>\
 </body>\
 </html>"
@@ -125,26 +125,28 @@ std::string findContentType(const std::string &file_extension);
     <style>\
     .parent-container {display: flex; flex-wrap: wrap; justify-content: left; align-items: flex; padding: 20px;}\
     .container {width: 30%; margin: 10px; overflow: hidden; box-sizing: border-box; transition: transform 0.3s, box-shadow 0.3s; min-height:200px;}\
-    .title {color: white; font-size: 2rem; text-align: left; border: 4px solid black; padding: 1rem;\
-	border-radius: 10px; background-color: #EE92C2; margin-bottom: 15px; margin-top: 20px;word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;}\
-    .title:hover {background-color: #add8e6;}\
-    .icon-file {color: #add8e6; padding-right: 10px;}\
-    .icon-folder {color: #add8e6; padding-right: 10px;}\
-	.title:hover .icon-file {color: #EE92C2;}\
-    .title:hover .icon-folder {color: #EE92C2;}\
-    .file-text {color: black; font-size: 1.5rem;}\
-    .last-modification {font-size: 1rem; color: black; border-radius: 10px; background-color: #add8e6; padding: 5px; margin-top: 10px;}\
-	.size {font-size: 1rem; color: black; border-radius: 10px; background-color: #add8e6; padding: 5px; margin-top: 5px;}\
-	a {text-decoration: none; color: black;}\
-    body {font-family: 'Roboto', sans-serif; background-color: #f0f0f0; margin: 0; padding: 0;}\
+    .container:hover {transform: scale(1.05);}\
+	.title {color: white; font-size: 2rem; text-align: left; border: 4px solid white; padding: 1rem;\
+	border-radius: 20px; background-color: #7A4500; margin-bottom: 15px; margin-top: 20px;word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;}\
+    .title:hover {background-color: #EAF0CE; color: #7A4500;}\
+    .icon-file {color: #EAF0CE; padding-right: 10px;}\
+    .icon-folder {color: #EAF0CE; padding-right: 10px;}\
+	.title:hover .icon-file {color: #7A4500;}\
+    .title:hover .icon-folder {color: #7A4500;}\
+	.title:hover .file-text {color: #7A4500;}\
+    .file-text {color: white; font-size: 1.5rem;}\
+    .last-modification {font-size: 1rem; color: black; border-radius: 10px; background-color: #EAF0CE; padding: 5px; margin-top: 10px;}\
+	.size {font-size: 1rem; color: black; border-radius: 10px; background-color: #EAF0CE; padding: 5px; margin-top: 5px;}\
+	a {text-decoration: none; color: white;}\
+    body {font-family: 'Roboto', sans-serif; background-color: #283F3B; margin: 0; padding: 0;}\
     </style>\
     <meta charset=\"UTF-8\">\
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\
     <title>Autoindex</title>\
-</head>\
-<body>\
-    <div class=\"parent-container\">\
-	<div class=\"container\"><div class=\"title\"><h3>Index of %@path@%</h3><br></div></div>"
+</head><body><div class\
+	=\"parent-container\">\
+	<div class=\"container\"><div class=\"title\"><a href=\"assets/logo.png\">\
+	<h3>Index of %@path@%</h3><br></div></div>"
 
 #define DEFAULT_AUTOINDEX_LIST_FILE                                           \
 	"<div class=\"container\"><a href=\"%@file@%\" style=\"text-decoration: " \
@@ -153,7 +155,7 @@ std::string findContentType(const std::string &file_extension);
 	"<span class=\"file-text\">%@file@%</span></div></a><span "               \
 	"class=\"last-modification\">Last "                                       \
 	"Modification : %@last_modif@%</span><br><br><span class=\"size\">"       \
-	"%@size@%\"</span></div>"
+	"%@size@%</span></div>"
 
 #define DEFAULT_AUTOINDEX_LIST_DIR                                            \
 	"<div class=\"container\"><a href=\"%@file@%\" style=\"text-decoration: " \
@@ -162,7 +164,7 @@ std::string findContentType(const std::string &file_extension);
 	"<span class=\"file-text\">%@file@%</span></div></a><span "               \
 	"class=\"last-modification\">Last "                                       \
 	"Modification : %@last_modif@%</span><br><br><span class=\"size\">"       \
-	"%@size@%\"</span></div>"
+	"%@size@%</span></div>"
 
 #define DEFAULT_AUTOINDEX_PAGE_FOOT "</div></body></html>"
 
