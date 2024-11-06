@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 16:27:18 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:48:10 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,8 +158,8 @@ void Client::handleRequest()
 	_builder = new Builder(_server, _default_server, parser);
 
 	int state = DEFAULT;
-	ptr tab[] = {&Builder::returnParam, &Builder::verifMethod,
-				 &Builder::setIndexOrAutoindex, &Builder::isCGI};
+	ptr tab[] = {&Builder::returnParam, &Builder::isCGI, &Builder::verifMethod,
+				 &Builder::setIndexOrAutoindex};
 
 	if (_builder->getCode() != "200") {
 		state = B_ERROR;

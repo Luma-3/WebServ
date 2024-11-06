@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="../css/style.css">
-	<title>Home</title>
+	<title>Account</title>
 </head>
 
 <body>
@@ -56,7 +56,7 @@
 
 	<div class="head_container">
 		<header class="header">
-			<a href="/html/index.html"> <img src="../icons/logo_webserv_no_arrow.png" height="58px" width="px"></a>
+			<a href="/cgi/index.php"> <img src="../icons/logo_webserv_no_arrow.png" height="58px" width="px"></a>
 			<nav class="nav_bar">
 				<ul>
 					<li><a href="https://github.com/Luma-3/WebServ"> <img src="../icons/github.png"></a></li>
@@ -66,7 +66,7 @@
 			</nav>
 		</header>
 		<div class="title">
-			<h1>Services available for you
+			<h1>Your account
 				<?= $username ?>
 			</h1>
 		</div>
@@ -74,10 +74,9 @@
 	<section>
 		<div class="services">
 			<ul>
-				<li><button class="button" onclick="window.location.href='/upload.html'">Upload</button></li>
-				<li><button class="button" onclick="window.location.href='/tic_tac_toe.html'">Tic Tac Toe</button></li>
-				<li><button class="button" onclick="window.location.href='/delete.html'">Delete</button></li>
-				<li><button class="button" onclick="window.location.href='/autoindex/'">Autoindex</button></li>
+				<li><h1>Username</h1> <p><?= $username ?></p></li>
+				<li><h1>Session Token</h1> <p><?= $session_token ?></p></li>
+				<li><button class="button" onclick=window.location.href="/html/account_management.html">Manage Account</button></li>
 			</ul>
 		</div>
 	</section>
@@ -91,7 +90,7 @@
 					<li><a href="https://github.com/monsieurCanard">Antgabri-Github</a></li>
 					<li><a href="https://github.com/rmnina">Rmnina-Github</a></li>
 					<li>
-						<p><img src="../icons/logo_webserv_no_arrow.svg" height="58px" width="px"></p>
+						<p><img src="../icons/logo_webserv_no_arrow.png" height="58px" width="px"></p>
 					</li>
 				</ul>
 			</div> </div>

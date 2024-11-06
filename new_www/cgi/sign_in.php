@@ -1,6 +1,6 @@
 <?php
 	// var_dump($_POST);
-	// session_start();
+	session_start();
 
 	$username = $_POST['username'];
 	$password = $_POST['password'];
@@ -38,7 +38,7 @@
 		exit();
 	}
 
-	header('HTTP/1.1 308 Permanent Redirect');
-	header('Location: /html/login.html');
+	header('HTTP/1.1 307 Temporary Redirect');
+	header('Location: /html/sign_in_success.html');
 	exit();
 ?>

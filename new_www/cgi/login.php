@@ -42,9 +42,10 @@ function renderTemplate($template, $variables) {
 }
 
 $_SESSION['username'] = $username;
+$_SESSION['session_token'] = $session_token;
 
-header('HTTP/1.1 307 Temporary Redirect');
-header('Location: /html/login_success.html');
+header('HTTP/1.1 200 OK');
+header('Location: /cgi/index.php');
 exit()
 
 ?>

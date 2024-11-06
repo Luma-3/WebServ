@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 10:37:14 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/06 10:46:12 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 
 	_cgi = new char[cgiPath.length() + 1];
 	strcpy(_cgi, cgiPath.c_str());
+	// TODO: STRING AND VERIF ACCESS
 
 	createArgv(builder);
 	createEnv(server, parser, client);
