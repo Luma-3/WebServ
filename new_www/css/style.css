@@ -2,11 +2,13 @@
 
 
 body {
+	background: url('/images/background.svg') no-repeat center center fixed;
+    background-size: cover;
 	font-family: Chillax-Light;
 	width: 100%;
 	height: 100%;
 	margin: 0;
-	background-color: #E5E5E5;
+	background-color: #EAF0CE;
 }
 
 .head_container {

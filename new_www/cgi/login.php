@@ -17,7 +17,7 @@ try {
 
 	if (!password_verify($password, $row['password'])) {
 		header('HTTP/1.1 401 Unauthorized');
-		echo "Invalid username or password";
+		echo renderTemplate(__DIR__ . '/../html/user_log_error.html', ['message' => 'Invalid username or password']);
 		exit();
 	}
 
@@ -30,7 +30,7 @@ try {
 
 } catch (Exception $e) {
 	header('HTTP/1.1 500 Internal Server Error');
-	echo "Database error";
+	echo renderTemplate(__DIR__ . '/../html/user_log_error.html', ['message' => 'Internal server error']);
 	exit();
 }
 

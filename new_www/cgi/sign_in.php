@@ -1,6 +1,12 @@
 <?php
-	// var_dump($_POST);
 	session_start();
+
+	function renderTemplate($template, $variables) {
+		extract($variables);
+		ob_start();
+		include $template;
+		return ob_get_clean();
+	}
 
 	$username = $_POST['username'];
 	$password = $_POST['password'];
@@ -8,7 +14,7 @@
 	
 	if ($password != $confirm_password) {
 		header('HTTP/1.1 400 Bad Request');
-		echo "Passwords do not match";
+		echo renderTemplate(__DIR__ . '/../html/user_log_error.html', ['message' => 'Passwords do not match']);
 		exit();
 	}
 
@@ -24,7 +30,7 @@
 
 		if ($row['count'] > 0) {
 			header('HTTP/1.1 409 Conflict');
-			echo "Username already exists";
+			echo renderTemplate(__DIR__ . '/../html/user_log_error.html', ['message' => 'Username already exists']);
 			exit();
 		}
 
@@ -34,7 +40,7 @@
 		$statement->execute();
 	} catch (Exception $e) {
 		header('HTTP/1.1 500 Internal Server Error');
-		echo "Database error";
+		echo renderTemplate(__DIR__ . '/../html/user_log_error.html', ['message' => 'Internal server error']);
 		exit();
 	}
 
