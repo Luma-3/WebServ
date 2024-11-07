@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 09:45:11 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 10:54:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int CGIHandler::parentProcess()
 		LOG_WARNING("Close Error: " + string(strerror(errno)), NULL);
 		return FAILURE;
 	}
-	if (write(_pipeIn[WRITE], _body.c_str(), _body.size()) != 0) {
+	if (write(_pipeIn[WRITE], _body.c_str(), _body.size()) == -1) {
 		LOG_WARNING("Write Error: " + string(strerror(errno)), NULL);
 		return FAILURE;
 	}

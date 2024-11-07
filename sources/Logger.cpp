@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:59:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/31 13:42:19 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 09:58:54 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ std::string Logger::formatFile(const std::string &filename)
 	size_t last_slash = filename.find_last_of('/');
 
 	std::string extension =
-		last_dot == std::string::npos ? "" : filename.substr(last_dot);
+		(last_dot == std::string::npos) ? "" : filename.substr(last_dot);
 
 	extension = extension.empty() ? ".log" : extension;
 

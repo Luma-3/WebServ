@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/04 15:33:39 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 10:13:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,11 +214,13 @@ void Handler::runEventLoop()
 
 	LOG_DEBUG("Starting event loop", NULL);
 	while (!g_sig) {
+		std::cerr << "Waiting for events" << std::endl;
 		int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
 		if (nfds == -1 && !g_sig) {
 			throw InternalServerException("epoll_wait", __LINE__, __FILE__,
 										  std::string(strerror(errno)));
 		}
+		std::cerr << "Events received" << std::endl;
 		for (int i = 0; i < nfds; ++i) {
 			_CSERVER = NULL;
 			event_fd = event[i].data.fd;

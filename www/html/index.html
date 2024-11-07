@@ -1,44 +1,59 @@
-<!--
-Filename: /home/jbrousse/Documents/WebServ/www/html/index.html
-Path: /home/jbrousse/Documents/WebServ/www/html
-Created Date: Monday, October 21st 2024, 10:23:29 am
-Author: Jean-Baptiste Brousse
-
-Copyright (c) 2024 Your Company
--->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-	</style>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Index</title>
 	<link rel="stylesheet" href="/css/style.css">
+	<title>Home</title>
 </head>
 
 <body>
-	<div class="container">
+	<div class="head_container">
+		<header class="header">
+			<a href="/html/index.html"> <img src="/images/logo/logo_webserv_no_arrow.png" height="58px" width="px"></a>
+			<nav class="nav_bar">
+				<ul>
+					<li><a href="https://github.com/Luma-3/WebServ"> <img src="/images/icons/github.png"></a></li>
+					<li><a href="/html/documentation.html"> <img src="/images/icons/book-open.png"></a></li>
+					<li><a href="/cgi-bin/account.php"> <img src="/images/icons/user.png"></a></li>
+				</ul>
+			</nav>
+		</header>
 		<div class="title">
-			<h2>Welcome to WebServ</h2>
+			<h1>Services available for you
+				<?= $username ?>
+			</h1>
 		</div>
 	</div>
-	<div class="navbar">
-		<ul>
-			<li><a href="/html/github/">Project github</a></li>
-			<li><a href="https://api.intra.42.fr/oauth/authorize">Login</a></li>
-			<li><a href="/html/calculatrice.html">Calculator</a></li>
-			<li><a href="/html/register.html">Register</a></li>
-			<li><a href="/html/upload.html">Upload</a></li>
-			<li><a href="/html/delete.html">Delete</a></li>
-			<li><a href="cgi/test.py">cgiTest</a></li>
-		</ul>
-	</div>
-	<!-- <p>Here you can find all the files and directories that are available on the server
-			and you can navigate through them by clicking on the links below.</p> -->
-	<!-- </div> -->
+	<section>
+		<div class="services">
+			<ul>
+				<li><button class="button" onclick="window.location.href='/upload.html'">Upload</button></li>
+				<li><button class="button" onclick="window.location.href='/html/tic_tac_toe.html'">Tic Tac Toe</button></li>
+				<li><button class="button" onclick="window.location.href='/autoindex/'">Autoindex</button></li>
+				<li><button class="button" onclick=window.location.href="/html/account_management.html">Manage Account</button></li>
+			</ul>
+		</div>
+	</section>
+	<footer>
+		<div class="footer">
+			<div>
+				<ul>
+					<li><a href="/html/documentation.html">Documentation</a></li>
+					<li><a href="https://github.com/Luma-3/WebServ">Project-Github</a></li>
+					<li><a href="https://github.com/Luma-3">Jbrousse-Github</a></li>
+					<li><a href="https://github.com/monsieurCanard">Antgabri-Github</a></li>
+					<li><a href="https://github.com/rmnina">Rmnina-Github</a></li>
+					<li>
+						<p><img src="/images/logo/logo_webserv_no_arrow.png" height="58px" width="px"></p>
+					</li>
+				</ul>
+			</div> </div>
+	</footer>
 </body>
+
+
+<!-- TODO: footer-->
 
 </html>

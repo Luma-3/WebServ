@@ -1,5 +1,5 @@
 function sendDeleteRequest() {
-	const url = '/cgi/delete_account.php';
+	const url = '/cgi-bin/delete_account.php';
 	const options = {
 		method: 'DELETE',
 		headers: {

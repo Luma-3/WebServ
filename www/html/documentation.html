@@ -15,13 +15,13 @@
 </head>
 
 <body>
-		<div class="doc_header">
-			<a href="/html/sign_in.html"> <img src="/images/logo/logo_webserv_brown.png"></a>
-			<h1>Documentation</h1>
-		</div>
-		<div class="title_text">
-			<h1>Specification</h1>
-		</div>
+	<div class="doc_header">
+		<a href="/html/sign_in.html"> <img src="/images/logo/logo_webserv_brown.png"></a>
+		<h1>Documentation</h1>
+	</div>
+	<div class="title_text">
+		<h1>Specification</h1>
+	</div>
 
 	<p> This HTTP 1.1 server, developed in C++98, is designed to handle HTTP requests and responses
 		in compliance with protocol standards. It supports essential HTTP methods (GET, POST, and DELETE)
@@ -236,7 +236,8 @@
 
 		The log file is structured as follows: [LOG_LEVEL] hostname -> meassge : 04-10-2024 14:33:51 <br><br>
 
-		The Log parameter is specified outside the server block.
+		The Log parameter is specified outside the server block.<br>
+		Logger not create directory if not exist, you must create it before start the server.
 
 	</p>
 	<footer>

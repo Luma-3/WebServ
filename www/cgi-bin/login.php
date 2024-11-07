@@ -45,7 +45,7 @@ $_SESSION['username'] = $username;
 $_SESSION['session_token'] = $session_token;
 
 header('HTTP/1.1 200 OK');
-header('Location: /cgi/index.php');
+header('Location: /cgi-bin/index.php');
 exit()
 
 ?>
