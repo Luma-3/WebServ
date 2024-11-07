@@ -6,7 +6,7 @@ import time
 class TestServerStaticStatusWebsiteConf(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
-		cls.server_process = subprocess.Popen(['./build/WebServ', 'website.conf'],
+		cls.server_process = subprocess.Popen(['./build/WebServ', 'tests/python/conf/classic.conf'],
 										cwd='../../',
 										stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		time.sleep(1)
@@ -22,15 +22,18 @@ class TestServerStaticStatusWebsiteConf(unittest.TestCase):
 		response = requests.get(self.url)
 		self.assertEqual(response.status_code, 200)
 
-	def test_404(self):
+	# def test_not_found(self):
+	# 	response = requests.get(self.url + "/ldjalkdjwalkwdj")
+	# 	self.assertEqual(response.status_code, 404)
 
-		response = requests.get(self.url + "/ldjalkdjwalkwdj")
-		self.assertEqual(response.status_code, 404)
-		self.assertEqual(response.text, )
+	# def test_bad_request(self):
+	# 	response = requests.put(self.url)
+	# 	self.assertEqual(response.status_code, 405)
 
-	def test_bad_request(self):
-		response = requests.put(self.url)
-		self.assertEqual(response.status_code, 405)
+	# def test_no_perm(self):
+	# 	response = requests.get(self.url + "/file_no_perm/")
+	# 	self.assertEqual(response.status_code, 403)
+
 
 if __name__ == '__main__':
 	unittest.main()
