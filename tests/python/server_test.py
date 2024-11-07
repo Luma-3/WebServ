@@ -7,7 +7,7 @@ class TestServerStaticStatusWebsiteConf(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 		cls.server_process = subprocess.Popen(['./build/WebServ', 'website.conf'],
-										cwd='../',
+										cwd='../../',
 										stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		time.sleep(1)
 
