@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIHandler.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 10:24:29 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:53:45 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,15 @@
 
 #define CGI_DONE 1
 #define CGI_WAIT 0
-#define CGI_FAIL -1
+#define CGI_FAIL (-1)
 
-#define TIMEOUT	   10
-#define CGI_PYTHON "/usr/bin/python3"
-#define CGI_PHP	   "/usr/bin/php-cgi" // TODO : check path
-#define CGI_JS	   "/usr/bin/node"
+#define TIMEOUT 10
 
 #define FAILURE 1
 #define SUCCESS 0
+
+#define BUFFER_SIZE 1024
+#define STATUS_POS	10
 
 namespace client {
 class Client;
@@ -60,7 +60,7 @@ class CGIHandler
 	int					  _pipeIn[2];
 	std::vector< char * > _envp;
 	std::vector< char * > _argv;
-	char				 *_cgi;
+	std::string			  _cgi;
 	std::string			  _response;
 	int					  _status;
 	std::string			  _body;

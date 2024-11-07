@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/06 12:48:10 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/07 13:50:51 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 #include <unistd.h>
 
 using client::Client;
-
-Client::Client() : _server(NULL), _default_server(NULL), _client_socket(-1) {}
 
 Client::Client(const VirtualServer *server, const VirtualServer *default_s,
 			   int client_socket, sockaddr_storage *client_addr,
@@ -89,54 +87,50 @@ void setErrorCodeAndBuild(const std::string &code, client::Builder *builder,
 
 int Client::CGIResponse()
 {
-	// TODO : verif body to send correct error
-
+	int ret = 0;
 	int wait_ret = _cgi_handler->waitCGI();
+
 	if (wait_ret == CGI_WAIT) {
 		return CONTINUE;
 	}
-	if (wait_ret == CGI_DONE) {
-		int ret = 0;
-		if ((ret = _cgi_handler->getStatus()) != 0) {
-			if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0) {
-				LOG_WARNING("CGI return with exit status: " +
-								ToString(WEXITSTATUS(ret)),
-							_CSERVER);
-			}
-			else {
-				LOG_WARNING("CGI interrupt by SIG : " + ToString(WTERMSIG(ret)),
-							_CSERVER);
-			}
-		}
-		if ((ret = _cgi_handler->recvCGIResponse()) != SUCCESS) {
-			LOG_WARNING("CGI recv failed: " + std::string(strerror(errno)),
-						_CSERVER);
-		}
-		std::cerr << "CGI return with status: " << WEXITSTATUS(ret)
-				  << std::endl;
-		/* 		if (ret == 0) {
-		 */
-		try {
-			_cgi_handler->adjustHeader(_response);
-		} catch (const std::exception &e) {
-			LOG_ERROR(e.what(), _CSERVER);
-			setErrorCodeAndBuild("502", _builder, _response);
-		}
-		/* 		}
-				else {
-					setErrorCodeAndBuild("500", _builder, _response);
-				} */
+	if (wait_ret == CGI_FAIL) {
+		setErrorCodeAndBuild("500", _builder, _response);
+		return returnAndDeleteCgi();
 	}
-	else {
+	ret = _cgi_handler->getStatus();
+	if (ret != 0) {
+		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0) {
+			LOG_WARNING("CGI return with exit status: " +
+							ToString(WEXITSTATUS(ret)),
+						CSERVER);
+		}
+		else {
+			LOG_WARNING("CGI interrupt by SIG : " + ToString(WTERMSIG(ret)),
+						CSERVER);
+		}
+	}
+
+	if (_cgi_handler->recvCGIResponse() != SUCCESS) {
+		LOG_WARNING("CGI recv failed: " + std::string(strerror(errno)),
+					CSERVER);
+	}
+
+	try {
+		_cgi_handler->adjustHeader(_response);
+	} catch (const std::exception &e) {
+		LOG_ERROR(e.what(), CSERVER);
 		setErrorCodeAndBuild("500", _builder, _response);
 	}
+	return returnAndDeleteCgi();
+}
+int Client::returnAndDeleteCgi()
+{
 	delete _cgi_handler;
 	_cgi_handler = NULL;
 	delete _builder;
 	_builder = NULL;
 	return FINISH;
 }
-
 int Client::handleResponse()
 {
 	if (_cgi_handler != NULL) {

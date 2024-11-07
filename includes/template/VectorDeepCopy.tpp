@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   VectorDeepCopy.tpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 11:32:35 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/14 11:34:34 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:38:46 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,9 @@ std::vector< T * > vectorDeepCopy(const std::vector< T * > &src)
 {
 	std::vector< T * > dst;
 	for (typename std::vector< T * >::const_iterator it = src.begin();
-		 it != src.end(); ++it)
+		 it != src.end(); ++it) {
 		dst.push_back(new T(**it));
+	}
 	return dst;
 };
 
@@ -30,8 +31,9 @@ std::vector< T > vectorDeepCopy(const std::vector< T > &src)
 {
 	std::vector< T > dst;
 	for (typename std::vector< T >::const_iterator it = src.begin();
-		 it != src.end(); ++it)
+		 it != src.end(); ++it) {
 		dst.push_back(T(*it));
+	}
 	return dst;
 };
 

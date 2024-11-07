@@ -19,7 +19,9 @@ Checks: >
   -misc-include-cleaner,
   -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
-  -cppcoreguidelines-pro-type-vararg
+  -cppcoreguidelines-pro-type-vararg,
+  -misc-no-recursion,
+  -cppcoreguidelines-special-member-functions
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

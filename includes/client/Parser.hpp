@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/22 14:44:57 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:54:33 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class Parser
 	void getHeaderFromRequest(const size_t &line_break_pos);
 	void getBodyFromRequest(size_t &line_break_pos);
 
-	void handleRequestedPath(std::string &url);
+	void handleRequestedPath(std::string &requested_path);
 
 	bool InvalidMethod();
 	bool InvalidHeader();

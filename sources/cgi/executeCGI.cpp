@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executeCGI.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 10:54:05 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:50:51 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,9 @@ int CGIHandler::childProcess()
 		exit(FAILURE);
 	}
 
-	if (Logger::Instance) {
-		delete Logger::Instance;
-	}
+	delete Logger::Instance;
 
-	if (execve(_cgi, _argv.data(), _envp.data()) != 0) {
+	if (execve(_cgi.c_str(), _argv.data(), _envp.data()) != 0) {
 		exit(errno);
 	}
 
@@ -70,14 +68,14 @@ int CGIHandler::parentProcess()
 
 int CGIHandler::recvCGIResponse()
 {
-	char	buffer[1024];
+	char	buffer[BUFFER_SIZE];
 	ssize_t nb_byte = 1;
 
 	while (nb_byte > 0) {
-		memset(buffer, 0, 1024);
-		nb_byte = read(_pipeOut[READ], buffer, 1024);
+		memset(buffer, 0, BUFFER_SIZE);
+		nb_byte = read(_pipeOut[READ], buffer, BUFFER_SIZE);
 		if (nb_byte == -1) {
-			LOG_WARNING("Read Error: " + string(strerror(errno)), _CSERVER);
+			LOG_WARNING("Read Error: " + string(strerror(errno)), CSERVER);
 			return FAILURE;
 		}
 		if (nb_byte == 0) {
@@ -98,10 +96,10 @@ int CGIHandler::waitCGI()
 	}
 	ret = waitpid(_pid, &_status, WNOHANG);
 	if (ret < 0) {
-		LOG_WARNING("Waitpid Error: " + string(strerror(errno)), _CSERVER);
+		LOG_WARNING("Waitpid Error: " + string(strerror(errno)), CSERVER);
 		return CGI_FAIL;
 	}
-	else if (ret == CGI_WAIT) {
+	if (ret == CGI_WAIT) {
 		return CGI_WAIT;
 	}
 	return CGI_DONE;
@@ -110,23 +108,21 @@ int CGIHandler::waitCGI()
 int CGIHandler::execute()
 {
 	if (pipe(_pipeIn) != 0 || pipe(_pipeOut) != 0) {
-		LOG_WARNING("Pipe Error: " + string(strerror(errno)), _CSERVER);
+		LOG_WARNING("Pipe Error: " + string(strerror(errno)), CSERVER);
 		return FAILURE;
 	}
 	_pid = fork();
 	if (_pid < 0) {
-		LOG_WARNING("Fork Error: " + string(strerror(errno)), _CSERVER);
+		LOG_WARNING("Fork Error: " + string(strerror(errno)), CSERVER);
 		return FAILURE;
 	}
-	else if (_pid == 0) {
+	if (_pid == 0) {
 		if (childProcess() == FAILURE) {
 			return FAILURE;
 		}
 	}
-	else {
-		if (parentProcess() == FAILURE) {
-			return FAILURE;
-		}
+	if (parentProcess() == FAILURE) {
+		return FAILURE;
 	}
 	return SUCCESS;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   verifCGIResponse.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 16:26:37 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/05 14:28:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:19:09 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,15 @@ namespace {
 void buildHeader(std::string &cgiHeader)
 {
 	std::string http = "HTTP/1.1";
-
+	std::string status = "Status:";
 	if (cgiHeader.find("Content-type:") == std::string::npos &&
 		cgiHeader.find("Content-Type:") == std::string::npos) {
 		throw InternalServerException("CGI: ", __LINE__, __FILE__,
 									  "No Content-Type found");
 	}
-	size_t pos = cgiHeader.find("Status:");
+	size_t pos = cgiHeader.find(status);
 	if (pos != std::string::npos) {
-		cgiHeader.erase(pos, 7);
+		cgiHeader.erase(pos, status.size());
 		cgiHeader.insert(pos, http);
 	}
 	else if (cgiHeader.find("HTTP/1.1") == std::string::npos) {
@@ -56,6 +56,12 @@ void CGIHandler::adjustHeader(std::string &client_response)
 	}
 
 	buildHeader(header);
+	std::string header_status = header.substr(STATUS_POS, 3);
+	if (body.empty() && header_status != "200") {
+		throw InternalServerException("CGI: ", __LINE__, __FILE__,
+									  "No body found with status: " +
+										  header_status);
+	}
 	std::cerr << "Header Post: " << header << std::endl;
 	client_response = header + body;
 

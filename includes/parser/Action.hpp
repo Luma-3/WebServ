@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Action.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 13:59:14 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 10:20:19 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:47:46 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,11 @@ class Action
 };
 
 struct ActionEntry {
+  private:
 	int			  _state;
 	Terminal_Type _terminal;
 
+  public:
 	ActionEntry(int state, Terminal_Type terminal) :
 		_state(state),
 		_terminal(terminal)
@@ -89,16 +91,12 @@ struct ActionEntry {
 	{
 		return _state == rhs._state && _terminal == rhs._terminal;
 	}
+	int			  getState() const { return _state; }
+	Terminal_Type getTerminal() const { return _terminal; }
 };
-
 
 } // namespace parser
 
-#include "template/StringUtils.tpp"// void R1_Server(std::stack< IParserToken * > &stack);
-// void R2_Param(std::stack< IParserToken * > &stack);
-// void R3_DoubleParam(std::stack< IParserToken * > &stack);
-// void R4_ErrorPage(std::stack< IParserToken * > &stack);
-// void R5_DenyMethod(std::stack< IParserToken * > &stack);
-// void R6_Location(std::stack< IParserToken * > &stack);
+#include "template/StringUtils.tpp"
 
 #endif // ACTION_HPP

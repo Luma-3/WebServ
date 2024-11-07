@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:44:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/31 11:04:19 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:51:19 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 class VirtualServer;
 
 static const VirtualServer *current __attribute__((unused)) = NULL;
-#define _CSERVER current
+#define CSERVER current
 
 #define BUFFER_SIZE 1024
 
@@ -43,7 +43,7 @@ enum LogLevel {
 	}                                                                       \
 	else {                                                                  \
 		std::cerr << PASTEL_RED "No logger instance" << std::endl;          \
-		std::cerr << message << std::endl;                                  \
+		std::cerr << (message) << std::endl;                                  \
 	}
 
 #define LOG_INFO(message, server)                                          \
@@ -52,7 +52,7 @@ enum LogLevel {
 	}                                                                      \
 	else {                                                                 \
 		std::cerr << PASTEL_RED "No logger instance" << std::endl;         \
-		std::cerr << message << std::endl;                                 \
+		std::cerr << (message) << std::endl;                                 \
 	}
 
 #define LOG_WARNING(message, server)                                          \
@@ -61,7 +61,7 @@ enum LogLevel {
 	}                                                                         \
 	else {                                                                    \
 		std::cerr << PASTEL_RED "No logger instance" << std::endl;            \
-		std::cerr << message << std::endl;                                    \
+		std::cerr << (message) << std::endl;                                    \
 	}
 
 #define LOG_ERROR(message, server)                                          \
@@ -70,7 +70,7 @@ enum LogLevel {
 	}                                                                       \
 	else {                                                                  \
 		std::cerr << PASTEL_RED "No logger instance" << std::endl;          \
-		std::cerr << message << std::endl;                                  \
+		std::cerr << (message) << std::endl;                                  \
 	}
 
 class Logger

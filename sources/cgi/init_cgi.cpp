@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   init_cgi.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 10:47:17 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:36:15 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cgi/CGIHandler.hpp"
 #include "client/Client.hpp"
 
-using std::map;
 using std::string;
 
 string getTranslatedPath(const client::Parser *parser,
@@ -38,17 +37,15 @@ void getClientInfo(const client::Client *client, std::vector< string > &env_vec)
 	const sockaddr_storage *addr = client->getAddr();
 
 	if (addr->ss_family == AF_INET) {
-		const sockaddr_in *addr_in = reinterpret_cast< const sockaddr_in * >(
-			addr); // TODO go to cast template
-		char ip[INET_ADDRSTRLEN];
+		const sockaddr_in *addr_in = (const sockaddr_in *)addr;
+		char			   ip[INET_ADDRSTRLEN];
 		inet_ntop(AF_INET, &(addr_in->sin_addr), ip, INET_ADDRSTRLEN);
 		env_vec.push_back("REMOTE_ADDR=" + string(ip));
 		env_vec.push_back("REMOTE_PORT=" + ToString(ntohs(addr_in->sin_port)));
 	}
 	else if (addr->ss_family == AF_INET6) {
-		const sockaddr_in6 *addr_in6 = reinterpret_cast< const sockaddr_in6 * >(
-			addr); // TODO go to cast template
-		char ip[INET6_ADDRSTRLEN];
+		const sockaddr_in6 *addr_in6 = (sockaddr_in6 *)addr;
+		char				ip[INET6_ADDRSTRLEN];
 		inet_ntop(AF_INET6, &(addr_in6->sin6_addr), ip, INET6_ADDRSTRLEN);
 		env_vec.push_back("REMOTE_ADDR=" + string(ip));
 		env_vec.push_back("REMOTE_PORT=" +
@@ -115,7 +112,7 @@ void CGIHandler::createEnv(const VirtualServer	*server,
 
 void CGIHandler::createArgv(const client::Builder *builder)
 {
-	_argv.push_back(ft_strdup(_cgi));
+	_argv.push_back(ft_strdup(_cgi.c_str()));
 	_argv.push_back(ft_strdup(builder->getPath().c_str()));
 	_argv.push_back(NULL);
 }

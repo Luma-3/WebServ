@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 15:54:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:48:12 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,8 +145,8 @@ std::string Parser::findExpected(int state)
 
 	for (std::map< ActionEntry, Action >::const_iterator it = _actions.begin();
 		 it != _actions.end(); ++it) {
-		if (it->first._state == state) {
-			expected.insert(it->first._terminal);
+		if (it->first.getState() == state) {
+			expected.insert(it->first.getTerminal());
 		}
 	}
 	std::string expected_values;

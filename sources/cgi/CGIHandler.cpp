@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/06 10:46:12 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/07 13:50:51 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,9 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 					   const VirtualServer *server, client::Builder *builder) :
 	_env(client->getEnv()),
 	_pid(-1),
-	_cgi(NULL),
-	_status(CGI_WAIT)
+	_status(CGI_WAIT),
+	_pipeIn(),
+	_pipeOut()
 {
 	_pipeIn[0] = -1;
 	_pipeIn[1] = -1;
@@ -27,31 +28,25 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 	std::string fileExtension = parser->getFileExtension();
 
 	const Location *location = server->getLocation(parser->getRequestedPath());
-	std::string		cgiPath;
 
 	if (location != NULL) {
-		cgiPath = location->getParamValue(fileExtension);
-		if (cgiPath.empty()) {
+		_cgi = location->getParamValue(fileExtension);
+		if (_cgi.empty()) {
 			LOG_ERROR("CGI path not found for this extention: " + fileExtension,
-					  _CSERVER);
+					  CSERVER);
 			_status = CGI_FAIL;
 			return;
 		}
 	}
 	else {
-		cgiPath = server->getParamValue(fileExtension);
-		if (cgiPath.empty()) {
+		_cgi = server->getParamValue(fileExtension);
+		if (_cgi.empty()) {
 			LOG_ERROR("CGI path not found for this extention: " + fileExtension,
-					  _CSERVER);
+					  CSERVER);
 			_status = CGI_FAIL;
 			return;
 		}
 	}
-
-	_cgi = new char[cgiPath.length() + 1];
-	strcpy(_cgi, cgiPath.c_str());
-	// TODO: STRING AND VERIF ACCESS
-
 	createArgv(builder);
 	createEnv(server, parser, client);
 	_body = parser->getHeader("body");
@@ -60,17 +55,22 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 char *ft_strdup(const char *s)
 {
 	char *str = new char[strlen(s) + 1];
-	strcpy(str, s);
+	strncpy(str, s, strlen(s) + 1);
 	return str;
 }
 
 CGIHandler::~CGIHandler()
 {
-	delete[] _cgi;
-	for (size_t i = 0; _envp[i] != NULL; i++) {
-		delete[] _envp[i];
+	for (std::vector< char * >::iterator it = _envp.begin(); it != _envp.end();
+		 ++it) {
+		if (*it != NULL) {
+			delete[] *it;
+		}
 	}
-	for (size_t i = 0; _argv[i] != NULL; i++) {
-		delete[] _argv[i];
+	for (std::vector< char * >::iterator it = _argv.begin(); it != _argv.end();
+		 ++it) {
+		if (*it != NULL) {
+			delete[] *it;
+		}
 	}
 }

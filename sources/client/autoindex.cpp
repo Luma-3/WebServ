@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/04 16:11:58 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:01:21 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,10 @@ std::string formatSize(off_t size)
 	int				   order = 0;
 	double			   formattedSize = static_cast< double >(size);
 	std::ostringstream out;
-	int				   packet_size = 1024;
 
-	while (formattedSize >= packet_size && order < 3) {
+	while (formattedSize >= CHUNK_SIZE && order < 3) {
 		order++;
-		formattedSize /= packet_size;
+		formattedSize /= CHUNK_SIZE;
 	}
 
 	out << std::fixed << std::setprecision(2) << formattedSize << " "

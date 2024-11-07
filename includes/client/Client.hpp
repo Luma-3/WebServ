@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 16:03:12 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:16:47 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,9 @@ class Client
 	void removeDirectory(const std::string &full_path);
 	bool verifAccessInsideDirectory(const std::string &full_path);
 	int	 CGIResponse();
+	int	 returnAndDeleteCgi();
 
   public:
-	Client();
 	Client(const VirtualServer *server, const VirtualServer *default_s,
 		   int client_socket, sockaddr_storage *client_addr, const char **envp);
 	Client(const Client &src);

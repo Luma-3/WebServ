@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Token.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:37:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 15:59:14 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:59:48 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,15 @@
 
 Token::Token() : _type(TOKEN), _terminal(T_None), _line(0), _col(0) {}
 
-Token::Token(const Terminal_Type term) : _type(TOKEN), _terminal(term), _line(0), _col(0)
+Token::Token(Terminal_Type term) :
+	_type(TOKEN),
+	_terminal(term),
+	_line(0),
+	_col(0)
 {
 }
-Token::Token(const std::string &key, Terminal_Type term, size_t line, size_t col) :
+Token::Token(const std::string &key, Terminal_Type term, size_t line,
+			 size_t col) :
 	_type(TOKEN),
 	_key(key),
 	_terminal(term),
@@ -31,7 +36,14 @@ Token::Token(const std::string &key, Terminal_Type term, size_t line, size_t col
 {
 }
 
-Token::Token(const Token &src) : _type(src._type), _key(src._key), _terminal(src._terminal), _line(0), _col(0) {}
+Token::Token(const Token &src) :
+	_type(src._type),
+	_key(src._key),
+	_terminal(src._terminal),
+	_line(0),
+	_col(0)
+{
+}
 
 Token &Token::operator=(const Token &rhs)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:59:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 09:58:54 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:35:08 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ Logger *Logger::Instance = NULL;
 
 Logger::Logger(const std::string &filename, int logLevel) :
 	_buffer_size(0),
-	_logLevel(logLevel)
+	_logLevel(logLevel),
+	_buffer()
 {
 	if (Instance) {
 		throw std::runtime_error("Logger instance already exists");
@@ -89,8 +90,8 @@ std::string Logger::formatTime()
 {
 	std::time_t time = std::time(0);
 	std::tm	   *ltm = std::localtime(&time);
-	char		time_str[100];
-	strftime(time_str, 100, "%d-%m-%Y_%H:%M:%S", ltm);
+	char		time_str[BUFFER_SIZE];
+	strftime(time_str, BUFFER_SIZE, "%d-%m-%Y_%H:%M:%S", ltm);
 	return std::string(time_str);
 }
 
@@ -150,7 +151,7 @@ std::string Logger::removeColor(const std::string &str)
 	std::string new_str = str;
 	size_t		pos = 0;
 	while ((pos = new_str.find("\033[")) != std::string::npos) {
-		size_t end = new_str.find("m", pos);
+		size_t end = new_str.find('m', pos);
 		if (end != std::string::npos) {
 			new_str.erase(pos, end - pos + 1);
 		}
@@ -163,24 +164,23 @@ LogLevel Logger::StringToLogLevel(const std::string &str)
 	if (str == "Debug") {
 		return DEBUG;
 	}
-	else if (str == "Info") {
+	if (str == "Info") {
 		return INFO;
 	}
-	else if (str == "Warning") {
+	if (str == "Warning") {
 		return WARNING;
 	}
-	else if (str == "Error") {
+	if (str == "Error") {
 		return ERROR;
 	}
-	else {
-		return DEBUG;
-	}
+	return DEBUG;
 }
 
 void Logger::flush()
 {
+
 	if (_buffer_size > 0) {
-		_file.write(_buffer, _buffer_size);
+		_file.write(_buffer, static_cast< std::streamsize >(_buffer_size));
 		_file.flush();
 		_buffer_size = 0;
 		memset(_buffer, 0, BUFFER_SIZE);

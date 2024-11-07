@@ -30,6 +30,7 @@
 #define CHILD_BUFFER_SIZE 4096
 #define IS_FILE			  0
 #define IS_DIR			  1
+#define CHUNK_SIZE		  1024
 
 namespace client {
 
@@ -103,15 +104,15 @@ std::string findContentType(const std::string &file_extension);
 <head>\
 	<style>\
 	.container {width: 80%;margin: auto;overflow: hidden;}\
-	.title {color: white;font-size: 2rem;text-align: center;justify-content: center;border: 4px solid black;padding: 1rem;border-radius: 10px;background-color: #EE92C2;margin-bottom: 20px;margin-top: 20px;}\
-	.errorMessage {width: 100%;height: 30%;padding: 0;margin: 0 auto 0 auto;position: center;display: flex;justify-content: center;background-color: #EE92C2;align-items: center;flex-wrap: wrap;}\
+	.title {color: white;font-size: 2rem;text-align: center;justify-content: center;border: 4px solid black;padding: 1rem;border-radius: 10px;background-color: #283F3B;margin-bottom: 20px;margin-top: 20px;}\
+	.errorMessage {width: 100%;height: 30%;padding: 0;margin: 0 auto 0 auto;position: center;display: flex;justify-content: center;background-color: #EAF0CE;align-items: center;flex-wrap: wrap;}\
 	</style>\
 	<meta charset=\"UTF-8\">\
 	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\
 	<title>%@title@%</title>\
 </head>\
 <body>\
-	< div class	=\"container\"><div class=\"title\"><h2>%@title@%</h2><br></div></div>\
+	<div class=\"container\"><div class=\"title\"><h2>%@title@%</h2><br></div></div>\
 	<div class=\"errorMessage\"><h3>%@message@%</h3></div>\
 </body>\
 </html>"

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 15:39:05 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:00:28 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,7 @@ int main(const int ac, const char **av, const char **env)
 	// }
 
 	delete handler;
-
-	// if (Logger::Instance) {
-	// 	delete Logger::Instance;
-	// }
+	delete Logger::Instance;
 
 	return 0;
 }

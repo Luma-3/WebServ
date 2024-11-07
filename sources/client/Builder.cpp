@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/04 16:24:44 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:50:51 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ void Builder::findErrorPage()
 	}
 	std::string error =
 		(errno != 0) ? strerror(errno) : "No file found in config file";
-	LOG_INFO("No Error page for code " + _code + ": " + error, _CSERVER);
+	LOG_INFO("No Error page for code " + _code + ": " + error, CSERVER);
 	createErrorPage();
 }
 

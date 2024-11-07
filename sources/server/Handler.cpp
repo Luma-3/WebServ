@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/07 10:13:43 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:50:51 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void Handler::handleNewClient(const ServerHost *server, int client_socket,
 	if (vhost == NULL) {
 		vhost = server->getDefaultVhost();
 	}
-	_CSERVER = vhost;
+	CSERVER = vhost;
 
 	client::Client *client = new client::Client(
 		vhost, server->getDefaultVhost(), client_socket, client_addr, _envp);
@@ -93,7 +93,7 @@ void Handler::handleNewConnection(const ServerHost *server)
 		request = ServerHost::recvRequest(client_socket);
 	} catch (RecvException &e) {
 		removeEvent(client_socket);
-		LOG_ERROR(e.what(), _CSERVER);
+		LOG_ERROR(e.what(), CSERVER);
 		// if (client_addr) {
 		// 	delete client_addr;
 		// }
@@ -101,7 +101,7 @@ void Handler::handleNewConnection(const ServerHost *server)
 			close(client_socket);
 		}
 	} catch (const std::exception &e) {
-		LOG_ERROR(e.what(), _CSERVER);
+		LOG_ERROR(e.what(), CSERVER);
 		// if (client_addr) {
 		// 	delete client_addr;
 		// }
@@ -112,7 +112,7 @@ void Handler::handleNewConnection(const ServerHost *server)
 	try {
 		handleNewClient(server, client_socket, client_addr, request);
 	} catch (const std::exception &e) {
-		LOG_ERROR(e.what(), _CSERVER);
+		LOG_ERROR(e.what(), CSERVER);
 		handleClientDisconnection(
 			client_socket); // TODO : method for error disconnection
 	}
@@ -126,19 +126,19 @@ void Handler::handleClientRequest(int event_fd, const std::string &request)
 	if (client) {
 		try {
 			if (request.empty()) {
-				_CSERVER = client->getServer();
+				CSERVER = client->getServer();
 				client_request = ServerHost::recvRequest(event_fd);
 				client->setRequest(client_request);
 			}
 			client->handleRequest();
 		} catch (const std::exception &e) {
-			LOG_ERROR(e.what(), _CSERVER);
+			LOG_ERROR(e.what(), CSERVER);
 			client->setResponse(e.what());
 		}
 		try {
 			modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
 		} catch (const std::exception &e) {
-			LOG_ERROR(e.what(), _CSERVER);
+			LOG_ERROR(e.what(), CSERVER);
 			handleClientDisconnection(
 				event_fd); // TODO : method for error disconnection
 		}
@@ -150,11 +150,11 @@ void Handler::handleClientResponse(int event_fd)
 	client::Client *client = _clients[event_fd];
 	if (client && client->handleResponse() == FINISH) {
 		try {
-			_CSERVER = client->getServer();
+			CSERVER = client->getServer();
 			ServerHost::sendResponse(event_fd, client->getResponse());
 			modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
 		} catch (const std::exception &e) {
-			LOG_ERROR(e.what(), _CSERVER);
+			LOG_ERROR(e.what(), CSERVER);
 			handleClientDisconnection(
 				event_fd); // TODO : method for error disconnection
 		}
@@ -165,12 +165,12 @@ void Handler::handleClientDisconnection(int event_fd)
 {
 	client::Client *client = _clients[event_fd];
 	if (client) {
-		_CSERVER = client->getServer();
+		CSERVER = client->getServer();
 		_clients.erase(event_fd);
 		try {
 			removeEvent(event_fd);
 		} catch (const std::exception &e) {
-			LOG_ERROR(e.what(), _CSERVER);
+			LOG_ERROR(e.what(), CSERVER);
 		}
 		close(event_fd);
 		delete client;
@@ -222,14 +222,14 @@ void Handler::runEventLoop()
 		}
 		std::cerr << "Events received" << std::endl;
 		for (int i = 0; i < nfds; ++i) {
-			_CSERVER = NULL;
+			CSERVER = NULL;
 			event_fd = event[i].data.fd;
 			ServerHost *server = _servers[event_fd];
 			if (server) {
 				try {
 					handleNewConnection(server);
 				} catch (const std::exception &e) {
-					LOG_ERROR(e.what(), _CSERVER);
+					LOG_ERROR(e.what(), CSERVER);
 				}
 			}
 			else if (event[i].events & EPOLLRDHUP ||

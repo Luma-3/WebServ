@@ -3,34 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualServer.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:54:59 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 15:13:39 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:42:04 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server/VirtualServer.hpp"
 
-#include "template/MapDeepCopy.tpp"
-
 VirtualServer::VirtualServer() {}
-
-VirtualServer::VirtualServer(const VirtualServer &src) :
-	_config(mapDeepCopy(src._config)),
-	_locations(mapDeepCopy(src._locations))
-{
-}
-
-VirtualServer &VirtualServer::operator=(const VirtualServer &rhs)
-{
-	if (this == &rhs) {
-		return *this;
-	}
-	_config = mapDeepCopy(rhs._config);
-	_locations = mapDeepCopy(rhs._locations);
-	return *this;
-}
 
 bool VirtualServer::operator==(const VirtualServer &rhs) const
 {
