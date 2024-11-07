@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   TestParser.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:37:59 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/23 14:17:56 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 14:47:59 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <gtest/gtest.h>
 
 #include "lexer/Token.hpp"
+#include "parser/Location.hpp"
+#include "parser/Param.hpp"
 #include "parser/Parser.hpp"
-#include "parser/statement/Location.hpp"
-#include "parser/statement/Param.hpp"
-#include "parser/statement/ReturnParam.hpp"
-#include "parser/statement/Server.hpp"
+#include "parser/ReturnParam.hpp"
+#include "parser/Server.hpp"
 
 using parser::Parser;
 
