@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:59:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:35:08 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/07 17:55:30 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 Logger *Logger::Instance = NULL;
 
 Logger::Logger(const std::string &filename, int logLevel) :
-	_buffer_size(0),
+	_buffer(),
 	_logLevel(logLevel),
-	_buffer()
+	_buffer_size(0)
 {
 	if (Instance) {
 		throw std::runtime_error("Logger instance already exists");

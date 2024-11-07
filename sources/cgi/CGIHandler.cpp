@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:50:51 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/07 17:56:23 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 					   const VirtualServer *server, client::Builder *builder) :
 	_env(client->getEnv()),
 	_pid(-1),
-	_status(CGI_WAIT),
+	_pipeOut(),
 	_pipeIn(),
-	_pipeOut()
+	_status(CGI_WAIT)
 {
 	_pipeIn[0] = -1;
 	_pipeIn[1] = -1;
