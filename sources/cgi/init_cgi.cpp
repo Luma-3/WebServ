@@ -106,6 +106,7 @@ void CGIHandler::createEnv(const VirtualServer	*server,
 	for (std::vector< string >::iterator it = env_vec.begin();
 		 it != env_vec.end(); ++it) {
 		_envp.push_back(ft_strdup(it->c_str()));
+		std::cout << *it << std::endl;
 	}
 	_envp.push_back(NULL);
 }
@@ -114,5 +115,6 @@ void CGIHandler::createArgv(const client::Builder *builder)
 {
 	_argv.push_back(ft_strdup(_cgi.c_str()));
 	_argv.push_back(ft_strdup(builder->getPath().c_str()));
+	LOG_DEBUG("Try to Access :" + builder->getPath(), CSERVER);
 	_argv.push_back(NULL);
 }

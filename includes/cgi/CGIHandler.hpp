@@ -43,7 +43,7 @@
 #define SUCCESS 0
 
 #define BUFFER_SIZE 1024
-#define STATUS_POS	10
+#define STATUS_POS	9
 
 namespace client {
 class Client;

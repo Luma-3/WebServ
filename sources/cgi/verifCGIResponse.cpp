@@ -57,7 +57,8 @@ void CGIHandler::adjustHeader(std::string &client_response)
 
 	buildHeader(header);
 	std::string header_status = header.substr(STATUS_POS, 3);
-	if (body.empty() && header_status != "200") {
+	std::cerr << header_status << std::endl;
+	if (body.empty() && header_status == "500") {
 		throw InternalServerException("CGI: ", __LINE__, __FILE__,
 									  "No body found with status: " +
 										  header_status);

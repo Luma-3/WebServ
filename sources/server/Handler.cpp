@@ -214,13 +214,13 @@ void Handler::runEventLoop()
 
 	LOG_DEBUG("Starting event loop", NULL);
 	while (!g_sig) {
-		std::cerr << "Waiting for events" << std::endl;
+		// std::cerr << "Waiting for events" << std::endl;
 		int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
 		if (nfds == -1 && !g_sig) {
 			throw InternalServerException("epoll_wait", __LINE__, __FILE__,
 										  std::string(strerror(errno)));
 		}
-		std::cerr << "Events received" << std::endl;
+		// std::cerr << "Events received" << std::endl;
 		for (int i = 0; i < nfds; ++i) {
 			CSERVER = NULL;
 			event_fd = event[i].data.fd;

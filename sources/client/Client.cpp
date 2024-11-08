@@ -212,8 +212,12 @@ std::string Client::getValueEnv(const std::string &key) const
 {
 	for (int i = 0; _envp[i] != NULL; i++) {
 		std::string envp_str(_envp[i]);
-		if (envp_str.find(key) != std::string::npos) {
-			return envp_str.substr(key.size() + 1);
+		size_t equal_pos = envp_str.find_first_of('=');
+		if (equal_pos != std::string::npos) {
+			std::string env_key = envp_str.substr(0, equal_pos);
+			if (env_key == key) {
+				return envp_str.substr(equal_pos + 1);
+			}
 		}
 	}
 	return "";
