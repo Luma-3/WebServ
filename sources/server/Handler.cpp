@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/07 13:50:51 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/08 10:00:43 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ void Handler::runEventLoop()
 	struct epoll_event event[MAX_EVENTS];
 	int				   event_fd = 0;
 
-	LOG_DEBUG("Starting event loop", NULL);
+	// LOG_DEBUG("Starting event loop", NULL);
 	while (!g_sig) {
 		// std::cerr << "Waiting for events" << std::endl;
 		int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   verifCGIResponse.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 16:26:37 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:19:09 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/08 16:00:19 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,10 @@ void CGIHandler::adjustHeader(std::string &client_response)
 
 	buildHeader(header);
 	std::string header_status = header.substr(STATUS_POS, 3);
-	std::cerr << header_status << std::endl;
 	if (body.empty() && header_status == "500") {
 		throw InternalServerException("CGI: ", __LINE__, __FILE__,
 									  "No body found with status: " +
 										  header_status);
 	}
 	client_response = header + body;
-
 }

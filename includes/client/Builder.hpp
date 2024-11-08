@@ -68,6 +68,7 @@ class Builder
 	bool findErrorPageDefaultServer();
 
 	void verifCGI(int &state);
+	void isMethodDeny(int &state);
 
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server,
@@ -89,6 +90,7 @@ class Builder
 	const std::string &getFilename() const { return _filename; };
 	const std::string &getCode() const { return _code; };
 	const std::string &getPath() const { return _path; };
+	const std::string &getRequestedPath() const { return _request_path; };
 
 	void setCode(const std::string &code) { _code = code; };
 };

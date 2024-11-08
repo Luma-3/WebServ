@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executeCGI.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:50:51 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/08 16:48:52 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ int CGIHandler::waitCGI()
 	pid_t ret = 0;
 
 	if (_status == CGI_FAIL) {
-		std::cerr << "CGI Fail with status: " << _status << std::endl;
 		return CGI_FAIL;
 	}
 	ret = waitpid(_pid, &_status, WNOHANG);

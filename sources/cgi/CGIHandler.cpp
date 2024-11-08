@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 17:56:23 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/08 14:57:00 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 	_pipeOut[0] = -1;
 	_pipeOut[1] = -1;
 
-	std::string fileExtension = parser->getFileExtension();
+	std::string fileExtension = builder->getFileExtension();
 
-	const Location *location = server->getLocation(parser->getRequestedPath());
+	const Location *location = server->getLocation(builder->getRequestedPath());
 
 	if (location != NULL) {
 		_cgi = location->getParamValue(fileExtension);
@@ -48,7 +48,7 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 		}
 	}
 	createArgv(builder);
-	createEnv(server, parser, client);
+	createEnv(server, parser, client, builder);
 	_body = parser->getHeader("body");
 }
 
