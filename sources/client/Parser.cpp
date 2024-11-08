@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/11/04 16:12:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/08 14:20:14 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,6 @@ std::string Parser::getHeader(const std::string &key) const
 	} catch (const std::out_of_range &e) {
 		return "";
 	}
-};
+}
 
 Parser::~Parser() {}

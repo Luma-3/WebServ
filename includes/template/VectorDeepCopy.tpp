@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   VectorDeepCopy.tpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 11:32:35 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:38:46 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/08 14:19:53 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ std::vector< T * > vectorDeepCopy(const std::vector< T * > &src)
 		dst.push_back(new T(**it));
 	}
 	return dst;
-};
+}
 
 template < typename T >
 std::vector< T > vectorDeepCopy(const std::vector< T > &src)
@@ -35,7 +35,7 @@ std::vector< T > vectorDeepCopy(const std::vector< T > &src)
 		dst.push_back(T(*it));
 	}
 	return dst;
-};
+}
 
 template < typename T > void deleteVector(const std::vector< T > &src)
 {

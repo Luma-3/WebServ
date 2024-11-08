@@ -9,6 +9,6 @@ template < typename T > T *D_Cast(IParserToken *token)
 		throw std::runtime_error("Invalid cast");
 	}
 	return cast;
-};
+}
 
 #endif // CAST_TPP

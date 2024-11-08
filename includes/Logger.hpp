@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:44:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 17:54:09 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/08 14:18:47 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,8 @@ class Logger
   private:
 	std::ofstream _file;
 	char		  _buffer[BUFFER_SIZE];
-	int			  _logLevel;
 	size_t		  _buffer_size;
+	int			  _logLevel;
 
 	static std::string formatFile(const std::string &filename);
 	static std::string formatTime();

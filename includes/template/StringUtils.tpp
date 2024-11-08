@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 16:10:53 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/04 12:38:22 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/08 14:19:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ template < typename T > std::string ToString(const T &value)
 	std::stringstream ss;
 	ss << value;
 	return ss.str();
-};
+}
 
 template < typename T > std::string getAndErase(T &str, const T &delim)
 {
