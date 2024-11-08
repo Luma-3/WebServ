@@ -24,6 +24,5 @@ Checks: >
   -cppcoreguidelines-special-member-functions
 
 WarningsAsErrors: '*'
-HeaderFilterRegex: '.*'
 FormatStyle: file
 
