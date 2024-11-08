@@ -47,7 +47,6 @@ void CGIHandler::adjustHeader(std::string &client_response)
 
 	if (pos != std::string::npos) {
 		header = _response.substr(0, pos + 2);
-		std::cerr << "Header: " << header << std::endl;
 		body = _response.substr(pos + 4);
 	}
 	else {
@@ -63,8 +62,6 @@ void CGIHandler::adjustHeader(std::string &client_response)
 									  "No body found with status: " +
 										  header_status);
 	}
-	std::cerr << "Header Post: " << header << std::endl;
 	client_response = header + body;
 
-	std::cerr << "CGI Response: " << client_response << std::endl;
 }

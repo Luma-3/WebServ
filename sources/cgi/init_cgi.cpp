@@ -81,8 +81,6 @@ void CGIHandler::createEnv(const VirtualServer	*server,
 		env_vec.push_back("REDIRECT_STATUS=" + ToString(0));
 		env_vec.push_back("HTTP_COOKIE=" + parser->getHeader("Cookie"));
 		env_vec.push_back("SERVER_SOFTWARE=webserv/0.5");
-
-		// TODO : check if it's a good idea to hardcode this
 		env_vec.push_back("PHP_SELF=/" + parser->getFilename());
 		env_vec.push_back("SCRIPT_NAME=/" + parser->getFilename());
 		env_vec.push_back("SCRIPT_FILENAME=" + client->getValueEnv("PWD") +
@@ -106,7 +104,6 @@ void CGIHandler::createEnv(const VirtualServer	*server,
 	for (std::vector< string >::iterator it = env_vec.begin();
 		 it != env_vec.end(); ++it) {
 		_envp.push_back(ft_strdup(it->c_str()));
-		std::cout << *it << std::endl;
 	}
 	_envp.push_back(NULL);
 }
@@ -115,6 +112,6 @@ void CGIHandler::createArgv(const client::Builder *builder)
 {
 	_argv.push_back(ft_strdup(_cgi.c_str()));
 	_argv.push_back(ft_strdup(builder->getPath().c_str()));
-	LOG_DEBUG("Try to Access :" + builder->getPath(), CSERVER);
+	LOG_DEBUG("Try to Access CGI Script:" + builder->getPath(), CSERVER);
 	_argv.push_back(NULL);
 }
