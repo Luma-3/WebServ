@@ -36,6 +36,6 @@ echo "Cmake Gemerating..."
 cmake .. || { echo "Cmake Failed!" && exit 1; }
 
 echo "Building..."
-make -j$(nproc) || { echo "Build Failed!" && exit 1; }
+make -sj$(nproc) || { echo "Build Failed!" && exit 1; }
 
 echo "Google Test Compiled Successfully!"

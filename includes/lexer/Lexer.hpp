@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:32:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/11 10:55:18 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/11 16:24:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,5 +85,7 @@ class Lexer
 		virtual const char *what() const throw();
 	};
 };
+
+
 
 #endif // LEXER_HPP

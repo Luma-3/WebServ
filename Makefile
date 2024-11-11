@@ -1,4 +1,3 @@
--include $(DEPS)
 
 #----------------------------------#
 #			VARIABLES              #
@@ -18,7 +17,7 @@ SRC := $(shell find $(SRC_DIR) -name "*.cpp")
 OBJ_DIR := $(BUILD_DIR)/obj
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-DEPS := $(BUILD_DIR)/depend.mk
+DEPS := $(OBJ:.o=.d)
 
 COMPILE_COMMANDS := $(BUILD_DIR)/compile_commands.json
 
@@ -65,10 +64,6 @@ $(COMPILE_COMMANDS): $(SRC)
 	@echo "]" >> $(COMPILE_COMMANDS)
 
 
-$(VERSION): $(SRC)
-	@echo "Build version: $(shell date)" > $(VERSION)
-	@echo "Commit hash: $(shell git rev-parse --short HEAD)" >> $(VERSION)
-
 check_depend: $(COMPILE_COMMANDS)
 	@echo "Checking compile_commands.json"
 	@command -v clang-check > /dev/null || (echo "clang-check not found, please install clang-tools" && exit 1)
@@ -83,22 +78,18 @@ stats: $(COMPILE_COMMANDS)
 #			COMPILE RULES          #
 #----------------------------------#
 
-$(DEPS) : $(SRC)
-	mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -MM $(SRC) > $(DEPS)
 
-
-$(NAME): $(DEPS) $(OBJ) $(VERSION)
+$(NAME): $(OBJ)
 	@$(CXX) $(CXXFLAGS) $^ -o $@
 	@echo "$(COLOR_GREEN)$(BOLD)$(NAME)$(COLOR_RESET)$(COLOR_GREEN) compiled successfully$(COLOR_RESET)"
-# fIX :dependencies are not updated
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) -c $< -o $@
-	@./progress_bar.sh $(TOTAL_SRC) $(CURRENT_SRC) $< "$(CXX) $(CXXFLAGS) -c $< -o $@"
+	@$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
+	@./progress_bar.sh $(TOTAL_SRC) $(CURRENT_SRC) $< "$(CXX) $(CXXFLAGS) -MMD -c $< -o $@"
 	@$(eval CURRENT_SRC := $(shell expr $(CURRENT_SRC) + 1))
 
+-include $(DEPS)
 
 #----------------------------------#
 #			CLEAN RULES            #
@@ -128,3 +119,32 @@ debug: re
 tidy: $(COMPILE_COMMANDS)
 	clang-tidy -p=$(BUILD_DIR) $(SRC) -- $(CXXFLAGS)
 .PHONY: tidy
+
+##----------------------------------#
+#			UNITS TEST              #
+#-----------------------------------#
+
+test:
+	./tests/gtest_installer.sh
+	@make -C tests/gtest
+
+clean_test:
+	@make -sC tests/gtest clean
+
+fclean_test:
+	@make -sC tests/gtest fclean
+
+gtest_clean:
+	@make -sC tests/gtest gtestClean
+
+
+
+.PHONY: test clean_test fclean_test gtest_clean
+
+
+#----------------------------------#
+#			 CLEAN ALL			   #
+#----------------------------------#
+
+fullclean: fclean fclean_test gtest_clean
+.PHONY: fullclean
