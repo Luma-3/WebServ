@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   verifCGIResponse.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 16:26:37 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:19:09 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/11 18:08:19 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ void CGIHandler::adjustHeader(std::string &client_response)
 	size_t		pos = _response.find("\r\n\r\n");
 	std::string header;
 	std::string body;
+
+	std::cerr << "Response: " << _response << std::endl;
 
 	if (pos != std::string::npos) {
 		header = _response.substr(0, pos + 2);

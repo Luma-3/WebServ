@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 15:53:45 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/11 17:34:14 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,7 @@ std::string ServerHost::recvRequest(int client_socket)
 								std::string(strerror(errno)));
 			break;
 		}
+		
 		request.append(buff, static_cast< size_t >(nb_bytes));
 		if (nb_bytes < MAX_REQ_SIZE) {
 			break;

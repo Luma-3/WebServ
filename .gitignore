@@ -33,4 +33,4 @@
 *.log
 build/
 externals/
-googletest/
+tests/gtest/googletest/
