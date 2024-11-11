@@ -24,15 +24,12 @@ BAR=$(printf "%-${BAR_LENGTH}s" "$BAR")
 
 BAR=$(printf "%-${NUM_EQUALS}s" | tr ' ' '=')
 
-# Fill the bar with = characters
-
 # Move the cursor to the bottom of the terminal
 echo -ne "\r$LOG\n"
 
 move_cursor $LINE 0
 # Print the progress bar
 printf "[%-50s] %d%% - %s" "$BAR" "$PERCENTAGE" "$CURRENT"
-
 
 # Print a newline if the progress is complete
 if [ $COMPLETED -eq $TOTAL ]; then

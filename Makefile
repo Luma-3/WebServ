@@ -7,7 +7,7 @@
 CXX = g++
 CXXFLAGS = -std=c++98 -Wall -Wextra -Werror -I$(INCLUDES) -pedantic #-O3
 
-INCLUDES = includes
+INCLUDES = $(PWD)/includes
 
 BUILD_DIR := build
 NAME := webserv
@@ -72,10 +72,12 @@ $(VERSION): $(SRC)
 check_depend: $(COMPILE_COMMANDS)
 	@echo "Checking compile_commands.json"
 	@command -v clang-check > /dev/null || (echo "clang-check not found, please install clang-tools" && exit 1)
+.PHONY: check_depend
 
 stats: $(COMPILE_COMMANDS)
 	@echo "Numbre of files: $(shell echo $(SRC) | wc -w)"
 	@echo "Numbre of lines: $(shell cat $(SRC) | wc -l)"
+.PHONY: stats
 
 #----------------------------------#
 #			COMPILE RULES          #
@@ -87,8 +89,9 @@ $(DEPS) : $(SRC)
 
 
 $(NAME): $(DEPS) $(OBJ) $(VERSION)
-	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
+	@$(CXX) $(CXXFLAGS) $^ -o $@
 	@echo "$(COLOR_GREEN)$(BOLD)$(NAME)$(COLOR_RESET)$(COLOR_GREEN) compiled successfully$(COLOR_RESET)"
+# fIX :dependencies are not updated
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
@@ -103,11 +106,14 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 clean:
 	rm -rf $(OBJ_DIR) $(DEPS)
+.PHONY: clean
 
 fclean: clean
 	rm -f $(NAME)
+.PHONY: fclean
 
 re: fclean all
+.PHONY: re
 
 
 #----------------------------------#
@@ -117,8 +123,8 @@ re: fclean all
 
 debug: CXXFLAGS += -g3
 debug: re
+.PHONY: debug
 
 tidy: $(COMPILE_COMMANDS)
 	clang-tidy -p=$(BUILD_DIR) $(SRC) -- $(CXXFLAGS)
-
-.PHONY: all clean fclean re
+.PHONY: tidy

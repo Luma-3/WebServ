@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:53:35 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/10/31 10:01:00 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/09 11:37:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,6 @@
 #define PASTEL_MAGENTA "\033[95m"
 #define PASTEL_CYAN	   "\033[96m"
 #define LIME		   "\033[32m"
+#define RED			   "\033[31m"
 
 #endif

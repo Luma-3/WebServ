@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:59:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/08 14:18:51 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/11 11:54:33 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 Logger *Logger::Instance = NULL;
 
 Logger::Logger(const std::string &filename, int logLevel) :
+	_filename(filename),
 	_buffer(),
 	_buffer_size(0),
 	_logLevel(logLevel)
@@ -78,7 +79,7 @@ Logger &Logger::operator=(const Logger &rhs)
 		_buffer_size = rhs._buffer_size;
 		_logLevel = rhs._logLevel;
 		if (!_file.is_open()) {
-			std::cerr << "Error: could not open file " << rhs._file
+			std::cerr << "Error: could not open file " << rhs._filename
 					  << std::endl;
 		}
 		std::memcpy(_buffer, rhs._buffer, BUFFER_SIZE);

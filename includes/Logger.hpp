@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:44:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/08 14:18:47 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/11 11:54:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ enum LogLevel {
 class Logger
 {
   private:
+	std::string  _filename;
 	std::ofstream _file;
 	char		  _buffer[BUFFER_SIZE];
 	size_t		  _buffer_size;
