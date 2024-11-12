@@ -33,7 +33,7 @@ fi
 mkdir -p build && cd build || { echo "Failed to create build directory!" && exit 1; }
 
 echo "Cmake Gemerating..."
-cmake .. || { echo "Cmake Failed!" && exit 1; }
+cmake .. -DCMAKE_CXX_FLAGS="-fPIC" || { echo "Cmake Failed!" && exit 1; }
 
 echo "Building..."
 make -sj$(nproc) || { echo "Build Failed!" && exit 1; }
