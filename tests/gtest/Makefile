@@ -26,28 +26,28 @@ OBJ := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
 
 DEPENDS := $(OBJ:.o=.d)
 
-OUTS := $(patsubst %.cpp, $(BIN_DIR)/%.out, $(notdir $(TEST)))
+OUTS := $(patsubst $(TEST_DIR)/%.cpp, $(BIN_DIR)/%.out,  $(TEST))
 
 all: $(OUTS)
 
-$(OUTS) : %.out: $(TEST_OBJ) | $(OBJ)
-	@mkdir -p $(BIN_DIR)
+$(OUTS) : $(BIN_DIR)/%.out: %.cpp | $(OBJ)
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $< $(OBJ) $(LDFLAGS) -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
 
-$(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
-	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
+# $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
+# 	@mkdir -p $(dir $@)
+# 	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
 
 
 -include $(DEPENDS)
 
 echo :
 	@echo $(TEST)
-	@echo $(TEST_OBJ)
+	@echo $(OUTS)
 
 clean:
 	rm -rf $(OBJ_DIR) $(DEPENDS)
