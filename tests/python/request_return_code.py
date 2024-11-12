@@ -2,7 +2,6 @@ import unittest
 import subprocess
 import requests
 import time
-import httpx
 
 class TestFunct(unittest.TestCase):
 	def printKO(self):

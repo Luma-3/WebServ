@@ -1,7 +1,7 @@
 #!/bin/bash
 
 launch() {
-   local executable_path="./build/WebServ"
+   local executable_path="./webserv"
    local config_path=$1
 
    $executable_path $config_path &
