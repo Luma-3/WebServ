@@ -30,3 +30,23 @@ chmod 000 tests/python/components/no_perm.html
 
 launch "tests/python/conf/classic.conf"
 
+echo 
+echo "=============[Test Header Response]============="
+echo
+
+
+
+
+
+echo
+echo "=============[Test Query string]============="
+echo
+
+
+
+
+
+
+echo
+echo "=============[Test Cookies]============="
+echo
