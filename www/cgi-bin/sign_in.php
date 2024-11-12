@@ -38,9 +38,8 @@
 		$statement->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
 		$statement->execute();
 	} catch (Exception $e) {
-		// header('HTTP/1.1 400 Bad Request');
-		echo $e->getMessage();
-		echo renderTemplate(__DIR__ . '/../html/user_log_error.html', ['message' => 'Bad Request']);
+		header('HTTP/1.1 500 Internal Server Error');
+		echo renderTemplate(__DIR__ . '/../html/user_log_error.html', ['message' => 'Internal Server Error']);
 		exit();
 	}
 

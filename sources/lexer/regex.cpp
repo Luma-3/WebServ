@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/06 11:20:05 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/12 15:02:16 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 #include <cstdlib>
 #include <string>
 
-#include "lexer/Token.hpp"
 #include "lexer/Lexer.hpp"
+#include "lexer/Token.hpp"
 
 #define PORT_MAX 65535
 
@@ -61,10 +61,16 @@ bool IsMethod(const string &value)
 bool IsLogLevel(const string &value)
 {
 	static const int	size_key = 4;
-	static const string key[size_key] = {"Debug", "Info", "Warning", "Error"};
+	static const string key[size_key] = {"debug", "info", "warning", "error"};
+
+	std::string lower;
+
+	for (size_t i = 0; i < value.size(); ++i) {
+		lower += static_cast< char >(tolower(value[i]));
+	}
 
 	for (size_t i = 0; i < size_key; ++i) {
-		if (value == key[i]) {
+		if (lower == key[i]) {
 			return (true);
 		}
 	}
@@ -123,7 +129,7 @@ bool IsIP(const string &value)
 }
 
 bool IsPort(const string &value)
-{	
+{
 	if (!IsDigit(value) || value.size() > MAXPORTSIZE) {
 		return (false);
 	}
@@ -159,7 +165,7 @@ bool IsBodySize(const string &value)
 	if (isdigit(last)) {
 		return (true);
 	}
-	last = static_cast<char>(toupper(last)); // TODO : handle bytes !
+	last = static_cast< char >(toupper(last)); // TODO : handle bytes !
 	if (last != 'K' && last != 'M' && last != 'G') {
 		return (false);
 	}

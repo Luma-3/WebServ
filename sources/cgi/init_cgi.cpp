@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:36:15 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/12 14:57:02 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,10 @@ void getClientInfo(const client::Client *client, std::vector< string > &env_vec)
 	}
 }
 
-void CGIHandler::createEnv(const VirtualServer	*server,
-						   const client::Parser *parser,
-						   const client::Client *client)
+void CGIHandler::createEnv(const VirtualServer	 *server,
+						   const client::Parser	 *parser,
+						   const client::Client	 *client,
+						   const client::Builder *builder)
 {
 	string path_translated;
 
@@ -81,22 +82,13 @@ void CGIHandler::createEnv(const VirtualServer	*server,
 		env_vec.push_back("REDIRECT_STATUS=" + ToString(0));
 		env_vec.push_back("HTTP_COOKIE=" + parser->getHeader("Cookie"));
 		env_vec.push_back("SERVER_SOFTWARE=webserv/0.5");
-		env_vec.push_back("PHP_SELF=/" + parser->getFilename());
-		env_vec.push_back("SCRIPT_NAME=/" + parser->getFilename());
+		env_vec.push_back("PHP_SELF=/" + builder->getFilename());
+		env_vec.push_back("SCRIPT_NAME=/" + builder->getFilename());
 		env_vec.push_back("SCRIPT_FILENAME=" + client->getValueEnv("PWD") +
 						  '/' + getTranslatedPath(parser, server) +
-						  parser->getFilename());
-		env_vec.push_back("DOCUMENT_ROOT=" + client->getValueEnv("PWD") +
-						  parser->getRequestedPath());
-
-		std::cerr << "DOCUMENT_ROOT=" + client->getValueEnv("PWD") +
-						 parser->getRequestedPath()
-				  << std::endl;
-		std::cerr << "SCRIPT_FILENAME=" + client->getValueEnv("PWD") + '/' +
-						 getTranslatedPath(parser, server) +
-						 parser->getFilename()
-				  << std::endl;
-		std::cerr << "SCRIPT_NAME=/" + parser->getFilename() << std::endl;
+						  builder->getFilename());
+		env_vec.push_back("DOCUMENT_ROOT=" + client->getValueEnv("PWD") + '/' +
+						  getTranslatedPath(parser, server));
 
 		getClientInfo(client, env_vec);
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIHandler.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:53:45 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/08 14:56:34 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ class CGIHandler
 	std::string			  _body;
 
 	void createEnv(const VirtualServer *server, const client::Parser *parser,
-				   const client::Client *client);
+				   const client::Client	 *client,
+				   const client::Builder *builder);
 
 	void createArgv(const client::Builder *builder);
 

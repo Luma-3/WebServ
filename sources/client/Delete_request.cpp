@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Delete_request.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:15:23 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/07 13:50:51 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/08 16:36:47 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,12 +108,9 @@ void Client::removeFile(const std::string &full_path)
 
 // TODO : check conditionnal logic
 
-void Client::handleDeleteRequest(const Parser &parser)
+void Client::handleDeleteRequest()
 {
-	const std::string &path = parser.getRequestedPath();
-	std::string		   root = _server->getRoot(path);
-	const std::string &filename = parser.getFilename();
-	std::string		   full_path = root + filename;
+	std::string full_path = _builder->getPath();
 
 	if (full_path[full_path.size() - 1] == '/') {
 		full_path = full_path.substr(0, full_path.size() - 1);

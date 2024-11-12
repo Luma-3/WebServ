@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>TestForm</title>
+</head>
+
+<body>
+	<form id="testForm" action="/" method="POST">
+		<input type="hidden" name="testForm" value="testForm">
+	</form>
+
+	<script>
+		window.onload = function() {
+			document.getElementById('testForm').submit();
+		};
+	</script>
+</body>
+</html>

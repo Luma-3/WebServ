@@ -1,19 +1,27 @@
 {
 	"files.associations": {
+<<<<<<< Updated upstream
+		"*.tpp": "cpp",
 		"any": "cpp",
+=======
+>>>>>>> Stashed changes
 		"array": "cpp",
 		"atomic": "cpp",
 		"bit": "cpp",
 		"*.tcc": "cpp",
 		"cctype": "cpp",
-
-		"charconv": "cpp",
+<<<<<<< Updated upstream
 		"chrono": "cpp",
+=======
+>>>>>>> Stashed changes
 		"clocale": "cpp",
 		"cmath": "cpp",
 		"compare": "cpp",
 		"concepts": "cpp",
+<<<<<<< Updated upstream
 		"condition_variable": "cpp",
+=======
+>>>>>>> Stashed changes
 		"csignal": "cpp",
 		"cstdarg": "cpp",
 		"cstddef": "cpp",
@@ -25,13 +33,18 @@
 		"cwchar": "cpp",
 		"cwctype": "cpp",
 		"deque": "cpp",
+<<<<<<< Updated upstream
 		"forward_list": "cpp",
 		"list": "cpp",
 		"map": "cpp",
 		"set": "cpp",
-		"string": "cpp",
 		"unordered_map": "cpp",
 		"unordered_set": "cpp",
+=======
+		"map": "cpp",
+		"set": "cpp",
+		"unordered_map": "cpp",
+>>>>>>> Stashed changes
 		"vector": "cpp",
 		"exception": "cpp",
 		"algorithm": "cpp",
@@ -42,13 +55,16 @@
 		"numeric": "cpp",
 		"optional": "cpp",
 		"random": "cpp",
+<<<<<<< Updated upstream
 		"ratio": "cpp",
+=======
+>>>>>>> Stashed changes
+		"string": "cpp",
 		"string_view": "cpp",
 		"system_error": "cpp",
 		"tuple": "cpp",
 		"type_traits": "cpp",
 		"utility": "cpp",
-		"format": "cpp",
 		"fstream": "cpp",
 		"initializer_list": "cpp",
 		"iomanip": "cpp",
@@ -56,44 +72,28 @@
 		"iostream": "cpp",
 		"istream": "cpp",
 		"limits": "cpp",
+<<<<<<< Updated upstream
 		"mutex": "cpp",
+=======
+>>>>>>> Stashed changes
 		"new": "cpp",
 		"numbers": "cpp",
 		"ostream": "cpp",
-
-		"semaphore": "cpp",
 		"ranges": "cpp",
-
 		"span": "cpp",
 		"sstream": "cpp",
 		"stdexcept": "cpp",
+<<<<<<< Updated upstream
 		"stop_token": "cpp",
 		"streambuf": "cpp",
 		"thread": "cpp",
 		"cinttypes": "cpp",
 		"typeinfo": "cpp",
-		"variant": "cpp"
-	}
 		"variant": "cpp",
-		"semaphore": "cpp",
-		"bitset": "cpp",
-		"regex": "cpp",
-		"*.tpp": "cpp",
-		"__threading_support": "cpp",
-		"charconv": "cpp",
-		"format": "cpp",
-		"__bit_reference": "cpp",
-		"__node_handle": "cpp",
-		"__memory": "cpp",
-		"locale": "cpp",
-		"__bits": "cpp",
-		"__config": "cpp",
-		"__debug": "cpp",
-		"__locale": "cpp",
-		"__split_buffer": "cpp",
-		"__tuple": "cpp",
-		"ios": "cpp",
-		"stack": "cpp"
-	},
-	"C_Cpp.default.compilerPath": "/usr/bin/g++"
+		"semaphore": "cpp"
+=======
+		"streambuf": "cpp",
+		"typeinfo": "cpp"
+>>>>>>> Stashed changes
+	}
 }

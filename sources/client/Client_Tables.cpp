@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client_Tables.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 10:39:08 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/06 11:37:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/07 15:48:54 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ string findStatusMessage(const std::string &code)
 	status_message["301"] = " Moved Permanently";
 	status_message["302"] = " Found";
 	status_message["303"] = " See Other";
+	status_message["304"] = "Not Modified";
 	status_message["307"] = " Temporary Redirect";
 	status_message["308"] = " Permanent Redirect";
 	status_message["400"] = " Bad Request";

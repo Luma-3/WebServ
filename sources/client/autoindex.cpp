@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/07 13:01:21 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/08 16:48:26 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,7 @@ void Builder::setIndexOrAutoindex(int &state)
 	}
 	state = verifLocationAndGetNewPath();
 	if (state != AUTOINDEX) {
+		state = DEFAULT;
 		return;
 	}
 	trimPath(_path);

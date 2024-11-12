@@ -134,9 +134,11 @@ clean_test:
 fclean_test:
 	@make -sC tests/gtest fclean
 
+re_test:
+	@make -C tests/gtest re
+
 gtest_clean:
 	@make -sC tests/gtest gtestClean
-
 
 
 .PHONY: test clean_test fclean_test gtest_clean

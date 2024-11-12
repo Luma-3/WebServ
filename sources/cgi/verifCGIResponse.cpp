@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 16:26:37 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/11 18:08:19 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/12 18:34:21 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,10 @@ void CGIHandler::adjustHeader(std::string &client_response)
 
 	buildHeader(header);
 	std::string header_status = header.substr(STATUS_POS, 3);
-	std::cerr << header_status << std::endl;
 	if (body.empty() && header_status == "500") {
 		throw InternalServerException("CGI: ", __LINE__, __FILE__,
 									  "No body found with status: " +
 										  header_status);
 	}
 	client_response = header + body;
-
 }
