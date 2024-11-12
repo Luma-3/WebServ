@@ -17,6 +17,7 @@ class TestFunct(unittest.TestCase):
 		except AssertionError as e:
 			self.printKO()
 			print(f"AssertionError: {e}" + '\n')
+			exit (1)
 		print()
 
 class TestServerStaticReturnCodeWebsiteConf(TestFunct):

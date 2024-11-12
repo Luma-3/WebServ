@@ -1,18 +1,27 @@
 {
 	"files.associations": {
+<<<<<<< Updated upstream
 		"*.tpp": "cpp",
 		"any": "cpp",
+=======
+>>>>>>> Stashed changes
 		"array": "cpp",
 		"atomic": "cpp",
 		"bit": "cpp",
 		"*.tcc": "cpp",
 		"cctype": "cpp",
+<<<<<<< Updated upstream
 		"chrono": "cpp",
+=======
+>>>>>>> Stashed changes
 		"clocale": "cpp",
 		"cmath": "cpp",
 		"compare": "cpp",
 		"concepts": "cpp",
+<<<<<<< Updated upstream
 		"condition_variable": "cpp",
+=======
+>>>>>>> Stashed changes
 		"csignal": "cpp",
 		"cstdarg": "cpp",
 		"cstddef": "cpp",
@@ -24,12 +33,18 @@
 		"cwchar": "cpp",
 		"cwctype": "cpp",
 		"deque": "cpp",
+<<<<<<< Updated upstream
 		"forward_list": "cpp",
 		"list": "cpp",
 		"map": "cpp",
 		"set": "cpp",
 		"unordered_map": "cpp",
 		"unordered_set": "cpp",
+=======
+		"map": "cpp",
+		"set": "cpp",
+		"unordered_map": "cpp",
+>>>>>>> Stashed changes
 		"vector": "cpp",
 		"exception": "cpp",
 		"algorithm": "cpp",
@@ -40,7 +55,10 @@
 		"numeric": "cpp",
 		"optional": "cpp",
 		"random": "cpp",
+<<<<<<< Updated upstream
 		"ratio": "cpp",
+=======
+>>>>>>> Stashed changes
 		"string": "cpp",
 		"string_view": "cpp",
 		"system_error": "cpp",
@@ -54,7 +72,10 @@
 		"iostream": "cpp",
 		"istream": "cpp",
 		"limits": "cpp",
+<<<<<<< Updated upstream
 		"mutex": "cpp",
+=======
+>>>>>>> Stashed changes
 		"new": "cpp",
 		"numbers": "cpp",
 		"ostream": "cpp",
@@ -62,6 +83,7 @@
 		"span": "cpp",
 		"sstream": "cpp",
 		"stdexcept": "cpp",
+<<<<<<< Updated upstream
 		"stop_token": "cpp",
 		"streambuf": "cpp",
 		"thread": "cpp",
@@ -69,5 +91,9 @@
 		"typeinfo": "cpp",
 		"variant": "cpp",
 		"semaphore": "cpp"
+=======
+		"streambuf": "cpp",
+		"typeinfo": "cpp"
+>>>>>>> Stashed changes
 	}
 }

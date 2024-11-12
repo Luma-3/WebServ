@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/08 16:49:14 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/12 11:15:39 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ void Builder::createErrorPage()
 	error_page.replace(error_page.find(title), title.size(), "Error " + _code);
 	error_page.replace(error_page.find(message), message.size(),
 					   findStatusMessage(_code));
-
 	_body.assign(error_page.begin(), error_page.end());
 }
 

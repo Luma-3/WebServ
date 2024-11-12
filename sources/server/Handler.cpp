@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/08 10:00:43 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/12 11:19:22 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,7 +243,9 @@ void Handler::runEventLoop()
 				handleClientResponse(event_fd);
 			}
 		}
-		Logger::Instance->flush();
+		if (Logger::Instance != NULL) {
+			Logger::Instance->flush();
+		}
 	}
 }
 
