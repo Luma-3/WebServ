@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:50:51 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/08 16:48:46 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,8 +152,8 @@ void Client::handleRequest()
 	_builder = new Builder(_server, _default_server, parser);
 
 	int state = DEFAULT;
-	ptr tab[] = {&Builder::returnParam, &Builder::isCGI, &Builder::verifMethod,
-				 &Builder::setIndexOrAutoindex};
+	ptr tab[] = {&Builder::returnParam, &Builder::setIndexOrAutoindex,
+				 &Builder::verifMethod, &Builder::isCGI};
 
 	if (_builder->getCode() != "200") {
 		state = B_ERROR;
@@ -168,7 +168,7 @@ void Client::handleRequest()
 			break;
 		}
 		case DELETE: {
-			handleDeleteRequest(parser);
+			handleDeleteRequest();
 			break;
 		}
 		case REDIRECT: {
@@ -212,7 +212,7 @@ std::string Client::getValueEnv(const std::string &key) const
 {
 	for (int i = 0; _envp[i] != NULL; i++) {
 		std::string envp_str(_envp[i]);
-		size_t equal_pos = envp_str.find_first_of('=');
+		size_t		equal_pos = envp_str.find_first_of('=');
 		if (equal_pos != std::string::npos) {
 			std::string env_key = envp_str.substr(0, equal_pos);
 			if (env_key == key) {

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/11/08 14:20:14 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/12 10:23:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ void Parser::getBodyFromRequest(size_t &line_break_pos)
 			_buffer.erase(0, 2);
 		}
 		_headers["body"] = _buffer;
-		std::cerr << "BODY: " << _headers["body"] << std::endl;
 	}
 }
 

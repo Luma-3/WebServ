@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/07 13:50:51 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/08 16:49:14 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ Builder::Builder(const VirtualServer  *server,
 	_default_server(default_server),
 	_parser(parser)
 {
+	_path = parser.getRequestedPath() + parser.getFilename();
 	_request_path = parser.getRequestedPath();
 	_filename = parser.getFilename();
 	_code = parser.getCodeResponse();
@@ -180,10 +181,33 @@ void Builder::findErrorPage()
 	createErrorPage();
 }
 
+void Builder::isMethodDeny(int &state)
+{
+	std::vector< std::string > deny_methods;
+
+	const Location *location = _server->getLocation(_request_path);
+	if (location != NULL) {
+		deny_methods = location->getParamList("deny_method");
+	}
+	else {
+		deny_methods = _server->getParamList("deny_method");
+	}
+	if (deny_methods.empty()) {
+		return;
+	}
+	for (size_t i = 0; i < deny_methods.size(); ++i) {
+		if (deny_methods[i] == _parser.getHeader("Method")) {
+			_code = "405";
+			state = B_ERROR;
+		}
+	}
+}
+
 void Builder::verifMethod(int &state)
 {
 	if (_parser.getHeader("Method") == "DELETE") {
 		state = DELETE;
+		isMethodDeny(state);
 		return;
 	}
 
@@ -204,6 +228,7 @@ void Builder::verifMethod(int &state)
 			state = B_ERROR;
 		}
 	}
+	isMethodDeny(state);
 }
 
 int Builder::readDataRequest()
