@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ReduceRule.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 16:01:49 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/13 09:37:46 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ bool R6Breaker(const IParserToken &token)
 
 void Parser::R1_Server()
 {
-	std::stack< IParserToken * >  tokens;
-	std::vector< IParserToken * > params;
+	std::stack< IParserToken * >		tokens;
+	const std::vector< IParserToken * > params;
 
 	TakeTo(tokens, _parse_stack, R1Breaker);
 
@@ -95,8 +95,8 @@ void Parser::R2_Param()
 		_parse_stack.pop();
 	}
 
-	Terminal_Type term_type = tokens[2]->getTerminal();
-	std::string	  value = tokens[1]->getKey();
+	const Terminal_Type term_type = tokens[2]->getTerminal();
+	const std::string	value = tokens[1]->getKey();
 
 	if (term_type == T_Hostname) {
 		if (!IsHostname(value)) {
@@ -130,15 +130,15 @@ void Parser::R3_DoubleParam()
 
 	TakeTo(tokens, _parse_stack, Token::IsKey);
 
-	Terminal_Type term_type = tokens.top()->getTerminal();
-	std::string	  key = tokens.top()->getKey();
+	const Terminal_Type term_type = tokens.top()->getTerminal();
+	const std::string	key = tokens.top()->getKey();
 
 	delete tokens.top();
 	tokens.pop();
 
-	std::string value1 = tokens.top()->getKey();
-	size_t			tmp_line = tokens.top()->getLine();
-	size_t			tmp_col = tokens.top()->getCol();
+	const std::string value1 = tokens.top()->getKey();
+	size_t			  tmp_line = tokens.top()->getLine();
+	size_t			  tmp_col = tokens.top()->getCol();
 	delete tokens.top();
 	tokens.pop();
 
@@ -278,7 +278,7 @@ void Parser::R6_Location()
 	delete tokens.top();
 	tokens.pop();
 
-	std::string route = tokens.top()->getKey();
+	const std::string route = tokens.top()->getKey();
 	delete tokens.top();
 	tokens.pop();
 

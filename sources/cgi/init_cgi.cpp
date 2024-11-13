@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_cgi.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/12 14:57:02 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/13 14:33:20 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void CGIHandler::createEnv(const VirtualServer	 *server,
 						   const client::Client	 *client,
 						   const client::Builder *builder)
 {
-	string path_translated;
+	const string path_translated;
 
 	std::vector< string > env_vec;
 	{

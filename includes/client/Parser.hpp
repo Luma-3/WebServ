@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/08 14:36:09 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/13 16:01:00 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,9 @@ class Parser
 	std::string _query;
 
 	void getHeaderFromRequest(const size_t &line_break_pos);
+
+	void handleMultiPartBody();
+	void handleUrlEncodedBody();
 	void getBodyFromRequest(size_t &line_break_pos);
 
 	void handleRequestedPath(std::string &requested_path);
@@ -69,10 +72,7 @@ class Parser
 	const std::string &getPathInfo() const { return _path_info; };
 	std::string		   getHeader(const std::string &key) const;
 	const std::string &getQuery() const { return _query; };
-	void			   setFileExtension(std::string &extension)
-	{
-		_extension = extension;
-	};
+	void setFileExtension(std::string &extension) { _extension = extension; };
 
 	static std::string findExtension(const std::string &filename);
 };

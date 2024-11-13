@@ -21,7 +21,8 @@ Checks: >
   -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
   -cppcoreguidelines-pro-type-vararg,
   -misc-no-recursion,
-  -cppcoreguidelines-special-member-functions
+  -cppcoreguidelines-special-member-functions,  
+  -cppcoreguidelines-pro-type-cstyle-cast
 
 WarningsAsErrors: '*'
 FormatStyle: file

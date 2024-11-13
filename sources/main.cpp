@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/12 11:18:38 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/13 14:47:52 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ int main(const int ac, const char **av, const char **env)
 {
 	Handler *handler = NULL;
 
+	std::cerr << "Starting server..." << std::endl;
 	if (ac != 2) {
 		std::cerr << "Usage: ./webserv <config_file>" << std::endl;
 		return FAILURE;

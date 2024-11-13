@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:48:12 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/13 09:38:31 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 
 Action Parser::findAction(int state, Terminal_Type terminal)
 {
-	ActionEntry entry(state, terminal);
+	const ActionEntry entry(state, terminal);
 
 	if (_actions.find(entry) != _actions.end()) {
 		return _actions.at(entry);
@@ -173,9 +173,9 @@ void Parser::Parse()
 
 		tokens.pop();
 		if (action.Execute(token, _parse_stack, *this) == ERROR) {
-			std::string value = token->getKey();
-			size_t		col = token->getCol();
-			size_t		line = token->getLine();
+			const std::string value = token->getKey();
+			const size_t	  col = token->getCol();
+			const size_t	  line = token->getLine();
 			delete token;
 			throw UnexpectedTokenException(col, line, value,
 										   findExpected(_status));

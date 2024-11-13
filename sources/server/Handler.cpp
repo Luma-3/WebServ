@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/12 11:19:22 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/13 09:34:36 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ Handler::Handler(const std::vector< VirtualServer * > &servers,
 	while (it != servers.end()) {
 		const Param *listen = (*it)->getParam("listen");
 
-		std::string hostkey =
+		const std::string hostkey =
 			listen->getPair().first + ":" + listen->getPair().second;
 
 		if (_hostptofd.find(hostkey) == _hostptofd.end()) {
@@ -54,7 +54,7 @@ Handler::Handler(const std::vector< VirtualServer * > &servers,
 					 EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
 			_nbServ++;
 		}
-		int fd = _hostptofd[hostkey];
+		const int fd = _hostptofd[hostkey];
 		_servers[fd]->AddServer((*it)->getParam("hostname")->getValue(), *it);
 		++it;
 	}
@@ -64,7 +64,7 @@ void Handler::handleNewClient(const ServerHost *server, int client_socket,
 							  sockaddr_storage	*client_addr,
 							  const std::string &request)
 {
-	string hostname = client::Parser::findHostName(request);
+	const string hostname = client::Parser::findHostName(request);
 
 	const VirtualServer *vhost = server->getVhost(hostname);
 	if (vhost == NULL) {
@@ -215,7 +215,7 @@ void Handler::runEventLoop()
 	// LOG_DEBUG("Starting event loop", NULL);
 	while (!g_sig) {
 		// std::cerr << "Waiting for events" << std::endl;
-		int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
+		const int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
 		if (nfds == -1 && !g_sig) {
 			throw InternalServerException("epoll_wait", __LINE__, __FILE__,
 										  std::string(strerror(errno)));

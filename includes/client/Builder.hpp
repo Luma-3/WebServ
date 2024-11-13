@@ -68,7 +68,7 @@ class Builder
 	bool findErrorPageDefaultServer();
 
 	void verifCGI(int &state);
-	void isMethodDeny(int &state);
+	bool isMethodDeny(int &state, std::string &max_body_size);
 
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server,

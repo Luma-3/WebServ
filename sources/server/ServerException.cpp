@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerException.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 13:09:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 15:32:15 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/13 09:54:14 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ InternalServerException::InternalServerException(const std::string &function,
 												 const std::string &file,
 												 const std::string &error)
 {
-	std::string new_file(file);
-	size_t		pos = new_file.find_last_of('/');
+	std::string	 new_file(file);
+	const size_t pos = new_file.find_last_of('/');
 	if (pos != std::string::npos) {
 		new_file = new_file.substr(pos + 1);
 	}
@@ -60,28 +60,22 @@ const char *InternalServerException::what() const throw()
 	return _msg.c_str();
 }
 
-
-
 RecvException::RecvException() : _msg("Recv Error") {}
 
 RecvException::RecvException(const std::string &function, int line,
 							 const std::string &file, const std::string &error)
 {
-	std::string new_file(file);
-	size_t		pos = new_file.find_last_of('/');
+	std::string	 new_file(file);
+	const size_t pos = new_file.find_last_of('/');
 	if (pos != std::string::npos) {
 		new_file = new_file.substr(pos + 1);
 	}
 
 	_msg = PASTEL_RED "Error: " ORANGE "Recv Exception\n" RESET + function +
 		   " at " + new_file + " | Line: " + ToString(line) + ": " + error;
-
 }
 
-RecvException::RecvException(const RecvException &src) :
-	_msg(src._msg)
-{
-}
+RecvException::RecvException(const RecvException &src) : _msg(src._msg) {}
 
 RecvException &RecvException::operator=(const RecvException &src)
 {
@@ -98,4 +92,3 @@ const char *RecvException::what() const throw()
 {
 	return _msg.c_str();
 }
-

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/11/12 10:23:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/13 18:22:52 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ Parser::Parser() : _codeResponse("200") {}
 
 bool Parser::InvalidMethod()
 {
-	string method = _headers["Method"];
+	const string method = _headers["Method"];
 
 	if (method != "GET" && method != "POST" && method != "DELETE") {
 		_codeResponse = "405";
@@ -44,10 +44,10 @@ bool Parser::InvalidHeader()
 
 void Parser::getBodyFromRequest(size_t &line_break_pos)
 {
-	string line;
-	string key;
-	string value;
-	string end_of = ": ";
+	string		 line;
+	string		 key;
+	string		 value;
+	const string end_of = ": ";
 
 	while ((line_break_pos = _buffer.find("\r\n")) != string::npos) {
 
@@ -76,9 +76,9 @@ void Parser::getBodyFromRequest(size_t &line_break_pos)
 
 void Parser::getHeaderFromRequest(const size_t &line_break_pos)
 {
-	string line = _buffer.substr(0, line_break_pos);
-	string space = " ";
-	string end_of_line = "\n";
+	string		 line = _buffer.substr(0, line_break_pos);
+	const string space = " ";
+	const string end_of_line = "\n";
 
 	_headers["Method"] = getAndErase(line, space);
 	_headers["Url"] = getAndErase(line, space);
@@ -95,32 +95,37 @@ void Parser::getHeaderFromRequest(const size_t &line_break_pos)
 
 void Parser::parseRequest(const std::string &request)
 {
-	size_t line_break_pos = 0;
-	string line;
+	size_t		 line_break_pos = 0;
+	const string line;
 
 	_buffer = request;
+
 	line_break_pos = _buffer.find("\r\n");
 	getHeaderFromRequest(line_break_pos);
-
 	getBodyFromRequest(line_break_pos);
+	if (_codeResponse == "200" &&
+		_headers["Content-Type"].find("multipart/form-data") !=
+			std::string::npos) {
+		_headers["body"] = request;
+	}
 }
 
 std::string Parser::findHostName(const std::string &request)
 {
-	std::string host = "Host: ";
-	size_t		pos = request.find(host);
+	const std::string host = "Host: ";
+	size_t			  pos = request.find(host);
 
 	if (pos == std::string::npos) {
 		return "";
 	}
 	pos += host.size();
-	size_t end = request.find("\r\n", pos);
+	const size_t end = request.find("\r\n", pos);
 	return request.substr(pos, end - pos);
 }
 
 std::string Parser::findExtension(const std::string &filename)
 {
-	size_t pos = filename.rfind('.');
+	const size_t pos = filename.rfind('.');
 
 	if (pos == std::string::npos) {
 		return "";

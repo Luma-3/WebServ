@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/08 16:48:26 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/13 09:40:59 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,10 @@ std::string formatSize(off_t size)
 void Builder::insertFileInHead(string &file, const off_t &size,
 							   const string &date, const int &id)
 {
-	string head;
-	string fileStr = "%@file@%";
-	string last_modif = "%@last_modif@%";
-	string sizeStr = "%@size@%";
+	string		 head;
+	const string fileStr = "%@file@%";
+	const string last_modif = "%@last_modif@%";
+	const string sizeStr = "%@size@%";
 
 	if (id == IS_FILE) {
 		head = DEFAULT_AUTOINDEX_LIST_FILE;
@@ -130,7 +130,7 @@ void Builder::getAutoindex()
 	string		   file;
 	DIR			  *dir = NULL;
 	int			   id = 0;
-	string		   path = "%@path@%";
+	const string   path = "%@path@%";
 
 	string head = DEFAULT_AUTOINDEX_PAGE_HEAD;
 	head.replace(head.find(path), path.size(), _path);
@@ -142,15 +142,15 @@ void Builder::getAutoindex()
 		if (entry->d_name[0] == '.') {
 			continue;
 		}
-		string full_path = _path + entry->d_name;
+		const string full_path = _path + entry->d_name;
 		if (stat(full_path.c_str(), &info) == -1) {
 			LOG_INFO("Impossible to get file info from " + full_path, _server);
 			continue;
 		}
-		off_t	   size = info.st_size;
-		time_t	   last_modif = info.st_mtime;
-		struct tm *time = gmtime(&last_modif);
-		char	   date[MAXBUFFERSIZE];
+		const off_t	 size = info.st_size;
+		const time_t last_modif = info.st_mtime;
+		struct tm	*time = gmtime(&last_modif);
+		char		 date[MAXBUFFERSIZE];
 		strftime(date, MAXBUFFERSIZE, "%d-%m-%Y %H:%M", time);
 
 		if (entry->d_type == DT_DIR) {

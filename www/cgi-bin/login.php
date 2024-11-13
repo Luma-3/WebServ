@@ -18,7 +18,7 @@ try {
 	if (!password_verify($password, $row['password'])) {
 		header('HTTP/1.1 401 Unauthorized');
 		echo renderTemplate(__DIR__ . '/../html/user_log_error.html', ['message' => 'Invalid username or password']);
-		exit();
+		exit(401);
 	}
 
 	$session_token = bin2hex(random_bytes(16));
@@ -31,7 +31,7 @@ try {
 } catch (Exception $e) {
 	header('HTTP/1.1 500 Internal Server Error');
 	echo renderTemplate(__DIR__ . '/../html/user_log_error.html', ['message' => 'Internal server error']);
-	exit();
+	exit(500);
 }
 
 function renderTemplate($template, $variables) {
@@ -46,6 +46,6 @@ $_SESSION['session_token'] = $session_token;
 
 header('HTTP/1.1 200 OK');
 header('Location: /cgi-bin/index.php');
-exit()
+exit(200)
 
 ?>

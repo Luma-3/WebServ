@@ -53,6 +53,7 @@ class TestServerBodyReturn(TestFunct):
 ##################################################
 # Test CGI with GET and POST Method and Max Body Size
 ##################################################
+
 	def test_wrong_header_cgi(self):
 		print("Testing wrong header CGI, should return 500")
 		response = requests.get(self.url + "/cgi-bin/test_wrong_header.py")
@@ -89,8 +90,6 @@ class TestServerBodyReturn(TestFunct):
 		print("Testing cookie wth GET")
 		response = requests.get(self.url + "/cgi-bin/test.py?cookie=on")
 		self.verifBody(response,'cookie=on')
-
-
 
 
 if __name__ == '__main__':

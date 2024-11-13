@@ -6,11 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="../css/style.css">
 	<title>Upload</title>
-	<script src="/js/send_delete_request.js"></script>
-
 </head>
 <body>
-	<form action="/upload" method="post" enctype="multipart/form-data">
+	<form action="/cgi-bin/upload.py" method="post" enctype="multipart/form-data">
 		<input type="file" name="file" id="file" required>
 		<button class="button" type="submit">Upload</button>
 	</form>

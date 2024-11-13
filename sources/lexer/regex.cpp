@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   regex.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/12 15:02:16 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/13 09:39:38 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,15 +103,15 @@ bool IsErrorCode(const string &value)
 
 bool IsIP(const string &value)
 {
-	size_t pos = 0;
-	size_t count = 0;
-	size_t size = value.size();
+	size_t		 pos = 0;
+	size_t		 count = 0;
+	const size_t size = value.size();
 
 	while (pos < size) {
 		if (!isdigit(value[pos])) {
 			return (false);
 		}
-		int octet = atoi(value.substr(pos).c_str());
+		const int octet = atoi(value.substr(pos).c_str());
 		if (octet < 0 || octet > MAXUCHAR) {
 			return (false);
 		}
@@ -133,7 +133,7 @@ bool IsPort(const string &value)
 	if (!IsDigit(value) || value.size() > MAXPORTSIZE) {
 		return (false);
 	}
-	int port = atoi(value.c_str());
+	const int port = atoi(value.c_str());
 	if (port < 0 || port > PORT_MAX) {
 		return (false);
 	}
@@ -155,7 +155,7 @@ bool IsHostname(const string &value)
 
 bool IsBodySize(const string &value)
 {
-	size_t size = value.size();
+	const size_t size = value.size();
 	for (size_t i = 0; i < size - 1; ++i) {
 		if (!isdigit(value[i])) {
 			return (false);

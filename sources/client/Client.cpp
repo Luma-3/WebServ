@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/12 11:14:14 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/13 17:38:04 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,8 @@ void setErrorCodeAndBuild(const std::string &code, client::Builder *builder,
 
 int Client::CGIResponse()
 {
-	int ret = 0;
-	int wait_ret = _cgi_handler->waitCGI();
+	int		  ret = 0;
+	const int wait_ret = _cgi_handler->waitCGI();
 
 	if (wait_ret == CGI_WAIT) {
 		return CONTINUE;
@@ -151,9 +151,9 @@ void Client::handleRequest()
 
 	_builder = new Builder(_server, _default_server, parser);
 
-	int state = DEFAULT;
-	ptr tab[] = {&Builder::returnParam, &Builder::setIndexOrAutoindex,
-				 &Builder::verifMethod, &Builder::isCGI};
+	int		  state = DEFAULT;
+	const ptr tab[] = {&Builder::returnParam, &Builder::setIndexOrAutoindex,
+					   &Builder::verifMethod, &Builder::isCGI};
 
 	if (_builder->getCode() != "200") {
 		state = B_ERROR;
@@ -179,7 +179,7 @@ void Client::handleRequest()
 			break;
 		}
 		case INDEX: {
-			int ret = _builder->readDataRequest();
+			const int ret = _builder->readDataRequest();
 			if (ret != 0) {
 				LOG_WARNING("Error Accessing index file from : " +
 								_builder->getPath(),
@@ -211,10 +211,10 @@ void Client::handleRequest()
 std::string Client::getValueEnv(const std::string &key) const
 {
 	for (int i = 0; _envp[i] != NULL; i++) {
-		std::string envp_str(_envp[i]);
-		size_t		equal_pos = envp_str.find_first_of('=');
+		const std::string envp_str(_envp[i]);
+		const size_t	  equal_pos = envp_str.find_first_of('=');
 		if (equal_pos != std::string::npos) {
-			std::string env_key = envp_str.substr(0, equal_pos);
+			const std::string env_key = envp_str.substr(0, equal_pos);
 			if (env_key == key) {
 				return envp_str.substr(equal_pos + 1);
 			}

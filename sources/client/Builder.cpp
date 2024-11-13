@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/12 11:15:39 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/13 14:52:40 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ Builder::Builder(const VirtualServer  *server,
 				 const client::Parser &parser) :
 	_server(server),
 	_default_server(default_server),
-	_parser(parser)
+	_parser(parser),
+	_request_path(parser.getRequestedPath()),
+	_path(parser.getRequestedPath() + parser.getFilename()),
+	_filename(parser.getFilename()),
+	_extension(parser.getFileExtension()),
+	_connection_status(parser.getHeader("Connection")),
+	_code(parser.getCodeResponse())
 {
-	_path = parser.getRequestedPath() + parser.getFilename();
-	_request_path = parser.getRequestedPath();
-	_filename = parser.getFilename();
-	_code = parser.getCodeResponse();
-	_extension = parser.getFileExtension();
-	_connection_status = parser.getHeader("Connection");
 }
 
 void Builder::verifCGI(int &state)
@@ -59,7 +59,7 @@ void Builder::verifCGI(int &state)
 
 void Builder::isCGI(int &state)
 {
-	static string cgi_extension[] = {"php", "py"};
+	const static string cgi_extension[] = {"php", "py"};
 	for (size_t i = 0; i < 3; ++i) {
 		if (_extension == cgi_extension[i]) {
 			state = CGI;
@@ -71,9 +71,9 @@ void Builder::isCGI(int &state)
 
 void Builder::createErrorPage()
 {
-	string error_page = DEFAULT_ERROR_PAGE;
-	string title = "%@title@%";
-	string message = "%@message@%";
+	string		 error_page = DEFAULT_ERROR_PAGE;
+	const string title = "%@title@%";
+	const string message = "%@message@%";
 
 	_extension = "html";
 	error_page.replace(error_page.find(title), title.size(), "Error " + _code);
@@ -85,8 +85,8 @@ void Builder::createErrorPage()
 
 void Builder::BuildResponse(string &response)
 {
-	string code_message = findStatusMessage(_code);
-	string content_type = findContentType(_extension);
+	const string code_message = findStatusMessage(_code);
+	const string content_type = findContentType(_extension);
 
 	response = "HTTP/1.1 " + _code + code_message + "\r\n";
 
@@ -134,8 +134,8 @@ bool Builder::findErrorPageLocation()
 
 bool Builder::findErrorPageServer()
 {
-	std::string error_page = _server->getParamValue(_code);
-	std::string error_path = _server->getParamValue("root");
+	const std::string error_page = _server->getParamValue(_code);
+	const std::string error_path = _server->getParamValue("root");
 	if (error_page.empty()) {
 		return false;
 	}
@@ -148,8 +148,8 @@ bool Builder::findErrorPageServer()
 
 bool Builder::findErrorPageDefaultServer()
 {
-	std::string error_page = _default_server->getParamValue(_code);
-	std::string error_path = _default_server->getParamValue("root");
+	const std::string error_page = _default_server->getParamValue(_code);
+	const std::string error_path = _default_server->getParamValue("root");
 
 	if (error_page.empty()) {
 		return false;
@@ -165,69 +165,70 @@ void Builder::findErrorPage()
 {
 	typedef bool (Builder::*ptr)(void);
 
-	ptr tab[3] = {&Builder::findErrorPageLocation,
-				  &Builder::findErrorPageServer,
-				  &Builder::findErrorPageDefaultServer};
+	const ptr tab[3] = {&Builder::findErrorPageLocation,
+						&Builder::findErrorPageServer,
+						&Builder::findErrorPageDefaultServer};
 
 	for (size_t i = 0; i < 3; ++i) {
 		if ((this->*tab[i])() && readDataRequest() == 0) {
 			return;
 		}
 	}
-	std::string error =
+	const std::string error =
 		(errno != 0) ? strerror(errno) : "No file found in config file";
 	LOG_INFO("No Error page for code " + _code + ": " + error, CSERVER);
 	createErrorPage();
 }
 
-void Builder::isMethodDeny(int &state)
+bool Builder::isMethodDeny(int &state, std::string &max_body_size)
 {
 	std::vector< std::string > deny_methods;
 
 	const Location *location = _server->getLocation(_request_path);
 	if (location != NULL) {
 		deny_methods = location->getParamList("deny_method");
+		max_body_size = location->getParamValue("max_body_size");
 	}
 	else {
 		deny_methods = _server->getParamList("deny_method");
+		max_body_size = _server->getParamValue("max_body_size");
 	}
 	if (deny_methods.empty()) {
-		return;
+		return false;
 	}
 	for (size_t i = 0; i < deny_methods.size(); ++i) {
 		if (deny_methods[i] == _parser.getHeader("Method")) {
 			_code = "405";
 			state = B_ERROR;
+			return true;
 		}
 	}
+	return false;
 }
 
 void Builder::verifMethod(int &state)
 {
-	if (_parser.getHeader("Method") == "DELETE") {
-		state = DELETE;
-		isMethodDeny(state);
+	std::string max_body_size;
+
+	if (isMethodDeny(state, max_body_size) == true) {
 		return;
 	}
 
-	std::vector< std::string > deny_methods;
-	const Location			  *location = _server->getLocation(_request_path);
-	if (location != NULL) {
-		deny_methods = location->getParamList("deny_method");
-	}
-	else {
-		deny_methods = _server->getParamList("deny_method");
-	}
-	if (deny_methods.empty()) {
+	const std::string current_method = _parser.getHeader("Method");
+	if (current_method == "DELETE") {
+		state = DELETE;
 		return;
 	}
-	for (size_t i = 0; i < deny_methods.size(); ++i) {
-		if (deny_methods[i] == _parser.getHeader("Method")) {
-			_code = "405";
+	if (max_body_size.empty()) {
+		return;
+	}
+	if (current_method == "POST") {
+		const int body_size = _parser.getHeader("body").size();
+		if (body_size > atoi(max_body_size.c_str())) {
+			_code = "413";
 			state = B_ERROR;
 		}
 	}
-	isMethodDeny(state);
 }
 
 int Builder::readDataRequest()
@@ -239,7 +240,7 @@ int Builder::readDataRequest()
 	std::ifstream file(_path.c_str(), std::ios::binary);
 	file.seekg(0, std::ios::end);
 
-	size_t size = file.tellg();
+	const size_t size = file.tellg();
 
 	file.seekg(0, std::ios::beg);
 	_body.resize(size);
@@ -250,7 +251,7 @@ int Builder::readDataRequest()
 
 void Builder::readFile()
 {
-	int ret = readDataRequest();
+	const int ret = readDataRequest();
 
 	if (ret != 0) {
 		LOG_WARNING("Error Accessing file path: " + _path, _server);
@@ -261,7 +262,7 @@ void Builder::readFile()
 
 void Builder::findFile()
 {
-	std::string root;
+	const std::string root;
 	if (_code == "200") {
 		const Location *location = _server->getLocation(_request_path);
 

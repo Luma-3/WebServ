@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/12 10:22:48 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/13 18:13:10 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 	_pipeOut[0] = -1;
 	_pipeOut[1] = -1;
 
-	std::string fileExtension = builder->getFileExtension();
+	const std::string fileExtension = builder->getFileExtension();
 
 	const Location *location = server->getLocation(builder->getRequestedPath());
 

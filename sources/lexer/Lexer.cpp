@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Lexer.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/11 11:03:18 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/13 09:39:53 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ Token *Lexer::CreateToken(size_t frontIT, size_t backIT,
 	const size_t size = frontIT - backIT + 1;
 	const string value(line, backIT, size);
 
-	Terminal_Type term = Token::IdentifyTerminal(value);
+	const Terminal_Type term = Token::IdentifyTerminal(value);
 
 	if (value[0] == '\"' || value[0] == '\'') {
 		return (

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:59:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/12 11:16:10 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/13 09:50:47 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ Logger::Logger(const std::string &filename, int logLevel) :
 	}
 	Instance = this;
 
-	std::string new_filename = formatFile(filename);
+	const std::string new_filename = formatFile(filename);
 
 	_file.open(new_filename.c_str(), std::ios::app);
 	if (!_file.is_open()) {
@@ -42,8 +42,8 @@ Logger::Logger(const std::string &filename, int logLevel) :
 
 std::string Logger::formatFile(const std::string &filename)
 {
-	size_t last_dot = filename.find_last_of('.');
-	size_t last_slash = filename.find_last_of('/');
+	const size_t last_dot = filename.find_last_of('.');
+	size_t		 last_slash = filename.find_last_of('/');
 
 	std::string extension =
 		(last_dot == std::string::npos) ? "" : filename.substr(last_dot);
@@ -51,10 +51,11 @@ std::string Logger::formatFile(const std::string &filename)
 	extension = extension.empty() ? ".log" : extension;
 
 	last_slash = last_slash == std::string::npos ? 0 : last_slash + 1;
-	std::string path = filename.substr(0, last_slash);
-	std::string file_without_extension = filename.substr(last_slash, last_dot);
+	const std::string path = filename.substr(0, last_slash);
+	const std::string file_without_extension =
+		filename.substr(last_slash, last_dot);
 
-	std::string new_filename =
+	const std::string new_filename =
 		path + "[" + formatTime() + "]" + file_without_extension + extension;
 
 	return new_filename;
@@ -89,9 +90,9 @@ Logger &Logger::operator=(const Logger &rhs)
 
 std::string Logger::formatTime()
 {
-	std::time_t time = std::time(0);
-	std::tm	   *ltm = std::localtime(&time);
-	char		time_str[BUFFER_SIZE];
+	const std::time_t time = std::time(0);
+	std::tm			 *ltm = std::localtime(&time);
+	char			  time_str[BUFFER_SIZE];
 	strftime(time_str, BUFFER_SIZE, "%d-%m-%Y_%H:%M:%S", ltm);
 	return std::string(time_str);
 }
@@ -99,10 +100,10 @@ std::string Logger::formatTime()
 std::string Logger::formatServer(const VirtualServer *server)
 {
 	if (server) {
-		std::string hostname = server->getParamValue("hostname");
+		const std::string hostname = server->getParamValue("hostname");
 		if (hostname.empty()) {
-			std::string ip = server->getParamValue("listen");
-			std::string port = server->getParamValue("port");
+			const std::string ip = server->getParamValue("listen");
+			const std::string port = server->getParamValue("port");
 			return ip + ":" + port;
 		}
 		return hostname;
@@ -135,10 +136,10 @@ void Logger::log(LogLevel level, const std::string &message,
 				level_str = "UNKNOWN";
 				break;
 		}
-		std::string log_message = "[" + level_str + "] " +
-								  formatServer(server) + " -> " + message +
-								  " : " + formatTime() + "\n";
-		size_t message_size = log_message.size();
+		const std::string log_message = "[" + level_str + "] " +
+										formatServer(server) + " -> " +
+										message + " : " + formatTime() + "\n";
+		const size_t message_size = log_message.size();
 		if (_buffer_size + message_size >= BUFFER_SIZE) {
 			flush();
 		}
@@ -152,7 +153,7 @@ std::string Logger::removeColor(const std::string &str)
 	std::string new_str = str;
 	size_t		pos = 0;
 	while ((pos = new_str.find("\033[")) != std::string::npos) {
-		size_t end = new_str.find('m', pos);
+		const size_t end = new_str.find('m', pos);
 		if (end != std::string::npos) {
 			new_str.erase(pos, end - pos + 1);
 		}

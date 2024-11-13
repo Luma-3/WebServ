@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:15:23 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/08 16:36:47 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/13 09:43:39 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ bool Client::verifAccessInsideDirectory(const std::string &full_path)
 		return false;
 	}
 	while ((entry = readdir(dir)) != NULL) {
-		std::string path_to_file = full_path + "/" + entry->d_name;
+		const std::string path_to_file = full_path + "/" + entry->d_name;
 
 		if (strcmp(entry->d_name, ".") == 0 ||
 			strcmp(entry->d_name, "..") == 0) {
@@ -72,7 +72,7 @@ void Client::removeDirectory(const std::string &full_path)
 		return;
 	}
 	while ((entry = readdir(dir)) != NULL) {
-		std::string path_to_file = full_path + "/" + entry->d_name;
+		const std::string path_to_file = full_path + "/" + entry->d_name;
 
 		if (strcmp(entry->d_name, ".") == 0 ||
 			strcmp(entry->d_name, "..") == 0) {
@@ -115,7 +115,7 @@ void Client::handleDeleteRequest()
 	if (full_path[full_path.size() - 1] == '/') {
 		full_path = full_path.substr(0, full_path.size() - 1);
 	}
-	int ret = access(full_path.c_str(), F_OK | W_OK);
+	const int ret = access(full_path.c_str(), F_OK | W_OK);
 	if (ret != 0) {
 		LOG_INFO("Accessing to" + full_path +
 					 ": error: " + std::string(strerror(errno)),
