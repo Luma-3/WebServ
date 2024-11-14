@@ -13,7 +13,7 @@ echo "Prepare environment DONE"
 echo "Running gtest"
 echo
 
-./build/tests/all_run.sh
+./build/tests/all_run.sh || exit 1
 
 echo "Cleaning up"
 echo
@@ -24,7 +24,7 @@ rm -rf build/tests/conf/
 echo "Done"
 
 echo "Running python tests"
-./tests/python/run_all_tests_python.sh
+./tests/python/run_all_tests_python.sh || exit 1
 
 
 echo "Do you want to delete log file generated during the test? [y/n]"
