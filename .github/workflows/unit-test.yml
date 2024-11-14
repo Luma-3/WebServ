@@ -24,6 +24,9 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Update apt-get
+        run: sudo apt-get update
+
       - name: Make test
         run: make test
 
