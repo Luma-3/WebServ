@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/13 14:52:40 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/14 15:58:19 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,7 @@ void Builder::findErrorPage()
 bool Builder::isMethodDeny(int &state, std::string &max_body_size)
 {
 	std::vector< std::string > deny_methods;
+	std::string				   upload_dir;
 
 	const Location *location = _server->getLocation(_request_path);
 	if (location != NULL) {
@@ -213,7 +214,6 @@ void Builder::verifMethod(int &state)
 	if (isMethodDeny(state, max_body_size) == true) {
 		return;
 	}
-
 	const std::string current_method = _parser.getHeader("Method");
 	if (current_method == "DELETE") {
 		state = DELETE;
@@ -227,6 +227,7 @@ void Builder::verifMethod(int &state)
 		if (body_size > atoi(max_body_size.c_str())) {
 			_code = "413";
 			state = B_ERROR;
+			return;
 		}
 	}
 }

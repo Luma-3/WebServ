@@ -73,15 +73,20 @@ class TestServerStaticReturnCodeWebsiteConf(TestFunct):
 ##################################################
 # Test Redirection
 ##################################################
-	def test_redirect_code(self):
-		print("Testing redirect code, should return 301")
-		response = requests.get(self.url + "/redirect/", allow_redirects=False)
+	def test_redirect_302(self):
+		print("Testing redirect 302, should return 302")
+		response = requests.get(self.url + "/redirect-302/", allow_redirects=False)
+		self.verifReturn(response, 302)
+	
+	def test_redirect_301(self):
+		print("Testing redirect 301, should return 301")
+		response = requests.get(self.url + "/redirect-301/", allow_redirects=False)
 		self.verifReturn(response, 301)
 
 
 	def test_redirect(self):
 		print("Testing redirect final code, should return 200")
-		response = requests.get(self.url + "/redirect/")
+		response = requests.get(self.url + "/redirect-301/")
 		self.verifReturn(response, 200)
 
 ##################################################

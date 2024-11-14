@@ -37,15 +37,14 @@ run_test() {
 }
 
 kill_server() {
-   kill -9 $SERVER_PID
-   rm -f .server_pid
+   kill -9 $SERVER_PID > /dev/null 2>&1
+   rm -f .server_pid 
    echo
-   echo "Server killed."
    echo
 }
 
 echo
-echo "=============[Classic Return Code Test]============="
+echo "=============[Return Code Test]============="
 echo
 
 touch tests/python/components/delete_me.html && touch tests/python/components/no_perm.html
@@ -55,12 +54,11 @@ launch "tests/python/conf/classic.conf"
 sleep 1
 run_test "tests/python/request_return_code.py"
 
-
-kill_server
 rm -f tests/python/components/no_perm.html
+kill_server
 
 echo
-echo "=============[Cgi Body Cookies Query Strings]============="
+echo "=============[Body Test]============="
 echo
 
 launch "tests/python/conf/test_website.conf"

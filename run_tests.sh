@@ -23,10 +23,12 @@ rm -rf build/tests/conf/
 
 echo "Done"
 
+echo "Running python tests"
 ./tests/python/run_all_tests_python.sh
+
 
 echo "Do you want to delete log file generated during the test? [y/n]"
 read answer
 if [ "$answer" == "y" ]; then
-	rm -f log/*.log
+	rm -f log/*units_python_test*.log
 fi

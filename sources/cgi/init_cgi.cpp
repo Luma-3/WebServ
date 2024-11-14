@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/13 14:33:20 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/14 15:48:02 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,16 @@ void CGIHandler::createEnv(const VirtualServer	 *server,
 		_envp.push_back(ft_strdup(it->c_str()));
 	}
 	_envp.push_back(NULL);
+}
+
+void CGIHandler::handleUploadDir(const std::string &body)
+{
+	const size_t pos = body.find("filename=\"") + 10;
+	const string filename = body.substr(pos, body.find("\"", pos) - pos - 1);
+	const size_t end = body.find("\"", pos) - 1;
+
+	_body = body.substr(0, pos) + _upload_dir + filename + body.substr(end);
+	std::cout << "NEW BODY: " << _body << std::endl;
 }
 
 void CGIHandler::createArgv(const client::Builder *builder)

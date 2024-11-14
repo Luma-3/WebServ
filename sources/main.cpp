@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/13 14:47:52 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/14 13:21:50 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ int main(const int ac, const char **av, const char **env)
 	// 	return (1);
 	// }
 
-	delete handler;
-	delete Logger::Instance;
+	// delete handler;
+	// delete Logger::Instance;
 
 	return 0;
 }

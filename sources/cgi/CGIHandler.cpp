@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/13 18:13:10 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/14 15:50:43 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 			_status = CGI_FAIL;
 			return;
 		}
+		_upload_dir = location->getParamValue("upload_dir");
 	}
 	else {
 		_cgi = server->getParamValue(fileExtension);
@@ -46,10 +47,17 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 			_status = CGI_FAIL;
 			return;
 		}
+		_upload_dir = server->getParamValue("upload_dir");
 	}
 	createArgv(builder);
 	createEnv(server, parser, client, builder);
-	_body = parser->getHeader("body");
+	std::string request_body = parser->getHeader("body");
+	if (request_body.find("multipart/form-data") != std::string::npos) {
+		handleUploadDir(request_body);
+	}
+	else {
+		_body = request_body;
+	}
 }
 
 char *ft_strdup(const char *s)

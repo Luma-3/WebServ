@@ -6,7 +6,7 @@
 /*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/13 09:34:36 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/14 14:57:52 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ void Handler::handleNewConnection(const ServerHost *server)
 
 	try {
 		client_addr = new sockaddr_storage;
+		memset(client_addr, 0, sizeof(sockaddr_storage));
 		client_socket = server->acceptClient(client_addr);
 		addEvent(client_socket, EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
 		request = ServerHost::recvRequest(client_socket);

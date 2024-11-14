@@ -73,7 +73,7 @@ class TestServerBodyReturn(TestFunct):
 	def test_max_body_size_post(self):
 		print("Testing max body size, should return 413")
 		data = {'name':'Billy', 'age':'None'}
-		response = requests.post(self.url + "/cgi-bin/test.py", data=data)
+		response = requests.post(self.url + "/max_size/" , data=data)
 		self.verifReturn(response, 413)
 
 ##################################################
@@ -86,10 +86,10 @@ class TestServerBodyReturn(TestFunct):
 		response = requests.post(self.url + "/cgi-bin/test.py", cookies=cookies, data=data)
 		self.verifBody(response,'name=Billy&age=None&cookie=session_id=123456')
 
-	def test_cookie_get(self):
-		print("Testing cookie wth GET")
-		response = requests.get(self.url + "/cgi-bin/test.py?cookie=on")
-		self.verifBody(response,'cookie=on')
+	def test_get_with_query_and_cookies(self):
+		print("Testing GET with query string and cookies")
+		response = requests.get(self.url + "/cgi-bin/test.py?name=coucou", cookies={'session_id':'123456'})
+		self.verifBody(response, 'name=coucou&age=None&cookie=session_id=123456')
 
 
 if __name__ == '__main__':
