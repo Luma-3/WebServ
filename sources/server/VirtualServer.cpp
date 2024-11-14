@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualServer.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:54:59 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:42:04 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/14 17:21:38 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ const Location *VirtualServer::getLocation(const std::string &path) const
 	while (!to_test.empty()) {
 		try {
 			return _locations.at(to_test);
-		} catch (...) {
+		} catch (std::out_of_range &e) {
 		}
 		pos = to_test.find_last_of('/', to_test.length() - 2);
 		to_test = to_test.substr(0, pos + 1);

@@ -24,16 +24,8 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: install cmake
-        run: sudo apt-get install cmake
+      - name: Make test
+        run: make test
 
-      - name: Create build dir
-        run: mkdir -p build
-
-      - name: Run Cmake
-        run: |
-          cmake -B build
-          cmake --build build
-
-      - name: Run unit tests
-        run: ctest --test-dir build --output-on-failure
+      - name: Run Test
+        run: ./run_tests.sh

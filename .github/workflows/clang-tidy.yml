@@ -27,14 +27,5 @@ jobs:
       - name: install clang-tidy
         run: sudo apt-get install clang-tidy
 
-      - name: install cmake
-        run: sudo apt-get install cmake
-
-      - name: Create build dir
-        run: mkdir -p build
-
-      - name: Run Cmake
-        run: cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build
-
-      - name: Run clang-tidy
-        run: clang-tidy -p build $(find ./sources -name '*.cpp') --extra-arg=-std=c++98
+      - name: Run Tidy
+        run: make tidy
