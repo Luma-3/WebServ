@@ -52,6 +52,7 @@ CURRENT_SRC := 1
 all: $(NAME)
 
 $(COMPILE_COMMANDS): $(SRC)
+	@mkdir -p $(BUILD_DIR)
 	@echo "Generating compile_commands.json"
 	rm -f $(COMPILE_COMMANDS)
 	@echo "[" >> $(COMPILE_COMMANDS)
