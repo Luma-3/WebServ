@@ -125,7 +125,7 @@ tidy: $(COMPILE_COMMANDS)
 #			UNITS TEST              #
 #-----------------------------------#
 
-test:
+test: $(NAME)
 	./tests/gtest_installer.sh
 	@make -C tests/gtest
 

@@ -1,7 +1,7 @@
 CXX = g++
 
 # std 14 is required for gtest. And simplify the test code
-CXXFLAGS = -std=c++14 -Wall -Wextra -Werror -g -I$(GTEST_INCLUDE) -I$(CODE_INCLUDE) -fPIC
+CXXFLAGS = -std=c++14 -Wall -Wextra -Werror -g -I$(GTEST_INCLUDE) -I$(CODE_INCLUDE)
 
 GTEST_INCLUDE = googletest/googletest/include
 CODE_INCLUDE = ../../includes
