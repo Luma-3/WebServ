@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/15 12:06:35 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/16 00:47:49 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ class Parser
 	std::stack< IParserToken * > &getParseStack() { return _parse_stack; };
 	const Lexer					 &getLexer() const { return *_lexer; };
 	const int					 &getState() const { return _status; };
+	const VirtualServer			 *getCurrent() const { return _current; };
 	const std::vector< VirtualServer * > &getServers() const
 	{
 		return _servers;

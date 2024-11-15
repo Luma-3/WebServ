@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ReduceRule.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/13 09:37:46 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/15 22:32:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,8 @@ void Parser::R2_Param()
 			throw Token::InvalidTokenException(
 				"body_size not correctly formatted",
 				LIME "\nSize must be:" RESET
-					 " a number and follow by 'k/K' or 'm/M' or 'g/G'",
+					 " a number and follow by 'k/K' or 'm/M' or 'g/G' or "
+					 "nothing for bytes",
 				value, tokens[1]->getCol(), tokens[1]->getLine());
 		}
 	}
@@ -124,7 +125,7 @@ void Parser::R2_Param()
 	_parse_stack.push(param);
 }
 
-void Parser::R3_DoubleParam()
+void Parser::R3_DoubleParam() // TODO : REFACTO
 {
 	std::stack< Token * > tokens;
 

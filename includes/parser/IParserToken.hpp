@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 18:53:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 10:13:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/15 22:20:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ enum Terminal_Type {
 
 	T_Comma,
 	T_Colon,
-	T_Semi_Colon,
+	T_SemiColon,
 	T_CBracket,
 	T_OBracket,
 	T_OSquareBracket,

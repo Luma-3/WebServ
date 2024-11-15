@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Token.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:37:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:59:48 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/15 22:20:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ std::string Token::TerminalToString(Terminal_Type terminal)
 		{T_Digits,		   "{digits}"						 },
 		{T_Identifier,	   "{identifier}"					 },
 		{T_Comma,		  ","							 },
-		{T_Semi_Colon,	   ";"							 },
+		{T_SemiColon,	  ";"							 },
 		{T_Colon,		  ":"							 },
 		{T_OBracket,		 "{"							 },
 		{T_CBracket,		 "}"							 },
@@ -160,7 +160,7 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 		case ',':
 			return (T_Comma);
 		case ';':
-			return (T_Semi_Colon);
+			return (T_SemiColon);
 		case ':':
 			return (T_Colon);
 		case '{':

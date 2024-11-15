@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:16:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/15 13:57:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/15 22:20:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ std::vector< Terminal_Type > term = {T_Server,
 									 T_UploadDir,
 									 T_Comma,
 									 T_Colon,
-									 T_Semi_Colon,
+									 T_SemiColon,
 									 T_OBracket,
 									 T_CBracket,
 									 T_OSquareBracket,

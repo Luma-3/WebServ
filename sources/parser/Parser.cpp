@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/15 12:08:30 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/15 22:20:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,19 +71,19 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(8, T_Digits)] = Action(SHIFT, 14);
 	actions[ActionEntry(9, T_Bool)] = Action(SHIFT, 11);
 	actions[ActionEntry(10, T_OSquareBracket)] = Action(SHIFT, 15);
-	actions[ActionEntry(11, T_Semi_Colon)] = Action(REDUCE, 2, R2);
+	actions[ActionEntry(11, T_SemiColon)] = Action(REDUCE, 2, R2);
 	actions[ActionEntry(12, T_Digits)] = Action(SHIFT, 16);
 	actions[ActionEntry(13, T_Identifier)] = Action(SHIFT, 45);
 	actions[ActionEntry(14, T_Identifier)] = Action(SHIFT, 17);
-	actions[ActionEntry(14, T_Semi_Colon)] = Action(REDUCE, 2, R3);
+	actions[ActionEntry(14, T_SemiColon)] = Action(REDUCE, 2, R3);
 	actions[ActionEntry(15, T_Method)] = Action(SHIFT, 18);
 	actions[ActionEntry(16, T_CSquareBracket)] = Action(SHIFT, 39);
 	actions[ActionEntry(16, T_Comma)] = Action(SHIFT, 12);
-	actions[ActionEntry(17, T_Semi_Colon)] = Action(REDUCE, 2, R3);
+	actions[ActionEntry(17, T_SemiColon)] = Action(REDUCE, 2, R3);
 	actions[ActionEntry(18, T_CSquareBracket)] = Action(SHIFT, 20);
 	actions[ActionEntry(18, T_Comma)] = Action(SHIFT, 15);
-	actions[ActionEntry(19, T_Semi_Colon)] = Action(REDUCE, 2, R4);
-	actions[ActionEntry(20, T_Semi_Colon)] = Action(REDUCE, 2, R5);
+	actions[ActionEntry(19, T_SemiColon)] = Action(REDUCE, 2, R4);
+	actions[ActionEntry(20, T_SemiColon)] = Action(REDUCE, 2, R5);
 	actions[ActionEntry(21, T_Path)] = Action(SHIFT, 22);
 	actions[ActionEntry(22, T_OBracket)] = Action(SHIFT, 23);
 	actions[ActionEntry(23, T_CBracket)] = Action(REDUCE, 2, R6);
@@ -104,18 +104,18 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(27, T_Digits)] = Action(SHIFT, 32);
 	actions[ActionEntry(28, T_Bool)] = Action(SHIFT, 30);
 	actions[ActionEntry(29, T_OSquareBracket)] = Action(SHIFT, 33);
-	actions[ActionEntry(30, T_Semi_Colon)] = Action(REDUCE, 23, R2);
+	actions[ActionEntry(30, T_SemiColon)] = Action(REDUCE, 23, R2);
 	actions[ActionEntry(31, T_Digits)] = Action(SHIFT, 34);
 	actions[ActionEntry(32, T_Identifier)] = Action(SHIFT, 35);
-	actions[ActionEntry(32, T_Semi_Colon)] = Action(REDUCE, 23, R3);
+	actions[ActionEntry(32, T_SemiColon)] = Action(REDUCE, 23, R3);
 	actions[ActionEntry(33, T_Method)] = Action(SHIFT, 36);
 	actions[ActionEntry(34, T_CSquareBracket)] = Action(SHIFT, 40);
 	actions[ActionEntry(34, T_Comma)] = Action(SHIFT, 31);
-	actions[ActionEntry(35, T_Semi_Colon)] = Action(REDUCE, 23, R3);
+	actions[ActionEntry(35, T_SemiColon)] = Action(REDUCE, 23, R3);
 	actions[ActionEntry(36, T_CSquareBracket)] = Action(SHIFT, 38);
 	actions[ActionEntry(36, T_Comma)] = Action(SHIFT, 33);
-	actions[ActionEntry(37, T_Semi_Colon)] = Action(REDUCE, 23, R4);
-	actions[ActionEntry(38, T_Semi_Colon)] = Action(REDUCE, 23, R5);
+	actions[ActionEntry(37, T_SemiColon)] = Action(REDUCE, 23, R4);
+	actions[ActionEntry(38, T_SemiColon)] = Action(REDUCE, 23, R5);
 	actions[ActionEntry(39, T_Identifier)] = Action(SHIFT, 19);
 	actions[ActionEntry(40, T_Identifier)] = Action(SHIFT, 37);
 	actions[ActionEntry(41, T_Identifier)] = Action(SHIFT, 11);
@@ -124,13 +124,13 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(42, T_Digits)] = Action(SHIFT, 30);
 	actions[ActionEntry(43, T_Colon)] = Action(SHIFT, 44);
 	actions[ActionEntry(44, T_Digits)] = Action(SHIFT, 17);
-	actions[ActionEntry(45, T_Semi_Colon)] = Action(REDUCE, 0, R3);
+	actions[ActionEntry(45, T_SemiColon)] = Action(REDUCE, 0, R3);
 	actions[ActionEntry(46, T_CGIExtension)] = Action(SHIFT, 47);
 	actions[ActionEntry(47, T_Identifier)] = Action(SHIFT, 48);
-	actions[ActionEntry(48, T_Semi_Colon)] = Action(REDUCE, 2, R7);
+	actions[ActionEntry(48, T_SemiColon)] = Action(REDUCE, 2, R7);
 	actions[ActionEntry(49, T_CGIExtension)] = Action(SHIFT, 50);
 	actions[ActionEntry(50, T_Identifier)] = Action(SHIFT, 51);
-	actions[ActionEntry(51, T_Semi_Colon)] = Action(REDUCE, 23, R7);
+	actions[ActionEntry(51, T_SemiColon)] = Action(REDUCE, 23, R7);
 	// NOLINTEND(*-magic-numbers)
 
 	return actions;

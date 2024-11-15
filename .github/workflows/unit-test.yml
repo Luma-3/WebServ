@@ -27,11 +27,8 @@ jobs:
       - name: Update apt-get
         run: sudo apt-get update
 
-      - name: Update python
-        run: python3 --version
-
       - name: Make test
         run: make test
 
       - name: Run Test
-        run: ./run_tests.sh
+        run: ./run_tests.sh all -y
