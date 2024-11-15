@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Token.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:34:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:59:59 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/15 10:19:06 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
+
+#include <string>
 
 #include "parser/IParserToken.hpp"
 

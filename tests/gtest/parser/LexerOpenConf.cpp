@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 10:05:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/12 14:15:38 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/15 09:42:54 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,22 +49,3 @@ TEST(LexerTest, EmptyFileException)
 {
 	EXPECT_NO_THROW(Lexer("conf/empty.conf"));
 }
-
-// class LexerFixture : public ::testing::TestWithParam< std::string >
-// {
-//   protected:
-// 	Lexer *_lexer;
-
-// 	void SetUp() override { _lexer = nullptr; }
-
-// 	void TearDown() override
-// 	{
-// 		delete _lexer;
-// 		_lexer = nullptr;
-// 	}
-
-// 	void CreateLexer(const std::string &file_path)
-// 	{
-// 		_lexer = new Lexer(file_path.c_str());
-// 	}
-// };

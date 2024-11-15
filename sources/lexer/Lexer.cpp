@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Lexer.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/13 09:39:53 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/15 09:30:56 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ void Lexer::SkipSpace(const string &line, size_t &it)
 Token *Lexer::CreateToken(size_t frontIT, size_t backIT,
 						  const string &line) const
 {
-
 	const size_t size = frontIT - backIT + 1;
 	const string value(line, backIT, size);
 
@@ -117,7 +116,6 @@ void Lexer::TokenizeLine(const string &line, queue< Token * > &tokens)
 
 void Lexer::Tokenize()
 {
-
 	for (string line; std::getline(_config_file, line);) {
 		_line++;
 		TokenizeLine(line, _tokens);

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:32:28 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/11 16:24:42 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/15 10:18:11 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <fstream>
 #include <queue>
 #include <string>
-#include <vector>
 
 #include "Token.hpp"
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/14 15:50:43 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/14 22:27:17 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 			return;
 		}
 		_upload_dir = location->getParamValue("upload_dir");
+		//TODO : check if cgi is ok in location ! else go to server
 	}
 	else {
 		_cgi = server->getParamValue(fileExtension);

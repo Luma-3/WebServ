@@ -21,9 +21,6 @@ DEPS := $(OBJ:.o=.d)
 
 COMPILE_COMMANDS := $(BUILD_DIR)/compile_commands.json
 
-VERSION := $(BUILD_DIR)/version.txt
-
-
 #----------------------------------#
 #			  COLORS               #
 #----------------------------------#
@@ -42,7 +39,6 @@ UNDERLINE		:=	\033[4m
 
 TOTAL_SRC := $(words $(SRC))
 CURRENT_SRC := 1
-
 
 #----------------------------------#
 #			MAKE RULES             #
@@ -103,6 +99,9 @@ clean:
 fclean: clean
 	rm -f $(NAME)
 .PHONY: fclean
+
+perf: CXXFLAGS += -pg
+perf: re
 
 re: fclean all
 .PHONY: re

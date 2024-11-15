@@ -1,7 +1,8 @@
+-include $(DEPENDS)
 CXX = g++
 
 # std 14 is required for gtest. And simplify the test code
-CXXFLAGS = -std=c++14 -Wall -Wextra -Werror -g -I$(GTEST_INCLUDE) -I$(CODE_INCLUDE)
+CXXFLAGS = -std=c++14 -Wall -Wextra -Werror -g -I$(GTEST_INCLUDE) -I$(CODE_INCLUDE) -MMD
 
 GTEST_INCLUDE = googletest/googletest/include
 CODE_INCLUDE = ../../includes
@@ -36,14 +37,8 @@ $(OUTS) : $(BIN_DIR)/%.out: %.cpp | $(OBJ)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
-# 	@mkdir -p $(dir $@)
-# 	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
-
-
--include $(DEPENDS)
 
 echo :
 	@echo $(TEST)
@@ -56,6 +51,9 @@ fclean: clean
 	rm -fr $(BIN_DIR)
 
 re: fclean all
+
+debug: CXXFLAGS += -g3
+debug: re
 
 gtestClean:
 	rm -rf googletest

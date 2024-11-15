@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   regex.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/13 09:39:38 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/15 11:46:22 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,7 @@ bool IsPath(const string &value)
 			return (false);
 		}
 	}
-	if (value[value.size() - 1] != '/') {
-		return (false);
-	}
-	return (true);
+	return (value[value.size() - 1] == '/');
 }
 
 bool IsMethod(const string &value)
@@ -50,8 +47,13 @@ bool IsMethod(const string &value)
 	static const int	size_key = 3;
 	static const string key[size_key] = {"GET", "POST", "DELETE"};
 
+	std::string upper;
+	for (size_t i = 0; i < value.size(); ++i) {
+		upper += static_cast< char >(toupper(value[i]));
+	}
+
 	for (size_t i = 0; i < size_key; ++i) {
-		if (value == key[i]) {
+		if (upper == key[i]) {
 			return (true);
 		}
 	}
@@ -92,40 +94,40 @@ bool IsBool(const string &value)
 
 bool IsErrorCode(const string &value)
 {
-	if (value.size() != 3) {
+	if (value.size() != 3 || !IsDigit(value)) {
 		return (false);
 	}
-	if (value[0] >= '1' && value[0] <= '5') {
-		return (true);
-	}
-	return (true);
+	return (value[0] >= '1' && value[0] <= '5');
 }
 
 bool IsIP(const string &value)
 {
-	size_t		 pos = 0;
-	size_t		 count = 0;
 	const size_t size = value.size();
+	std::string	 octet;
+	size_t		 pos = 0;
+	size_t		 dot_pos = 0;
+	size_t		 count = 0;
 
-	while (pos < size) {
-		if (!isdigit(value[pos])) {
+	while (count < 4) {
+		dot_pos = value.find('.', pos);
+		if (dot_pos == string::npos) {
+			dot_pos = size;
+		}
+		octet = value.substr(pos, dot_pos - pos);
+		if (!IsDigit(octet)) {
 			return (false);
 		}
-		const int octet = atoi(value.substr(pos).c_str());
-		if (octet < 0 || octet > MAXUCHAR) {
+		const int octet_int = atoi(octet.c_str());
+		if (octet_int < 0 || octet_int > MAXUCHAR) {
 			return (false);
 		}
-		++count;
-		pos += value.find('.', pos);
-		if (pos == string::npos) {
+		pos = dot_pos + 1;
+		if (pos >= size) {
 			break;
 		}
-		++pos;
+		++count;
 	}
-	if (count != 4) {
-		return (false);
-	}
-	return (true);
+	return (count == 3);
 }
 
 bool IsPort(const string &value)
@@ -134,10 +136,7 @@ bool IsPort(const string &value)
 		return (false);
 	}
 	const int port = atoi(value.c_str());
-	if (port < 0 || port > PORT_MAX) {
-		return (false);
-	}
-	return (true);
+	return (!(port < 0 && port > PORT_MAX));
 }
 
 bool IsHostname(const string &value)
@@ -165,11 +164,8 @@ bool IsBodySize(const string &value)
 	if (isdigit(last)) {
 		return (true);
 	}
-	last = static_cast< char >(toupper(last)); // TODO : handle bytes !
-	if (last != 'K' && last != 'M' && last != 'G') {
-		return (false);
-	}
-	return (true);
+	last = static_cast< char >(toupper(last));
+	return (!(last != 'K' && last != 'M' && last != 'G'));
 }
 
 bool IsCGIExtension(const string &value)
@@ -182,6 +178,5 @@ bool IsCGIExtension(const string &value)
 			return (true);
 		}
 	}
-
 	return (false);
 }

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 15:54:45 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/15 10:17:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,6 @@ class Parser
 
   public:
 	Parser();
-	Parser(const Parser &src);
-	Parser &operator=(const Parser &src);
 	~Parser();
 
 	Parser(Lexer *lexer);
