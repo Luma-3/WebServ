@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/13 09:38:31 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/15 12:08:30 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,13 @@
 using parser::Action;
 using parser::ActionEntry;
 using parser::Parser;
+
+Parser::Parser() :
+	_status(0),
+	_current(new VirtualServer),
+	_actions(createActionMap())
+{
+}
 
 Parser::Parser(Lexer *lexer) :
 	_lexer(lexer),
