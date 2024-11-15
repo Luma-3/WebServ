@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:16:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/15 10:16:05 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/15 13:57:33 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,20 @@
 
 #include "lexer/Lexer.hpp"
 
-class IdentidyToken : public ::testing::TestWithParam<std::tuple<std::string, std::vector<Terminal_Type>>>
+class IdentidyToken :
+	public ::testing::TestWithParam<
+		std::tuple< std::string, std::vector< Terminal_Type > > >
 {
   protected:
-	std::string		_file_path;
-	std::vector<Terminal_Type> _terminals;
+	std::string					 _file_path;
+	std::vector< Terminal_Type > _terminals;
 
   public:
-	IdentidyToken() : _file_path(std::get<0>(GetParam())), _terminals(std::get<1>(GetParam())) {}
+	IdentidyToken() :
+		_file_path(std::get< 0 >(GetParam())),
+		_terminals(std::get< 1 >(GetParam()))
+	{
+	}
 };
 
 TEST_P(IdentidyToken, Terminal)
@@ -44,54 +50,49 @@ TEST_P(IdentidyToken, Terminal)
 	EXPECT_EQ(tokens.size(), (size_t)0);
 }
 
-std::vector<Terminal_Type> term = {
-	T_Server,
-	T_Location,
-	T_ErrorPage,
-	T_DenyMethod,
-	T_Return,
-	T_Listen,
-	T_Hostname,
-	T_Index,
-	T_AutoIndex,
-	T_Root,
-	T_Log,
-	T_BodySize,
-	T_CGI,
-	T_UploadDir,
-	T_Comma,
-	T_Colon,
-	T_Semi_Colon,
-	T_OBracket,
-	T_CBracket,
-	T_OSquareBracket,
-	T_CSquareBracket,
-	T_Identifier,
-	T_Digits,
-	T_Method,
-	T_Method,
-	T_Method,
-	T_Path,
-	T_CGIExtension,
-	T_CGIExtension,
-	T_Bool,
-	T_Bool,
-	T_LogLevel,
-	T_LogLevel,
-	T_LogLevel,
-	T_LogLevel
-};
+std::vector< Terminal_Type > term = {T_Server,
+									 T_Location,
+									 T_ErrorPage,
+									 T_DenyMethod,
+									 T_Return,
+									 T_Listen,
+									 T_Hostname,
+									 T_Index,
+									 T_AutoIndex,
+									 T_Root,
+									 T_Log,
+									 T_BodySize,
+									 T_CGI,
+									 T_UploadDir,
+									 T_Comma,
+									 T_Colon,
+									 T_Semi_Colon,
+									 T_OBracket,
+									 T_CBracket,
+									 T_OSquareBracket,
+									 T_CSquareBracket,
+									 T_Identifier,
+									 T_Digits,
+									 T_Method,
+									 T_Method,
+									 T_Method,
+									 T_Path,
+									 T_CGIExtension,
+									 T_CGIExtension,
+									 T_Bool,
+									 T_Bool,
+									 T_LogLevel,
+									 T_LogLevel,
+									 T_LogLevel,
+									 T_LogLevel};
 
-std::vector<Terminal_Type> empty = {};
+std::vector< Terminal_Type > empty = {};
 
 INSTANTIATE_TEST_SUITE_P(
-	Terminal,
-	IdentidyToken,
+	Terminal, IdentidyToken,
 	::testing::Values(
-		std::make_tuple("conf/identify_token.conf", term),
-		std::make_tuple("conf/identify_token_tab.conf", term),
-		std::make_tuple("conf/identify_token_tab+space.conf", term),
-		std::make_tuple("conf/identify_token_one_line.conf", term),
-		std::make_tuple("conf/empty.conf", empty)
-	)
-);
+		std::make_tuple("conf/lexer/identify_token.conf", term),
+		std::make_tuple("conf/lexer/identify_token_tab.conf", term),
+		std::make_tuple("conf/lexer/identify_token_tab+space.conf", term),
+		std::make_tuple("conf/lexer/identify_token_one_line.conf", term),
+		std::make_tuple("conf/lexer/empty.conf", empty)));

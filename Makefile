@@ -67,8 +67,12 @@ check_depend: $(COMPILE_COMMANDS)
 .PHONY: check_depend
 
 stats: $(COMPILE_COMMANDS)
-	@echo "Numbre of files: $(shell echo $(SRC) | wc -w)"
-	@echo "Numbre of lines: $(shell cat $(SRC) | wc -l)"
+	@echo "Numbre of cpp files: $(shell echo $(SRC) | wc -w)"
+	@echo "Numbre of cpp lines: $(shell cat $(SRC) | wc -l)"
+	@echo "Numbre of hpp files: $(shell echo $(shell find $(INCLUDES) -name "*.hpp") | wc -w)"
+	@echo "Numbre of hpp lines: $(shell cat $(shell find $(INCLUDES) -name "*.hpp") | wc -l)"
+	@echo "Total files: $(shell echo $(SRC) $(shell find $(INCLUDES) -name "*.hpp") | wc -w)"
+	@echo "Total lines: $(shell cat $(SRC) $(shell find $(INCLUDES) -name "*.hpp") | wc -l)"
 .PHONY: stats
 
 #----------------------------------#

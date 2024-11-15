@@ -7,7 +7,7 @@ google_test() {
 	cp tests/gtest/all_run.sh build/tests/all_run.sh
 
 	cp -r tests/gtest/conf/ build/tests/
-	chmod 000  build/tests/conf/exception/no_perm.conf
+	chmod 000  build/tests/conf/lexer/exception/no_perm.conf
 
 	echo "Prepare environment DONE"
 
@@ -19,7 +19,7 @@ google_test() {
 	echo "Cleaning up"
 	echo
 
-	chmod 644 build/tests/conf/exception/no_perm.conf
+	chmod 644 build/tests/conf/lexer/exception/no_perm.conf
 	rm -rf build/tests/conf/
 
 	echo "Done"

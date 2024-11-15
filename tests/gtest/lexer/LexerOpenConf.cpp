@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 10:05:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/15 09:42:54 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/15 14:37:34 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,37 +15,39 @@
 
 #include "lexer/Lexer.hpp"
 
+
 TEST(LexerTest, InvalidFileExtensionException)
 {
 
-	EXPECT_THROW(Lexer("conf/exception/bad_extension.d"),
+	EXPECT_THROW(Lexer("conf/lexer/exception/bad_extension.d"),
 				 Lexer::InvalidFileExtensionException);
 }
 
 TEST(LexerTest, MissExtensionException)
 {
-	EXPECT_THROW(Lexer("conf/exception/miss_extension"),
+	EXPECT_THROW(Lexer("conf/lexer/exception/miss_extension"),
 				 Lexer::InvalidFileExtensionException);
 }
 
 TEST(LexerTest, FileNotExistException)
 {
-	EXPECT_THROW(Lexer("conf/exception/does_not_exist.conf"),
+	EXPECT_THROW(Lexer("conf/lexer/exception/does_not_exist.conf"),
 				 Lexer::FileNotOpenException);
 }
 
 TEST(LexerTest, NoPermissionException)
 {
-	EXPECT_THROW(Lexer("conf/exception/no_perm.conf"),
+	EXPECT_THROW(Lexer("conf/lexer/exception/no_perm.conf"),
 				 Lexer::FileNotOpenException);
 }
 
 TEST(LexerTest, IsDirectoryException)
 {
-	EXPECT_THROW(Lexer("conf/exception/dir.conf"), Lexer::FileNotOpenException);
+	EXPECT_THROW(Lexer("conf/lexer/exception/dir.conf"),
+				 Lexer::FileNotOpenException);
 }
 
 TEST(LexerTest, EmptyFileException)
 {
-	EXPECT_NO_THROW(Lexer("conf/empty.conf"));
+	EXPECT_NO_THROW(Lexer("conf/lexer/empty.conf"));
 }
