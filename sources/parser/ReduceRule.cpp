@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/15 22:32:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/18 09:28:17 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,31 +227,6 @@ void Parser::R4_ErrorPage()
 	}
 }
 
-void Parser::R7_CGI()
-{
-	std::stack< Token * > tokens;
-
-	std::string cgi_path;
-	std::string cgi_extension;
-
-	TakeTo(tokens, _parse_stack, Token::IsKey);
-
-	while (!tokens.empty()) {
-		if (tokens.top()->getTerminal() == T_Identifier) {
-			cgi_path = tokens.top()->getKey();
-		}
-		else if (tokens.top()->getTerminal() == T_CGIExtension) {
-			cgi_extension = tokens.top()->getKey();
-		}
-		delete tokens.top();
-		tokens.pop();
-	}
-
-	Param *cgi = new Param(cgi_extension, cgi_path);
-
-	_parse_stack.push(cgi);
-}
-
 void Parser::R5_DenyMethod()
 {
 	std::stack< IParserToken * > tokens;
@@ -296,4 +271,29 @@ void Parser::R6_Location()
 		tokens.pop();
 	}
 	_current->addLocation(route, location);
+}
+
+void Parser::R7_CGI()
+{
+	std::stack< Token * > tokens;
+
+	std::string cgi_path;
+	std::string cgi_extension;
+
+	TakeTo(tokens, _parse_stack, Token::IsKey);
+
+	while (!tokens.empty()) {
+		if (tokens.top()->getTerminal() == T_Identifier) {
+			cgi_path = tokens.top()->getKey();
+		}
+		else if (tokens.top()->getTerminal() == T_CGIExtension) {
+			cgi_extension = tokens.top()->getKey();
+		}
+		delete tokens.top();
+		tokens.pop();
+	}
+
+	Param *cgi = new Param(cgi_extension, cgi_path);
+
+	_parse_stack.push(cgi);
 }

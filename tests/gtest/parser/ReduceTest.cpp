@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 11:56:19 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/16 00:48:50 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/18 09:31:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -478,4 +478,160 @@ TEST(R6_Location, Simple)
 
 	EXPECT_NE(server, nullptr);
 	EXPECT_NE(server->getLocation("/"), nullptr);
+}
+
+TEST(R6_Location, WithOneParam)
+{
+	Parser parser;
+
+	std::stack< IParserToken * > stack_test;
+
+	stack_test.push(new Token("location", T_Location, 1, 1));
+	stack_test.push(new Token("/", T_Path, 1, 2));
+	stack_test.push(new Token("{", T_OBracket, 1, 3));
+	stack_test.push(new Param("root", "/var/www/html"));
+	stack_test.push(new Token("}", T_CBracket, 1, 4));
+
+	parser.setParseStack(stack_test);
+
+	ASSERT_NO_THROW(parser.R6_Location());
+
+	const VirtualServer *server = parser.getCurrent();
+
+	EXPECT_NE(server, nullptr);
+	EXPECT_NE(server->getLocation("/"), nullptr);
+	EXPECT_EQ(server->getLocation("/")->getParamValue("root"), "/var/www/html");
+}
+
+TEST(R6_Location, WithTwoParam)
+{
+	Parser parser;
+
+	std::stack< IParserToken * > stack_test;
+
+	stack_test.push(new Token("location", T_Location, 1, 1));
+	stack_test.push(new Token("/", T_Path, 1, 2));
+	stack_test.push(new Token("{", T_OBracket, 1, 3));
+	stack_test.push(new Param("root", "/var/www/html"));
+	stack_test.push(new Param("index", "index.html"));
+	stack_test.push(new Token("}", T_CBracket, 1, 4));
+
+	parser.setParseStack(stack_test);
+
+	ASSERT_NO_THROW(parser.R6_Location());
+
+	const VirtualServer *server = parser.getCurrent();
+
+	EXPECT_NE(server, nullptr);
+	EXPECT_NE(server->getLocation("/"), nullptr);
+	EXPECT_EQ(server->getLocation("/")->getParamValue("root"), "/var/www/html");
+	EXPECT_EQ(server->getLocation("/")->getParamValue("index"), "index.html");
+}
+
+TEST(R6_Location, WithSameParam)
+{
+	Parser parser;
+
+	std::stack< IParserToken * > stack_test;
+
+	stack_test.push(new Token("location", T_Location, 1, 1));
+	stack_test.push(new Token("/", T_Path, 1, 2));
+	stack_test.push(new Token("{", T_OBracket, 1, 3));
+	stack_test.push(new Param("root", "/var/www/html"));
+	stack_test.push(new Param("root", "/var/www/html2"));
+	stack_test.push(new Param("autoindex", "on"));
+	stack_test.push(new Token("}", T_CBracket, 1, 4));
+
+	parser.setParseStack(stack_test);
+
+	ASSERT_NO_THROW(parser.R6_Location());
+
+	const VirtualServer *server = parser.getCurrent();
+
+	EXPECT_NE(server, nullptr);
+	EXPECT_NE(server->getLocation("/"), nullptr);
+	EXPECT_NE(server->getLocation("/")->getParamValue("root"), "/var/www/html");
+	EXPECT_EQ(server->getLocation("/")->getParamValue("root"),
+			  "/var/www/html2");
+	EXPECT_EQ(server->getLocation("/")->getParamValue("autoindex"), "on");
+}
+
+TEST(R6_Location, WithAllParam)
+{
+	Parser parser;
+
+	std::stack< IParserToken * > stack_test;
+
+	stack_test.push(new Token("location", T_Location, 1, 1));
+	stack_test.push(new Token("/", T_Path, 1, 2));
+	stack_test.push(new Token("{", T_OBracket, 1, 3));
+	stack_test.push(new Param("root", "/var/www/html"));
+	stack_test.push(new Param("index", "index.html"));
+	stack_test.push(new Param("404", "/404.html"));
+	stack_test.push(new Param("autoindex", "on"));
+	stack_test.push(new Param("php", "/usr/bin/php-cgi"));
+	std::vector< std::string > methods = {"GET", "POST"};
+	stack_test.push(new Param("deny_method", methods));
+	stack_test.push(new Token("}", T_CBracket, 1, 4));
+
+	parser.setParseStack(stack_test);
+
+	ASSERT_NO_THROW(parser.R6_Location());
+
+	const VirtualServer *server = parser.getCurrent();
+
+	EXPECT_NE(server, nullptr);
+	EXPECT_NE(server->getLocation("/"), nullptr);
+	EXPECT_EQ(server->getLocation("/")->getParamValue("root"), "/var/www/html");
+	EXPECT_EQ(server->getLocation("/")->getParamValue("index"), "index.html");
+	EXPECT_EQ(server->getLocation("/")->getParamValue("404"), "/404.html");
+	EXPECT_EQ(server->getLocation("/")->getParamValue("autoindex"), "on");
+	EXPECT_EQ(server->getLocation("/")->getParamValue("php"),
+			  "/usr/bin/php-cgi");
+	EXPECT_EQ(server->getLocation("/")->getParamList("deny_method").size(),
+			  (size_t)2);
+	EXPECT_EQ(server->getLocation("/")->getParamList("deny_method").at(0),
+			  "GET");
+	EXPECT_EQ(server->getLocation("/")->getParamList("deny_method").at(1),
+			  "POST");
+}
+
+TEST(R7_CGI, PHP)
+{
+	Parser parser;
+
+	std::stack< IParserToken * > stack_test;
+
+	stack_test.push(new Token("cgi", T_CGI, 1, 1));
+	stack_test.push(new Token("php", T_CGIExtension, 1, 2));
+	stack_test.push(new Token("/usr/bin/php", T_Identifier, 1, 3));
+	stack_test.push(new Token(";", T_SemiColon, 1, 4));
+
+	parser.setParseStack(stack_test);
+
+	ASSERT_NO_THROW(parser.R7_CGI());
+
+	EXPECT_NE(parser.getParseStack().top(), nullptr);
+	EXPECT_EQ(parser.getParseStack().top()->getKey(), "php");
+	EXPECT_EQ(get_castParm(parser.getParseStack().top()), "/usr/bin/php");
+}
+
+TEST(R7_CGI, PY)
+{
+	Parser parser;
+
+	std::stack< IParserToken * > stack_test;
+
+	stack_test.push(new Token("cgi", T_CGI, 1, 1));
+	stack_test.push(new Token("py", T_CGIExtension, 1, 2));
+	stack_test.push(new Token("/usr/bin/python", T_Identifier, 1, 3));
+	stack_test.push(new Token(";", T_SemiColon, 1, 4));
+
+	parser.setParseStack(stack_test);
+
+	ASSERT_NO_THROW(parser.R7_CGI());
+
+	EXPECT_NE(parser.getParseStack().top(), nullptr);
+	EXPECT_EQ(parser.getParseStack().top()->getKey(), "py");
+	EXPECT_EQ(get_castParm(parser.getParseStack().top()), "/usr/bin/python");
 }
