@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/11/14 15:28:14 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 16:19:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,10 @@
 using client::Parser;
 using std::string;
 
-Parser::Parser() : _codeResponse("200") {}
+Parser::Parser() : _codeResponse("200")
+{
+	_headers["Connection"] = "keep-alive";
+}
 
 bool Parser::InvalidMethod()
 {
@@ -42,12 +45,40 @@ bool Parser::InvalidHeader()
 	return false;
 }
 
-void Parser::getBodyFromRequest(size_t &line_break_pos)
+void Parser::getBodyFromRequest()
 {
-	string		 line;
+	if (_buffer.empty()) {
+		return;
+	}
+
+	if (!_buffer.empty() && _headers["Method"] == "POST") {
+		if (_buffer[0] == '\r' && _buffer[1] == '\n') {
+			_buffer.erase(0, 2);
+		}
+		_headers["body"] = _buffer;
+	}
+}
+
+void Parser::getDataHeaderFromRequest(size_t line_break_pos)
+{
+	string		 line = _buffer.substr(0, line_break_pos);
 	string		 key;
 	string		 value;
 	const string end_of = ": ";
+	const string space = " ";
+	const string end_of_line = "\n";
+
+	_headers["Method"] = getAndErase(line, space);
+	_headers["Url"] = getAndErase(line, space);
+	_headers["httpVersion"] = getAndErase(line, end_of_line);
+
+	parseURI(_headers["Url"]);
+
+	if (InvalidMethod() || InvalidHeader()) {
+		return;
+	}
+
+	_buffer = _buffer.substr(line_break_pos + 2);
 
 	while ((line_break_pos = _buffer.find("\r\n")) != string::npos) {
 
@@ -62,35 +93,6 @@ void Parser::getBodyFromRequest(size_t &line_break_pos)
 		_headers[key] = value;
 		_buffer = _buffer.substr(line_break_pos + 2);
 	}
-	if (_buffer.empty()) {
-		return;
-	}
-
-	if (!_buffer.empty() && _headers["Method"] == "POST") {
-		if (_buffer[0] == '\r' && _buffer[1] == '\n') {
-			_buffer.erase(0, 2);
-		}
-		_headers["body"] = _buffer;
-	}
-}
-
-void Parser::getHeaderFromRequest(const size_t &line_break_pos)
-{
-	string		 line = _buffer.substr(0, line_break_pos);
-	const string space = " ";
-	const string end_of_line = "\n";
-
-	_headers["Method"] = getAndErase(line, space);
-	_headers["Url"] = getAndErase(line, space);
-	_headers["httpVersion"] = getAndErase(line, end_of_line);
-
-	handleRequestedPath(_headers["Url"]);
-
-	if (InvalidMethod() || InvalidHeader()) {
-		return;
-	}
-
-	_buffer = _buffer.substr(line_break_pos + 2);
 }
 
 void Parser::parseRequest(const std::string &request)
@@ -101,13 +103,17 @@ void Parser::parseRequest(const std::string &request)
 	_buffer = request;
 
 	line_break_pos = _buffer.find("\r\n");
-	getHeaderFromRequest(line_break_pos);
-	getBodyFromRequest(line_break_pos);
-	if (_codeResponse == "200" &&
-		_headers["Content-Type"].find("multipart/form-data") !=
-			std::string::npos) {
-		_headers["body"] = request;
+	getDataHeaderFromRequest(line_break_pos);
+
+	getBodyFromRequest();
+
+	std::string content_type = _headers["Content-Type"];
+	if (content_type.empty() ||
+		content_type.find("multipart/form-data") == std::string::npos) {
+		return;
 	}
+
+	_headers["body"] = request;
 }
 
 std::string Parser::findHostName(const std::string &request)

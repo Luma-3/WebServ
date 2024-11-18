@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/14 14:57:52 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 16:13:51 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,15 @@
 #include "server/ServerException.hpp"
 #include "server/ServerHost.hpp"
 
+using client::Builder;
+using client::Client;
+using client::Parser;
 using std::string;
+using std::vector;
 
 volatile int g_sig = 0;
 
-Handler::Handler(const std::vector< VirtualServer * > &servers,
-				 const char							 **envp) :
+Handler::Handler(const vector< VirtualServer * > &servers, const char **envp) :
 	_envp(envp),
 	_epfd(epoll_create1(0)),
 	_nbServ(0)
@@ -36,12 +39,12 @@ Handler::Handler(const std::vector< VirtualServer * > &servers,
 									  std::string(strerror(errno)));
 	}
 
-	std::vector< VirtualServer * >::const_iterator it = servers.begin();
+	vector< VirtualServer * >::const_iterator it = servers.begin();
 
 	while (it != servers.end()) {
 		const Param *listen = (*it)->getParam("listen");
 
-		const std::string hostkey =
+		const string hostkey =
 			listen->getPair().first + ":" + listen->getPair().second;
 
 		if (_hostptofd.find(hostkey) == _hostptofd.end()) {
@@ -61,8 +64,8 @@ Handler::Handler(const std::vector< VirtualServer * > &servers,
 }
 
 void Handler::handleNewClient(const ServerHost *server, int client_socket,
-							  sockaddr_storage	*client_addr,
-							  const std::string &request)
+							  sockaddr_storage *client_addr,
+							  const string	   &request)
 {
 	const string hostname = client::Parser::findHostName(request);
 
@@ -89,93 +92,115 @@ void Handler::handleNewConnection(const ServerHost *server)
 	try {
 		client_addr = new sockaddr_storage;
 		memset(client_addr, 0, sizeof(sockaddr_storage));
+
 		client_socket = server->acceptClient(client_addr);
+
 		addEvent(client_socket, EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
 		request = ServerHost::recvRequest(client_socket);
 	} catch (RecvException &e) {
+
 		removeEvent(client_socket);
-		LOG_ERROR(e.what(), CSERVER);
-		// if (client_addr) {
-		// 	delete client_addr;
-		// }
+		LOG_ERROR(e.what());
+		delete client_addr;
 		if (client_socket != -1) {
 			close(client_socket);
 		}
+
 	} catch (const std::exception &e) {
-		LOG_ERROR(e.what(), CSERVER);
-		// if (client_addr) {
-		// 	delete client_addr;
-		// }
+
+		LOG_ERROR(e.what());
+		if (client_addr) {
+			delete client_addr;
+		}
 		if (client_socket != -1) {
 			close(client_socket);
 		}
 	}
+
 	try {
 		handleNewClient(server, client_socket, client_addr, request);
 	} catch (const std::exception &e) {
-		LOG_ERROR(e.what(), CSERVER);
-		handleClientDisconnection(
-			client_socket); // TODO : method for error disconnection
+		LOG_ERROR(e.what());
+		handleClientDisconnection(client_socket);
 	}
 }
 
-void Handler::handleClientRequest(int event_fd, const std::string &request)
+void Handler::handleClientRequest(int event_fd, const string &request)
 {
-	std::string client_request;
+	string client_request;
 
-	client::Client *client = _clients[event_fd];
-	if (client) {
-		try {
-			if (request.empty()) {
-				CSERVER = client->getServer();
-				client_request = ServerHost::recvRequest(event_fd);
-				client->setRequest(client_request);
-			}
-			client->handleRequest();
-		} catch (const std::exception &e) {
-			LOG_ERROR(e.what(), CSERVER);
-			client->setResponse(e.what());
+	Client *client = _clients[event_fd];
+	if (!client) {
+		return;
+	}
+
+	try {
+		CSERVER = client->getServer();
+
+		if (request.empty()) {
+			client_request = ServerHost::recvRequest(event_fd);
+			client->setRequest(client_request);
 		}
-		try {
-			modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
-		} catch (const std::exception &e) {
-			LOG_ERROR(e.what(), CSERVER);
-			handleClientDisconnection(
-				event_fd); // TODO : method for error disconnection
-		}
+		client->handleRequest();
+
+	} catch (const std::exception &e) {
+
+		Parser	 parser;
+		Builder *builder = new Builder(client->getServer(),
+									   client->getDefaultServer(), parser);
+
+		LOG_ERROR(e.what());
+		builder->setCode("500");
+		builder->findErrorPage();
+		client->setBuilder(builder);
+	}
+
+	try {
+		modifyEvent(event_fd, EPOLLOUT | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
+	} catch (const std::exception &e) {
+		LOG_ERROR(e.what());
+		handleClientDisconnection(event_fd);
 	}
 }
 
 void Handler::handleClientResponse(int event_fd)
 {
-	client::Client *client = _clients[event_fd];
-	if (client && client->handleResponse() == FINISH) {
-		try {
-			CSERVER = client->getServer();
-			ServerHost::sendResponse(event_fd, client->getResponse());
-			modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
-		} catch (const std::exception &e) {
-			LOG_ERROR(e.what(), CSERVER);
-			handleClientDisconnection(
-				event_fd); // TODO : method for error disconnection
-		}
+	Client *client = _clients[event_fd];
+	if (!client || (client && client->handleResponse() != FINISH)) {
+		return;
 	}
+
+	std::cout << "Je comment a envoyer la reponse" << std::endl;
+
+	try {
+		CSERVER = client->getServer();
+		ServerHost::sendResponse(event_fd, client->getResponse());
+		modifyEvent(event_fd, EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
+
+	} catch (const std::exception &e) {
+		LOG_ERROR(e.what());
+		handleClientDisconnection(event_fd);
+	}
+	std::cerr << "JE sors de la repsonse" << std::endl;
 }
 
 void Handler::handleClientDisconnection(int event_fd)
 {
-	client::Client *client = _clients[event_fd];
-	if (client) {
-		CSERVER = client->getServer();
-		_clients.erase(event_fd);
-		try {
-			removeEvent(event_fd);
-		} catch (const std::exception &e) {
-			LOG_ERROR(e.what(), CSERVER);
-		}
-		close(event_fd);
-		delete client;
+	Client *client = _clients[event_fd];
+	if (!client) {
+		return;
 	}
+
+	CSERVER = client->getServer();
+
+	_clients.erase(event_fd);
+	try {
+		removeEvent(event_fd);
+	} catch (const std::exception &e) {
+		LOG_ERROR(e.what());
+	}
+	close(event_fd);
+	delete client;
 }
 
 void Handler::addEvent(int fd, uint32_t events) const
@@ -213,24 +238,24 @@ void Handler::runEventLoop()
 	struct epoll_event event[MAX_EVENTS];
 	int				   event_fd = 0;
 
-	// LOG_DEBUG("Starting event loop", NULL);
 	while (!g_sig) {
-		// std::cerr << "Waiting for events" << std::endl;
+
 		const int nfds = epoll_wait(_epfd, event, MAX_EVENTS, -1);
 		if (nfds == -1 && !g_sig) {
 			throw InternalServerException("epoll_wait", __LINE__, __FILE__,
 										  std::string(strerror(errno)));
 		}
-		// std::cerr << "Events received" << std::endl;
 		for (int i = 0; i < nfds; ++i) {
+
 			CSERVER = NULL;
 			event_fd = event[i].data.fd;
 			ServerHost *server = _servers[event_fd];
+
 			if (server) {
 				try {
 					handleNewConnection(server);
 				} catch (const std::exception &e) {
-					LOG_ERROR(e.what(), CSERVER);
+					LOG_ERROR(e.what());
 				}
 			}
 			else if (event[i].events & EPOLLRDHUP ||
@@ -257,7 +282,7 @@ Handler::~Handler()
 		delete it->second;
 		++it;
 	}
-	std::map< int, client::Client * >::iterator it2 = _clients.begin();
+	std::map< int, Client * >::iterator it2 = _clients.begin();
 	while (it2 != _clients.end()) {
 		delete it2->second;
 		++it2;

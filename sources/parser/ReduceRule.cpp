@@ -6,18 +6,19 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 09:28:17 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/18 12:16:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include <stack>
 
 #include "parser/Parser.hpp"
 
 using parser::Parser;
 
-void TakeTo(std::stack< IParserToken * > &dst,
-			std::stack< IParserToken * > &stack,
+using std::stack;
+using std::string;
+using std::vector;
+
+void TakeTo(stack< IParserToken * > &dst, stack< IParserToken * > &stack,
 			bool (*breaker)(const IParserToken &))
 {
 	while (!stack.empty()) {
@@ -31,17 +32,17 @@ void TakeTo(std::stack< IParserToken * > &dst,
 	stack.pop();
 }
 
-void TakeTo(std::stack< Token * > &dst, std::stack< IParserToken * > &stack,
+void TakeTo(stack< Token * > &dst, stack< IParserToken * > &stack,
 			bool (*breaker)(const IParserToken &))
 {
 	while (!stack.empty()) {
 		if (breaker(*stack.top())) {
 			break;
 		}
-		dst.push(dynamic_cast< Token * >(stack.top()));
+		dst.push(D_Cast< Token * >(stack.top()));
 		stack.pop();
 	}
-	dst.push(dynamic_cast< Token * >(stack.top()));
+	dst.push(D_Cast< Token * >(stack.top()));
 	stack.pop();
 }
 
@@ -57,15 +58,15 @@ bool R6Breaker(const IParserToken &token)
 
 void Parser::R1_Server()
 {
-	std::stack< IParserToken * >		tokens;
-	const std::vector< IParserToken * > params;
+	stack< IParserToken * >		   tokens;
+	const vector< IParserToken * > params;
 
 	TakeTo(tokens, _parse_stack, R1Breaker);
 
 	while (!tokens.empty()) {
 		if (tokens.top()->getType() != TOKEN) {
 			_current->addParam(tokens.top()->getKey(),
-							   D_Cast< Param >(tokens.top()));
+							   D_Cast< Param * >(tokens.top()));
 		}
 		else {
 			delete tokens.top();
@@ -88,15 +89,15 @@ void Parser::R1_Server()
 
 void Parser::R2_Param()
 {
-	std::vector< Token * > tokens;
+	vector< Token * > tokens;
 
 	for (size_t i = 0; i < 3; ++i) {
-		tokens.push_back(dynamic_cast< Token * >(_parse_stack.top()));
+		tokens.push_back(D_Cast< Token * >(_parse_stack.top()));
 		_parse_stack.pop();
 	}
 
 	const Terminal_Type term_type = tokens[2]->getTerminal();
-	const std::string	value = tokens[1]->getKey();
+	const string		value = tokens[1]->getKey();
 
 	if (term_type == T_Hostname) {
 		if (!IsHostname(value)) {
@@ -125,48 +126,55 @@ void Parser::R2_Param()
 	_parse_stack.push(param);
 }
 
-void Parser::R3_DoubleParam() // TODO : REFACTO
+void Parser::R3_CaseListen(stack< Token * > &tokens, const string &value1,
+						   string &value2, size_t &tmp_col, size_t &tmp_line)
 {
-	std::stack< Token * > tokens;
+	if (!IsHostname(value1) && !IsIP(value1)) {
+		throw Token::InvalidTokenException(
+			"hostname or IP address not correctly formatted",
+			LIME "\nExemple:" RESET " example.com / 127.0.0.1 ", value1,
+			tmp_col, tmp_line);
+	}
+	delete tokens.top();
+	tokens.pop();
+
+	value2 = tokens.top()->getKey();
+	tmp_col = tokens.top()->getCol();
+	tmp_line = tokens.top()->getLine();
+
+	delete tokens.top();
+	tokens.pop();
+
+	if (!IsPort(value2)) {
+		throw Token::InvalidTokenException(
+			"port not correctly formatted",
+			LIME "\nExemple:" RESET " 0 to 65535", value2, tmp_col, tmp_line);
+	}
+}
+
+void Parser::R3_DoubleParam()
+{
+	stack< Token * > tokens;
 
 	TakeTo(tokens, _parse_stack, Token::IsKey);
 
 	const Terminal_Type term_type = tokens.top()->getTerminal();
-	const std::string	key = tokens.top()->getKey();
+	const string		key = tokens.top()->getKey();
 
 	delete tokens.top();
 	tokens.pop();
 
-	const std::string value1 = tokens.top()->getKey();
-	size_t			  tmp_line = tokens.top()->getLine();
-	size_t			  tmp_col = tokens.top()->getCol();
+	const string value1 = tokens.top()->getKey();
+	size_t		 tmp_line = tokens.top()->getLine();
+	size_t		 tmp_col = tokens.top()->getCol();
+
 	delete tokens.top();
 	tokens.pop();
 
-	std::string value2;
+	string value2;
 
 	if (term_type == T_Listen) {
-		if (!IsHostname(value1) && !IsIP(value1)) {
-			throw Token::InvalidTokenException(
-				"hostname or IP address not correctly formatted",
-				LIME "\nExemple:" RESET " example.com / 127.0.0.1 ", value1,
-				tmp_col, tmp_line);
-		}
-		delete tokens.top();
-		tokens.pop();
-
-		value2 = tokens.top()->getKey();
-		tmp_col = tokens.top()->getCol();
-		tmp_line = tokens.top()->getLine();
-		delete tokens.top();
-		tokens.pop();
-
-		if (!IsPort(value2)) {
-			throw Token::InvalidTokenException("port not correctly formatted",
-											   LIME "\nExemple:" RESET
-													" 0 to 65535",
-											   value2, tmp_col, tmp_line);
-		}
+		R3_CaseListen(tokens, value1, value2, tmp_col, tmp_line);
 	}
 	else if (tokens.size() > 1) {
 		value2 = tokens.top()->getKey();
@@ -192,12 +200,12 @@ void Parser::R3_DoubleParam() // TODO : REFACTO
 
 void Parser::R4_ErrorPage()
 {
-	std::stack< Token * > tokens;
+	stack< Token * > tokens;
 
 	TakeTo(tokens, _parse_stack, Token::IsKey);
 
-	std::string				   value;
-	std::vector< std::string > errorCode;
+	string			 value;
+	vector< string > errorCode;
 
 	while (!tokens.empty()) {
 		if (tokens.top()->getTerminal() == T_Digits) {
@@ -218,7 +226,7 @@ void Parser::R4_ErrorPage()
 		tokens.pop();
 	}
 
-	std::vector< std::string >::const_iterator it = errorCode.begin();
+	vector< string >::const_iterator it = errorCode.begin();
 
 	while (it != errorCode.end()) {
 		Param *param = new Param(*it, value);
@@ -229,8 +237,8 @@ void Parser::R4_ErrorPage()
 
 void Parser::R5_DenyMethod()
 {
-	std::stack< IParserToken * > tokens;
-	std::vector< std::string >	 method;
+	stack< IParserToken * > tokens;
+	vector< string >		method;
 
 	TakeTo(tokens, _parse_stack, Token::IsKey);
 
@@ -248,13 +256,13 @@ void Parser::R5_DenyMethod()
 
 void Parser::R6_Location()
 {
-	std::stack< IParserToken * > tokens;
+	stack< IParserToken * > tokens;
 
 	TakeTo(tokens, _parse_stack, R6Breaker);
 	delete tokens.top();
 	tokens.pop();
 
-	const std::string route = tokens.top()->getKey();
+	const string route = tokens.top()->getKey();
 	delete tokens.top();
 	tokens.pop();
 
@@ -263,7 +271,7 @@ void Parser::R6_Location()
 	while (!tokens.empty()) {
 		if (tokens.top()->getType() != TOKEN) {
 			location->addParam(tokens.top()->getKey(),
-							   D_Cast< Param >(tokens.top()));
+							   D_Cast< Param * >(tokens.top()));
 		}
 		else {
 			delete tokens.top();
@@ -275,10 +283,10 @@ void Parser::R6_Location()
 
 void Parser::R7_CGI()
 {
-	std::stack< Token * > tokens;
+	stack< Token * > tokens;
 
-	std::string cgi_path;
-	std::string cgi_extension;
+	string cgi_path;
+	string cgi_extension;
 
 	TakeTo(tokens, _parse_stack, Token::IsKey);
 

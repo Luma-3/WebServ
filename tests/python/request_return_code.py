@@ -126,7 +126,9 @@ class TestServerStaticReturnCodeWebsiteConf(TestFunct):
 	def test_wrong_cgi_good_script(self):
 		print("Testing wrong cgi, should return 500")
 		response = requests.post(self.url + "/cgi-wrong/")
-		self.verifReturn(response, 500)
+		self.verifReturn(response, 500) 
+	# TODO : to delete test is not correct
+
 
 
 	def test_cgi_script(self):

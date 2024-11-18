@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/14 15:28:29 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 15:54:58 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,10 @@ class Parser
 	std::string _path_info;
 	std::string _query;
 
-	void getHeaderFromRequest(const size_t &line_break_pos);
+	void getDataHeaderFromRequest(size_t line_break_pos);
+	void getBodyFromRequest();
 
-	void handleMultiPartBody();
-	void handleUrlEncodedBody();
-	void getBodyFromRequest(size_t &line_break_pos);
-
-	void handleRequestedPath(std::string &requested_path);
+	void parseURI(std::string &uri);
 	bool InvalidMethod();
 	bool InvalidHeader();
 

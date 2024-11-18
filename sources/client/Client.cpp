@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/14 15:08:25 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 16:11:31 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,36 +43,10 @@ Client::Client(const Client &src) :
 {
 }
 
-Client &Client::operator=(const Client &src)
-{
-	if (this != &src) {}
-	return *this;
-}
-
 bool Client::operator==(const Client &rhs) const
 {
 	return (_server == rhs._server && _default_server == rhs._default_server &&
 			_client_socket == rhs._client_socket);
-}
-
-int Client::getSocket() const
-{
-	return _client_socket;
-}
-
-const ServerHost *Client::getHost() const
-{
-	return _host;
-}
-
-const std::string &Client::getRequest() const
-{
-	return _request;
-}
-
-const std::string &Client::getBody() const
-{
-	return _body;
 }
 
 namespace {
@@ -82,6 +56,12 @@ void setErrorCodeAndBuild(const std::string &code, client::Builder *builder,
 	builder->setCode(code);
 	builder->findErrorPage();
 	builder->BuildResponse(response);
+}
+
+void setErrorCodeAndFindPage(const std::string &code, client::Builder *builder)
+{
+	builder->setCode(code);
+	builder->findErrorPage();
 }
 } // namespace
 
@@ -97,48 +77,55 @@ int Client::CGIResponse()
 		setErrorCodeAndBuild("500", _builder, _response);
 		return returnAndDeleteCgi();
 	}
+
 	ret = _cgi_handler->getStatus();
+
 	if (ret != 0) {
 		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0) {
 			LOG_WARNING("CGI return with exit status: " +
-							ToString(WEXITSTATUS(ret)),
-						CSERVER);
+						ToString(WEXITSTATUS(ret)));
 		}
 		else {
-			LOG_WARNING("CGI interrupt by SIG : " + ToString(WTERMSIG(ret)),
-						CSERVER);
+			LOG_WARNING("CGI interrupt by SIG : " + ToString(WTERMSIG(ret)));
 		}
 	}
 
 	if (_cgi_handler->recvCGIResponse() != SUCCESS) {
-		LOG_WARNING("CGI recv failed: " + std::string(strerror(errno)),
-					CSERVER);
+		LOG_WARNING("CGI recv failed: " + std::string(strerror(errno)));
 	}
 
 	try {
 		_cgi_handler->adjustHeader(_response);
+
 	} catch (const std::exception &e) {
-		LOG_ERROR(e.what(), CSERVER);
+		LOG_ERROR(e.what());
 		setErrorCodeAndBuild("500", _builder, _response);
 	}
+
 	return returnAndDeleteCgi();
 }
+
 int Client::returnAndDeleteCgi()
 {
 	delete _cgi_handler;
 	_cgi_handler = NULL;
+
 	delete _builder;
 	_builder = NULL;
+
 	return FINISH;
 }
+
 int Client::handleResponse()
 {
 	if (_cgi_handler != NULL) {
 		return CGIResponse();
 	}
+
 	_builder->BuildResponse(_response);
 	delete _builder;
 	_builder = NULL;
+
 	return FINISH;
 }
 
@@ -152,17 +139,20 @@ void Client::handleRequest()
 	_builder = new Builder(_server, _default_server, parser);
 
 	int		  state = DEFAULT;
-	const ptr tab[] = {&Builder::returnParam, &Builder::setIndexOrAutoindex,
-					   &Builder::verifMethod, &Builder::isCGI};
+	const int ptr_tab_size = 4;
+	const ptr tab[ptr_tab_size] = {&Builder::returnParam,
+								   &Builder::setIndexOrAutoindex,
+								   &Builder::verifMethod, &Builder::isCGI};
 
 	if (_builder->getCode() != "200") {
 		state = B_ERROR;
 	}
-	for (int i = 0; i < 4 && state == DEFAULT; ++i) {
+	for (int i = 0; i < ptr_tab_size && state == DEFAULT; ++i) {
 		(_builder->*tab[i])(state);
 	}
 
 	switch (state) {
+
 		case B_ERROR: {
 			_builder->findErrorPage();
 			break;
@@ -178,17 +168,18 @@ void Client::handleRequest()
 			_builder->getAutoindex();
 			break;
 		}
+
 		case INDEX: {
 			const int ret = _builder->readDataRequest();
 			if (ret != 0) {
 				LOG_WARNING("Error Accessing index file from : " +
-								_builder->getPath(),
-							_server);
-				_builder->setCode((ret == ENOENT) ? "404" : "403");
-				_builder->findErrorPage();
+							_builder->getPath());
+				setErrorCodeAndFindPage((ret == ENOENT) ? "404" : "403",
+										_builder);
 			}
 			break;
 		}
+
 		case CGI: {
 			try {
 				_cgi_handler = new CGIHandler(this, &parser, _server, _builder);
@@ -196,14 +187,14 @@ void Client::handleRequest()
 					_cgi_handler->execute();
 				}
 			} catch (const std::exception &e) {
-				LOG_ERROR(e.what(), _server);
-				_builder->setCode("500");
-				_builder->findErrorPage();
+				LOG_ERROR(e.what());
+				setErrorCodeAndFindPage("500", _builder);
 			}
 			break;
 		}
 		default: {
 			_builder->findFile();
+			
 		}
 	}
 }
@@ -211,8 +202,10 @@ void Client::handleRequest()
 std::string Client::getValueEnv(const std::string &key) const
 {
 	for (int i = 0; _envp[i] != NULL; i++) {
+
 		const std::string envp_str(_envp[i]);
 		const size_t	  equal_pos = envp_str.find_first_of('=');
+
 		if (equal_pos != std::string::npos) {
 			const std::string env_key = envp_str.substr(0, equal_pos);
 			if (env_key == key) {
@@ -226,10 +219,10 @@ std::string Client::getValueEnv(const std::string &key) const
 Client::~Client()
 {
 	delete _addr;
-	// if (_builder != NULL) {
-	// 	delete _builder;
-	// }
-	// if (_cgi_handler != NULL) {
-	// 	delete _cgi_handler;
-	// }
+	if (_builder != NULL) {
+		delete _builder;
+	}
+	if (_cgi_handler != NULL) {
+		delete _cgi_handler;
+	}
 }

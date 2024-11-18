@@ -6,11 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/14 22:27:17 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/18 12:37:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cgi/CGIHandler.hpp"
+
+#include "finder.hpp"
 
 CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 					   const VirtualServer *server, client::Builder *builder) :
@@ -27,29 +29,15 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 
 	const std::string fileExtension = builder->getFileExtension();
 
-	const Location *location = server->getLocation(builder->getRequestedPath());
+	_cgi = findParam(fileExtension, builder->getRequestedPath(), server);
+	if (_cgi.empty()) {
+		LOG_ERROR("CGI path not found for this extention: " + fileExtension);
+		_status = CGI_FAIL;
+		return;
+	}
 
-	if (location != NULL) {
-		_cgi = location->getParamValue(fileExtension);
-		if (_cgi.empty()) {
-			LOG_ERROR("CGI path not found for this extention: " + fileExtension,
-					  CSERVER);
-			_status = CGI_FAIL;
-			return;
-		}
-		_upload_dir = location->getParamValue("upload_dir");
-		//TODO : check if cgi is ok in location ! else go to server
-	}
-	else {
-		_cgi = server->getParamValue(fileExtension);
-		if (_cgi.empty()) {
-			LOG_ERROR("CGI path not found for this extention: " + fileExtension,
-					  CSERVER);
-			_status = CGI_FAIL;
-			return;
-		}
-		_upload_dir = server->getParamValue("upload_dir");
-	}
+	_upload_dir = findParam("upload_dir", builder->getRequestedPath(), server);
+
 	createArgv(builder);
 	createEnv(server, parser, client, builder);
 	std::string request_body = parser->getHeader("body");

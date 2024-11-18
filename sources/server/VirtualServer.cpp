@@ -6,11 +6,13 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:54:59 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/14 17:21:38 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/18 15:12:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server/VirtualServer.hpp"
+
+#include "Logger.hpp"
 
 VirtualServer::VirtualServer() {}
 
@@ -92,10 +94,13 @@ const Location *VirtualServer::getLocation(const std::string &path) const
 	size_t		pos = 0;
 
 	while (!to_test.empty()) {
+
 		try {
 			return _locations.at(to_test);
 		} catch (std::out_of_range &e) {
+			LOG_DEBUG("Location not found: " + to_test);
 		}
+
 		pos = to_test.find_last_of('/', to_test.length() - 2);
 		to_test = to_test.substr(0, pos + 1);
 		if (to_test == "/") {
@@ -137,7 +142,7 @@ VirtualServer::~VirtualServer()
 
 	std::map< std::string, Location * >::const_iterator it2 =
 		_locations.begin();
-	;
+
 	while (it2 != _locations.end()) {
 		delete (*it2).second;
 		++it2;

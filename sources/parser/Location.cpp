@@ -3,39 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:10:50 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/13 09:38:45 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 12:24:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/Location.hpp"
 
 #include "lexer/Token.hpp"
-#include "template/VectorDeepCopy.tpp"
 
-Location::Location(const std::string &route) : _route(route) {}
+using std::map;
+using std::pair;
+using std::string;
+using std::vector;
 
-Location::Location(const Location &src)
-{
-	*this = src;
-}
-
-Location &Location::operator=(const Location &src)
-{
-	if (this != &src) {
-		return *this;
-	}
-	return *this;
-}
+Location::Location(const string &route) : _route(route) {}
 
 bool Location::operator==(const Location &rhs) const
 {
 	if (this == &rhs) {
 		return true;
 	}
-	for (std::map< std::string, Param * >::const_iterator it = _params.begin();
+	for (map< string, Param * >::const_iterator it = _params.begin();
 		 it != _params.end(); ++it) {
 		if (it->second != rhs._params.at(it->first)) {
 			return false;
@@ -44,12 +35,12 @@ bool Location::operator==(const Location &rhs) const
 	return true;
 }
 
-void Location::addParam(const std::string &key, Param *param)
+void Location::addParam(const string &key, Param *param)
 {
 	_params[key] = param;
 }
 
-const Param *Location::getParam(const std::string &key) const
+const Param *Location::getParam(const string &key) const
 {
 	try {
 		return _params.at(key);
@@ -58,7 +49,7 @@ const Param *Location::getParam(const std::string &key) const
 	}
 }
 
-std::string Location::getParamValue(const std::string &key) const
+string Location::getParamValue(const string &key) const
 {
 	const Param *param = getParam(key);
 	if (param == NULL) {
@@ -67,29 +58,23 @@ std::string Location::getParamValue(const std::string &key) const
 	return param->getValue();
 }
 
-std::pair< std::string, std::string >
-Location::getParamPair(const std::string &key) const
+pair< string, string > Location::getParamPair(const string &key) const
 {
 	const Param *param = getParam(key);
-	if (param == NULL) {
-		return std::pair< std::string, std::string >("", "");
-	}
-	return param->getPair();
+	return ((param == NULL) ? pair< string, string >("", "")
+							: param->getPair());
 }
 
-std::vector< std::string > Location::getParamList(const std::string &key) const
+vector< string > Location::getParamList(const string &key) const
 {
 	const Param *param = getParam(key);
-	if (param == NULL) {
-		return std::vector< std::string >();
-	}
-	return param->getList();
+	return ((param == NULL) ? vector< string >() : param->getList());
 }
 
-std::string Location::getRoot(const std::string &path) const
+string Location::getRoot(const string &path) const
 {
-	std::string root;
-	std::string final;
+	string root;
+	string final;
 
 	try {
 		root = _params.at("root")->getValue();
@@ -104,7 +89,7 @@ std::string Location::getRoot(const std::string &path) const
 
 void Location::print() const
 {
-	std::map< std::string, Param * >::const_iterator it = _params.begin();
+	map< string, Param * >::const_iterator it = _params.begin();
 
 	while (it != _params.end()) {
 		std::cout << "Key : " << it->first << " Value : ";
@@ -115,7 +100,7 @@ void Location::print() const
 
 Location::~Location()
 {
-	for (std::map< std::string, Param * >::iterator it = _params.begin();
+	for (map< string, Param * >::iterator it = _params.begin();
 		 it != _params.end(); ++it) {
 		delete it->second;
 	}

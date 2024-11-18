@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_cgi.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/14 15:48:02 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 12:38:17 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,6 @@ void CGIHandler::createArgv(const client::Builder *builder)
 {
 	_argv.push_back(ft_strdup(_cgi.c_str()));
 	_argv.push_back(ft_strdup(builder->getPath().c_str()));
-	LOG_DEBUG("Try to Access CGI Script:" + builder->getPath(), CSERVER);
+	LOG_DEBUG("Try to Access CGI Script:" + builder->getPath());
 	_argv.push_back(NULL);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Delete_request.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:15:23 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/13 09:43:39 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 12:39:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,7 @@ bool Client::verifAccessInsideDirectory(const std::string &full_path)
 
 	dir = opendir(full_path.c_str());
 	if (dir == NULL) {
-		LOG_WARNING("Open directory error: " + std::string(strerror(errno)),
-					CSERVER);
+		LOG_WARNING("Open directory error: " + std::string(strerror(errno)));
 		_builder->setCode("500");
 		return false;
 	}
@@ -38,14 +37,13 @@ bool Client::verifAccessInsideDirectory(const std::string &full_path)
 
 		if (access(path_to_file.c_str(), F_OK | W_OK) == -1) {
 			LOG_INFO("Accessing to" + path_to_file +
-						 ": error: " + std::string(strerror(errno)),
-					 CSERVER);
+					 ": error: " + std::string(strerror(errno)));
 			_builder->setCode("403");
 			closedir(dir);
 			return false;
 		}
 		if (stat(path_to_file.c_str(), &infos) == -1) {
-			LOG_WARNING("Stat error: " + std::string(strerror(errno)), CSERVER);
+			LOG_WARNING("Stat error: " + std::string(strerror(errno)));
 			_builder->setCode("500");
 			return false;
 		}
@@ -93,7 +91,7 @@ void Client::removeDirectory(const std::string &full_path)
 	}
 	closedir(dir);
 	if (rmdir(full_path.c_str()) == -1) {
-		LOG_WARNING("Rmdir error: " + std::string(strerror(errno)), CSERVER);
+		LOG_WARNING("Rmdir error: " + std::string(strerror(errno)));
 		_builder->setCode("500");
 	}
 }
@@ -118,14 +116,13 @@ void Client::handleDeleteRequest()
 	const int ret = access(full_path.c_str(), F_OK | W_OK);
 	if (ret != 0) {
 		LOG_INFO("Accessing to" + full_path +
-					 ": error: " + std::string(strerror(errno)),
-				 CSERVER);
+				 ": error: " + std::string(strerror(errno)));
 		(errno == EACCES) ? _builder->setCode("403") : _builder->setCode("404");
 		return;
 	}
 	struct stat infos = {};
 	if (stat(full_path.c_str(), &infos) == -1) {
-		LOG_WARNING("Stat error: " + std::string(strerror(errno)), CSERVER);
+		LOG_WARNING("Stat error: " + std::string(strerror(errno)));
 		_builder->setCode("500");
 		return;
 	}

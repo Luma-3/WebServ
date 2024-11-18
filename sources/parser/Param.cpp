@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:00:44 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 15:36:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/18 12:18:02 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,11 @@ Param::Param(const Param &src) :
 
 Param &Param::operator=(const Param &rhs)
 {
-	if (this == &rhs) {
-		return *this;
+	if (this != &rhs) {
+		_type = rhs._type;
+		_key = rhs._key;
+		_value = rhs._value;
 	}
-	_type = rhs._type;
-	_key = rhs._key;
-	_value = rhs._value;
 	return *this;
 }
 
@@ -96,7 +95,6 @@ void Param::print() const
 		std::cout << "List Param: " << _key << " = ";
 		for (std::vector< std::string >::const_iterator it = _list.begin();
 			 it != _list.end(); ++it)
-
 		{
 			std::cout << *it << " ";
 		}

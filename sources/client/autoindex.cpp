@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/13 09:40:59 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 12:38:31 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void Builder::getAutoindex()
 		}
 		const string full_path = _path + entry->d_name;
 		if (stat(full_path.c_str(), &info) == -1) {
-			LOG_INFO("Impossible to get file info from " + full_path, _server);
+			LOG_INFO("Impossible to get file info from " + full_path);
 			continue;
 		}
 		const off_t	 size = info.st_size;
@@ -179,7 +179,7 @@ void Builder::setIndexOrAutoindex(int &state)
 	trimPath(_path);
 	if (access(_path.c_str(), F_OK | R_OK) != 0) {
 		_code = (errno == ENOENT) ? "404" : "403";
-		LOG_WARNING("accessing file " + _path + " failed", current);
+		LOG_WARNING("accessing file " + _path + " failed");
 		state = B_ERROR;
 		return;
 	}

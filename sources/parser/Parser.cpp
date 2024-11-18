@@ -6,15 +6,11 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/15 22:20:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/18 12:17:17 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser/Parser.hpp"
-
-#include <cstddef>
-#include <stack>
-#include <vector>
 
 #include "lexer/Lexer.hpp"
 #include "lexer/Token.hpp"

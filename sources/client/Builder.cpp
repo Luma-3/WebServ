@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/14 15:58:19 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 16:02:55 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #include <iostream>
 
-// #include "cgi/CGI.hpp"
+#include "finder.hpp"
 
 using client::Builder;
 using std::string;
@@ -60,7 +60,7 @@ void Builder::verifCGI(int &state)
 void Builder::isCGI(int &state)
 {
 	const static string cgi_extension[] = {"php", "py"};
-	for (size_t i = 0; i < 3; ++i) {
+	for (size_t i = 0; i < 2; ++i) {
 		if (_extension == cgi_extension[i]) {
 			state = CGI;
 			verifCGI(state);
@@ -88,22 +88,18 @@ void Builder::BuildResponse(string &response)
 	const string code_message = findStatusMessage(_code);
 	const string content_type = findContentType(_extension);
 
+	std::cout << "reponse: " << response << std::endl;
+
 	response = "HTTP/1.1 " + _code + code_message + "\r\n";
 
-	if (!_location.empty()) {
-		response += "Location: " + _location + "\r\n";
-	}
-	else {
-		response += "Content-Type: " + content_type + "\r\n";
-	}
+	response += (!_location.empty()) ? "Location: " + _location + "\r\n"
+									 : "Content-Type: " + content_type + "\r\n";
+
 	response += "Content-Length: " + ToString(_body.size()) + "\r\n";
 
-	if (_connection_status == "close") {
-		response += "Connection: close\r\n\r\n";
-	}
-	else {
-		response += "Connection: keep-alive\r\n\r\n";
-	}
+	response += (_connection_status == "close")
+				  ? "Connection: close\r\n\r\n"
+				  : "Connection: keep-alive\r\n\r\n";
 
 	response += std::string(_body.begin(), _body.end());
 }
@@ -176,7 +172,7 @@ void Builder::findErrorPage()
 	}
 	const std::string error =
 		(errno != 0) ? strerror(errno) : "No file found in config file";
-	LOG_INFO("No Error page for code " + _code + ": " + error, CSERVER);
+	LOG_INFO("No Error page for code " + _code + ": " + error);
 	createErrorPage();
 }
 
@@ -255,7 +251,7 @@ void Builder::readFile()
 	const int ret = readDataRequest();
 
 	if (ret != 0) {
-		LOG_WARNING("Error Accessing file path: " + _path, _server);
+		LOG_WARNING("Error Accessing file path: " + _path);
 		_code = (ret == ENOENT) ? "404" : "403";
 		findErrorPage();
 	}
@@ -263,16 +259,10 @@ void Builder::readFile()
 
 void Builder::findFile()
 {
-	const std::string root;
+	std::string root;
 	if (_code == "200") {
-		const Location *location = _server->getLocation(_request_path);
-
-		if (location != NULL) {
-			_path = location->getRoot(_request_path) + _filename;
-		}
-		else {
-			_path = _server->getRoot(_request_path) + _filename;
-		}
+		root = findRoot(_request_path, _server);
+		_path = root + _filename;
 	}
 	readFile();
 }

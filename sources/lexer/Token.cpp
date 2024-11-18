@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:37:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/15 22:20:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/18 12:27:06 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ Token::Token(Terminal_Type term) :
 	_col(0)
 {
 }
+
 Token::Token(const std::string &key, Terminal_Type term, size_t line,
 			 size_t col) :
 	_type(TOKEN),
@@ -47,11 +48,10 @@ Token::Token(const Token &src) :
 
 Token &Token::operator=(const Token &rhs)
 {
-	if (this == &rhs) {
-		return *this;
+	if (this != &rhs) {
+		_type = rhs._type;
+		_key = rhs._key;
 	}
-	_type = rhs._type;
-	_key = rhs._key;
 	return *this;
 }
 
@@ -61,10 +61,7 @@ bool Token::IsKey(const IParserToken &token)
 {
 	const Terminal_Type type = token.getTerminal();
 
-	if (type <= T_UploadDir && type >= T_Server) {
-		return (true);
-	}
-	return (false);
+	return (type <= T_UploadDir && type >= T_Server);
 }
 
 void Token::print() const
@@ -200,7 +197,9 @@ Token::InvalidTokenException::InvalidTokenException(
 Token::InvalidTokenException &
 Token::InvalidTokenException::operator=(const InvalidTokenException &src)
 {
-	(void)src;
+	if (this != &src) {
+		_msg = src._msg;
+	}
 	return (*this);
 }
 

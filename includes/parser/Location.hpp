@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 10:03:20 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/07 13:43:20 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/18 12:21:55 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,17 @@ class Location : public IConfig
 
   public:
 	Location(const std::string &route);
-	Location(const Location &src);
-	Location &operator=(const Location &src);
 	~Location();
 
 	bool operator==(const Location &rhs) const;
 
-	void		 addParam(const std::string &key, Param *param);
-	const Param *getParam(const std::string &key) const;
-	std::string	 getParamValue(const std::string &key) const;
+	void addParam(const std::string &key, Param *param);
+
 	std::pair< std::string, std::string >
 							   getParamPair(const std::string &key) const;
 	std::vector< std::string > getParamList(const std::string &key) const;
+	const Param				  *getParam(const std::string &key) const;
+	std::string				   getParamValue(const std::string &key) const;
 	std::string				   getRoot(const std::string &path) const;
 
 	void print() const;

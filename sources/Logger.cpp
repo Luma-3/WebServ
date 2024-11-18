@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:59:40 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/13 09:50:47 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 14:30:32 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@
 
 #include "server/VirtualServer.hpp"
 
-Logger *Logger::Instance = NULL;
+Logger				*Logger::Instance = NULL;
+const VirtualServer *current = NULL;
 
 Logger::Logger(const std::string &filename, int logLevel) :
 	_filename(filename),
@@ -49,11 +50,11 @@ std::string Logger::formatFile(const std::string &filename)
 		(last_dot == std::string::npos) ? "" : filename.substr(last_dot);
 
 	extension = extension.empty() ? ".log" : extension;
+	last_slash = (last_slash == std::string::npos) ? 0 : last_slash + 1;
 
-	last_slash = last_slash == std::string::npos ? 0 : last_slash + 1;
 	const std::string path = filename.substr(0, last_slash);
 	const std::string file_without_extension =
-		filename.substr(last_slash, last_dot);
+		filename.substr(last_slash, last_dot - last_slash);
 
 	const std::string new_filename =
 		path + "[" + formatTime() + "]" + file_without_extension + extension;
@@ -93,17 +94,20 @@ std::string Logger::formatTime()
 	const std::time_t time = std::time(0);
 	std::tm			 *ltm = std::localtime(&time);
 	char			  time_str[BUFFER_SIZE];
+
 	strftime(time_str, BUFFER_SIZE, "%d-%m-%Y_%H:%M:%S", ltm);
 	return std::string(time_str);
 }
 
-std::string Logger::formatServer(const VirtualServer *server)
+std::string Logger::formatServer()
 {
-	if (server) {
-		const std::string hostname = server->getParamValue("hostname");
+	if (CSERVER) {
+
+		const std::string hostname = CSERVER->getParamValue("hostname");
+
 		if (hostname.empty()) {
-			const std::string ip = server->getParamValue("listen");
-			const std::string port = server->getParamValue("port");
+			const std::string ip = CSERVER->getParamValue("listen");
+			const std::string port = CSERVER->getParamValue("port");
 			return ip + ":" + port;
 		}
 		return hostname;
@@ -111,10 +115,9 @@ std::string Logger::formatServer(const VirtualServer *server)
 	return "Main Server";
 }
 
-// [INFO] 127.0.0.1:8080 -> meassge : 04-10-2024 14:33:51
+// [INFO] 127.0.0.1:8080 -> message : 04-10-2024 14:33:51
 
-void Logger::log(LogLevel level, const std::string &message,
-				 const VirtualServer *server)
+void Logger::log(LogLevel level, const std::string &message)
 {
 
 	if (level >= _logLevel) {
@@ -137,12 +140,14 @@ void Logger::log(LogLevel level, const std::string &message,
 				break;
 		}
 		const std::string log_message = "[" + level_str + "] " +
-										formatServer(server) + " -> " +
-										message + " : " + formatTime() + "\n";
+										formatServer() + " -> " + message +
+										" : " + formatTime() + "\n";
 		const size_t message_size = log_message.size();
+
 		if (_buffer_size + message_size >= BUFFER_SIZE) {
 			flush();
 		}
+
 		std::memcpy(_buffer + _buffer_size, log_message.c_str(), message_size);
 		_buffer_size += message_size;
 	}
@@ -152,7 +157,9 @@ std::string Logger::removeColor(const std::string &str)
 {
 	std::string new_str = str;
 	size_t		pos = 0;
+
 	while ((pos = new_str.find("\033[")) != std::string::npos) {
+
 		const size_t end = new_str.find('m', pos);
 		if (end != std::string::npos) {
 			new_str.erase(pos, end - pos + 1);

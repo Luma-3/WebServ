@@ -6,13 +6,12 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/15 11:46:22 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/18 12:42:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cctype>
-#include <cstdlib>
 #include <string>
+#include <cstdlib>
 
 #include "lexer/Lexer.hpp"
 #include "lexer/Token.hpp"

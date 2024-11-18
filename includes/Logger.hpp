@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:44:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/12 11:27:17 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/18 12:55:26 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@
 
 class VirtualServer;
 
-static const VirtualServer *current __attribute__((unused)) = NULL;
+extern const VirtualServer *current;
+
 #define CSERVER current
 
 #define BUFFER_SIZE 1024
@@ -37,9 +38,9 @@ enum LogLevel {
 #define ERROR ERROR
 };
 
-#define LOG_DEBUG(message, server)                                            \
+#define LOG_DEBUG(message)                                                    \
 	if (Logger::Instance) {                                                   \
-		Logger::Instance->log(DEBUG, Logger::removeColor(message), server);   \
+		Logger::Instance->log(DEBUG, Logger::removeColor(message));           \
 	}                                                                         \
 	else {                                                                    \
 		std::cerr << PASTEL_RED "No logger instance"                          \
@@ -49,9 +50,9 @@ enum LogLevel {
 		std::cerr << (message) << std::endl;                                  \
 	}
 
-#define LOG_INFO(message, server)                                             \
+#define LOG_INFO(message)                                                     \
 	if (Logger::Instance) {                                                   \
-		Logger::Instance->log(INFO, Logger::removeColor(message), server);    \
+		Logger::Instance->log(INFO, Logger::removeColor(message));            \
 	}                                                                         \
 	else {                                                                    \
 		std::cerr << PASTEL_RED "No logger instance"                          \
@@ -61,9 +62,9 @@ enum LogLevel {
 		std::cerr << (message) << std::endl;                                  \
 	}
 
-#define LOG_WARNING(message, server)                                          \
+#define LOG_WARNING(message)                                                  \
 	if (Logger::Instance) {                                                   \
-		Logger::Instance->log(WARNING, Logger::removeColor(message), server); \
+		Logger::Instance->log(WARNING, Logger::removeColor(message));         \
 	}                                                                         \
 	else {                                                                    \
 		std::cerr << PASTEL_RED "No logger instance"                          \
@@ -73,9 +74,9 @@ enum LogLevel {
 		std::cerr << (message) << std::endl;                                  \
 	}
 
-#define LOG_ERROR(message, server)                                            \
+#define LOG_ERROR(message)                                                    \
 	if (Logger::Instance) {                                                   \
-		Logger::Instance->log(ERROR, Logger::removeColor(message), server);   \
+		Logger::Instance->log(ERROR, Logger::removeColor(message));           \
 	}                                                                         \
 	else {                                                                    \
 		std::cerr << PASTEL_RED "No logger instance"                          \
@@ -96,7 +97,7 @@ class Logger
 
 	static std::string formatFile(const std::string &filename);
 	static std::string formatTime();
-	static std::string formatServer(const VirtualServer *server);
+	static std::string formatServer();
 
   public:
 	static Logger *Instance;
@@ -106,8 +107,7 @@ class Logger
 
 	Logger &operator=(const Logger &rhs);
 
-	void log(LogLevel level, const std::string &message,
-			 const VirtualServer *server = NULL);
+	void log(LogLevel level, const std::string &message);
 
 	static LogLevel StringToLogLevel(const std::string &str);
 

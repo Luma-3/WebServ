@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/14 13:21:50 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 11:52:17 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cerrno>
-#include <cstdlib>
-#include <cstring>
 #include <exception>
 #include <iostream>
 
@@ -22,18 +20,25 @@
 #include "server/Handler.hpp"
 #include "server/Signal.hpp"
 
-Handler *init_server(const char **av, const char **envp)
+using parser::Parser;
+
+using std::cerr;
+using std::cout;
+using std::endl;
+using std::vector;
+
+Handler *init_server(const char *conf_file, const char **envp)
 {
 
-	Lexer Lexer(av[1]);
+	Lexer Lexer(conf_file);
 	Lexer.Tokenize();
 
-	parser::Parser parser(&Lexer);
+	Parser parser(&Lexer);
 	parser.Parse();
 
-	const std::vector< VirtualServer * > servers = parser.getServers();
+	const vector< VirtualServer * > servers = parser.getServers();
 	if (!parser.getParseStack().empty()) {
-		Param *token = dynamic_cast< Param * >(parser.getParseStack().top());
+		Param *token = D_Cast< Param * >(parser.getParseStack().top());
 		new Logger(token->getPair().second,
 				   Logger::StringToLogLevel(token->getPair().first));
 	}
@@ -43,13 +48,23 @@ Handler *init_server(const char **av, const char **envp)
 	return (handler);
 }
 
+void delete_instance(Handler *handler, Logger *logger)
+{
+	if (handler) {
+		delete handler;
+	}
+	if (logger) {
+		delete logger;
+	}
+}
+
 int main(const int ac, const char **av, const char **env)
 {
 	Handler *handler = NULL;
 
-	std::cerr << "Starting server..." << std::endl;
+	cout << "Starting server..." << endl;
 	if (ac != 2) {
-		std::cerr << "Usage: ./webserv <config_file>" << std::endl;
+		cerr << "Usage: ./webserv <config_file>" << endl;
 		return FAILURE;
 	}
 	if (initSignal() == FAILURE) {
@@ -57,20 +72,15 @@ int main(const int ac, const char **av, const char **env)
 	}
 
 	try {
-		handler = init_server(av, env);
+		handler = init_server(av[1], env);
+		cout << "Server started !" << endl;
 		handler->runEventLoop();
 	} catch (const std::exception &e) {
-		std::cerr << e.what() << std::endl;
+		cerr << e.what() << endl;
+		delete_instance(handler, Logger::Instance);
 		return FAILURE;
 	}
-	// } catch (const std::exception &e) {
-	// 	std::cerr << e.what() << " | errno: " << strerror(errno) << '\n';
-	// 	delete handler;
-	// 	return (1);
-	// }
 
-	// delete handler;
-	// delete Logger::Instance;
-
-	return 0;
+	delete_instance(handler, Logger::Instance);
+	return SUCCESS;
 }

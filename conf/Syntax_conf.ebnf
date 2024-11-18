@@ -11,6 +11,9 @@ ServerParam = 	LocationBlock
 				|	DenyMethodParam
 				|	ReturnParam
 				|	IndexParam
+				|	MaxBodySizeParam
+				|	UploadDir
+				|	CgiParam
 
 LocationBlock = 'location' path '{' [ LocationParam ] '}'
 LocationParam =	RootParam
@@ -19,6 +22,9 @@ LocationParam =	RootParam
 				|	AutoindexParam
 				|	DenyMethodParam
 				|	ReturnParam
+				|	MaxBodySizeParam
+				|	UploadDir
+				|	CgiParam
 
 PortParam		= 'port' digits ';'
 HostParam		= 'host'  identifier ';'
@@ -32,8 +38,11 @@ autoindexParam	= 'autoindex' bool ';'
 
 ReturnParam		= 'return' digits identifier ';'
 
-MaxBodySizeParam	= 'client_max_body_size' identifier ';'
+MaxBodySizeParam	= 'max_body_size' identifier ';'
 
+UploadDir = 'uplaod_dir' path ';'
+
+CgiParam = 'cgi' cgi_extension identifier ';' 
 
 identifier	= [a-zA-Z0-9_-.]+
 path		= [a-zA-Z0-9/_-]+/
@@ -41,4 +50,5 @@ digits		= [0-9]+
 method		= 'GET' | 'POST' | 'DELETE'
 log_level	= 'Debug' | 'Info' | 'Warning' | 'Error'
 bool		= 'on' | 'off'
+cgi_extension = 'php' | 'py'
 

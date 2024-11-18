@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/08 16:08:39 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/18 15:15:33 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,16 +71,15 @@ class Client
 	Client(const VirtualServer *server, const VirtualServer *default_s,
 		   int client_socket, sockaddr_storage *client_addr, const char **envp);
 	Client(const Client &src);
-	Client &operator=(const Client &src);
 	~Client();
 
 	bool operator==(const Client &rhs) const;
 
-	const ServerHost	   *getHost() const;
-	int						getSocket() const;
-	const std::string	   &getRequest() const;
+	const ServerHost	   *getHost() const { return _host; };
+	int						getSocket() const { return _client_socket; };
+	const std::string	   &getRequest() const { return _request; };
 	const std::string	   &getResponse() const { return _response; };
-	const std::string	   &getBody() const;
+	const std::string	   &getBody() const { return _body; };
 	const sockaddr_storage *getAddr() const { return _addr; };
 	const VirtualServer	   *getServer() const { return _server; };
 	const VirtualServer *getDefaultServer() const { return _default_server; };
@@ -89,6 +88,7 @@ class Client
 	std::string getValueEnv(const std::string &key) const;
 	void		setRequest(const std::string &request) { _request = request; };
 	void setResponse(const std::string &response) { _response = response; };
+	void setBuilder(Builder *builder) { _builder = builder; }
 
 	void handleRequest();
 	int	 handleResponse();
