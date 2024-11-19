@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/18 16:13:51 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 09:58:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,8 +170,6 @@ void Handler::handleClientResponse(int event_fd)
 		return;
 	}
 
-	std::cout << "Je comment a envoyer la reponse" << std::endl;
-
 	try {
 		CSERVER = client->getServer();
 		ServerHost::sendResponse(event_fd, client->getResponse());
@@ -181,7 +179,6 @@ void Handler::handleClientResponse(int event_fd)
 		LOG_ERROR(e.what());
 		handleClientDisconnection(event_fd);
 	}
-	std::cerr << "JE sors de la repsonse" << std::endl;
 }
 
 void Handler::handleClientDisconnection(int event_fd)

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 16:08:24 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 10:01:28 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,6 @@ void ServerHost::sendResponse(int client_socket, const string &response)
 	if (response.empty()) {
 		return;
 	}
-	std::cout << "response: " << response << std::endl;
 
 	if (response.find("Transfer-Encoding: chunked") != string::npos) {
 		chunckResponse(client_socket, response);

@@ -81,10 +81,11 @@ class TestServerBodyReturn(TestFunct):
 ##################################################
 	def test_cookie_post(self):
 		print("Testing cookie with POST")
-		data = {'name':'Billy', 'age':'None'}
+		data = {'name':'Billy', 'age':'7'}
 		cookies = {'session_id':'123456'}
 		response = requests.post(self.url + "/cgi-bin/test.py", cookies=cookies, data=data)
-		self.verifBody(response,'name=Billy&age=None&cookie=session_id=123456')
+		
+		self.verifBody(response,'name=Billy&age=7&cookie=session_id=123456')
 
 	def test_get_with_query_and_cookies(self):
 		print("Testing GET with query string and cookies")

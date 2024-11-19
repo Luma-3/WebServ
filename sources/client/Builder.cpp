@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/18 16:02:55 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 09:31:58 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,6 @@ void Builder::BuildResponse(string &response)
 {
 	const string code_message = findStatusMessage(_code);
 	const string content_type = findContentType(_extension);
-
-	std::cout << "reponse: " << response << std::endl;
 
 	response = "HTTP/1.1 " + _code + code_message + "\r\n";
 

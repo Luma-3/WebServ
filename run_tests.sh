@@ -6,7 +6,7 @@ google_test() {
 
 	cp tests/gtest/all_run.sh build/tests/all_run.sh
 
-	cp -r tests/gtest/conf/ build/tests/
+	cp -rf tests/gtest/conf/ build/tests/
 	chmod 000  build/tests/conf/lexer/exception/no_perm.conf
 
 	echo "Prepare environment DONE"

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 12:37:43 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 10:16:49 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 
 	_cgi = findParam(fileExtension, builder->getRequestedPath(), server);
 	if (_cgi.empty()) {
-		LOG_ERROR("CGI path not found for this extention: " + fileExtension);
 		_status = CGI_FAIL;
-		return;
+		throw std::runtime_error("CGI path not found for this extention: " +
+								 fileExtension);
 	}
 
 	_upload_dir = findParam("upload_dir", builder->getRequestedPath(), server);

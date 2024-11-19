@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 12:38:17 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 09:31:53 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,6 @@ void CGIHandler::handleUploadDir(const std::string &body)
 	const size_t end = body.find("\"", pos) - 1;
 
 	_body = body.substr(0, pos) + _upload_dir + filename + body.substr(end);
-	std::cout << "NEW BODY: " << _body << std::endl;
 }
 
 void CGIHandler::createArgv(const client::Builder *builder)
