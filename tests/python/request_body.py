@@ -66,8 +66,8 @@ class TestServerBodyReturn(TestFunct):
 
 	def test_cgi_post_query_string(self):
 		print("Testing CGI POST query string, body should contain 'name=Billy&age=None'")
-		data = {'name':'Billy', 'age':'None'}
-		response = requests.post(self.url + "/cgi-bin/test.php", data=data)
+		headers = {"Content-Type": "application/x-www-form-urlencoded"}
+		response = requests.post(self.url + "/cgi-bin/test.php", data="name=Billy&age=None", headers=headers)
 		print(response.text)
 		self.verifBody(response,'name=Billy&age=None')
 

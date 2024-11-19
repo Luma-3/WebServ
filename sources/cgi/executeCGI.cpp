@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 12:38:11 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 15:44:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int CGIHandler::childProcess()
 	if (Logger::Instance) {
 		Logger::Instance->resetBuffer();
 	}
-
 	if (close(_pipeOut[READ]) != 0 || close(_pipeIn[WRITE]) != 0) {
 		LOG_WARNING("Close Error: " + string(strerror(errno)));
 		exit(FAILURE);

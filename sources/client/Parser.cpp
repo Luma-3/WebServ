@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/11/18 16:19:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 15:22:26 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void Parser::getBodyFromRequest()
 	}
 
 	if (!_buffer.empty() && _headers["Method"] == "POST") {
+		
 		if (_buffer[0] == '\r' && _buffer[1] == '\n') {
 			_buffer.erase(0, 2);
 		}

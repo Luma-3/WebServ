@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/19 10:24:53 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 16:04:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,12 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 	createArgv(builder);
 	createEnv(server, parser, client, builder);
 	std::string request_body = parser->getHeader("body");
-	if (request_body.find("multipart/form-data") != std::string::npos) {
-		handleUploadDir(request_body);
-	}
-	else {
-		_body = request_body;
-	}
+	// if (request_body.find("multipart/form-data") != std::string::npos) {
+	// 	handleUploadDir(request_body);
+	// }
+	// else {
+	_body = request_body;
+	// }
 }
 
 char *ft_strdup(const char *s)
