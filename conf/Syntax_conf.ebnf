@@ -12,7 +12,6 @@ ServerParam = 	LocationBlock
 				|	ReturnParam
 				|	IndexParam
 				|	MaxBodySizeParam
-				|	UploadDir
 				|	CgiParam
 
 LocationBlock = 'location' path '{' [ LocationParam ] '}'
@@ -23,7 +22,6 @@ LocationParam =	RootParam
 				|	DenyMethodParam
 				|	ReturnParam
 				|	MaxBodySizeParam
-				|	UploadDir
 				|	CgiParam
 
 PortParam		= 'port' digits ';'
@@ -39,8 +37,6 @@ autoindexParam	= 'autoindex' bool ';'
 ReturnParam		= 'return' digits identifier ';'
 
 MaxBodySizeParam	= 'max_body_size' identifier ';'
-
-UploadDir = 'uplaod_dir' path ';'
 
 CgiParam = 'cgi' cgi_extension identifier ';' 
 

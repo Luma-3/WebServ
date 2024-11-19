@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/19 16:04:36 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 17:33:38 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,10 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 								 fileExtension);
 	}
 
-	_upload_dir = findParam("upload_dir", builder->getRequestedPath(), server);
-
 	createArgv(builder);
 	createEnv(server, parser, client, builder);
 	std::string request_body = parser->getHeader("body");
-	// if (request_body.find("multipart/form-data") != std::string::npos) {
-	// 	handleUploadDir(request_body);
-	// }
-	// else {
 	_body = request_body;
-	// }
 }
 
 char *ft_strdup(const char *s)
