@@ -27,6 +27,9 @@ jobs:
       - name: Update apt-get
         run: sudo apt-get update
 
+      - name: Install dependencies
+        run: sudo apt-get install php-cgi
+
       - name: Make test
         run: make test
 
