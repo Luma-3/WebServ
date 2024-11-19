@@ -10,5 +10,5 @@ name = form.getvalue('name')
 age = form.getvalue('age')
 
 cookies = os.environ.get('HTTP_COOKIE', '')
-
+print(form)
 print(f"name={name}&age={age}&cookie={cookies}")

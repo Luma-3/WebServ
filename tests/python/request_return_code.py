@@ -35,6 +35,11 @@ class TestServerStaticReturnCodeWebsiteConf(TestFunct):
 		response = requests.get(self.url + "/")
 		self.verifReturn(response, 200)
 
+	def test_wrong_index(self):
+		print("Testing wrong index page, should return 404")
+		response = requests.get(self.url + "/wrong-index/")
+		self.verifReturn(response, 404)
+
 	def test_not_found(self):
 		print("Testing not found page, should return 404")
 		response = requests.get(self.url + "/index.htmoul")
@@ -43,8 +48,13 @@ class TestServerStaticReturnCodeWebsiteConf(TestFunct):
 ##################################################
 # Test DELETE
 ##################################################
-	def test_delete(self):
-		print("Testing delete, should return 200")
+	def test_delete_wrong(self):
+		print("Testing delete, should return 404")
+		response = requests.delete(self.url + "/deloute/")
+		self.verifReturn(response, 404)
+
+	def test_delete_good(self):
+		print("Testing delete good, should return 200")
 		response = requests.delete(self.url + "/delete/")
 		self.verifReturn(response, 200)
 

@@ -67,7 +67,8 @@ class TestServerBodyReturn(TestFunct):
 	def test_cgi_post_query_string(self):
 		print("Testing CGI POST query string, body should contain 'name=Billy&age=None'")
 		data = {'name':'Billy', 'age':'None'}
-		response = requests.post(self.url + "/cgi-bin/test.py", data=data)
+		response = requests.post(self.url + "/cgi-bin/test.php", data=data)
+		print(response.text)
 		self.verifBody(response,'name=Billy&age=None')
 
 	def test_max_body_size_post(self):

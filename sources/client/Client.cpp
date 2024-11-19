@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 16:11:31 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 14:29:21 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,13 +140,14 @@ void Client::handleRequest()
 
 	int		  state = DEFAULT;
 	const int ptr_tab_size = 4;
-	const ptr tab[ptr_tab_size] = {&Builder::returnParam,
-								   &Builder::setIndexOrAutoindex,
-								   &Builder::verifMethod, &Builder::isCGI};
+	const ptr tab[ptr_tab_size] = {&Builder::handleMethods,
+								   &Builder::returnParam,
+								   &Builder::validateIndexDir, &Builder::isCGI};
 
 	if (_builder->getCode() != "200") {
 		state = B_ERROR;
 	}
+
 	for (int i = 0; i < ptr_tab_size && state == DEFAULT; ++i) {
 		(_builder->*tab[i])(state);
 	}
@@ -165,21 +166,9 @@ void Client::handleRequest()
 			break;
 		}
 		case AUTOINDEX: {
-			_builder->getAutoindex();
+			_builder->Autoindex();
 			break;
 		}
-
-		case INDEX: {
-			const int ret = _builder->readDataRequest();
-			if (ret != 0) {
-				LOG_WARNING("Error Accessing index file from : " +
-							_builder->getPath());
-				setErrorCodeAndFindPage((ret == ENOENT) ? "404" : "403",
-										_builder);
-			}
-			break;
-		}
-
 		case CGI: {
 			try {
 				_cgi_handler = new CGIHandler(this, &parser, _server, _builder);
@@ -194,7 +183,6 @@ void Client::handleRequest()
 		}
 		default: {
 			_builder->findFile();
-			
 		}
 	}
 }

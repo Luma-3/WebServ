@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/18 12:38:31 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 14:29:04 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ using std::string;
 
 void Builder::trimPath(string &path)
 {
-	if (path[path.size() - 1] != '/') {
-		path += "/";
-	}
+	// if (path[path.size() - 1] != '/') {
+	// 	path += "/";
+	// }
 	if (path[0] == '/') {
 		path = path.substr(1);
 	}
@@ -28,10 +28,7 @@ void Builder::trimPath(string &path)
 
 bool Builder::verifAccess()
 {
-	int ret = 0;
-
-	ret = access(_path.c_str(), F_OK | R_OK);
-	if (ret != 0) {
+	if (access(_path.c_str(), F_OK | R_OK)) {
 		_code = (errno == ENOENT) ? "404" : "403";
 		findErrorPage();
 		return false;
@@ -39,42 +36,70 @@ bool Builder::verifAccess()
 	return true;
 }
 
+template < typename T >
+int getAutoIndex(T *ptr, const string &request_path, string &code, string &path)
+{
+	string autoindex;
+
+	autoindex = ptr->getParamValue("autoindex");
+	path = ptr->getRoot(request_path);
+
+	code = (autoindex == "on") ? code : "403";
+	return (autoindex == "on") ? AUTOINDEX : B_ERROR;
+}
+
+int Builder::getIndex(const string &root, const string &index)
+{
+	_path = root + index;
+	_filename = index;
+	_extension = Parser::findExtension(index);
+	return DEFAULT;
+}
+
+void Builder::validateIndexDir(int &state)
+{
+	if (!_filename.empty()) {
+		return;
+	}
+
+	state = verifLocationAndGetNewPath();
+
+	trimPath(_path);
+
+	if (access(_path.c_str(), F_OK | R_OK) != 0) {
+		_code = (errno == ENOENT) ? "404" : "403";
+		LOG_WARNING("Accessing file " + _path + " failed");
+		state = B_ERROR;
+	}
+}
+
 int Builder::verifLocationAndGetNewPath()
 {
 	string			root;
 	const Location *location = NULL;
-	string			autoindex;
 	string			index;
 
-	location = _server->getLocation(_request_path);
+	location = _server->getLocation(_requestPath);
 	if (location != NULL) {
+
+		root = location->getRoot(_requestPath);
 		index = location->getParamValue("index");
-		root = location->getRoot(_request_path);
+
 		if (!index.empty()) {
-			_path = root + index;
-			_filename = index;
-			_extension = Parser::findExtension(index);
-			return INDEX;
+			return getIndex(root, index);
 		}
-		autoindex = location->getParamValue("autoindex");
-		if (!autoindex.empty()) {
-			_path = location->getRoot(_request_path);
-		}
-		_code = (autoindex == "on") ? _code : "403";
-		return (autoindex == "on") ? AUTOINDEX : B_ERROR;
+
+		return getAutoIndex(location, _requestPath, _code, _path);
 	}
-	index = _server->getParamValue("index");
+
 	root = _server->getParamValue("root");
+	index = _server->getParamValue("index");
+
+
 	if (!index.empty()) {
-		_path = root + index;
-		_filename = index;
-		_extension = Parser::findExtension(index);
-		return INDEX;
+		return getIndex(root, index);
 	}
-	autoindex = _server->getParamValue("autoindex");
-	_path = _server->getRoot(_request_path);
-	_code = (autoindex == "on") ? _code : "403";
-	return (autoindex == "on") ? AUTOINDEX : B_ERROR;
+	return getAutoIndex(_server, _requestPath, _code, _path);
 }
 
 std::string formatSize(off_t size)
@@ -102,12 +127,9 @@ void Builder::insertFileInHead(string &file, const off_t &size,
 	const string last_modif = "%@last_modif@%";
 	const string sizeStr = "%@size@%";
 
-	if (id == IS_FILE) {
-		head = DEFAULT_AUTOINDEX_LIST_FILE;
-	}
-	else {
-		head = DEFAULT_AUTOINDEX_LIST_DIR;
-	}
+	head = (id == IS_FILE) ? DEFAULT_AUTOINDEX_LIST_FILE
+						   : DEFAULT_AUTOINDEX_LIST_DIR;
+
 	head.replace(head.find(fileStr), fileStr.size(), file);
 	head.replace(head.find(fileStr), fileStr.size(), file);
 	head.replace(head.find(last_modif), last_modif.size(), date);
@@ -123,16 +145,18 @@ void Builder::insertFooterAndSetAttributes(std::vector< char > &body)
 	_extension = "html";
 }
 
-void Builder::getAutoindex()
+void Builder::Autoindex()
 {
 	struct dirent *entry = NULL;
 	struct stat	   info = {};
-	string		   file;
 	DIR			  *dir = NULL;
-	int			   id = 0;
-	const string   path = "%@path@%";
+
+	const string path = "%@path@%";
+	string		 file;
+	int			 id = 0;
 
 	string head = DEFAULT_AUTOINDEX_PAGE_HEAD;
+
 	head.replace(head.find(path), path.size(), _path);
 	_body.insert(_body.end(), head.begin(), head.end());
 
@@ -147,6 +171,7 @@ void Builder::getAutoindex()
 			LOG_INFO("Impossible to get file info from " + full_path);
 			continue;
 		}
+
 		const off_t	 size = info.st_size;
 		const time_t last_modif = info.st_mtime;
 		struct tm	*time = gmtime(&last_modif);
@@ -164,23 +189,4 @@ void Builder::getAutoindex()
 	}
 	closedir(dir);
 	insertFooterAndSetAttributes(_body);
-}
-
-void Builder::setIndexOrAutoindex(int &state)
-{
-	if (!_filename.empty()) {
-		return;
-	}
-	state = verifLocationAndGetNewPath();
-	if (state != AUTOINDEX) {
-		state = DEFAULT;
-		return;
-	}
-	trimPath(_path);
-	if (access(_path.c_str(), F_OK | R_OK) != 0) {
-		_code = (errno == ENOENT) ? "404" : "403";
-		LOG_WARNING("accessing file " + _path + " failed");
-		state = B_ERROR;
-		return;
-	}
 }

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/19 09:31:58 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 14:29:47 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,34 +23,23 @@ Builder::Builder(const VirtualServer  *server,
 				 const VirtualServer  *default_server,
 				 const client::Parser &parser) :
 	_server(server),
-	_default_server(default_server),
+	_defaultServer(default_server),
 	_parser(parser),
-	_request_path(parser.getRequestedPath()),
+	_requestPath(parser.getRequestedPath()),
 	_path(parser.getRequestedPath() + parser.getFilename()),
 	_filename(parser.getFilename()),
 	_extension(parser.getFileExtension()),
-	_connection_status(parser.getHeader("Connection")),
+	_connectionStatus(parser.getHeader("Connection")),
 	_code(parser.getCodeResponse())
 {
 }
 
 void Builder::verifCGI(int &state)
 {
-	const Location *location = _server->getLocation(_request_path);
-	std::string		root;
+	std::string root = findRoot(_requestPath, _server);
 
-	if (location != NULL) {
-		root = location->getRoot(_request_path);
-		_path = root + _filename;
-		if (access(_path.c_str(), F_OK | R_OK) != 0) {
-
-			state = B_ERROR;
-			_code = (errno == ENOENT) ? "404" : "403";
-		}
-		return;
-	}
-	root = _server->getRoot(_request_path);
 	_path = root + _filename;
+
 	if (access(_path.c_str(), F_OK | R_OK) != 0) {
 		state = B_ERROR;
 		_code = (errno == ENOENT) ? "404" : "403";
@@ -90,12 +79,13 @@ void Builder::BuildResponse(string &response)
 
 	response = "HTTP/1.1 " + _code + code_message + "\r\n";
 
-	response += (!_location.empty()) ? "Location: " + _location + "\r\n"
-									 : "Content-Type: " + content_type + "\r\n";
+	response += (!_returnLocation.empty())
+				  ? "Location: " + _returnLocation + "\r\n"
+				  : "Content-Type: " + content_type + "\r\n";
 
 	response += "Content-Length: " + ToString(_body.size()) + "\r\n";
 
-	response += (_connection_status == "close")
+	response += (_connectionStatus == "close")
 				  ? "Connection: close\r\n\r\n"
 				  : "Connection: keep-alive\r\n\r\n";
 
@@ -107,14 +97,14 @@ bool Builder::findErrorPageLocation()
 	std::string error_page;
 	std::string error_path;
 
-	const Location *location = _server->getLocation(_request_path);
+	const Location *location = _server->getLocation(_requestPath);
 
 	if (location == NULL) {
 		return false;
 	}
 
 	error_page = location->getParamValue(_code);
-	error_path = location->getRoot(_request_path);
+	error_path = location->getRoot(_requestPath);
 
 	if (error_page.empty()) {
 		return false;
@@ -142,8 +132,8 @@ bool Builder::findErrorPageServer()
 
 bool Builder::findErrorPageDefaultServer()
 {
-	const std::string error_page = _default_server->getParamValue(_code);
-	const std::string error_path = _default_server->getParamValue("root");
+	const std::string error_page = _defaultServer->getParamValue(_code);
+	const std::string error_path = _defaultServer->getParamValue("root");
 
 	if (error_page.empty()) {
 		return false;
@@ -174,25 +164,16 @@ void Builder::findErrorPage()
 	createErrorPage();
 }
 
-bool Builder::isMethodDeny(int &state, std::string &max_body_size)
+bool Builder::isMethodDeny(int &state, const std::string &current_method)
 {
 	std::vector< std::string > deny_methods;
-	std::string				   upload_dir;
 
-	const Location *location = _server->getLocation(_request_path);
-	if (location != NULL) {
-		deny_methods = location->getParamList("deny_method");
-		max_body_size = location->getParamValue("max_body_size");
-	}
-	else {
-		deny_methods = _server->getParamList("deny_method");
-		max_body_size = _server->getParamValue("max_body_size");
-	}
+	deny_methods = findParamList("deny_method", _requestPath, _server);
 	if (deny_methods.empty()) {
 		return false;
 	}
 	for (size_t i = 0; i < deny_methods.size(); ++i) {
-		if (deny_methods[i] == _parser.getHeader("Method")) {
+		if (deny_methods[i] == current_method) {
 			_code = "405";
 			state = B_ERROR;
 			return true;
@@ -201,18 +182,21 @@ bool Builder::isMethodDeny(int &state, std::string &max_body_size)
 	return false;
 }
 
-void Builder::verifMethod(int &state)
+void Builder::handleMethods(int &state)
 {
-	std::string max_body_size;
+	const std::string current_method = _parser.getHeader("Method");
+	std::string		  max_body_size =
+		findParam("max_body_size", _requestPath, _server);
 
-	if (isMethodDeny(state, max_body_size) == true) {
+	if (isMethodDeny(state, current_method)) {
 		return;
 	}
-	const std::string current_method = _parser.getHeader("Method");
+
 	if (current_method == "DELETE") {
 		state = DELETE;
 		return;
 	}
+
 	if (max_body_size.empty()) {
 		return;
 	}
@@ -259,7 +243,7 @@ void Builder::findFile()
 {
 	std::string root;
 	if (_code == "200") {
-		root = findRoot(_request_path, _server);
+		root = findRoot(_requestPath, _server);
 		_path = root + _filename;
 	}
 	readFile();
@@ -267,18 +251,18 @@ void Builder::findFile()
 
 void Builder::returnParam(int &state)
 {
-	const Location *location = _server->getLocation(_request_path);
+	const Location *location = _server->getLocation(_requestPath);
 	if (location != NULL) {
 		if (!location->getParamPair("return").first.empty()) {
 			_code = location->getParamPair("return").first;
-			_location = location->getParamPair("return").second;
+			_returnLocation = location->getParamPair("return").second;
 		}
 	}
 	else if (!_server->getParamPair("return").first.empty()) {
 		_code = _server->getParamPair("return").first;
-		_location = _server->getParamPair("return").second;
+		_returnLocation = _server->getParamPair("return").second;
 	}
-	state = (_location.empty()) ? state : REDIRECT;
+	state = (_returnLocation.empty()) ? state : REDIRECT;
 }
 
 Builder::~Builder() {}

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 10:08:55 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 10:18:34 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 13:02:09 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,20 @@ std::string findRoot(const std::string &uri, const VirtualServer *server)
 		}
 	}
 	return server->getRoot(uri);
+}
+
+std::vector< std::string > findParamList(const std::string	 &param,
+										 const std::string	 &uri,
+										 const VirtualServer *server)
+{
+	const Location			  *location = server->getLocation(uri);
+	std::vector< std::string > value;
+
+	if (location != NULL) {
+		value = location->getParamList(param);
+		if (!value.empty()) {
+			return value;
+		}
+	}
+	return server->getParamList(param);
 }

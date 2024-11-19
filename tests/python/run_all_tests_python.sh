@@ -47,7 +47,9 @@ echo
 echo "=============[Return Code Test]============="
 echo
 
-touch tests/python/components/delete_me.html && touch tests/python/components/no_perm.html
+mkdir -p tests/python/delete/delete2
+touch tests/python/delete/delete_me.html && touch tests/python/delete/delete2/delete_me.html
+touch tests/python/components/no_perm.html
 chmod 000 tests/python/components/no_perm.html
 
 launch "tests/python/conf/classic.conf"
@@ -55,6 +57,7 @@ sleep 1
 run_test "tests/python/request_return_code.py"
 
 rm -f tests/python/components/no_perm.html
+rm -rf delete
 kill_server
 
 echo

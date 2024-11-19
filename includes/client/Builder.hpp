@@ -40,21 +40,20 @@ class Builder
 {
   private:
 	const VirtualServer	 *_server;
-	const VirtualServer	 *_default_server;
+	const VirtualServer	 *_defaultServer;
 	const client::Parser &_parser;
 
-	std::string			_request_path;
+	std::string			_requestPath;
 	std::string			_path;
 	std::string			_filename;
 	std::string			_extension;
-	std::string			_location;
-	std::string			_connection_status;
+	std::string			_returnLocation;
+	std::string			_connectionStatus;
 	std::string			_code;
 	std::vector< char > _body;
 
 	void createErrorPage();
 
-	void		buildHeader();
 	static void trimPath(std::string &path);
 
 	int	 verifLocationAndGetNewPath();
@@ -68,7 +67,9 @@ class Builder
 	bool findErrorPageDefaultServer();
 
 	void verifCGI(int &state);
-	bool isMethodDeny(int &state, std::string &max_body_size);
+	bool isMethodDeny(int &state, const std::string &current_method);
+
+	int getIndex(const std::string &root, const std::string &index);
 
   public:
 	Builder(const VirtualServer *server, const VirtualServer *default_server,
@@ -76,13 +77,13 @@ class Builder
 	~Builder();
 
 	void BuildResponse(std::string &response);
-	void verifMethod(int &state);
+	void handleMethods(int &state);
 	void returnParam(int &state);
 	void findFile();
 	void readFile();
 	void findErrorPage();
-	void setIndexOrAutoindex(int &state);
-	void getAutoindex();
+	void validateIndexDir(int &state);
+	void Autoindex();
 	void isCGI(int &state);
 	int	 readDataRequest();
 
@@ -90,7 +91,7 @@ class Builder
 	const std::string &getFilename() const { return _filename; };
 	const std::string &getCode() const { return _code; };
 	const std::string &getPath() const { return _path; };
-	const std::string &getRequestedPath() const { return _request_path; };
+	const std::string &getRequestedPath() const { return _requestPath; };
 
 	void setCode(const std::string &code) { _code = code; };
 };

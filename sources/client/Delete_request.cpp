@@ -6,19 +6,32 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:15:23 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/18 12:39:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/19 14:29:40 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <cstring>
+
 #include "client/Client.hpp"
+#include "finder.hpp"
 
 using client::Client;
+
+namespace {
+
+bool isCurrentOrBackDir(const char *entry_name)
+{
+	return (strncmp(entry_name, ".", strlen(entry_name)) == 0 ||
+			strncmp(entry_name, "..", strlen(entry_name)) == 0);
+}
+} // namespace
 
 bool Client::verifAccessInsideDirectory(const std::string &full_path)
 {
 	DIR			  *dir = NULL;
 	struct dirent *entry = NULL;
-	;
+	struct stat	   infos = {};
+	std::string	   path_to_file;
 
 	dir = opendir(full_path.c_str());
 	if (dir == NULL) {
@@ -26,33 +39,36 @@ bool Client::verifAccessInsideDirectory(const std::string &full_path)
 		_builder->setCode("500");
 		return false;
 	}
-	while ((entry = readdir(dir)) != NULL) {
-		const std::string path_to_file = full_path + "/" + entry->d_name;
 
-		if (strcmp(entry->d_name, ".") == 0 ||
-			strcmp(entry->d_name, "..") == 0) {
+	while ((entry = readdir(dir)) != NULL) {
+
+		path_to_file = full_path + "/" + entry->d_name;
+		memset(&infos, 0, sizeof(infos));
+
+		if (isCurrentOrBackDir(entry->d_name)) {
 			continue;
 		}
-		struct stat infos = {};
 
 		if (access(path_to_file.c_str(), F_OK | W_OK) == -1) {
-			LOG_INFO("Accessing to" + path_to_file +
-					 ": error: " + std::string(strerror(errno)));
-			_builder->setCode("403");
+			LOG_WARNING("Accessing to" + path_to_file +
+						": error: " + std::string(strerror(errno)));
+			(errno == ENOENT) ? _builder->setCode("404")
+							  : _builder->setCode("403");
 			closedir(dir);
 			return false;
 		}
 		if (stat(path_to_file.c_str(), &infos) == -1) {
-			LOG_WARNING("Stat error: " + std::string(strerror(errno)));
+			LOG_ERROR("Stat error: " + std::string(strerror(errno)));
 			_builder->setCode("500");
+			closedir(dir);
 			return false;
 		}
-		if (S_ISDIR(infos.st_mode)) {
-			if (!verifAccessInsideDirectory(path_to_file)) {
-				closedir(dir);
-				_builder->setCode("403");
-				return false;
-			}
+
+		if (S_ISDIR(infos.st_mode) &&
+			!verifAccessInsideDirectory(path_to_file)) {
+			closedir(dir);
+			_builder->setCode("403");
+			return false;
 		}
 	}
 	closedir(dir);
@@ -63,6 +79,8 @@ void Client::removeDirectory(const std::string &full_path)
 {
 	DIR			  *dir = NULL;
 	struct dirent *entry = NULL;
+	std::string	   path_to_file;
+	struct stat	   infos = {};
 
 	dir = opendir(full_path.c_str());
 	if (dir == NULL) {
@@ -70,14 +88,14 @@ void Client::removeDirectory(const std::string &full_path)
 		return;
 	}
 	while ((entry = readdir(dir)) != NULL) {
-		const std::string path_to_file = full_path + "/" + entry->d_name;
+		memset(&infos, 0, sizeof(infos));
+		path_to_file = full_path + "/" + entry->d_name;
 
-		if (strcmp(entry->d_name, ".") == 0 ||
-			strcmp(entry->d_name, "..") == 0) {
+		if (isCurrentOrBackDir(entry->d_name)) {
 			continue;
 		}
-		struct stat infos = {};
 		if (stat(path_to_file.c_str(), &infos) == -1) {
+			LOG_WARNING("Stat error: " + std::string(strerror(errno)));
 			_builder->setCode("500");
 			closedir(dir);
 			return;
@@ -104,28 +122,30 @@ void Client::removeFile(const std::string &full_path)
 	}
 }
 
-// TODO : check conditionnal logic
-
 void Client::handleDeleteRequest()
 {
-	std::string full_path = _builder->getPath();
+
+	std::string full_path = findRoot(_builder->getRequestedPath(), _server) +
+							_builder->getFilename();
+	struct stat infos = {};
 
 	if (full_path[full_path.size() - 1] == '/') {
 		full_path = full_path.substr(0, full_path.size() - 1);
 	}
-	const int ret = access(full_path.c_str(), F_OK | W_OK);
-	if (ret != 0) {
-		LOG_INFO("Accessing to" + full_path +
+
+	if (access(full_path.c_str(), F_OK | W_OK) != 0) {
+		LOG_INFO("Accessing to " + full_path +
 				 ": error: " + std::string(strerror(errno)));
 		(errno == EACCES) ? _builder->setCode("403") : _builder->setCode("404");
 		return;
 	}
-	struct stat infos = {};
+
 	if (stat(full_path.c_str(), &infos) == -1) {
 		LOG_WARNING("Stat error: " + std::string(strerror(errno)));
 		_builder->setCode("500");
 		return;
 	}
+
 	if (S_ISDIR(infos.st_mode)) {
 		if (!verifAccessInsideDirectory(full_path)) {
 			return;
