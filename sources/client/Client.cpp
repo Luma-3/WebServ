@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 13:06:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 16:19:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,4 +209,7 @@ Client::~Client()
 	delete _addr;
 	delete _builder;
 	delete _cgi_handler;
+	if (_client_socket != -1) {
+		close(_client_socket);
+	}
 }

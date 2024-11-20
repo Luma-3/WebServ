@@ -5,7 +5,7 @@ session_start();
 
 $username = $_POST['username'];
 $password = $_POST['password'];
-
+//db-wh01.winhberg.fr:3306 u2914_DlczCdFZO5 
 try {
 	$sqlite = new SQLite3(__DIR__ . '/../database/users.db');
 	$sqlite->exec('CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT, session_token TEXT)');

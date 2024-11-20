@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:37:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 12:27:06 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 15:57:12 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void Token::print() const
 
 std::string Token::TerminalToString(Terminal_Type terminal)
 {
-	static const int				  size = 27;
+	static const int				  size = 26;
 	static const IdentifyTypeTerminal key[size] = {
 		{T_Server,		   "server"						   },
 		{T_Location,		 "location"					   },
@@ -98,8 +98,7 @@ std::string Token::TerminalToString(Terminal_Type terminal)
 		{T_CBracket,		 "}"							 },
 		{T_OSquareBracket, "["							  },
 		{T_CSquareBracket, "]"							  },
-		{T_CGI,			"cgi"						   },
-		{T_UploadDir,	  "upload_dir"					  }
+		{T_CGI,			"cgi"						   }
 	   };
 
 	for (size_t i = 0; i < size; ++i) {
@@ -112,7 +111,7 @@ std::string Token::TerminalToString(Terminal_Type terminal)
 
 Terminal_Type Token::IdentifyTerminal(const std::string &value)
 {
-	static const int		 size_key = 15;
+	static const int		 size_key = 14;
 	static const IdentifyKey key[size_key] = {
 		{T_Server,	   "server"	   },
 		{T_Location,	 "location"	   },
@@ -127,7 +126,6 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 		{T_Log,		"log"			 },
 		{T_BodySize,	 "max_body_size"},
 		{T_CGI,		"cgi"			 },
-		{T_UploadDir,  "upload_dir"	  }
 	   };
 
 	for (size_t i = 0; i < size_key; ++i) {

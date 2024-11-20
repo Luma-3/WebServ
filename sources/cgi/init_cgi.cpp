@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_cgi.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/19 17:33:42 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/20 16:17:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,19 +100,10 @@ void CGIHandler::createEnv(const VirtualServer	 *server,
 	_envp.push_back(NULL);
 }
 
-// void CGIHandler::handleUploadDir(const std::string &body)
-// {
-// 	const size_t pos = body.find("filename=\"") + 10;
-// 	const string filename = body.substr(pos, body.find("\"", pos) - pos - 1);
-// 	const size_t end = body.find("\"", pos) - 1;
-
-// 	_body = body.substr(0, pos) + _upload_dir + filename + body.substr(end);
-// }
-
 void CGIHandler::createArgv(const client::Builder *builder)
 {
 	_argv.push_back(ft_strdup(_cgi.c_str()));
-	_argv.push_back(ft_strdup(builder->getPath().c_str()));
+	_argv.push_back(ft_strdup(_filename.c_str()));
 	LOG_DEBUG("Try to Access CGI Script:" + builder->getPath());
 	_argv.push_back(NULL);
 }

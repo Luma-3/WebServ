@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGIHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/19 17:33:38 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/20 16:16:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,14 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 								 fileExtension);
 	}
 
+	std::string path_file = builder->getPath();
+	size_t		pos = path_file.find_last_of('/');
+	_path = path_file.substr(0, pos);
+	_filename = path_file.substr(pos + 1);
+
 	createArgv(builder);
 	createEnv(server, parser, client, builder);
-	std::string request_body = parser->getHeader("body");
-	_body = request_body;
+	_body = parser->getHeader("body");
 }
 
 char *ft_strdup(const char *s)

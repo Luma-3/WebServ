@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 10:11:56 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 16:16:30 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,15 +63,15 @@ class CGIHandler
 	std::string			  _cgi;
 	std::string			  _response;
 	int					  _status;
-	std::string			  _upload_dir;
 	std::string			  _body;
+	std::string			  _path;
+	std::string			  _filename;
 
 	void createEnv(const VirtualServer *server, const client::Parser *parser,
 				   const client::Client	 *client,
 				   const client::Builder *builder);
 
 	void createArgv(const client::Builder *builder);
-	void handleUploadDir(const std::string &body);
 
 	int childProcess();
 	int parentProcess();

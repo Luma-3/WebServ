@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 13:31:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 15:56:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(2, T_AutoIndex)] = Action(SHIFT, 9);
 	actions[ActionEntry(2, T_DenyMethod)] = Action(SHIFT, 10);
 	actions[ActionEntry(2, T_CGI)] = Action(SHIFT, 46);
-	actions[ActionEntry(2, T_UploadDir)] = Action(SHIFT, 7);
 
 	actions[ActionEntry(3, T_Identifier)] = Action(SHIFT, 43);
 	actions[ActionEntry(4, T_Identifier)] = Action(SHIFT, 11);
@@ -93,7 +92,6 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(23, T_AutoIndex)] = Action(SHIFT, 28);
 	actions[ActionEntry(23, T_DenyMethod)] = Action(SHIFT, 29);
 	actions[ActionEntry(23, T_CGI)] = Action(SHIFT, 49);
-	actions[ActionEntry(23, T_UploadDir)] = Action(SHIFT, 26);
 
 	actions[ActionEntry(24, T_Identifier)] = Action(SHIFT, 30);
 	actions[ActionEntry(25, T_OSquareBracket)] = Action(SHIFT, 31);
