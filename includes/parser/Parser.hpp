@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 12:25:13 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:11:49 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ class Parser
 	};
 
 	void setState(int state) { _status = state; };
-	void setParseStack(std::stack< IParserToken * > stack)
+	void setParseStack(std::stack< IParserToken * > &stack)
 	{
 		_parse_stack = stack;
 	};
@@ -73,13 +73,14 @@ class Parser
 	void R1_Server();
 	void R2_Param();
 
-	void R3_CaseListen(std::stack< Token * > &tokens, const std::string &value1,
-					   std::string &value2, size_t &tmp_col, size_t &tmp_line);
-	void R3_DoubleParam();
-	void R4_ErrorPage();
-	void R5_DenyMethod();
-	void R6_Location();
-	void R7_CGI();
+	static void R3_CaseListen(std::stack< Token * > &tokens,
+							  const std::string &value1, std::string &value2,
+							  size_t &tmp_col, size_t &tmp_line);
+	void		R3_DoubleParam();
+	void		R4_ErrorPage();
+	void		R5_DenyMethod();
+	void		R6_Location();
+	void		R7_CGI();
 
 	// EXCEPTIONS
 
