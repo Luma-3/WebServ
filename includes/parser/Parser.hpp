@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 13:31:24 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:36:25 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,13 @@ class Parser
 	};
 
 	void setState(int state) { _status = state; };
+
+	// NOLINTSTART
 	void setParseStack(std::stack< IParserToken * > stack)
 	{
 		_parse_stack = stack;
 	};
+	// NOLINTEND
 
 	Action		findAction(int state, Terminal_Type terminal);
 	std::string findExpected(int state);

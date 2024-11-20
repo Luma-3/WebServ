@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:34:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 13:17:14 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:37:12 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,16 @@
 #include "parser/IParserToken.hpp"
 
 struct IdentifyRegex {
-	enum Terminal_Type type; // NOLINT(cppcoreguidelines-pro-type-member-init)
+	enum Terminal_Type type;
 	bool (*func)(const std::string &);
 };
 
+// NOLINTSTART
 struct IdentifyKey {
 	enum Terminal_Type type;
 	std::string		   key;
 };
+// NOLINTEND
 
 struct IdentifyTypeTerminal {
 	enum Terminal_Type type;
