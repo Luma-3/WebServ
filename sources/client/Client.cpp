@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/19 14:29:21 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:06:52 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,10 +207,6 @@ std::string Client::getValueEnv(const std::string &key) const
 Client::~Client()
 {
 	delete _addr;
-	if (_builder != NULL) {
-		delete _builder;
-	}
-	if (_cgi_handler != NULL) {
-		delete _cgi_handler;
-	}
+	delete _builder;
+	delete _cgi_handler;
 }

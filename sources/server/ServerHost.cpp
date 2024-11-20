@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/19 10:01:28 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:16:05 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,7 @@ string ServerHost::recvRequest(int client_socket)
 
 				size_t pos_length = header.find("Content-Length: ");
 				if (pos_length != string::npos) {
-					pos_length += 16;
+					pos_length += 16; // NOLINT(*-magic-numbers)
 					size_t pos_end = header.find("\r\n", pos_length);
 					string length =
 						header.substr(pos_length, pos_end - pos_length);

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/19 14:29:47 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:04:43 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,8 +201,8 @@ void Builder::handleMethods(int &state)
 		return;
 	}
 	if (current_method == "POST") {
-		const int body_size = _parser.getHeader("body").size();
-		if (body_size > atoi(max_body_size.c_str())) {
+		const size_t body_size = _parser.getHeader("body").size();
+		if (static_cast< int >(body_size) > atoi(max_body_size.c_str())) {
 			_code = "413";
 			state = B_ERROR;
 			return;

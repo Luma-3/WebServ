@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 11:52:17 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:06:04 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,8 @@ Handler *init_server(const char *conf_file, const char **envp)
 
 void delete_instance(Handler *handler, Logger *logger)
 {
-	if (handler) {
-		delete handler;
-	}
-	if (logger) {
-		delete logger;
-	}
+	delete handler;
+	delete logger;
 }
 
 int main(const int ac, const char **av, const char **env)

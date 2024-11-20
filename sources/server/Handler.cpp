@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/19 09:58:43 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:14:44 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,7 @@ void Handler::handleNewConnection(const ServerHost *server)
 	} catch (const std::exception &e) {
 
 		LOG_ERROR(e.what());
-		if (client_addr) {
-			delete client_addr;
-		}
+		delete client_addr;
 		if (client_socket != -1) {
 			close(client_socket);
 		}
