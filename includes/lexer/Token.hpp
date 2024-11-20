@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:34:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 13:37:12 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:39:06 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ struct IdentifyRegex {
 	bool (*func)(const std::string &);
 };
 
-// NOLINTSTART
+// NOLINTBEGIN
 struct IdentifyKey {
 	enum Terminal_Type type;
 	std::string		   key;
