@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 13:28:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:29:38 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ class Parser
 	};
 
 	void setState(int state) { _status = state; };
-	void setParseStack(std::stack< IParserToken * > &stack)
+	void setParseStack(std::stack< IParserToken * > stack)
 	{
 		_parse_stack = stack;
 	};
