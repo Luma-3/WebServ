@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:13:07 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/18 15:54:58 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 17:59:41 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ class Parser
 	void setFileExtension(std::string &extension) { _extension = extension; };
 
 	static std::string findExtension(const std::string &filename);
+	static std::string findFilename(const std::string &path);
 };
 
 } // namespace client

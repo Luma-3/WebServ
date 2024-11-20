@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   finder.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 10:08:55 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/19 13:02:09 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 18:02:22 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,27 @@ std::vector< std::string > findParamList(const std::string	 &param,
 		}
 	}
 	return server->getParamList(param);
+}
+
+std::string findErrorParam(const std::string   &code,
+						   const std::string   &requestPath,
+						   const VirtualServer *server)
+{
+	const Location *location = server->getLocation(requestPath);
+	std::string		error_page;
+	std::string		error_path;
+
+	if (location != NULL) {
+		error_page = location->getParamValue(code);
+		error_path = location->getRoot(requestPath);
+	}
+	else {
+		error_page = server->getParamValue(code);
+		error_path = server->getParamValue("root");
+	}
+
+	if (!error_page.empty()) {
+		return error_path + error_page;
+	}
+	return "";
 }

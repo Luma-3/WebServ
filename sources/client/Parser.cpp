@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/11/19 15:22:26 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 17:59:43 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void Parser::getBodyFromRequest()
 	}
 
 	if (!_buffer.empty() && _headers["Method"] == "POST") {
-		
+
 		if (_buffer[0] == '\r' && _buffer[1] == '\n') {
 			_buffer.erase(0, 2);
 		}
@@ -138,6 +138,16 @@ std::string Parser::findExtension(const std::string &filename)
 		return "";
 	}
 	return filename.substr(pos + 1);
+}
+
+std::string Parser::findFilename(const std::string &path)
+{
+	const size_t pos = path.rfind('/');
+
+	if (pos == std::string::npos) {
+		return "";
+	}
+	return path.substr(pos + 1);
 }
 
 std::string Parser::getHeader(const std::string &key) const

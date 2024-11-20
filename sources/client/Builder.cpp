@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/20 13:04:43 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 18:32:29 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,76 +92,24 @@ void Builder::BuildResponse(string &response)
 	response += std::string(_body.begin(), _body.end());
 }
 
-bool Builder::findErrorPageLocation()
-{
-	std::string error_page;
-	std::string error_path;
-
-	const Location *location = _server->getLocation(_requestPath);
-
-	if (location == NULL) {
-		return false;
-	}
-
-	error_page = location->getParamValue(_code);
-	error_path = location->getRoot(_requestPath);
-
-	if (error_page.empty()) {
-		return false;
-	}
-
-	_path = error_path + error_page;
-	_filename = error_page;
-	_extension = Parser::findExtension(error_page);
-	return true;
-}
-
-bool Builder::findErrorPageServer()
-{
-	const std::string error_page = _server->getParamValue(_code);
-	const std::string error_path = _server->getParamValue("root");
-	if (error_page.empty()) {
-		return false;
-	}
-
-	_path = error_path + error_page;
-	_filename = error_page;
-	_extension = Parser::findExtension(error_page);
-	return true;
-}
-
-bool Builder::findErrorPageDefaultServer()
-{
-	const std::string error_page = _defaultServer->getParamValue(_code);
-	const std::string error_path = _defaultServer->getParamValue("root");
-
-	if (error_page.empty()) {
-		return false;
-	}
-
-	_path = error_path + error_page;
-	_filename = error_page;
-	_extension = Parser::findExtension(error_page);
-	return true;
-}
-
 void Builder::findErrorPage()
 {
-	typedef bool (Builder::*ptr)(void);
+	std::string path_error_page;
 
-	const ptr tab[3] = {&Builder::findErrorPageLocation,
-						&Builder::findErrorPageServer,
-						&Builder::findErrorPageDefaultServer};
+	path_error_page = findErrorParam(_code, _requestPath, _server);
 
-	for (size_t i = 0; i < 3; ++i) {
-		if ((this->*tab[i])() && readDataRequest() == 0) {
-			return;
-		}
+	if (!path_error_page.empty()) {
+		_path = path_error_page;
+		_filename = Parser::findFilename(path_error_page);
+		_extension = Parser::findExtension(_filename);
 	}
-	const std::string error =
-		(errno != 0) ? strerror(errno) : "No file found in config file";
-	LOG_INFO("No Error page for code " + _code + ": " + error);
-	createErrorPage();
+
+	if (_path.empty() || readDataRequest() != 0) {
+		LOG_INFO(
+			"No Error page for code " + _code + ": " +
+			((errno != 0) ? strerror(errno) : "No file found in config file"));
+		createErrorPage();
+	}
 }
 
 bool Builder::isMethodDeny(int &state, const std::string &current_method)

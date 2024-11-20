@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHost.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 13:16:05 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 18:30:16 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,11 @@ string ServerHost::recvRequest(int client_socket)
 			throw RecvException("recv failed: ", __LINE__, __FILE__,
 								string(strerror(errno)));
 		}
-
+		else if (nb_bytes == 0) {
+			delete[] buff;
+			close(client_socket);
+			throw RecvException("Client disconnected", __LINE__, __FILE__, "");
+		}
 		request.append(buff, static_cast< size_t >(nb_bytes));
 
 		if (!header) {
