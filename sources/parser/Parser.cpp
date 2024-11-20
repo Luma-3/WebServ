@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 13:26:39 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:31:41 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ using parser::ActionEntry;
 using parser::Parser;
 
 Parser::Parser() :
+	_lexer(NULL),
 	_status(0),
 	_current(new VirtualServer),
 	_actions(createActionMap())
