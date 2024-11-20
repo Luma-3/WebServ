@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IdentidyToken.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:16:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/15 22:20:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/20 18:37:14 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ std::vector< Terminal_Type > term = {T_Server,
 									 T_Log,
 									 T_BodySize,
 									 T_CGI,
-									 T_UploadDir,
 									 T_Comma,
 									 T_Colon,
 									 T_SemiColon,
