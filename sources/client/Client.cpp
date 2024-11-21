@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:30:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 16:19:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/21 16:05:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@
 
 using client::Client;
 
-Client::Client(const VirtualServer *server, const VirtualServer *default_s,
+Client::Client(const ServerHost *server_host, const VirtualServer *server,
 			   int client_socket, sockaddr_storage *client_addr,
 			   const char **envp) :
 	_envp(envp),
+	_serverHost(server_host),
 	_server(server),
-	_default_server(default_s),
 	_host(NULL),
 	_client_socket(client_socket),
 	_addr(client_addr),
@@ -34,7 +34,6 @@ Client::Client(const VirtualServer *server, const VirtualServer *default_s,
 Client::Client(const Client &src) :
 	_envp(src._envp),
 	_server(src._server),
-	_default_server(src._default_server),
 	_host(src._host),
 	_client_socket(src._client_socket),
 	_addr(src._addr),
@@ -45,8 +44,7 @@ Client::Client(const Client &src) :
 
 bool Client::operator==(const Client &rhs) const
 {
-	return (_server == rhs._server && _default_server == rhs._default_server &&
-			_client_socket == rhs._client_socket);
+	return (_server == rhs._server && _client_socket == rhs._client_socket);
 }
 
 namespace {
@@ -136,7 +134,7 @@ void Client::handleRequest()
 	Parser parser;
 	parser.parseRequest(_request);
 
-	_builder = new Builder(_server, _default_server, parser);
+	_builder = new Builder(_server, parser);
 
 	int		  state = DEFAULT;
 	const int ptr_tab_size = 4;

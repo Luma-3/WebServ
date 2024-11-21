@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/20 18:32:08 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/21 16:40:30 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,12 @@
 
 #include <algorithm>
 #include <map>
+#include <netdb.h>
 #include <sys/socket.h>
 
 #include "client/Builder.hpp"
 #include "client/Parser.hpp"
+#include "finder.hpp"
 #include "server/ServerException.hpp"
 #include "server/ServerHost.hpp"
 
@@ -28,6 +30,22 @@ using std::string;
 using std::vector;
 
 volatile int g_sig = 0;
+
+namespace {
+string getIP(const struct addrinfo *addr)
+{
+	char ip[INET6_ADDRSTRLEN];
+	if (addr->ai_family == AF_INET) {
+		const sockaddr_in *addr_in = (struct sockaddr_in *)(addr->ai_addr);
+		inet_ntop(AF_INET, &(addr_in->sin_addr), ip, INET_ADDRSTRLEN);
+	}
+	else if (addr->ai_family == AF_INET6) {
+		const sockaddr_in6 *addr_in6 = (struct sockaddr_in6 *)(addr->ai_addr);
+		inet_ntop(AF_INET6, &(addr_in6->sin6_addr), ip, INET6_ADDRSTRLEN);
+	}
+	return string(ip);
+}
+} // namespace
 
 Handler::Handler(const vector< VirtualServer * > &servers, const char **envp) :
 	_envp(envp),
@@ -41,24 +59,44 @@ Handler::Handler(const vector< VirtualServer * > &servers, const char **envp) :
 
 	vector< VirtualServer * >::const_iterator it = servers.begin();
 
+	struct addrinfo *info = NULL;
+	struct addrinfo	 hints = {};
+
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
+
 	while (it != servers.end()) {
 		const Param *listen = (*it)->getParam("listen");
 
+		const int status =
+			getaddrinfo(listen->getPair().first.c_str(),
+						listen->getPair().second.c_str(), &hints, &info);
+
+		if (status != 0) {
+			throw InternalServerException(
+				"getaddrinfo failed on " +
+					std::string(listen->getPair().first.c_str()) + ": ",
+				__LINE__, __FILE__, string(gai_strerror(status)));
+		}
+
 		const string hostkey =
-			listen->getPair().first + ":" + listen->getPair().second;
+			getIP(info) + string(":") + listen->getPair().second;
 
 		if (_hostptofd.find(hostkey) == _hostptofd.end()) {
 
-			ServerHost *host = new ServerHost(listen->getPair().first,
-											  listen->getPair().second);
+			ServerHost *host = new ServerHost(info);
 			_hostptofd[hostkey] = host->getSocket();
 			_servers[host->getSocket()] = host;
 			addEvent(host->getSocket(),
 					 EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR);
 			_nbServ++;
 		}
+		freeaddrinfo(info);
+
 		const int fd = _hostptofd[hostkey];
-		_servers[fd]->AddServer((*it)->getParam("hostname")->getValue(), *it);
+		string	  server_name = findParam("server_name", "", *it);
+		_servers[fd]->AddServer(server_name, *it);
 		++it;
 	}
 }
@@ -67,16 +105,16 @@ void Handler::handleNewClient(const ServerHost *server, int client_socket,
 							  sockaddr_storage *client_addr,
 							  const string	   &request)
 {
-	const string hostname = client::Parser::findHostName(request);
+	const string server_name = client::Parser::findHostName(request);
 
-	const VirtualServer *vhost = server->getVhost(hostname);
+	const VirtualServer *vhost = server->getVhost(server_name);
 	if (vhost == NULL) {
 		vhost = server->getDefaultVhost();
 	}
 	CSERVER = vhost;
 
-	client::Client *client = new client::Client(
-		vhost, server->getDefaultVhost(), client_socket, client_addr, _envp);
+	client::Client *client =
+		new client::Client(server, vhost, client_socket, client_addr, _envp);
 	_clients[client_socket] = client;
 
 	client->setRequest(request);
@@ -115,6 +153,10 @@ void Handler::handleNewConnection(const ServerHost *server)
 		}
 	}
 
+	if (request.empty()) {
+		handleClientDisconnection(client_socket);
+		return;
+	}
 	try {
 		handleNewClient(server, client_socket, client_addr, request);
 	} catch (const std::exception &e) {
@@ -138,14 +180,21 @@ void Handler::handleClientRequest(int event_fd, const string &request)
 		if (request.empty()) {
 			client_request = ServerHost::recvRequest(event_fd);
 			client->setRequest(client_request);
+
+			string host = client::Parser::findHostName(client_request);
+			const ServerHost	*serverHost = client->getServerHost();
+			const VirtualServer *vhost = serverHost->getVhost(host);
+			if (vhost == NULL) {
+				vhost = serverHost->getDefaultVhost();
+			}
+			client->setVHost(vhost);
 		}
 		client->handleRequest();
 
 	} catch (const std::exception &e) {
 
-		Parser	 parser;
-		Builder *builder = new Builder(client->getServer(),
-									   client->getDefaultServer(), parser);
+		const Parser parser;
+		Builder		*builder = new Builder(client->getServer(), parser);
 
 		LOG_ERROR(e.what());
 		builder->setCode("500");

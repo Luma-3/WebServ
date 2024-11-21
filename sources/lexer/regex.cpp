@@ -6,12 +6,12 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 11:01:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 12:42:23 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/21 11:33:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <string>
 #include <cstdlib>
+#include <string>
 
 #include "lexer/Lexer.hpp"
 #include "lexer/Token.hpp"
@@ -135,7 +135,7 @@ bool IsPort(const string &value)
 		return (false);
 	}
 	const int port = atoi(value.c_str());
-	return (!(port < 0 && port > PORT_MAX));
+	return (port >= 0 || port <= PORT_MAX);
 }
 
 bool IsHostname(const string &value)
@@ -164,7 +164,7 @@ bool IsBodySize(const string &value)
 		return (true);
 	}
 	last = static_cast< char >(toupper(last));
-	return (!(last != 'K' && last != 'M' && last != 'G'));
+	return (last == 'K' || last == 'M' || last == 'G');
 }
 
 bool IsCGIExtension(const string &value)

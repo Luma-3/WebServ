@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:37:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 15:57:12 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/21 14:18:42 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ std::string Token::TerminalToString(Terminal_Type terminal)
 		{T_DenyMethod,	   "deny_method"					},
 		{T_Return,		   "return"						   },
 		{T_Listen,		   "listen"						   },
-		{T_Hostname,		 "hostname"					   },
+		{T_ServerName,	   "server_name"					},
 		{T_Index,		  "index"						 },
 		{T_AutoIndex,	  "autoindex"					 },
 		{T_Root,			 "root"						  },
@@ -99,7 +99,7 @@ std::string Token::TerminalToString(Terminal_Type terminal)
 		{T_OSquareBracket, "["							  },
 		{T_CSquareBracket, "]"							  },
 		{T_CGI,			"cgi"						   }
-	   };
+	  };
 
 	for (size_t i = 0; i < size; ++i) {
 		if (terminal == key[i].type) {
@@ -119,14 +119,14 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 		{T_DenyMethod, "deny_method"	},
 		{T_Return,	   "return"	   },
 		{T_Listen,	   "listen"	   },
-		{T_Hostname,	 "hostname"	   },
+		{T_ServerName, "server_name"	},
 		{T_Index,	  "index"		 },
 		{T_AutoIndex,  "autoindex"	 },
 		{T_Root,		 "root"		   },
 		{T_Log,		"log"			 },
 		{T_BodySize,	 "max_body_size"},
 		{T_CGI,		"cgi"			 },
-	   };
+	};
 
 	for (size_t i = 0; i < size_key; ++i) {
 		if (value == key[i].key) {

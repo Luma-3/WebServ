@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:16 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 16:17:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/21 10:36:12 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,6 @@ void CGIHandler::createEnv(const VirtualServer	 *server,
 						   const client::Client	 *client,
 						   const client::Builder *builder)
 {
-	const string path_translated;
-
 	std::vector< string > env_vec;
 	{
 		env_vec.push_back("AUTH_TYPE=");

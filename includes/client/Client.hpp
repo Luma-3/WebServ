@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 15:15:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/21 16:07:06 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ class Client
 {
   private:
 	const char		   **_envp;
+	const ServerHost	*_serverHost;
 	const VirtualServer *_server;
-	const VirtualServer *_default_server;
 	const ServerHost	*_host;
 	const int			 _client_socket;
 	sockaddr_storage	*_addr;
@@ -68,7 +68,7 @@ class Client
 	int	 returnAndDeleteCgi();
 
   public:
-	Client(const VirtualServer *server, const VirtualServer *default_s,
+	Client(const ServerHost *server_host, const VirtualServer *server,
 		   int client_socket, sockaddr_storage *client_addr, const char **envp);
 	Client(const Client &src);
 	~Client();
@@ -82,13 +82,15 @@ class Client
 	const std::string	   &getBody() const { return _body; };
 	const sockaddr_storage *getAddr() const { return _addr; };
 	const VirtualServer	   *getServer() const { return _server; };
-	const VirtualServer *getDefaultServer() const { return _default_server; };
-	const char		   **getEnv() const { return _envp; };
+	const ServerHost	   *getServerHost() const { return _serverHost; };
+	const char			  **getEnv() const { return _envp; };
 
 	std::string getValueEnv(const std::string &key) const;
 	void		setRequest(const std::string &request) { _request = request; };
 	void setResponse(const std::string &response) { _response = response; };
 	void setBuilder(Builder *builder) { _builder = builder; }
+
+	void setVHost(const VirtualServer *server) { _server = server; };
 
 	void handleRequest();
 	int	 handleResponse();

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 15:58:36 by anthony           #+#    #+#             */
-/*   Updated: 2024/11/20 17:59:43 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/21 10:37:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,8 +98,7 @@ void Parser::getDataHeaderFromRequest(size_t line_break_pos)
 
 void Parser::parseRequest(const std::string &request)
 {
-	size_t		 line_break_pos = 0;
-	const string line;
+	size_t line_break_pos = 0;
 
 	_buffer = request;
 
@@ -108,7 +107,7 @@ void Parser::parseRequest(const std::string &request)
 
 	getBodyFromRequest();
 
-	std::string content_type = _headers["Content-Type"];
+	const std::string content_type = _headers["Content-Type"];
 	if (content_type.empty() ||
 		content_type.find("multipart/form-data") == std::string::npos) {
 		return;

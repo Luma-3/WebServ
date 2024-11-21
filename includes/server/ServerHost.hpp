@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:37:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/04 15:31:25 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/21 15:35:23 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,12 @@ class ServerHost
 	int													 _nbVhost;
 	int													 _socket;
 
-	struct addrinfo *setupSocket(const std::string &host,
-								 const std::string &port,
-								 struct addrinfo   *hints);
-	void			 bindAndListenSocket(struct addrinfo *info) const;
+	void setupSocket(const struct addrinfo *info);
+	void bindAndListenSocket(const struct addrinfo *info) const;
 
   public:
 	ServerHost();
-	ServerHost(const std::string &host, const std::string &port);
+	ServerHost(struct addrinfo *info);
 	ServerHost(const ServerHost &src);
 
 	ServerHost &operator=(const ServerHost &rhs);

@@ -40,7 +40,6 @@ class Builder
 {
   private:
 	const VirtualServer	 *_server;
-	const VirtualServer	 *_defaultServer;
 	const client::Parser &_parser;
 
 	std::string			_requestPath;
@@ -72,8 +71,7 @@ class Builder
 	int getIndex(const std::string &root, const std::string &index);
 
   public:
-	Builder(const VirtualServer *server, const VirtualServer *default_server,
-			const client::Parser &parser);
+	Builder(const VirtualServer *server, const client::Parser &parser);
 	~Builder();
 
 	void BuildResponse(std::string &response);

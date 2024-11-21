@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Builder.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/20 18:32:29 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/21 16:41:11 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,8 @@
 using client::Builder;
 using std::string;
 
-Builder::Builder(const VirtualServer  *server,
-				 const VirtualServer  *default_server,
-				 const client::Parser &parser) :
+Builder::Builder(const VirtualServer *server, const client::Parser &parser) :
 	_server(server),
-	_defaultServer(default_server),
 	_parser(parser),
 	_requestPath(parser.getRequestedPath()),
 	_path(parser.getRequestedPath() + parser.getFilename()),
@@ -36,7 +33,7 @@ Builder::Builder(const VirtualServer  *server,
 
 void Builder::verifCGI(int &state)
 {
-	std::string root = findRoot(_requestPath, _server);
+	const std::string root = findRoot(_requestPath, _server);
 
 	_path = root + _filename;
 
@@ -104,7 +101,7 @@ void Builder::findErrorPage()
 		_extension = Parser::findExtension(_filename);
 	}
 
-	if (_path.empty() || readDataRequest() != 0) {
+	if (path_error_page.empty() || readDataRequest() != 0) {
 		LOG_INFO(
 			"No Error page for code " + _code + ": " +
 			((errno != 0) ? strerror(errno) : "No file found in config file"));
@@ -133,7 +130,7 @@ bool Builder::isMethodDeny(int &state, const std::string &current_method)
 void Builder::handleMethods(int &state)
 {
 	const std::string current_method = _parser.getHeader("Method");
-	std::string		  max_body_size =
+	const std::string max_body_size =
 		findParam("max_body_size", _requestPath, _server);
 
 	if (isMethodDeny(state, current_method)) {

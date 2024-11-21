@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 15:56:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/21 14:19:49 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(2, T_Location)] = Action(SHIFT, 21);
 	actions[ActionEntry(2, T_CBracket)] = Action(REDUCE, 0, R1);
 	actions[ActionEntry(2, T_Listen)] = Action(SHIFT, 3);
-	actions[ActionEntry(2, T_Hostname)] = Action(SHIFT, 4);
+	actions[ActionEntry(2, T_ServerName)] = Action(SHIFT, 4);
 	actions[ActionEntry(2, T_BodySize)] = Action(SHIFT, 41);
 	actions[ActionEntry(2, T_ErrorPage)] = Action(SHIFT, 5);
 	actions[ActionEntry(2, T_Root)] = Action(SHIFT, 7);

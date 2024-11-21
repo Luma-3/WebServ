@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 12:16:27 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/21 14:57:59 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,12 @@ void Parser::R1_Server()
 	if (_current->getParam("listen") == NULL) {
 		throw Parser::MissingParamException("listen");
 	}
-	if (_current->getParam("hostname") == NULL) {
-		Param *param = new Param(
-			"hostname", _current->getParam("listen")->getPair().first + ":" +
-							_current->getParam("listen")->getPair().second);
-		_current->addParam("hostname", param);
-	}
+	// if (_current->getParam("server_name") == NULL) {
+	// 	Param *param = new Param(
+	// 		"server_name", _current->getParam("listen")->getPair().first + ":" +
+	// 						_current->getParam("listen")->getPair().second);
+	// 	_current->addParam("server_name", param);
+	// }
 
 	_servers.push_back(_current);
 	_current = new VirtualServer();
@@ -99,15 +99,7 @@ void Parser::R2_Param()
 	const Terminal_Type term_type = tokens[2]->getTerminal();
 	const string		value = tokens[1]->getKey();
 
-	if (term_type == T_Hostname) {
-		if (!IsHostname(value)) {
-			throw Token::InvalidTokenException(
-				"hostname not correctly formatted",
-				LIME "\nExemple:" RESET " example.com", value,
-				tokens[1]->getCol(), tokens[1]->getLine());
-		}
-	}
-	else if (term_type == T_BodySize) {
+	if (term_type == T_BodySize) {
 		if (!IsBodySize(value)) {
 			throw Token::InvalidTokenException(
 				"body_size not correctly formatted",

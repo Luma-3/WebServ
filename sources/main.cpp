@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 13:06:04 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/21 16:40:46 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ Handler *init_server(const char *conf_file, const char **envp)
 	parser.Parse();
 
 	const vector< VirtualServer * > servers = parser.getServers();
+
 	if (!parser.getParseStack().empty()) {
 		Param *token = D_Cast< Param * >(parser.getParseStack().top());
 		new Logger(token->getPair().second,
@@ -69,7 +70,7 @@ int main(const int ac, const char **av, const char **env)
 
 	try {
 		handler = init_server(av[1], env);
-		cout << "Server started !" << endl;
+		cout << "All server started !" << endl;
 		handler->runEventLoop();
 	} catch (const std::exception &e) {
 		cerr << e.what() << endl;
