@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:43:56 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/22 15:01:24 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 15:40:26 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,7 @@ string ServerHost::recvRequest(int client_socket)
 								string(strerror(errno)));
 		}
 		if (nb_bytes == 0) {
+			delete[] buff;
 			return "";
 		}
 		request.append(buff, static_cast< size_t >(nb_bytes));
