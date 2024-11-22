@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/21 16:40:30 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 15:02:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ Handler::Handler(const vector< VirtualServer * > &servers, const char **envp) :
 		if (status != 0) {
 			throw InternalServerException(
 				"getaddrinfo failed on " +
-					std::string(listen->getPair().first.c_str()) + ": ",
+					std::string(listen->getPair().first) + ": ",
 				__LINE__, __FILE__, string(gai_strerror(status)));
 		}
 
@@ -94,8 +94,8 @@ Handler::Handler(const vector< VirtualServer * > &servers, const char **envp) :
 		}
 		freeaddrinfo(info);
 
-		const int fd = _hostptofd[hostkey];
-		string	  server_name = findParam("server_name", "", *it);
+		const int	 fd = _hostptofd[hostkey];
+		const string server_name = findParam("server_name", "", *it);
 		_servers[fd]->AddServer(server_name, *it);
 		++it;
 	}
@@ -181,7 +181,7 @@ void Handler::handleClientRequest(int event_fd, const string &request)
 			client_request = ServerHost::recvRequest(event_fd);
 			client->setRequest(client_request);
 
-			string host = client::Parser::findHostName(client_request);
+			const string host = client::Parser::findHostName(client_request);
 			const ServerHost	*serverHost = client->getServerHost();
 			const VirtualServer *vhost = serverHost->getVhost(host);
 			if (vhost == NULL) {

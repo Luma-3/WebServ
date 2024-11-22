@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 11:56:19 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 09:31:41 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 14:45:20 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,6 @@ TEST(R1_Server, Simple)
 	EXPECT_NE(parser.getServers().at(0), nullptr);
 	EXPECT_EQ(parser.getServers().at(0)->getParamPair("listen").first,
 			  "129.0.0.1");
-
-	EXPECT_EQ(parser.getServers().at(0)->getParamValue("hostname"),
-			  "129.0.0.1:8080");
 }
 
 TEST(R1_Server, Two_params)
@@ -48,7 +45,7 @@ TEST(R1_Server, Two_params)
 	stack_test.push(new Token("server", T_Server, 1, 1));
 	stack_test.push(new Token("{", T_OBracket, 1, 2));
 	stack_test.push(new Param("listen", "210.3.12.2", "8080"));
-	stack_test.push(new Param("hostname", "localhost"));
+	stack_test.push(new Param("server_name", "localhost"));
 	stack_test.push(new Token("}", T_CBracket, 4, 1));
 
 	parser.setParseStack(stack_test);
@@ -58,8 +55,6 @@ TEST(R1_Server, Two_params)
 	EXPECT_NE(parser.getServers().at(0), nullptr);
 	EXPECT_EQ(parser.getServers().at(0)->getParamPair("listen").first,
 			  "210.3.12.2");
-	EXPECT_EQ(parser.getServers().at(0)->getParamValue("hostname"),
-			  "localhost");
 }
 
 TEST(R1_Server, Same_param)
@@ -93,7 +88,7 @@ TEST(R1_Server, Missing_param)
 
 	stack_test.push(new Token("server", T_Server, 1, 1));
 	stack_test.push(new Token("{", T_OBracket, 1, 2));
-	stack_test.push(new Param("hostname", "localhost"));
+	stack_test.push(new Param("server_name", "localhost"));
 	stack_test.push(new Token("}", T_CBracket, 4, 1));
 
 	parser.setParseStack(stack_test);
@@ -110,14 +105,14 @@ TEST(R1_Server, All_param)
 	stack_test.push(new Token("server", T_Server, 1, 1));
 	stack_test.push(new Token("{", T_OBracket, 1, 2));
 	stack_test.push(new Param("listen", "localhost", "8080"));
-	stack_test.push(new Param("hostname", "localhost"));
+	stack_test.push(new Param("server_name", "localhost"));
 	stack_test.push(new Param("root", "/var/www/html"));
 	stack_test.push(new Param("index", "index.html"));
 	stack_test.push(new Param("404", "/404.html"));
 	stack_test.push(new Param("autoindex", "on"));
 	stack_test.push(new Param("php", "/usr/bin/php-cgi"));
 	std::vector< std::string > methods = {"GET", "POST"};
-	stack_test.push(new Param("deny_method", methods));
+	stack_test.push(new Param("method", methods));
 	stack_test.push(new Token("}", T_CBracket, 4, 1));
 
 	parser.setParseStack(stack_test);
@@ -128,7 +123,7 @@ TEST(R1_Server, All_param)
 
 	EXPECT_EQ(parser.getServers().at(0)->getParamPair("listen").first,
 			  "localhost");
-	EXPECT_EQ(parser.getServers().at(0)->getParamValue("hostname"),
+	EXPECT_EQ(parser.getServers().at(0)->getParamValue("server_name"),
 			  "localhost");
 	EXPECT_EQ(parser.getServers().at(0)->getParamValue("root"),
 			  "/var/www/html");
@@ -137,12 +132,10 @@ TEST(R1_Server, All_param)
 	EXPECT_EQ(parser.getServers().at(0)->getParamValue("autoindex"), "on");
 	EXPECT_EQ(parser.getServers().at(0)->getParamValue("php"),
 			  "/usr/bin/php-cgi");
-	EXPECT_EQ(parser.getServers().at(0)->getParamList("deny_method").size(),
+	EXPECT_EQ(parser.getServers().at(0)->getParamList("method").size(),
 			  (size_t)2);
-	EXPECT_EQ(parser.getServers().at(0)->getParamList("deny_method").at(0),
-			  "GET");
-	EXPECT_EQ(parser.getServers().at(0)->getParamList("deny_method").at(1),
-			  "POST");
+	EXPECT_EQ(parser.getServers().at(0)->getParamList("method").at(0), "GET");
+	EXPECT_EQ(parser.getServers().at(0)->getParamList("method").at(1), "POST");
 }
 
 std::string get_castParm(IParserToken *token)
@@ -206,21 +199,6 @@ TEST(R2_Param, Autoindex)
 	EXPECT_NE(parser.getParseStack().top(), nullptr);
 	EXPECT_EQ(parser.getParseStack().top()->getKey(), "autoindex");
 	EXPECT_EQ(get_castParm(parser.getParseStack().top()), "on");
-}
-
-TEST(R2_Param, InvalidHostname)
-{
-	Parser parser;
-
-	std::stack< IParserToken * > stack_test;
-
-	stack_test.push(new Token("hostname", T_Hostname, 1, 1));
-	stack_test.push(new Token("localhost_", T_Identifier, 1, 2));
-	stack_test.push(new Token(";", T_SemiColon, 1, 3));
-
-	parser.setParseStack(stack_test);
-
-	ASSERT_THROW(parser.R2_Param(), Token::InvalidTokenException);
 }
 
 TEST(R2_Param, InvalidBodySize)
@@ -412,13 +390,13 @@ std::vector< std::string > get_castList(IParserToken *token)
 	return param ? param->getList() : std::vector< std::string >();
 }
 
-TEST(R5_DenyMethod, One_Method)
+TEST(R5_Method, One_Method)
 {
 	Parser parser;
 
 	std::stack< IParserToken * > stack_test;
 
-	stack_test.push(new Token("deny_method", T_DenyMethod, 1, 1));
+	stack_test.push(new Token("method", T_KeyMethod, 1, 1));
 	stack_test.push(new Token("[", T_OSquareBracket, 1, 2));
 	stack_test.push(new Token("GET", T_Method, 1, 2));
 	stack_test.push(new Token("]", T_CSquareBracket, 1, 3));
@@ -426,21 +404,21 @@ TEST(R5_DenyMethod, One_Method)
 
 	parser.setParseStack(stack_test);
 
-	ASSERT_NO_THROW(parser.R5_DenyMethod());
+	ASSERT_NO_THROW(parser.R5_Method());
 
 	EXPECT_NE(parser.getParseStack().top(), nullptr);
-	EXPECT_EQ(parser.getParseStack().top()->getKey(), "deny_method");
+	EXPECT_EQ(parser.getParseStack().top()->getKey(), "method");
 	EXPECT_EQ(get_castList(parser.getParseStack().top()).size(), (size_t)1);
 	EXPECT_EQ(get_castList(parser.getParseStack().top()).at(0), "GET");
 }
 
-TEST(R5_DenyMethod, Two_Method)
+TEST(R5_Method, Two_Method)
 {
 	Parser parser;
 
 	std::stack< IParserToken * > stack_test;
 
-	stack_test.push(new Token("deny_method", T_DenyMethod, 1, 1));
+	stack_test.push(new Token("method", T_KeyMethod, 1, 1));
 	stack_test.push(new Token("[", T_OSquareBracket, 1, 2));
 	stack_test.push(new Token("GET", T_Method, 1, 2));
 	stack_test.push(new Token(",", T_Comma, 1, 3));
@@ -450,10 +428,10 @@ TEST(R5_DenyMethod, Two_Method)
 
 	parser.setParseStack(stack_test);
 
-	ASSERT_NO_THROW(parser.R5_DenyMethod());
+	ASSERT_NO_THROW(parser.R5_Method());
 
 	EXPECT_NE(parser.getParseStack().top(), nullptr);
-	EXPECT_EQ(parser.getParseStack().top()->getKey(), "deny_method");
+	EXPECT_EQ(parser.getParseStack().top()->getKey(), "method");
 	EXPECT_EQ(get_castList(parser.getParseStack().top()).size(), (size_t)2);
 	EXPECT_EQ(get_castList(parser.getParseStack().top()).at(0), "GET");
 	EXPECT_EQ(get_castList(parser.getParseStack().top()).at(1), "POST");
@@ -571,7 +549,7 @@ TEST(R6_Location, WithAllParam)
 	stack_test.push(new Param("autoindex", "on"));
 	stack_test.push(new Param("php", "/usr/bin/php-cgi"));
 	std::vector< std::string > methods = {"GET", "POST"};
-	stack_test.push(new Param("deny_method", methods));
+	stack_test.push(new Param("method", methods));
 	stack_test.push(new Token("}", T_CBracket, 1, 4));
 
 	parser.setParseStack(stack_test);
@@ -588,12 +566,10 @@ TEST(R6_Location, WithAllParam)
 	EXPECT_EQ(server->getLocation("/")->getParamValue("autoindex"), "on");
 	EXPECT_EQ(server->getLocation("/")->getParamValue("php"),
 			  "/usr/bin/php-cgi");
-	EXPECT_EQ(server->getLocation("/")->getParamList("deny_method").size(),
+	EXPECT_EQ(server->getLocation("/")->getParamList("method").size(),
 			  (size_t)2);
-	EXPECT_EQ(server->getLocation("/")->getParamList("deny_method").at(0),
-			  "GET");
-	EXPECT_EQ(server->getLocation("/")->getParamList("deny_method").at(1),
-			  "POST");
+	EXPECT_EQ(server->getLocation("/")->getParamList("method").at(0), "GET");
+	EXPECT_EQ(server->getLocation("/")->getParamList("method").at(1), "POST");
 }
 
 TEST(R7_CGI, PHP)

@@ -61,12 +61,8 @@ class Builder
 						  const std::string &date, const int &id);
 	void insertFooterAndSetAttributes(std::vector< char > &body);
 
-	bool findErrorPageLocation();
-	bool findErrorPageServer();
-	bool findErrorPageDefaultServer();
-
 	void verifCGI(int &state);
-	bool isMethodDeny(int &state, const std::string &current_method);
+	bool isAcceptedMethod(int &state, const std::string &current_method);
 
 	int getIndex(const std::string &root, const std::string &index);
 
@@ -75,7 +71,8 @@ class Builder
 	~Builder();
 
 	void BuildResponse(std::string &response);
-	void handleMethods(int &state);
+	void verifyMethodsAndBodySize(int &state);
+	void isDelete(int &state);
 	void returnParam(int &state);
 	void findFile();
 	void readFile();

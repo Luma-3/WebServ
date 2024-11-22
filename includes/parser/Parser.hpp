@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 10:03:34 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 13:39:29 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 11:23:56 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ class Parser
 							  size_t &tmp_col, size_t &tmp_line);
 	void		R3_DoubleParam();
 	void		R4_ErrorPage();
-	void		R5_DenyMethod();
+	void		R5_Method();
 	void		R6_Location();
 	void		R7_CGI();
 

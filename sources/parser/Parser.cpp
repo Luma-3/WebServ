@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/21 14:19:49 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 11:31:37 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(2, T_Index)] = Action(SHIFT, 4);
 	actions[ActionEntry(2, T_Return)] = Action(SHIFT, 8);
 	actions[ActionEntry(2, T_AutoIndex)] = Action(SHIFT, 9);
-	actions[ActionEntry(2, T_DenyMethod)] = Action(SHIFT, 10);
+	actions[ActionEntry(2, T_KeyMethod)] = Action(SHIFT, 10);
 	actions[ActionEntry(2, T_CGI)] = Action(SHIFT, 46);
 
 	actions[ActionEntry(3, T_Identifier)] = Action(SHIFT, 43);
@@ -90,7 +90,7 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	actions[ActionEntry(23, T_Index)] = Action(SHIFT, 24);
 	actions[ActionEntry(23, T_Return)] = Action(SHIFT, 27);
 	actions[ActionEntry(23, T_AutoIndex)] = Action(SHIFT, 28);
-	actions[ActionEntry(23, T_DenyMethod)] = Action(SHIFT, 29);
+	actions[ActionEntry(23, T_KeyMethod)] = Action(SHIFT, 29);
 	actions[ActionEntry(23, T_CGI)] = Action(SHIFT, 49);
 
 	actions[ActionEntry(24, T_Identifier)] = Action(SHIFT, 30);

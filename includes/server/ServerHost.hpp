@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:37:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/21 15:35:23 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 15:08:36 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,10 @@ class ServerHost
 
 	int					 getSocket() const { return _socket; };
 	int					 getNbVhost() const { return _nbVhost; };
-	const VirtualServer *getVhost(const std::string &host_name) const;
+	const VirtualServer *getVhost(const std::string &server_name) const;
 	const VirtualServer *getDefaultVhost() const;
 
-	void AddServer(const std::string &host_name, VirtualServer *server);
+	void AddServer(const std::string &server_name, VirtualServer *server);
 
 	static void sendResponse(int client_socket, const std::string &response);
 	static std::string recvRequest(int client_socket);

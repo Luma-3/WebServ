@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 10:21:07 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/15 22:20:52 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 14:41:24 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ INSTANTIATE_TEST_SUITE_P(
 	IsKey, TokenTest,
 	::testing::Values(
 		std::make_tuple(T_Server, true), std::make_tuple(T_Location, true),
-		std::make_tuple(T_ErrorPage, true), std::make_tuple(T_DenyMethod, true),
+		std::make_tuple(T_ErrorPage, true), std::make_tuple(T_KeyMethod, true),
 		std::make_tuple(T_Return, true), std::make_tuple(T_Listen, true),
-		std::make_tuple(T_Hostname, true), std::make_tuple(T_Index, true),
+		std::make_tuple(T_ServerName, true), std::make_tuple(T_Index, true),
 		std::make_tuple(T_AutoIndex, true), std::make_tuple(T_Root, true),
 		std::make_tuple(T_Log, true), std::make_tuple(T_BodySize, true),
 		std::make_tuple(T_CGI, true), std::make_tuple(T_UploadDir, true),

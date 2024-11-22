@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 16:10:43 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 14:31:15 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int CGIHandler::parentProcess()
 	return SUCCESS;
 }
 
-int CGIHandler::recvCGIResponse()
+int CGIHandler::recvCGIResponse(std::string &response)
 {
 	char	buffer[BUFFER_SIZE];
 	ssize_t nb_byte = 1;
@@ -90,7 +90,7 @@ int CGIHandler::recvCGIResponse()
 		if (nb_byte == 0) {
 			break;
 		}
-		_response.append(buffer, nb_byte);
+		response.append(buffer, nb_byte);
 	}
 	return SUCCESS;
 }

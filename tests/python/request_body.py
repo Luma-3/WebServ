@@ -57,7 +57,7 @@ class TestServerBodyReturn(TestFunct):
 	def test_wrong_header_cgi(self):
 		print("Testing wrong header CGI, should return 500")
 		response = requests.get(self.url + "/cgi-bin/test_wrong_header.py")
-		self.verifReturn(response, 500)
+		self.verifReturn(response, 502)
 
 	def test_cgi_get_query_string(self):
 		print("Testing CGI GET, cgi should access to query string")

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:37:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/21 14:18:42 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 11:26:47 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ std::string Token::TerminalToString(Terminal_Type terminal)
 		{T_Server,		   "server"						   },
 		{T_Location,		 "location"					   },
 		{T_ErrorPage,	  "error_page"					  },
-		{T_DenyMethod,	   "deny_method"					},
+		{T_KeyMethod,		   "method"						   },
 		{T_Return,		   "return"						   },
 		{T_Listen,		   "listen"						   },
 		{T_ServerName,	   "server_name"					},
@@ -116,7 +116,7 @@ Terminal_Type Token::IdentifyTerminal(const std::string &value)
 		{T_Server,	   "server"	   },
 		{T_Location,	 "location"	   },
 		{T_ErrorPage,  "error_page"	  },
-		{T_DenyMethod, "deny_method"	},
+		{T_KeyMethod,	   "method"	   },
 		{T_Return,	   "return"	   },
 		{T_Listen,	   "listen"	   },
 		{T_ServerName, "server_name"	},

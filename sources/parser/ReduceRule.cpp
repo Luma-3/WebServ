@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/21 14:57:59 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 11:23:56 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,7 +227,7 @@ void Parser::R4_ErrorPage()
 	}
 }
 
-void Parser::R5_DenyMethod()
+void Parser::R5_Method()
 {
 	stack< IParserToken * > tokens;
 	vector< string >		method;
@@ -242,7 +242,7 @@ void Parser::R5_DenyMethod()
 		tokens.pop();
 	}
 
-	Param *deniedMethod = new Param("deny_method", method);
+	Param *deniedMethod = new Param("method", method);
 	_parse_stack.push(deniedMethod);
 }
 

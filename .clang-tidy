@@ -23,7 +23,8 @@ Checks: >
   -misc-no-recursion,
   -cppcoreguidelines-special-member-functions,  
   -cppcoreguidelines-pro-type-cstyle-cast,
-  -performance-no-int-to-ptr
+  -performance-no-int-to-ptr,
+  -cppcoreguidelines-avoid-const-or-ref-data-members,
 
 WarningsAsErrors: '*'
 FormatStyle: file

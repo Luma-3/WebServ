@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/30 10:15:33 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 11:23:56 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void Action::Reduce(Token *token, std::stack< IParserToken * > &stack,
 			parser.R4_ErrorPage();
 			break;
 		case R5:
-			parser.R5_DenyMethod();
+			parser.R5_Method();
 			break;
 		case R6:
 			parser.R6_Location();

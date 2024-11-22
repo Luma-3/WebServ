@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IdentidyToken.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:16:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 18:37:14 by anthony          ###   ########.fr       */
+/*   Updated: 2024/11/22 14:42:22 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,10 @@ TEST_P(IdentidyToken, Terminal)
 std::vector< Terminal_Type > term = {T_Server,
 									 T_Location,
 									 T_ErrorPage,
-									 T_DenyMethod,
+									 T_KeyMethod,
 									 T_Return,
 									 T_Listen,
-									 T_Hostname,
+									 T_ServerName,
 									 T_Index,
 									 T_AutoIndex,
 									 T_Root,

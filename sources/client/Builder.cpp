@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/21 16:41:11 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 15:21:39 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,36 +109,41 @@ void Builder::findErrorPage()
 	}
 }
 
-bool Builder::isMethodDeny(int &state, const std::string &current_method)
+bool Builder::isAcceptedMethod(int &state, const std::string &current_method)
 {
-	std::vector< std::string > deny_methods;
+	std::vector< std::string > methods;
 
-	deny_methods = findParamList("deny_method", _requestPath, _server);
-	if (deny_methods.empty()) {
-		return false;
+	methods = findParamList("method", _requestPath, _server);
+	if (methods.empty()) {
+		return true;
 	}
-	for (size_t i = 0; i < deny_methods.size(); ++i) {
-		if (deny_methods[i] == current_method) {
-			_code = "405";
-			state = B_ERROR;
+	for (size_t i = 0; i < methods.size(); ++i) {
+		if (methods[i] == current_method) {
 			return true;
 		}
 	}
+	_code = "405";
+	state = B_ERROR;
 	return false;
 }
 
-void Builder::handleMethods(int &state)
+void Builder::isDelete(int &state)
+{
+	const std::string current_method = _parser.getHeader("Method");
+
+	if (current_method == "DELETE") {
+		state = DELETE;
+		return;
+	}
+}
+
+void Builder::verifyMethodsAndBodySize(int &state)
 {
 	const std::string current_method = _parser.getHeader("Method");
 	const std::string max_body_size =
 		findParam("max_body_size", _requestPath, _server);
 
-	if (isMethodDeny(state, current_method)) {
-		return;
-	}
-
-	if (current_method == "DELETE") {
-		state = DELETE;
+	if (!isAcceptedMethod(state, current_method)) {
 		return;
 	}
 

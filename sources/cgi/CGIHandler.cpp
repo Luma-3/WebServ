@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 14:42:29 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/21 10:35:46 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 15:02:09 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ CGIHandler::CGIHandler(const client::Client *client, client::Parser *parser,
 								 fileExtension);
 	}
 
-	std::string	 path_file = builder->getPath();
+	const std::string	 path_file = builder->getPath();
 	const size_t pos = path_file.find_last_of('/');
 	_path = path_file.substr(0, pos);
 	_filename = path_file.substr(pos + 1);

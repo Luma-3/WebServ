@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 18:53:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/21 14:18:28 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 11:26:25 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ enum Terminal_Type {
 	T_Server,
 	T_Location,
 	T_ErrorPage,
-	T_DenyMethod,
+	T_KeyMethod,
 	T_Return,
 	T_Listen,
 	T_ServerName,

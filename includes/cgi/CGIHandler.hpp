@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/20 16:16:30 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 13:14:31 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,12 +81,10 @@ class CGIHandler
 			   const VirtualServer *server, client::Builder *builder);
 	~CGIHandler();
 
-	int getStatus() const { return _status; }
-
-	int	 execute();
-	int	 waitCGI();
-	int	 recvCGIResponse();
-	void adjustHeader(std::string &client_response);
+	int execute();
+	int waitCGI();
+	int recvCGIResponse(std::string &response);
+	int getStatus() const { return _status; };
 };
 
 char *ft_strdup(const char *s);

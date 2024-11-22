@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:22:15 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/21 16:07:06 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/22 13:12:57 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,9 @@ class Client
 	void removeFile(const std::string &full_path);
 	void removeDirectory(const std::string &full_path);
 	bool verifAccessInsideDirectory(const std::string &full_path);
-	int	 CGIResponse();
 	int	 returnAndDeleteCgi();
+	int	 CGIResponse();
+	void adjustCGIResponse();
 
   public:
 	Client(const ServerHost *server_host, const VirtualServer *server,
