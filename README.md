@@ -21,8 +21,8 @@ make test && run ./run_all_test.sh all -y
 
 ## See Documentation
 
-If you launch webserv with the classic website, you will access to the index page of the webserv.
-In this page you have Documentation with all the configuration infos
+If you start the webserv with the classic website, you will be taken to the index page of the webserv.
+On this page you will find the documentation with all the configuration information.
 
 # How we did it ?
 
