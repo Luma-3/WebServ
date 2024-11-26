@@ -18,13 +18,6 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: install cmake
-        run: sudo apt-get install cmake
-
-      - name: Create build dir
-        run: mkdir -p build
-
-      - name: Run Cmake
+      - name: Run Make
         run: |
-          cmake -B build
-          cmake --build build --target WebServ
+          make

@@ -1,0 +1,50 @@
+Config		= [ ServerBlock ]
+
+ServerBlock = 'server' '{' [ ServerParam ] '}'
+ServerParam = 	LocationBlock
+				|	PortParam
+				|	HostParam
+				|	ErrorPageParam
+				|	LogParam
+				|	RootParam
+				|	AutoindexParam
+				|	DenyMethodParam
+				|	ReturnParam
+				|	IndexParam
+				|	MaxBodySizeParam
+				|	CgiParam
+
+LocationBlock = 'location' path '{' [ LocationParam ] '}'
+LocationParam =	RootParam
+				|	IndexParam
+				|	ErrorPageParam
+				|	AutoindexParam
+				|	DenyMethodParam
+				|	ReturnParam
+				|	MaxBodySizeParam
+				|	CgiParam
+
+PortParam		= 'port' digits ';'
+HostParam		= 'host'  identifier ';'
+ErrorPageParam	= 'error_page'  '[' digits ']' identifier ';' | [ digits (',') ] identifier ';'
+DenyMethodParam	= 'deny_method' '[' method ']' | [ '[' method (',') ']' ] ';'
+RootParam		= 'root' path ';'
+IndexParam		= 'index' identifier ';'
+LogParam		= 'log' log_level identifier ';'
+
+autoindexParam	= 'autoindex' bool ';'
+
+ReturnParam		= 'return' digits identifier ';'
+
+MaxBodySizeParam	= 'max_body_size' identifier ';'
+
+CgiParam = 'cgi' cgi_extension identifier ';' 
+
+identifier	= [a-zA-Z0-9_-.]+
+path		= [a-zA-Z0-9/_-]+/
+digits		= [0-9]+
+method		= 'GET' | 'POST' | 'DELETE'
+log_level	= 'Debug' | 'Info' | 'Warning' | 'Error'
+bool		= 'on' | 'off'
+cgi_extension = 'php' | 'py'
+

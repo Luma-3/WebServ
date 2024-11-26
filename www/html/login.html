@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../css/sign-in.css">
+	<link rel="stylesheet" href="../css/style.css">
+	<title>Login</title>
+</head>
+
+<body>
+	<div class="cont">
+
+		<div class="title_sign_in">
+			<a href="/"><img src="/images/logo/logo_webserv_no_arrow.png"></a>
+			<h1>Login</h1>
+			<button class="button" onclick="window.location.href = '/html/documentation.html';">See Documentation</button>
+		</div>
+
+		<div class="form_sign_in">
+			<form action="/cgi-bin/login.php" method="post" enctype="application/x-www-form-urlencoded">
+
+				<div class="sign_in">
+					<div class="sign_in_container">
+						<div class="sign_in_input">
+							<img src="/images/icons/user_simple.png">
+							<input type="text" name="username" id="username" placeholder="Username" required>
+						</div>
+						<div class="sign_in_input">
+							<img src="/images/icons/key.png">
+							<input type="password" name="password" id="password" placeholder="Password" required>
+						</div>
+						<button class="button" type="submit">Login</button>
+						<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Forgot Password?</a>
+					</div>
+				</div>
+			</form>
+</body>
+
+</html>

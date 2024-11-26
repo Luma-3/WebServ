@@ -4,13 +4,13 @@ on:
   push:
     branches:
       - main
-      - develop
+      - devlop
       - feature/*
       - hotfix/*
   pull_request:
     branches:
       - main
-      - develop
+      - devlop
       - feature/*
       - hotfix/*
 
@@ -24,16 +24,14 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: install cmake
-        run: sudo apt-get install cmake
+      - name: Update apt-get
+        run: sudo apt-get update
 
-      - name: Create build dir
-        run: mkdir -p build
+      - name: Install dependencies
+        run: sudo apt-get install php-cgi
 
-      - name: Run Cmake
-        run: |
-          cmake -B build
-          cmake --build build
+      - name: Make test
+        run: make test
 
-      - name: Run unit tests
-        run: ctest --test-dir build --output-on-failure
+      - name: Run Test
+        run: ./run_tests.sh all -y

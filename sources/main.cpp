@@ -6,43 +6,78 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/09/06 15:21:25 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/21 16:40:46 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <cerrno>
+#include <exception>
 #include <iostream>
 
-int main()
+#include "lexer/Lexer.hpp"
+#include "Logger.hpp"
+#include "parser/Parser.hpp"
+#include "server/Handler.hpp"
+#include "server/Signal.hpp"
+
+using parser::Parser;
+
+using std::cerr;
+using std::cout;
+using std::endl;
+using std::vector;
+
+Handler *init_server(const char *conf_file, const char **envp)
 {
-	std::cout << "Hello World!" << std::endl;
-	return 0;
+
+	Lexer Lexer(conf_file);
+	Lexer.Tokenize();
+
+	Parser parser(&Lexer);
+	parser.Parse();
+
+	const vector< VirtualServer * > servers = parser.getServers();
+
+	if (!parser.getParseStack().empty()) {
+		Param *token = D_Cast< Param * >(parser.getParseStack().top());
+		new Logger(token->getPair().second,
+				   Logger::StringToLogLevel(token->getPair().first));
+	}
+
+	Handler *handler = new Handler(servers, envp);
+
+	return (handler);
 }
 
-// #include <cstdlib>
-// #include <iostream>
-// #include <vector>
+void delete_instance(Handler *handler, Logger *logger)
+{
+	delete handler;
+	delete logger;
+}
 
-// void test(int a)
-// {
-// 	if (a = 5) { // Erreur potentielle : affectation au lieu de comparaison
-// 		std::cout << "a vaut 5" << std::endl;
-// 	}
-// }
+int main(const int ac, const char **av, const char **env)
+{
+	Handler *handler = NULL;
 
-// int main()
-// {
-// 	int				 x = NULL; // Utilisation de NULL au lieu de nullptr
-// 	std::vector<int> vec;
-// 	for (int i = 0; i < 10; i++) { // 10 est un nombre magique
-// 		vec.push_back(i);
-// 	}
+	cout << "Starting server..." << endl;
+	if (ac != 2) {
+		cerr << "Usage: ./webserv <config_file>" << endl;
+		return FAILURE;
+	}
+	if (initSignal() == FAILURE) {
+		return (EPERM);
+	}
 
-// 	int *ptr = (int *)malloc(
-// 		sizeof(int)); // Utilisation de malloc au lieu de new, non recommandé
-// 	*ptr = 10;		  // 10 est un nombre magique
+	try {
+		handler = init_server(av[1], env);
+		cout << "All server started !" << endl;
+		handler->runEventLoop();
+	} catch (const std::exception &e) {
+		cerr << e.what() << endl;
+		delete_instance(handler, Logger::Instance);
+		return FAILURE;
+	}
 
-// 	std::cout << "Valeur de ptr : " << *ptr << std::endl;
-// 	free(ptr); // Utilisation de free au lieu de delete
-
-// 	return 0;
-// }
+	delete_instance(handler, Logger::Instance);
+	return SUCCESS;
+}

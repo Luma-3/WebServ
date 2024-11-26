@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Account</title>
+	<script>
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('preview');
+                output.src = reader.result;
+                output.style.display = 'block';
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+</head>
+
+<body>
+    <div class="head_container">
+        <header class="header">
+            <a href="/html/index.html"> <img src="../images/logo/logo_webserv_no_arrow.png" height="58px" width="px"></a>
+            <nav class="nav_bar">
+                <ul>
+                    <li><a href="https://github.com/Luma-3/WebServ"> <img src="/images/icons/github.png"></a></li>
+                    <li><a href="/html/documentation.html"> <img src="/images/icons/book-open.png"></a></li>
+                    <li><a href="/cgi-bin/account.php"> <img src="/images/icons/user.png"></a></li>
+                </ul>
+            </nav>
+        </header>
+        <div class="title">
+            <h1>Upload file</h1>
+        </div>
+    </div>
+    <section>
+        <div class="services">
+            <ul>
+				<form action="/cgi-bin/upload.py" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file" id="file" required onchange="previewImage(event)">
+                    <br>
+                    <br>
+                    <button class="button" type="submit">Upload</button>
+                </form>
+            </ul>
+			<div class="title" >
+			<img id="preview" src="#" alt="Image Preview" style="align-items: center; display: none; max-width: 100%; height: auto;">
+			</div>
+		</div>
+    </section>
+</body>
+</html>

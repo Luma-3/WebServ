@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../css/style.css">
+	<title>Account</title>
+</head>
+
+<body>
+	<div class="head_container">
+		<header class="header">
+			<a href="/cgi-bin/index.php"> <img src="../images/logo/logo_webserv_no_arrow.png" height="58px"
+					width="px"></a>
+			<nav class="nav_bar">
+				<ul>
+					<li><a href="https://github.com/Luma-3/WebServ"> <img src="/images/icons/github.png"></a></li>
+					<li><a href="/html/documentation.html"> <img src="/images/icons/book-open.png"></a></li>
+					<li><a href="/cgi-bin/account.php"> <img src="/images/icons/user.png"></a></li>
+				</ul>
+			</nav>
+		</header>
+		<div class="title">
+			<h1>Your account
+				<?= $username ?>
+			</h1>
+		</div>
+	</div>
+	<section>
+		<div class="services">
+			<ul>
+				<li>
+					<h1>Username</h1>
+					<p>
+						<?= $username ?>
+					</p>
+				</li>
+				<li>
+					<h1>Session Token</h1>
+					<p>
+						<?= $session_token ?>
+					</p>
+				</li>
+				<li><button class="button" onclick=window.location.href="/html/account_management.html">Manage
+						Account</button></li>
+			</ul>
+		</div>
+	</section>
+	<footer>
+		<div class="footer">
+			<div>
+				<ul>
+					<li><a href="/html/documentation.html">Documentation</a></li>
+					<li><a href="https://github.com/Luma-3/WebServ">Project-Github</a></li>
+					<li><a href="https://github.com/Luma-3">Jbrousse-Github</a></li>
+					<li><a href="https://github.com/monsieurCanard">Antgabri-Github</a></li>
+
+					<li>
+						<p><img src="/images/logo/logo_webserv_no_arrow.png" height="58px" width="px"></p>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</footer>
+</body>
+
+</html>

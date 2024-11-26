@@ -9,7 +9,7 @@ AlignTrailingComments: true
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortLoopsOnASingleLine: false
 BinPackArguments: true
@@ -25,7 +25,7 @@ BraceWrapping:
   AfterUnion: false
   AfterExternBlock: false
   BeforeCatch: false
-  BeforeElse: false
+  BeforeElse: true
   IndentBraces: false
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
@@ -48,11 +48,11 @@ IncludeCategories:
     Priority: 3
     SortPriority: 1
     CaseSensitive: false
-  - Regex: '.*'
+  - Regex: ".*"
     Priority: 1
     SortPriority: 2
     CaseSensitive: false
-IncludeIsMainRegex: '(Test)?$'
+IncludeIsMainRegex: "(Test)?$"
 IndentCaseLabels: true
 IndentPPDirectives: AfterHash
 IndentWidth: 4
@@ -69,9 +69,8 @@ SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1
-SpacesInAngles: Never
+SpacesInAngles: true
 SpacesInCStyleCastParentheses: false
 SpacesInContainerLiterals: false
 TabWidth: 4
 UseTab: Always
-...
