@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:15:36 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/22 15:21:39 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/26 09:53:00 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,9 +173,12 @@ int Builder::readDataRequest()
 
 	file.seekg(0, std::ios::beg);
 	_body.resize(size);
-	file.read(&_body[0], static_cast< std::streamsize >(size));
+	if (file.read(&_body[0], static_cast< std::streamsize >(size))) {
+		file.close();
+		return 0;
+	}
 	file.close();
-	return 0;
+	return FAILURE;
 }
 
 void Builder::readFile()

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:44:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/18 12:55:26 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/26 09:51:59 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,37 +42,16 @@ enum LogLevel {
 	if (Logger::Instance) {                                                   \
 		Logger::Instance->log(DEBUG, Logger::removeColor(message));           \
 	}                                                                         \
-	else {                                                                    \
-		std::cerr << PASTEL_RED "No logger instance"                          \
-				  << RESET " (to have one, put this line in the confi_file: " \
-						   "log_file [Log_Level] 'path')"                     \
-				  << std::endl;                                               \
-		std::cerr << (message) << std::endl;                                  \
-	}
 
 #define LOG_INFO(message)                                                     \
 	if (Logger::Instance) {                                                   \
 		Logger::Instance->log(INFO, Logger::removeColor(message));            \
 	}                                                                         \
-	else {                                                                    \
-		std::cerr << PASTEL_RED "No logger instance"                          \
-				  << RESET " (to have one, put this line in the confi_file: " \
-						   "log_file [Log_Level] 'path')"                     \
-				  << std::endl;                                               \
-		std::cerr << (message) << std::endl;                                  \
-	}
 
 #define LOG_WARNING(message)                                                  \
 	if (Logger::Instance) {                                                   \
 		Logger::Instance->log(WARNING, Logger::removeColor(message));         \
 	}                                                                         \
-	else {                                                                    \
-		std::cerr << PASTEL_RED "No logger instance"                          \
-				  << RESET " (to have one, put this line in the confi_file: " \
-						   "log_file [Log_Level] 'path')"                     \
-				  << std::endl;                                               \
-		std::cerr << (message) << std::endl;                                  \
-	}
 
 #define LOG_ERROR(message)                                                    \
 	if (Logger::Instance) {                                                   \

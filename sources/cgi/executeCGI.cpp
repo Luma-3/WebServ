@@ -6,13 +6,14 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 11:03:31 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/22 14:31:15 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/26 10:29:08 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cstdlib>
 
 #include "cgi/CGIHandler.hpp"
+#include "server/Handler.hpp"
 
 using std::string;
 

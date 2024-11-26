@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 14:33:51 by jdufour           #+#    #+#             */
-/*   Updated: 2024/11/22 15:02:03 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/26 10:29:27 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ using std::vector;
 
 volatile int g_sig = 0;
 
+
 namespace {
 string getIP(const struct addrinfo *addr)
 {
@@ -52,6 +53,7 @@ Handler::Handler(const vector< VirtualServer * > &servers, const char **envp) :
 	_epfd(epoll_create1(0)),
 	_nbServ(0)
 {
+
 	if (_epfd == -1) {
 		throw InternalServerException("epoll_create", __LINE__, __FILE__,
 									  std::string(strerror(errno)));

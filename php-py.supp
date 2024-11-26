@@ -1,0 +1,6 @@
+{
+	ingore_php_leak
+	Memchek:Leak
+	...
+	fun:php_module_startup
+}

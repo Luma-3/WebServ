@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:00:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/22 13:14:31 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/26 09:57:57 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 #define CGI_WAIT 0
 #define CGI_FAIL (-1)
 
-#define TIMEOUT 10
+#define TIMEOUT 15
 
 #define FAILURE 1
 #define SUCCESS 0
