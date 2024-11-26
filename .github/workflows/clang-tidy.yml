@@ -4,15 +4,11 @@ on:
   push:
     branches:
       - main
-      - devlop
-      - feature/*
-      - hotfix/*
+      - develop
   pull_request:
     branches:
       - main
-      - devlop
-      - feature/*
-      - hotfix/*
+      - develop
 
 jobs:
   clang-tidy:
@@ -22,10 +18,10 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v4
         with:
-          submodules: "recursive"
+          submodules: 'recursive'
 
       - name: install clang-tidy
         run: sudo apt-get install clang-tidy
-
+        
       - name: Run Tidy
         run: make tidy
