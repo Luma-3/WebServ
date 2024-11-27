@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/19 14:29:04 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/27 11:06:24 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,3 +190,4 @@ void Builder::Autoindex()
 	closedir(dir);
 	insertFooterAndSetAttributes(_body);
 }
+

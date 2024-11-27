@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IError.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 13:58:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/10/24 10:57:48 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/27 11:07:03 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

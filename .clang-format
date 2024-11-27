@@ -72,5 +72,6 @@ SpacesBeforeTrailingComments: 1
 SpacesInAngles: true
 SpacesInCStyleCastParentheses: false
 SpacesInContainerLiterals: false
+IsertFinalNewline: true
 TabWidth: 4
 UseTab: Always

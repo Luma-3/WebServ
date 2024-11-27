@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client_Tables.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
+/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 10:39:08 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/07 15:48:54 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/11/27 11:06:08 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

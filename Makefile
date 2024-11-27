@@ -3,7 +3,7 @@
 #			VARIABLES              #
 #----------------------------------#
 
-CXX = g++
+CXX = c++
 CXXFLAGS = -std=c++98 -Wall -Wextra -Werror -I$(INCLUDES) -pedantic #-O3
 
 INCLUDES = $(PWD)/includes
@@ -12,10 +12,44 @@ BUILD_DIR := build
 NAME := webserv
 
 SRC_DIR := sources
-SRC := $(shell find $(SRC_DIR) -name "*.cpp")
+SRC_LIST =	main.cpp 					\
+		Logger.cpp					\
+		finder.cpp					\
+		server/Handler.cpp			\
+		server/ServerException.cpp	\
+		server/ServerHost.cpp		\
+		server/Signal.cpp			\
+		server/VirtualServer.cpp	\
+		parser/Action.cpp			\
+		parser/Location.cpp			\
+		parser/Param.cpp			\
+		parser/Parser.cpp			\
+		parser/ParserException.cpp	\
+		parser/ReduceRule.cpp		\
+		lexer/Lexer.cpp				\
+		lexer/LexerException.cpp	\
+		lexer/regex.cpp				\
+		lexer/Token.cpp				\
+		client/autoindex.cpp		\
+		client/Builder.cpp			\
+		client/Client_Tables.cpp		\
+		client/Client.cpp			\
+		client/ClientCGI.cpp		\
+		client/Delete_request.cpp	\
+		client/Parser_uri.cpp		\
+		client/Parser.cpp			\
+		cgi/CGIHandler.cpp			\
+		cgi/executeCGI.cpp			\
+		cgi/init_cgi.cpp
+SRC = $(addprefix $(SRC_DIR)/, $(SRC_LIST))
+		
+
+
+# $(shell find $(SRC_DIR) -name "*.cpp")
 
 OBJ_DIR := $(BUILD_DIR)/obj
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+
 
 DEPS := $(OBJ:.o=.d)
 
