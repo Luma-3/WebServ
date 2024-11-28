@@ -1,6 +1,9 @@
 <?php
 
-session_start();
+if (!isset($_COOKIE['username'])) {
+	header('Location: /html/login.html');
+	exit;
+}
 
 function renderTemplate($template, $variables) {
 	extract($variables);
@@ -8,6 +11,6 @@ function renderTemplate($template, $variables) {
 	include $template;
 	return ob_get_clean();
 }
-echo renderTemplate(__DIR__ . '/../html/index.html', ['username' => $_SESSION['username']]);
+echo renderTemplate(__DIR__ . '/../html/index.html', ['username' => $_COOKIE['username']]);
 
 ?>

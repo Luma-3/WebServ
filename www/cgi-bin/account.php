@@ -9,6 +9,6 @@ function renderTemplate($template, $variables) {
 	return ob_get_clean();
 }
 
-echo renderTemplate(__DIR__ . '/../html/account.html', ['username' => $_SESSION['username'], 'session_token' => $_SESSION['session_token']]);
+echo renderTemplate(__DIR__ . '/../html/account.html', ['username' => $_COOKIE['username']]);
 
 ?>
