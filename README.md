@@ -1,3 +1,5 @@
+![Frame 26](https://github.com/user-attachments/assets/f1a6acda-4cf2-4f60-827e-359c9b95d99a)
+
 # WebServ (HTTP 1.1 Server in C++98)
 
 ### How to install
@@ -26,7 +28,7 @@ On this page you will find the documentation with all the configuration informat
 
 # How we did it ?
 
-## PUT FLOWCHART
+![Flowchart](https://github.com/user-attachments/assets/c4be87f6-a73a-49af-97dd-9070a7a1b897)
 
 
 
