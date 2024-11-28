@@ -12,7 +12,8 @@ BUILD_DIR := build
 NAME := webserv
 
 SRC_DIR := sources
-SRC_LIST =	main.cpp 					\
+SRC_LIST =							\
+		main.cpp 					\
 		Logger.cpp					\
 		finder.cpp					\
 		server/Handler.cpp			\
@@ -32,7 +33,7 @@ SRC_LIST =	main.cpp 					\
 		lexer/Token.cpp				\
 		client/autoindex.cpp		\
 		client/Builder.cpp			\
-		client/Client_Tables.cpp		\
+		client/Client_Tables.cpp	\
 		client/Client.cpp			\
 		client/ClientCGI.cpp		\
 		client/Delete_request.cpp	\
@@ -42,10 +43,7 @@ SRC_LIST =	main.cpp 					\
 		cgi/executeCGI.cpp			\
 		cgi/init_cgi.cpp
 SRC = $(addprefix $(SRC_DIR)/, $(SRC_LIST))
-		
 
-
-# $(shell find $(SRC_DIR) -name "*.cpp")
 
 OBJ_DIR := $(BUILD_DIR)/obj
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
