@@ -6,7 +6,7 @@ import cgitb
 cgitb.enable()
 form = cgi.FieldStorage()
 
-if 'fiawdawdawdle' in form:
+if 'fiawdawdawdle' in fom:
 
 	file_field = form["file"]
 	body = file_field.file.read()
