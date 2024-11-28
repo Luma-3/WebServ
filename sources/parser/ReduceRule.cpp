@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 23:40:41 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/27 11:05:32 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/28 12:31:56 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,6 @@ void Parser::R1_Server()
 	if (_current->getParam("listen") == NULL) {
 		throw Parser::MissingParamException("listen");
 	}
-	// if (_current->getParam("server_name") == NULL) {
-	// 	Param *param = new Param(
-	// 		"server_name", _current->getParam("listen")->getPair().first + ":" +
-	// 						_current->getParam("listen")->getPair().second);
-	// 	_current->addParam("server_name", param);
-	// }
-
 	_servers.push_back(_current);
 	_current = new VirtualServer();
 }

@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 18:53:01 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/27 11:07:22 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/28 12:34:53 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,9 @@ enum Terminal_Type {
 	T_Path,
 	T_CGIExtension,
 	T_Bool,
-	T_LogLevel
+	T_LogLevel,
+
+	T_EOF
 };
 
 class IParserToken

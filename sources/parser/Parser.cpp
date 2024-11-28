@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/22 11:31:37 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/28 12:44:00 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,11 @@ void Parser::Parse()
 	std::queue< Token * > &tokens = _lexer->getTokens();
 
 	while (!tokens.empty()) {
-		Token		*token = tokens.front();
+		Token *token = tokens.front();
+		if (token->getTerminal() == T_EOF) {
+			break;
+		}
+
 		const Action action = findAction(_status, token->getTerminal());
 
 		tokens.pop();

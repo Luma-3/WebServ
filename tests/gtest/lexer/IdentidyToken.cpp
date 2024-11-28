@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:16:22 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/22 14:42:22 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/28 13:03:45 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ TEST_P(IdentidyToken, Terminal)
 	while (!tokens.empty()) {
 		Token *token = tokens.front();
 		EXPECT_EQ(token->getTerminal(), _terminals[i]);
+		std::cout << "I:" << i << " Token:" << token->getKey() << std::endl;
 		tokens.pop();
 		++i;
 	}
@@ -83,9 +84,10 @@ std::vector< Terminal_Type > term = {T_Server,
 									 T_LogLevel,
 									 T_LogLevel,
 									 T_LogLevel,
-									 T_LogLevel};
+									 T_LogLevel,
+									 T_EOF};
 
-std::vector< Terminal_Type > empty = {};
+std::vector< Terminal_Type > empty = {T_EOF};
 
 INSTANTIATE_TEST_SUITE_P(
 	Terminal, IdentidyToken,

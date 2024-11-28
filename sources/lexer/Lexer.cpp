@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:51:38 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/27 11:05:36 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/11/28 12:35:28 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ void Lexer::Tokenize()
 		_line++;
 		TokenizeLine(line, _tokens);
 	}
+	_tokens.push(new Token("", T_EOF, _line, _col));
 }
 
 Lexer::~Lexer()
