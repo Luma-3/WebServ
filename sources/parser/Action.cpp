@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 14:05:45 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/27 11:04:39 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/12/02 11:56:38 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,10 @@ int Action::Execute(Token *token, std::stack< IParserToken * > &stack,
 	}
 	else if (_type == REDUCE) {
 		Reduce(token, stack, parser);
+	}
+	else if (_type == ACCEPT) {
+		delete token;
+		return (ACCEPT);
 	}
 	else {
 		return (ERROR);

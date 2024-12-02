@@ -6,7 +6,7 @@
 /*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:28:51 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/11/28 12:44:00 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/12/02 11:50:31 by jbrousse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ std::map< parser::ActionEntry, Action > Parser::createActionMap()
 	// state and terminal
 	actions[ActionEntry(0, T_Server)] = Action(SHIFT, 1);
 	actions[ActionEntry(0, T_Log)] = Action(SHIFT, 6);
+	actions[ActionEntry(0, T_EOF)] = Action(ACCEPT, 0);
 	actions[ActionEntry(1, T_OBracket)] = Action(SHIFT, 2);
 
 	actions[ActionEntry(2, T_Location)] = Action(SHIFT, 21);
@@ -171,11 +172,11 @@ void Parser::Parse()
 
 	while (!tokens.empty()) {
 		Token *token = tokens.front();
-		if (token->getTerminal() == T_EOF) {
-			break;
-		}
 
 		const Action action = findAction(_status, token->getTerminal());
+		// if (token->getTerminal() == T_EOF) {
+		// 	break;
+		// }
 
 		tokens.pop();
 		if (action.Execute(token, _parse_stack, *this) == ERROR) {
@@ -191,6 +192,8 @@ void Parser::Parse()
 
 Parser::~Parser()
 {
+
+	std::cout << "Destructor called" << std::endl;
 	while (!_parse_stack.empty()) {
 		delete _parse_stack.top();
 		_parse_stack.pop();
