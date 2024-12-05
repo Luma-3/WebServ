@@ -87,7 +87,7 @@
 		autoindex <b>on/off</b>;
 		cgi <b>php/py</b> <b>path</b>;
 		error_page [<b>code</b>, ...] <b>path</b>;
-		deny_method [<b>method</b>, ...];
+		method [<b>method</b>, ...];
 		max_body_size <b>size</b>;
 
 		location <b>path</b> {
@@ -131,9 +131,9 @@
 			for a specific error code.
 			The server will serve the error page when a client encounters the specified error code.</li>
 
-		<li><span class="param_name">deny_methods</span> : The deny_methods parameter specifies the HTTP methods that
-			the server should deny.
-			The server will return a 405 Method Not Allowed response when a client uses one of the specified methods.
+		<li><span class="param_name">method</span> : The method parameter specifies the HTTP methods that
+			the server should accept.
+			The server will return a 405 Method Not Allowed response when a client uses one outside of the specified methods.
 		</li>
 
 		<li><span class="param_name">max_body_size</span> : The max_body_size parameter specifies the maximum size of
@@ -160,7 +160,7 @@
 		autoindex <b>on/off</b>;
 		cgi <b>php/py</b> <b>path</b>;
 		error_page [<b>code</b>, ...] <b>path</b>;
-		deny_method [<b>method</b>, ...];
+		method [<b>methods</b>, ...];
 		max_body_size <b>size</b>;
 	}
 	</code></pre>

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/12/02 11:57:38 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/12/05 09:21:52 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ Handler *init_server(const char *conf_file, const char **envp)
 	try {
 		parser.Parse();
 	} catch (const std::exception &e) {
-		const vector< VirtualServer * > servers = parser.getServers();
+		const vector< VirtualServer * > &servers = parser.getServers();
 		for (size_t i = 0; i < servers.size(); i++) {
 			delete servers[i];
 		}
