@@ -6,7 +6,7 @@
 /*   By: Monsieur_Canard <Monsieur_Canard@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 15:21:12 by jbrousse          #+#    #+#             */
-/*   Updated: 2024/12/05 09:21:52 by Monsieur_Ca      ###   ########.fr       */
+/*   Updated: 2024/12/05 10:07:02 by Monsieur_Ca      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ Handler *init_server(const char *conf_file, const char **envp)
 		throw;
 	}
 
-	const vector< VirtualServer * > servers = parser.getServers();
+	const vector< VirtualServer * > &servers = parser.getServers();
 
 	if (!parser.getParseStack().empty()) {
 		Param *token = D_Cast< Param * >(parser.getParseStack().top());
