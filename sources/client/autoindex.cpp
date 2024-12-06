@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrousse <jbrousse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anthony <anthony@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:14:53 by Monsieur_Ca       #+#    #+#             */
-/*   Updated: 2024/11/27 11:06:24 by jbrousse         ###   ########.fr       */
+/*   Updated: 2024/12/06 09:26:59 by anthony          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int Builder::verifLocationAndGetNewPath()
 		root = location->getRoot(_requestPath);
 		index = location->getParamValue("index");
 
-		if (!index.empty()) {
+		if (!index.empty() || _parser.getHeader("Method") != "GET") {
 			return getIndex(root, index);
 		}
 
@@ -95,8 +95,7 @@ int Builder::verifLocationAndGetNewPath()
 	root = _server->getParamValue("root");
 	index = _server->getParamValue("index");
 
-
-	if (!index.empty()) {
+	if (!index.empty() || _parser.getHeader("Method") != "GET") {
 		return getIndex(root, index);
 	}
 	return getAutoIndex(_server, _requestPath, _code, _path);
@@ -190,4 +189,3 @@ void Builder::Autoindex()
 	closedir(dir);
 	insertFooterAndSetAttributes(_body);
 }
-
