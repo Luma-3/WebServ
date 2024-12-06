@@ -1,6 +1,17 @@
 ![Frame 26](https://github.com/user-attachments/assets/f1a6acda-4cf2-4f60-827e-359c9b95d99a)
 
+<div align="center">
+
 # 🌐 WebServ (HTTP 1.1 Server in C++98)
+
+</div>
+
+<p align="center">
+  <br>
+	<img src="https://img.shields.io/badge/Score-125-pink?style=flat-square&logo=42" alt="Score project :125"/>
+	<img alt="Static Badge" src="https://img.shields.io/badge/Outstanding-2-pink?style=flat-square&logo=42">
+	<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/Luma-3/WebServ?style=flat-square&logo=github&color=pink">
+</p>
 
 ### 📥 How to install
 
